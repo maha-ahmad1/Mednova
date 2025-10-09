@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@/components/ui/button";
 export function OtpInputs() {
   const [otp, setOtp] = useState(""); 
 

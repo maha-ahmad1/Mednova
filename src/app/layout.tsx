@@ -1,38 +1,41 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Cairo } from "next/font/google"
+
+import type React from "react";
+import type { Metadata } from "next";
 // import { Analytics } from "@vercel/analytics/next"
-import "./globals.css"
-import { Suspense } from "react"
-// import { GeistSans, GeistMono } from "geist/font/google";
+import "./globals.css";
+import { Suspense } from "react";
+import { Tajawal } from "next/font/google";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Providers } from './Providers';
 
+const queryClient = new QueryClient();
 
-
-const cairo = Cairo({
-  subsets: ["latin", "arabic"],
-  variable: "--font-cairo",
-  display: "swap",
-})
+const tajawal = Tajawal({
+  subsets: ["arabic"],
+  weight: ["400", "700"],
+  variable: "--font-tajawal",
+});
 
 export const metadata: Metadata = {
   title: "MEDNOVA - Medical Innovation",
-  description: "Register for MEDNOVA medical services",
-  generator: "v0.app",
-}
+  description: "Medical Innovation",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body>
-        <Suspense fallback={null}>
-          {children}
-          {/* <Analytics /> */}
-        </Suspense>
+      <body className={tajawal.variable}>
+        <Providers>
+          <Suspense fallback={null}>
+            {children}
+            {/* <Analytics /> */}
+          </Suspense>
+        </Providers>
       </body>
     </html>
-  )
+  );
 }

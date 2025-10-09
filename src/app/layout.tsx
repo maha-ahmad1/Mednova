@@ -5,10 +5,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Suspense } from "react";
 import { Tajawal } from "next/font/google";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Providers } from './Providers';
 
-const queryClient = new QueryClient();
 
 const tajawal = Tajawal({
   subsets: ["arabic"],

@@ -8,6 +8,7 @@ import { Tajawal } from "next/font/google";
 import { Providers } from './Providers';
 
 
+
 const tajawal = Tajawal({
   subsets: ["arabic"],
   weight: ["400", "700"],
@@ -19,19 +20,25 @@ export const metadata: Metadata = {
   description: "Medical Innovation",
 };
 
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}
+>) 
+
+
+{
   return (
     <html lang="ar" dir="rtl">
       <body className={tajawal.variable}>
         <Providers>
           <Suspense fallback={null}>
-            {children}
-            {/* <Analytics /> */}
+            <main className="min-h-screen">{children}</main>
           </Suspense>
+          {/* <Analytics /> */}
         </Providers>
       </body>
     </html>

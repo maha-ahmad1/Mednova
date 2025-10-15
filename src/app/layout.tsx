@@ -6,8 +6,7 @@ import "./globals.css";
 import { Suspense } from "react";
 import { Tajawal } from "next/font/google";
 import { Providers } from './Providers';
-import { Footer } from "@/shared/ui/Footer";
-import { Navbar } from "@/shared/ui/Header";
+
 
 
 const tajawal = Tajawal({
@@ -37,9 +36,7 @@ export default function RootLayout({
       <body className={tajawal.variable}>
         <Providers>
           <Suspense fallback={null}>
-            <Navbar />
             <main className="min-h-screen">{children}</main>
-            <Footer />
           </Suspense>
           {/* <Analytics /> */}
         </Providers>

@@ -6,6 +6,10 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
+
+
+  console.log("Auth Layout is working ✅");
+
   return (
     <div className="bg-white h-screen ">
       <div className="h-full grid lg:grid-cols-2 items-stretch gap-0">

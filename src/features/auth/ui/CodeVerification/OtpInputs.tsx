@@ -1,53 +1,209 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import * as z from "zod";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
+import { verifyToken, forgotPassword } from "@/features/auth/api/authApi";
+import { useSearchParams } from "next/navigation"
+
+const otpSchema = z.object({
+  token: z.string().length(4, "يجب إدخال جميع الأرقام الأربعة"),
+});
+
+type OtpFormData = z.infer<typeof otpSchema>;
+
+// interface OtpInputsProps {
+//   email: string; 
+// }
+
 export function OtpInputs() {
-  const [otp, setOtp] = useState(""); 
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isResending, setIsResending] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(0);
+
+  const router = useRouter();
+  const searchParams = useSearchParams()
+  const email = searchParams.get("email") || ""
+
+  console.log("email:", email)
+  const {
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isValid },
+  } = useForm<OtpFormData>({
+    resolver: zodResolver(otpSchema),
+    mode: "onChange",
+    defaultValues: {
+      token: "",
+    },
+  });
+
+  const token = watch("token");
+
+  const mutation = useMutation({
+    mutationFn: (data: { email: string; token: string; verification_method: string }) =>
+    verifyToken(data),
+    onSuccess: (data) => {
+      console.log("✅ تم التحقق من الرمز بنجاح:", data);
+
+      if (data.success) {
+        router.push("/auth/reset-password");
+      } else {
+        setServerError(data.message || "حدث خطأ غير متوقع");
+      }
+    },
+    onError: (error: any) => {
+      console.error("❌ خطأ أثناء التحقق من الرمز:", error);
+
+      if (error.response) {
+        const responseData = error.response.data;
+        const backendErrors = responseData.data?.errors || responseData.data?.error || {};
+
+        Object.entries(backendErrors).forEach(([field, message]) => {
+          if (field === "token") {
+            setServerError(Array.isArray(message) ? message[0] : message);
+          }
+        });
+
+        if (responseData.message && Object.keys(backendErrors).length === 0) {
+          setServerError(responseData.message);
+        }
+      } else if (error.request) {
+        setServerError("لا يوجد اتصال بالخادم");
+      } else {
+        setServerError("حدث خطأ غير متوقع");
+      }
+    },
+  });
+
+  const resendMutation = useMutation({
+    mutationFn: () => forgotPassword({ email, verification_method: "email" }), 
+    onSuccess: () => {
+      setIsResending(false);
+      setResendCountdown(60);
+      const timer = setInterval(() => {
+        setResendCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    },
+    onError: () => {
+      setIsResending(false);
+      setServerError("فشل في إعادة إرسال الرمز");
+    },
+  });
+
+  const onSubmit = (data: OtpFormData) => {
+    setServerError(null);
+    mutation.mutate({
+      email, 
+      token: data.token,
+      verification_method: "email", 
+    });
+  };
+console.log("email:", email);
+
+
+  const handleResendCode = () => {
+    if (resendCountdown > 0) return;
+
+    setIsResending(true);
+    resendMutation.mutate();
+  };
 
   return (
-    <div className="w-full h-full flex flex-col justify-center border-0 shadow-none bg-transparent  mt-14">
-      <div className="space-y-2">
-        <div className="text-2xl font-bold text-foreground ">
+    <div className="w-full h-full flex flex-col justify-center border-0 shadow-none bg-transparent mt-14">
+      <div className="space-y-2" dir="rtl">
+        <div className="text-2xl font-bold text-foreground text-right">
           تأكيد الرمز
         </div>
-        <div className="">
+        <div className="text-muted-foreground text-right">
           أدخل رمز التحقق المرسل إلى بريدك الإلكتروني
         </div>
+        <div className="text-sm text-gray-600 text-right">{email}</div>
       </div>
 
       <div className="space-y-6 flex-1 flex flex-col justify-center">
-        <form className="space-y-5  mt-[-20px]">
-          <div className="flex justify-center" dir="ltr">
-            <InputOTP maxLength={4} value={otp} onChange={setOtp}>
-              <InputOTPGroup className="flex justify-center border-1 rounded-xl">
-                {[0, 1, 2, 3].map((i) => (
-                  <InputOTPSlot
-                    key={i}
-                    index={i}
-                    className={`w-16 h-16 text-lg font-bold text-center border-1 
-                      ${
-                        otp[i]
-                          ? "border-[#32A88D] text-[#4B5563]"
-                          : "border-gray-300 text-gray-800"
-                      }
-                      focus:ring-2 focus:ring-[#32A88D] focus:border-[#32A88D]
-                    `}
-                  />
-                ))}
-              </InputOTPGroup>
-            </InputOTP>
+        <form className="space-y-5 mt-[-20px]" onSubmit={handleSubmit(onSubmit)}>
+          {serverError && (
+            <div className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-right text-sm">
+              {serverError}
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <div className="flex justify-center" dir="ltr">
+              <InputOTP
+                maxLength={4}
+                value={token}
+                onChange={(value) => setValue("token", value, { shouldValidate: true })}
+              >
+                <InputOTPGroup className="flex gap-4">
+                  {[0, 1, 2, 3].map((i) => (
+                    <InputOTPSlot
+                      key={i}
+                      index={i}
+                      className={`w-16 h-16 text-lg font-bold text-center border-2 rounded-lg
+                        ${
+                          token[i]
+                            ? "border-[#32A88D] text-[#4B5563] bg-[#F0FDF4]"
+                            : "border-gray-300 text-gray-800"
+                        }
+                        focus:ring-2 focus:ring-[#32A88D] focus:border-[#32A88D] transition-all
+                      `}
+                    />
+                  ))}
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+            {errors.token && (
+              <p className="text-sm text-red-500 text-center mt-2">
+                {errors.token.message}
+              </p>
+            )}
           </div>
 
           <Button
             type="submit"
-            className="w-full  text-primary-foreground font-semibold mt-4"
+            className="w-full bg-[#32A88D] hover:bg-[#32A88D]/90 text-primary-foreground font-semibold mt-4"
             size="lg"
+            disabled={!isValid || mutation.isPending}
           >
-            تأكيد الرمز
+            {mutation.isPending ? "جاري التحقق..." : "تأكيد الرمز"}
           </Button>
         </form>
+
+        <div className="space-y-2" dir="rtl">
+          <p className="text-sm text-muted-foreground">
+            لم تستلم الرمز؟{" "}
+            <button
+              type="button"
+              onClick={handleResendCode}
+              disabled={resendCountdown > 0 || isResending}
+              className={`${
+                resendCountdown > 0 || isResending
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-[#32A88D] hover:underline cursor-pointer"
+              } font-medium`}
+            >
+              {isResending
+                ? "جاري الإرسال..."
+                : resendCountdown > 0
+                ? `إعادة الإرسال (${resendCountdown})`
+                : "إعادة إرسال الرمز"}
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

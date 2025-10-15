@@ -7,7 +7,6 @@ import * as z from "zod"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-
 import { registerUser, type RegistrationData } from "@/features/auth/api/authApi"
 import {
   FormInput,
@@ -21,6 +20,8 @@ import {
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { User, Briefcase, Building2, Mail, Phone } from "lucide-react"
+import type { AxiosError } from "axios"
+
 
 // ---------------- Zod Schema ----------------
 const registrationSchema = z
@@ -63,7 +64,7 @@ export function RegistrationForm() {
       if (data.success) router.push("/auth/login")
       else setServerError(data.message || "حدث خطأ غير متوقع")
     },
-    onError: (error: any) => {
+onError: (error: AxiosError<{ message?: string; data?: Record<string, string> }>) => {
       if (error.response?.data) {
         const backendErrors = error.response.data.data || {}
         Object.entries(backendErrors).forEach(([field, message]) => {

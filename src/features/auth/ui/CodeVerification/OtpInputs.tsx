@@ -10,7 +10,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { Button } from "@/components/ui/button";
 import { verifyToken, forgotPassword } from "@/features/auth/api/authApi";
 import { useSearchParams } from "next/navigation"
-
+import type { AxiosError } from "axios";
 const otpSchema = z.object({
   token: z.string().length(4, "يجب إدخال جميع الأرقام الأربعة"),
 });
@@ -58,7 +58,7 @@ export function OtpInputs() {
         setServerError(data.message || "حدث خطأ غير متوقع");
       }
     },
-    onError: (error: any) => {
+onError: (error: AxiosError<{ message?: string; data?: Record<string, string> }>) => {
       console.error("❌ خطأ أثناء التحقق من الرمز:", error);
 
       if (error.response) {
@@ -130,7 +130,7 @@ console.log("email:", email);
         <div className="text-muted-foreground text-right">
           أدخل رمز التحقق المرسل إلى بريدك الإلكتروني
         </div>
-        <div className="text-sm text-gray-600 text-right">{email}</div>
+        {/* <div className="text-sm text-gray-600 text-right">{email}</div> */}
       </div>
 
       <div className="space-y-6 flex-1 flex flex-col justify-center">

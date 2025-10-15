@@ -1,13 +1,14 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/navigation"
-import { useMutation } from "@tanstack/react-query"
-import * as z from "zod"
-import Link from "next/link"
-import { Mail } from "lucide-react"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import * as z from "zod";
+import Link from "next/link";
+import { Mail } from "lucide-react";
+import type { AxiosError } from "axios";
 
 import {
   Card,
@@ -15,17 +16,17 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
-import { Label } from "@/components/ui/label"
+import { Label } from "@/components/ui/label";
 import {
   FormInput,
   FormPasswordInput,
   FormSubmitButton,
   SocialLoginButton,
-} from "@/shared/ui/forms"
+} from "@/shared/ui/forms";
 
-import { loginUser, type LoginData } from "@/features/auth/api/authApi"
+import { loginUser, type LoginData } from "@/features/auth/api/authApi";
 
 const loginSchema = z.object({
   email: z.string().email("بريد إلكتروني غير صالح"),
@@ -37,13 +38,13 @@ const loginSchema = z.object({
       "يجب أن تحتوي كلمة المرور على حرف كبير وحرف صغير ورمز واحد على الأقل"
     ),
   remember: z.boolean().optional(),
-})
+});
 
-type LoginFormData = z.infer<typeof loginSchema>
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const [serverError, setServerError] = useState<string | null>(null)
-  const router = useRouter()
+  const [serverError, setServerError] = useState<string | null>(null);
+  const router = useRouter();
 
   const {
     register,
@@ -54,62 +55,62 @@ export function LoginForm() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     mode: "onChange",
-  })
+  });
 
   const mutation = useMutation({
     mutationFn: (data: LoginData) => loginUser(data),
     onSuccess: (data) => {
-      console.log("✅ تسجيل الدخول بنجاح:", data)
+      console.log("✅ تسجيل الدخول بنجاح:", data);
       if (data.success) {
-        // حفظ التوكن
-        localStorage.setItem("token", data.data?.token)
+        localStorage.setItem("token", data.data?.token);
 
-        // التحقق من خيار "تذكرني"
-        const remember = watch("remember")
+        const remember = watch("remember");
         if (remember) {
-          localStorage.setItem("remember", "true")
-          localStorage.setItem("email", data.data?.email || "")
+          localStorage.setItem("remember", "true");
+          localStorage.setItem("email", data.data?.email || "");
         } else {
-          localStorage.removeItem("remember")
-          localStorage.removeItem("email")
+          localStorage.removeItem("remember");
+          localStorage.removeItem("email");
         }
 
-        router.push("/")
+        router.push("/");
       } else {
-        setServerError(data.message || "حدث خطأ غير متوقع")
+        setServerError(data.message || "حدث خطأ غير متوقع");
       }
     },
-    onError: (error: any) => {
-      console.error("خطأ أثناء تسجيل الدخول:", error)
+    onError: (
+      error: AxiosError<{ message?: string; data?: Record<string, string> }>
+    ) => {
+      console.error("خطأ أثناء تسجيل الدخول:", error);
 
       if (error.response) {
-        const responseData = error.response.data
-        const backendErrors = responseData.data || {}
+        const responseData = error.response.data;
+        const backendErrors = responseData.data || {};
 
         Object.entries(backendErrors).forEach(([field, message]) => {
           if (typeof message === "string") {
             setError(field as keyof LoginFormData, {
               type: "server",
               message,
-            })
+            });
           }
-        })
+        });
 
         if (responseData.message && Object.keys(backendErrors).length === 0) {
-          setServerError(responseData.message)
+          setServerError(responseData.message);
         }
       } else if (error.request) {
-        setServerError("لا يوجد اتصال بالخادم")
+        setServerError("لا يوجد اتصال بالخادم");
       } else {
-        setServerError("حدث خطأ غير متوقع")
+        setServerError("حدث خطأ غير متوقع");
       }
     },
-  })
+  });
 
   const onSubmit = (data: LoginFormData) => {
-    setServerError(null)
-    mutation.mutate(data)
-  }
+    setServerError(null);
+    mutation.mutate(data);
+  };
 
   return (
     <Card className="w-full h-full flex flex-col justify-center border-0 shadow-none bg-transparent">
@@ -201,11 +202,14 @@ export function LoginForm() {
           <a href="#" className="text-[#4B5563] text-md cursor-default">
             ليس لديك حساب؟
           </a>{" "}
-          <Link href="/auth/register" className="text-[#32A88D] hover:underline">
+          <Link
+            href="/auth/register"
+            className="text-[#32A88D] hover:underline"
+          >
             أنشئ حسابك الآن
           </Link>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

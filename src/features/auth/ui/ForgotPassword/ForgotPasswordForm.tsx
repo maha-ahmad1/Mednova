@@ -8,7 +8,7 @@ import * as z from "zod";
 import { Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import type { AxiosError } from "axios";
 import {
   Card,
   CardContent,
@@ -57,7 +57,7 @@ export function ForgotPassword() {
         setSuccessMessage(null);
       }
     },
-    onError: (error: any) => {
+   onError: (error: AxiosError<{ message?: string; data?: Record<string, string> }>) => {
       console.error(" خطأ في Forgot Password:", error);
       const responseData = error.response?.data;
       const backendErrors = responseData?.data || {};

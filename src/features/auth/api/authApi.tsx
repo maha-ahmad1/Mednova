@@ -58,10 +58,24 @@ export const verifyToken = async (data: { email: string; token: string; verifica
     "Content-Type": "application/json; charset=utf-8",
     "Accept": "application/json",
   },
-  transformRequest: [(data) => {
-    // Ensure data is properly encoded
-    return JSON.stringify(data);
-  }],
+  // transformRequest: [(data) => {
+  //   // Ensure data is properly encoded
+  //   return JSON.stringify(data);
+  // }],
   });
   return response.data;
 };
+
+
+export const resetPassword = async (data: {
+  email: string
+  token: string
+  password: string
+  password_confirmation: string
+  verification_method: string
+}) => {
+  const response = await api.post("/auth/reset-password", data, {
+    headers: { "Content-Type": "application/json" },
+  })
+  return response.data
+}

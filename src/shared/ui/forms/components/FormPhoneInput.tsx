@@ -49,15 +49,15 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
     }
 
     return (
-      <div className={cn("space-y-2", containerClassName)} dir={rtl ? "rtl" : "ltr"}>
+      <div className={cn("space-y-2 ", containerClassName)} dir={rtl ? "rtl" : "ltr"}>
         {label && (
           <Label htmlFor={inputProps.id} className={cn("block", rtl && "text-right")}>
             {label}
           </Label>
         )}
-        <div className="flex gap-2">
+        <div className="flex gap-2 ">
           <Select value={currentCountryCode} onValueChange={handleCountryCodeChange}>
-            <SelectTrigger className="w-24">
+            <SelectTrigger className="w-24 py-5 py-6">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

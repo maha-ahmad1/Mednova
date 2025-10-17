@@ -39,7 +39,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         {label && (
           <Label
             htmlFor={inputId}
-            className={cn("block", rtl && "text-right", error && "text-destructive", labelClassName)}
+            className={cn("block", rtl && "text-right", error, labelClassName)}
           >
             {label}
           </Label>
@@ -62,8 +62,9 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
               Icon && iconPosition === "left" && (rtl ? "pr-10" : "pl-10"),
               Icon && iconPosition === "right" && (rtl ? "pl-10" : "pr-10"),
               rtl && "text-right",
-              error && "border-destructive focus-visible:ring-destructive",
+              error && " border-destructive focus-visible:ring-destructive",
               className,
+              "p-6"
             )}
             dir={rtl ? "rtl" : undefined}
             aria-invalid={!!error}

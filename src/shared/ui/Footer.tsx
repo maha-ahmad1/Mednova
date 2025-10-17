@@ -1,142 +1,90 @@
 import Link from "next/link"
-import { Mail, Phone, MapPin, ChevronLeft, Linkedin, Facebook, Twitter, Instagram } from "lucide-react"
+import { Activity } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="bg-[#32A88D] text-white" dir="rtl">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company Info - Right side */}
-          <div className="space-y-4">
-            <div className="flex flex-col items-start">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center">
-                  <span className="text-teal-600 font-bold">M</span>
-                </div>
+    <footer className="border-t bg-card mt-auto">
+      <div className="container mx-auto px-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8" dir="rtl">
+          {/* Brand */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                <Activity className="h-5 w-5 text-white" />
               </div>
-              <span className="text-sm font-semibold">MEDOVA</span>
+              <span className="text-lg font-bold">ميدنوفا</span>
             </div>
-            <p className="text-sm leading-relaxed">
-              منصة صحية متطورة تجمع بكفاءة في المنصة بين الطبيب والمريض والخدمات الطبية والخدمات الدوائية المتميزة والتي
-              تهدف إلى الاستشارات الطبية الفورية والمتابعة الصحية الدائمة، لتقديم تجربة صحية متكاملة ومستقبلية في
-              متناولك.
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              منصة متكاملة لإدارة الرعاية الصحية والتأهيل الطبي
             </p>
-            <div className="flex gap-3">
-              <Link href="#" className="hover:opacity-80 transition-opacity">
-                <Linkedin className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="hover:opacity-80 transition-opacity">
-                <Facebook className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="hover:opacity-80 transition-opacity">
-                <Twitter className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="hover:opacity-80 transition-opacity">
-                <Instagram className="h-5 w-5" />
-              </Link>
-            </div>
           </div>
 
-          {/* Quick Links Column 1 */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">روابط سريعة</h3>
-            <ul className="space-y-2">
+          {/* Quick Links */}
+          <div>
+            <h3 className="font-semibold mb-3">روابط سريعة</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link href="#" className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity">
-                  <ChevronLeft className="h-4 w-4" />
+                <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
                   الرئيسية
                 </Link>
               </li>
               <li>
-                <Link href="#" className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity">
-                  <ChevronLeft className="h-4 w-4" />
-                  خدماتنا
+                <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                  من نحن
                 </Link>
               </li>
               <li>
-                <Link href="#" className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity">
-                  <ChevronLeft className="h-4 w-4" />
-                  المزايا الأساسية
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity">
-                  <ChevronLeft className="h-4 w-4" />
-                  شهادة مستخدمينا
+                <Link href="/services" className="text-muted-foreground hover:text-primary transition-colors">
+                  الخدمات
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Quick Links Column 2 */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">تدوالنا</h3>
-            <ul className="space-y-2">
+          {/* Support */}
+          <div>
+            <h3 className="font-semibold mb-3">الدعم</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link href="#" className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity">
-                  <ChevronLeft className="h-4 w-4" />
-                  استشارات فورية
+                <Link href="/help" className="text-muted-foreground hover:text-primary transition-colors">
+                  مركز المساعدة
                 </Link>
               </li>
               <li>
-                <Link href="#" className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity">
-                  <ChevronLeft className="h-4 w-4" />
-                  ملفات صحية
+                <Link href="/contact" className="text-muted-foreground hover:text-primary transition-colors">
+                  اتصل بنا
                 </Link>
               </li>
               <li>
-                <Link href="#" className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity">
-                  <ChevronLeft className="h-4 w-4" />
-                  متابعة مستمرة
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity">
-                  <ChevronLeft className="h-4 w-4" />
-                  برامج تثقيفية
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity">
-                  <ChevronLeft className="h-4 w-4" />
-                  متابعة مستمرة
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity">
-                  <ChevronLeft className="h-4 w-4" />
-                  تقريرنا عنك
+                <Link href="/faq" className="text-muted-foreground hover:text-primary transition-colors">
+                  الأسئلة الشائعة
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Contact Info */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">تواصل معنا</h3>
-            <ul className="space-y-3">
-              <li className="flex items-center gap-3 text-sm">
-                <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                  <Mail className="h-4 w-4" />
-                </div>
-                <span>midnova@gmail.com</span>
+          {/* Legal */}
+          <div>
+            <h3 className="font-semibold mb-3">قانوني</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors">
+                  الشروط والأحكام
+                </Link>
               </li>
-              <li className="flex items-center gap-3 text-sm">
-                <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                  <Phone className="h-4 w-4" />
-                </div>
-                <span>+968 0000 0000</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm">
-                <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="h-4 w-4" />
-                </div>
-                <span>سلطنة عمان - مسقط</span>
+              <li>
+                <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                  سياسة الخصوصية
+                </Link>
               </li>
             </ul>
           </div>
         </div>
+
+        <div className="mt-8 pt-6 border-t text-center text-sm text-muted-foreground">
+          <p>© 2025 ميدنوفا. جميع الحقوق محفوظة.</p>
+        </div>
       </div>
-    </footer>
-  )
+    </footer>
+  )
 }

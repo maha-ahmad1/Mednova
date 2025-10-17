@@ -16,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useResetPasswordStore } from "@/features/auth/store/useResetPasswordStore";
 
 import { FormInput, FormSubmitButton } from "@/shared/ui/forms";
 import { forgotPassword } from "@/features/auth/api/authApi";
@@ -30,6 +31,7 @@ export function ForgotPassword() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const router = useRouter();
+  const { setEmail, setVerificationMethod } = useResetPasswordStore();
 
   const {
     register,
@@ -44,12 +46,15 @@ export function ForgotPassword() {
     mutationFn: forgotPassword,
     onSuccess: (data,variables) => {
       if (data.success) {
+        setEmail(variables.email);
+        setVerificationMethod("email");
+
         setSuccessMessage(
           data.message || "تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني."
         );
         setServerError(null);
         router.push(
-          `/auth/code-verification?email=${encodeURIComponent((variables.email))}`
+          `/auth/code-verification`
         );
         console.log("✅ Forgot Password successful:", data.email);
       } else {
@@ -81,7 +86,6 @@ export function ForgotPassword() {
       verification_method: "email",
       
     });
-            console.log("✅:", data.email);
 
   };
 
@@ -91,7 +95,7 @@ export function ForgotPassword() {
         <CardTitle className="text-2xl font-bold text-foreground">
           إعادة تعيين كلمة المرور
         </CardTitle>
-        <CardDescription className="text-muted-foreground">
+        <CardDescription className="text-md">
           أدخل بريدك الإلكتروني لإرسال رابط إعادة تعيين كلمة المرور
         </CardDescription>
       </CardHeader>
@@ -104,11 +108,11 @@ export function ForgotPassword() {
             </div>
           )}
 
-          {successMessage && (
+          {/* {successMessage && (
             <div className="bg-green-100 text-green-700 border border-green-300 p-3 rounded text-right text-sm">
               {successMessage}
             </div>
-          )}
+          )} */}
 
           <FormInput
             label="البريد الإلكتروني"

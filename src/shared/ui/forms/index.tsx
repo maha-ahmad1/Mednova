@@ -6,6 +6,7 @@ export * from "./components/FormSubmitButton"
 export * from "./components/SocialLoginButton"
 export * from "./components/FormAccountTypeSelector"
 export * from "./components/FormPhoneInput"
+export * from "./components/FormSelect"
 
 
 

@@ -1,34 +1,47 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "@tanstack/react-query"
-import { useRouter } from "next/navigation"
-import * as z from "zod"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import * as z from "zod";
+import { useResetPasswordStore } from "@/features/auth/store/useResetPasswordStore";
+import type { AxiosError } from "axios";
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { FormPasswordInput, FormSubmitButton } from "@/shared/ui/forms"
-import { resetPassword } from "@/features/auth/api/authApi"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { FormPasswordInput, FormSubmitButton } from "@/shared/ui/forms";
+import { resetPassword } from "@/features/auth/api/authApi";
 
-const resetPasswordSchema = z.object({
-  email: z.string().email("بريد إلكتروني غير صالح"),
-  token: z.string().min(4, "الرمز يجب أن يكون 4 أرقام على الأقل"),
-  password: z
-    .string()
-    .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/, "يجب أن تحتوي على حرف كبير وحرف صغير ورمز"),
-  password_confirmation: z.string(),
-}).refine((data) => data.password === data.password_confirmation, {
-  message: "كلمة المرور غير متطابقة",
-  path: ["password_confirmation"],
-})
+const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
+        "يجب أن تحتوي على حرف كبير وحرف صغير ورمز"
+      ),
+    password_confirmation: z.string(),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: "كلمة المرور غير متطابقة",
+    path: ["password_confirmation"],
+  });
 
-type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>
+type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 export function ResetPasswordForm() {
-  const router = useRouter()
-  const [serverError, setServerError] = useState<string | null>(null)
+  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const { email, token, verification_method, resetAll } =
+    useResetPasswordStore();
 
   const {
     register,
@@ -37,31 +50,50 @@ export function ResetPasswordForm() {
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
     mode: "onChange",
-  })
+  });
 
   const mutation = useMutation({
-    mutationFn: (data: ResetPasswordFormData) =>
-      resetPassword({
-        email: data.email,
-        token: data.token,
-        password: data.password,
-        password_confirmation: data.password_confirmation,
-        verification_method: "email",
-      }),
+    mutationFn: resetPassword,
     onSuccess: (data) => {
       if (data.success) {
-        router.push("/auth/login")
+        resetAll();
+        router.push("/auth/login");
       } else {
-        setServerError(data.message || "حدث خطأ أثناء إعادة التعيين")
+        setServerError(data.message || "حدث خطأ أثناء إعادة التعيين");
       }
     },
-    onError: () => setServerError("حدث خطأ في الاتصال بالخادم"),
-  })
+  onError: (error:AxiosError<{ message?: string; data?: { error?: string; errors?: Record<string, string[]> } }>) => {
+    console.error(" خطأ في الاتصال أو من السيرفر:", error);
+
+    if (error.response) {
+      const responseData = error.response.data;
+
+      const backendError =
+        responseData?.data?.error ||
+        responseData?.data?.errors?.password?.[0] ||
+        responseData?.data?.errors?.password_confirmation?.[0] ||
+        responseData?.message ||
+        "حدث خطأ أثناء الاتصال بالخادم";
+
+      setServerError(backendError);
+    } else if (error.request) {
+      setServerError("تعذر الاتصال بالخادم. تحقق من الإنترنت.");
+    } else {
+      setServerError("حدث خطأ غير متوقع.");
+    }
+  },
+  });
 
   const onSubmit = (data: ResetPasswordFormData) => {
-    setServerError(null)
-    mutation.mutate(data)
-  }
+    setServerError(null);
+    mutation.mutate({
+      email,
+      token,
+      verification_method,
+      password: data.password,
+      password_confirmation: data.password_confirmation,
+    });
+  };
 
   return (
     <Card className="w-full h-full flex flex-col justify-center border-0 shadow-none bg-transparent">
@@ -69,7 +101,7 @@ export function ResetPasswordForm() {
         <CardTitle className="text-2xl font-bold text-foreground">
           إعادة تعيين كلمة المرور
         </CardTitle>
-        <CardDescription className="text-muted-foreground">
+        <CardDescription className="text-md">
           أدخل الرمز وكلمة المرور الجديدة لتعيينها
         </CardDescription>
       </CardHeader>
@@ -81,22 +113,6 @@ export function ResetPasswordForm() {
               {serverError}
             </div>
           )}
-
-          <input
-            type="email"
-            placeholder="example@email.com"
-            className="w-full border border-border rounded-md p-2 text-right"
-            {...register("email")}
-          />
-          {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
-
-          <input
-            type="text"
-            placeholder="أدخل الرمز المرسل"
-            className="w-full border border-border rounded-md p-2 text-right"
-            {...register("token")}
-          />
-          {errors.token && <p className="text-red-600 text-sm">{errors.token.message}</p>}
 
           <FormPasswordInput
             label="كلمة المرور الجديدة"
@@ -124,5 +140,5 @@ export function ResetPasswordForm() {
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

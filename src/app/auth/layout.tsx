@@ -1,6 +1,5 @@
 import { HeroSection } from "@/features/auth/ui/HeroSection";
-import Image from "next/image";
-
+import {Logo} from "@/shared/ui/Logo";
 export default function AuthLayout({
   children,
 }: {
@@ -8,7 +7,6 @@ export default function AuthLayout({
 }) {
 
 
-  console.log("Auth Layout is working ✅");
 
   return (
     <div className="bg-white h-screen ">
@@ -16,14 +14,7 @@ export default function AuthLayout({
         <div className="flex flex-col items-center justify-center p-4 lg:p-8">
           <div className="w-full max-w-md lg:max-w-lg ">
             
-            <div className="flex mb-[-20]">
-              <Image
-                src="/images/auth/mednova-logo.png"
-                alt="Mednova Logo"
-                width={100}
-                height={100}
-              />
-            </div>
+            <Logo />
 
             {children}
           </div>

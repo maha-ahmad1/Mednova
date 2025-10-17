@@ -118,7 +118,7 @@ export function LoginForm() {
         <CardTitle className="text-2xl font-bold text-foreground">
           تسجيل الدخول
         </CardTitle>
-        <CardDescription className="text-muted-foreground">
+        <CardDescription className="text-md">
           قم بإدخال بياناتك للانضمام إلى منصة ميدنوفا
         </CardDescription>
       </CardHeader>

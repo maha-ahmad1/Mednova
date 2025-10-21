@@ -57,7 +57,7 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
         )}
         <div className="flex gap-2 ">
           <Select value={currentCountryCode} onValueChange={handleCountryCodeChange}>
-            <SelectTrigger className="w-24 py-5 py-6">
+            <SelectTrigger className="w-24 py-6">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

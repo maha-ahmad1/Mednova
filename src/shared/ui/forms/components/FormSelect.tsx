@@ -1,54 +1,79 @@
 "use client";
-import * as React from "react"
-import { SelectHTMLAttributes, forwardRef } from "react";
+
+import * as React from "react";
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
-interface FormSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+interface FormSelectProps {
   label?: string;
   rtl?: boolean;
   error?: string;
   options: { value: string; label: string }[];
-  labelClassName?: string
-
+  value?: string;
+  onValueChange?: (value: string) => void;
+  placeholder?: string;
+  labelClassName?: string;
+  className?: string;
 }
 
-export const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
+export const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
   (
-    { label, rtl, error, options, className,labelClassName, ...props },
+    {
+      label,
+      rtl,
+      error,
+      options,
+      value,
+      onValueChange,
+      placeholder = "أختر",
+      labelClassName,
+      className,
+    },
     ref
   ) => {
-    const inputId = React.useId();
+    const selectId = React.useId();
 
     return (
       <div className={cn("flex flex-col gap-1", rtl && "text-right")}>
         {label && (
           <Label
-            htmlFor={inputId}
-            className={cn("block", rtl && "text-right", error, labelClassName)}
+            htmlFor={selectId}
+            className={cn("block", rtl && "text-right", labelClassName)}
           >
             {label}
           </Label>
         )}
 
-        <select
-          ref={ref}
-          {...props}
-          className={cn(
-            "border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-[#32A88D] focus:border-[#32A88D] outline-none text-gray-800 ",
-            error && "border-red-500",
-            rtl && "text-right",
-            className
-          )}
-        >
-          <option value="">اختر...</option>
-          {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+        <Select value={value} onValueChange={onValueChange}>
+          <SelectTrigger
+            ref={ref}
+            id={selectId}
+            dir={rtl ? "rtl" : "ltr"}
+            className={cn(
+              "flex h-14 w-full items-center justify-between rounded-md border border-gray-200 bg-white p-5.5 !focus:ring-0 !focus:ring-[#32A88D] !focus:border-[#32A88D]",
+              error && "border-red-500 focus:ring-red-500",
+              className
+            )}
+          >
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+
+          <SelectContent className={cn("")}>
+            {options.map((opt) => (
+              <SelectItem className="flex-row-reverse " key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         {error && <span className="text-sm text-red-500">{error}</span>}
       </div>

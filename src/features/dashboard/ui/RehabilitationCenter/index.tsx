@@ -101,7 +101,6 @@ export function RehabilitationCenterForm() {
                 />
               </div>
 
-              {/* Row 2: رقم الهوية + رقم الهاتف */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <FormInput
                   label="رقم الهوية"
@@ -137,7 +136,7 @@ export function RehabilitationCenterForm() {
                         { value: "female", label: "أنثى" },
                       ]}
                       value={field.value}
-                      onChange={field.onChange}
+                      onValueChange={field.onChange}
                       error={errors.gender?.message}
                     />
                   )}

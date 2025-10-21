@@ -11,11 +11,10 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { Button } from "@/components/ui/button";
 import { verifyToken, forgotPassword } from "@/features/auth/api/authApi";
 import type { AxiosError } from "axios";
 import { useResetPasswordStore } from "@/features/auth/store/useResetPasswordStore";
-
+import { FormSubmitButton } from "@/shared/ui/forms";
 const otpSchema = z.object({
   token: z.string().length(4, "يجب إدخال جميع الأرقام الأربعة"),
 });
@@ -189,14 +188,14 @@ export function OtpInputs() {
             )}
           </div>
 
-          <Button
+          <FormSubmitButton
             type="submit"
-            className="w-full bg-[#32A88D] hover:bg-[#32A88D]/90 text-primary-foreground font-semibold mt-4"
+             className=" mt-4"
             size="lg"
-            disabled={!isValid || mutation.isPending}
+            // disabled={!isValid || mutation.isPending}
           >
             {mutation.isPending ? "جاري التحقق..." : "تأكيد الرمز"}
-          </Button>
+          </FormSubmitButton>
         </form>
 
         <div className="space-y-2" dir="rtl">

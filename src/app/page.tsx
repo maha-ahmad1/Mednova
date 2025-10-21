@@ -1,8 +1,22 @@
+// app/dashboard/page.tsx
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export default function Home() {
+export default async function DashboardPage() {
+  // ✅ هنا نجيب الجلسة من السيرفر
+  const session = await getServerSession(authOptions);
+
+  // لو المستخدم مش مسجل دخول
+  if (!session) {
+    return <div>الرجاء تسجيل الدخول أولاً</div>;
+  }
+
+  // لو مسجل دخول نعرض بياناته
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-       <h1 className="text-red-500">maha</h1>
+    <div dir="rtl">
+      <h1>مرحباً {session.user?.full_name}</h1>
+      <p>البريد الإلكتروني: {session.user?.email}</p>
+      <p>نوع الحساب: {session.user?.type_account}</p>
     </div>
   );
 }

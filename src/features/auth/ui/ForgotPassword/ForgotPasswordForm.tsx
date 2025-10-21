@@ -44,7 +44,7 @@ export function ForgotPassword() {
 
   const mutation = useMutation({
     mutationFn: forgotPassword,
-    onSuccess: (data,variables) => {
+    onSuccess: (data, variables) => {
       if (data.success) {
         setEmail(variables.email);
         setVerificationMethod("email");
@@ -53,16 +53,16 @@ export function ForgotPassword() {
           data.message || "تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني."
         );
         setServerError(null);
-        router.push(
-          `/auth/code-verification`
-        );
+        router.push(`/auth/code-verification`);
         console.log("✅ Forgot Password successful:", data.email);
       } else {
         setServerError(data.message || "حدث خطأ أثناء إرسال البريد.");
         setSuccessMessage(null);
       }
     },
-   onError: (error: AxiosError<{ message?: string; data?: Record<string, string> }>) => {
+    onError: (
+      error: AxiosError<{ message?: string; data?: Record<string, string> }>
+    ) => {
       console.error(" خطأ في Forgot Password:", error);
       const responseData = error.response?.data;
       const backendErrors = responseData?.data || {};
@@ -84,9 +84,7 @@ export function ForgotPassword() {
     mutation.mutate({
       email: data.email,
       verification_method: "email",
-      
     });
-
   };
 
   return (
@@ -128,13 +126,14 @@ export function ForgotPassword() {
           <FormSubmitButton
             isLoading={mutation.isPending}
             loadingText="جاري الإرسال..."
-            disabled={!isValid}
+            size="lg"
+            className="mt-4"
           >
             إرسال
           </FormSubmitButton>
         </form>
 
-        <div className=" text-sm mt-3">
+        <div className=" text-sm ">
           <span className="text-gray-600">تذكرت كلمة المرور؟ </span>
           <Link href="/auth/login" className="text-[#32A88D] hover:underline">
             تسجيل الدخول

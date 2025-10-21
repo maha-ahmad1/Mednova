@@ -6,23 +6,24 @@ import { cn } from "@/lib/utils";
 import { sidebarMenus } from "@/constants/sidebar-menu";
 import { LogOut } from "lucide-react";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 const userRole: keyof typeof sidebarMenus = "patient";
 
 export function Sidebar() {
   const pathname = usePathname();
   const menuItems = sidebarMenus[userRole];
+  const { data: session } = useSession();
 
-  const user = {
-    name: " مها الكحلوت",
-    email: "maha@example.com",
-    image:  "/images/maha.png"
-  };
+ const user = {
+  name: session?.user?.full_name || "اسم المستخدم",
+  email: session?.user?.email || "email@example.com",
+  image: session?.user?.image || "/images/placeholder.svg"
+};
+console.log("Session user:", session?.user?.image);
 
   return (
-    <aside
-      className=" sm:fixed right-10 top-30 z-40 w-72 bg-white shadow-xl border border-gray-100 rounded-2xl overflow-hidden transition-all duration-300 "
-    >
+    <aside className=" fixed right-10 top-30 z-40 w-72 bg-white shadow-xl border border-gray-100 rounded-2xl overflow-hidden transition-all duration-300 ">
       <div className="flex flex-col items-center p-6 bg-[#32A88D]/10 border-b border-gray-100 ">
         <div className="relative">
           <Image

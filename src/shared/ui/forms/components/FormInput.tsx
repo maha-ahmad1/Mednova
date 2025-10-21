@@ -1,19 +1,20 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { cn } from "@/lib/utils"
-import type { LucideIcon } from "lucide-react"
+import * as React from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import type { LucideIcon } from "lucide-react";
 
-export interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string
-  error?: string
-  icon?: LucideIcon
-  iconPosition?: "left" | "right"
-  rtl?: boolean
-  containerClassName?: string
-  labelClassName?: string
+export interface FormInputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  icon?: LucideIcon;
+  iconPosition?: "left" | "right";
+  rtl?: boolean;
+  containerClassName?: string;
+  labelClassName?: string;
 }
 
 const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
@@ -30,12 +31,15 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
       id,
       ...props
     },
-    ref,
+    ref
   ) => {
-    const inputId = React.useId()
+    const inputId = React.useId();
 
     return (
-      <div className={cn("space-y-2", containerClassName)} dir={rtl ? "rtl" : undefined}>
+      <div
+        className={cn("space-y-2", containerClassName)}
+        dir={rtl ? "rtl" : undefined}
+      >
         {label && (
           <Label
             htmlFor={inputId}
@@ -49,7 +53,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             <div
               className={cn(
                 "absolute top-1/2 -translate-y-1/2 flex items-center pointer-events-none",
-                rtl ? "right-3" : "left-3",
+                rtl ? "right-3" : "left-3"
               )}
             >
               <Icon className="h-4 w-4 text-muted-foreground" />
@@ -62,7 +66,9 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
               Icon && iconPosition === "left" && (rtl ? "pr-10" : "pl-10"),
               Icon && iconPosition === "right" && (rtl ? "pl-10" : "pr-10"),
               rtl && "text-right",
-              error && " border-destructive focus-visible:ring-destructive",
+              error && "border-destructive focus-visible:ring-destructive",
+              props.readOnly &&
+                "cursor-no-drop bg-[#32A88D]/10 text-gray-700 border-transparent focus:border-transparent focus:ring-0 focus:outline-none",
               className,
               "p-6"
             )}
@@ -75,7 +81,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             <div
               className={cn(
                 "absolute top-1/2 -translate-y-1/2 flex items-center pointer-events-none",
-                rtl ? "left-3" : "right-3",
+                rtl ? "left-3" : "right-3"
               )}
             >
               <Icon className="h-4 w-4 text-muted-foreground" />
@@ -83,14 +89,17 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
           )}
         </div>
         {error && (
-          <p id={`${inputId}-error`} className={cn("text-sm text-destructive", rtl && "text-right")}>
+          <p
+            id={`${inputId}-error`}
+            className={cn("text-sm text-destructive", rtl && "text-right")}
+          >
             {error}
           </p>
         )}
       </div>
-    )
-  },
-)
-FormInput.displayName = "FormInput"
+    );
+  }
+);
+FormInput.displayName = "FormInput";
 
-export { FormInput }
+export { FormInput };

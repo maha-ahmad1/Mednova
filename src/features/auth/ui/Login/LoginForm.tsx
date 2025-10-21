@@ -9,6 +9,7 @@ import * as z from "zod";
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import type { AxiosError } from "axios";
+import { signIn } from "next-auth/react";
 
 import {
   Card,
@@ -59,19 +60,25 @@ export function LoginForm() {
 
   const mutation = useMutation({
     mutationFn: (data: LoginData) => loginUser(data),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log("✅ تسجيل الدخول بنجاح:", data);
       if (data.success) {
-        localStorage.setItem("token", data.data?.token);
+        // localStorage.setItem("token", data.data?.token);
+        // const remember = watch("remember");
+        // if (remember) {
+        //   localStorage.setItem("remember", "true");
+        //   localStorage.setItem("email", data.data?.email || "");
+        // } else {
+        //   localStorage.removeItem("remember");
+        //   localStorage.removeItem("email");
+        // }
 
-        const remember = watch("remember");
-        if (remember) {
-          localStorage.setItem("remember", "true");
-          localStorage.setItem("email", data.data?.email || "");
-        } else {
-          localStorage.removeItem("remember");
-          localStorage.removeItem("email");
-        }
+        // router.push("/");
+        await signIn("credentials", {
+          redirect: false,
+          access_token: data.data.access_token,
+          user: JSON.stringify(data.data.user),
+        });
 
         router.push("/");
       } else {
@@ -177,7 +184,7 @@ export function LoginForm() {
           <FormSubmitButton
             isLoading={mutation.isPending}
             loadingText="جاري تسجيل الدخول..."
-            disabled={!isValid}
+            size="lg"
           >
             تسجيل الدخول
           </FormSubmitButton>

@@ -232,6 +232,7 @@ export function RegistrationForm() {
             <FormSubmitButton
               isLoading={mutation.isPending}
               loadingText="جاري الإنشاء..."
+              size="lg"
             >
               إنشاء حساب
             </FormSubmitButton>

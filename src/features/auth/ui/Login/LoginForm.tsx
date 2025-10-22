@@ -51,8 +51,7 @@ export function LoginForm() {
     register,
     handleSubmit,
     setError,
-    watch,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     mode: "onChange",
@@ -63,24 +62,14 @@ export function LoginForm() {
     onSuccess: async (data) => {
       console.log("✅ تسجيل الدخول بنجاح:", data);
       if (data.success) {
-        // localStorage.setItem("token", data.data?.token);
-        // const remember = watch("remember");
-        // if (remember) {
-        //   localStorage.setItem("remember", "true");
-        //   localStorage.setItem("email", data.data?.email || "");
-        // } else {
-        //   localStorage.removeItem("remember");
-        //   localStorage.removeItem("email");
-        // }
-
-        // router.push("/");
+     
         await signIn("credentials", {
           redirect: false,
           access_token: data.data.access_token,
           user: JSON.stringify(data.data.user),
         });
 
-        router.push("/");
+        router.push("/profile/patient");
       } else {
         setServerError(data.message || "حدث خطأ غير متوقع");
       }

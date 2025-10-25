@@ -37,13 +37,13 @@ export default function MostRatedProfessionals() {
     queryKey: ["mostRatedProfessionals"],
     queryFn: async () => {
       try {
-        const token = session?.accessToken; // 🔹 ناخد التوكن من السيشن
+        const token = session?.accessToken; 
 
         const res = await axios.get(
           "https://demoapplication.jawebhom.com/api/customer/service-provider/search?type=therapist",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // 🔸 نضيفها بالهيدر
+              Authorization: `Bearer ${token}`, 
             },
           }
         );
@@ -59,7 +59,7 @@ export default function MostRatedProfessionals() {
         throw err;
       }
     },
-    enabled: !!session?.accessToken, // ⚠️ نتأكد ما يشتغل الكويري إلا بعد ما يكون التوكن جاهز
+    enabled: !!session?.accessToken, 
   });
 
   if (isLoading) return <p>Loading...</p>;
@@ -158,7 +158,7 @@ const ServicesCard = [
 //   const { data: session, status } = useSession();
 //     console.log(session?.accessToken)
 
-//     // 2️⃣ استدعاء الداتا من API باستخدام axios + useQuery
+//    
 //  const { data, isLoading, error } = useQuery({
 //     queryKey: ["mostRatedProfessionals"],
 //     queryFn: async () => {
@@ -176,7 +176,7 @@ const ServicesCard = [
 // }
 // },
 //   });
-//   // 3️⃣ عرض النتائج
+//  
 //   if (isLoading) return <p>Loading...</p>;
 //   if (error) return <p>Error loading data</p>;
 

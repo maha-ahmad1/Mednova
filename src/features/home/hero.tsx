@@ -1,10 +1,4 @@
 "use client";
-// import slider1 from "../../../public/images/home/slider1.jpg";
-// import slider2 from "../../../public/images/home/slider2.jpeg";
-// import slider3 from "../../../public/images/home/slider3.jpeg";
-
-// import Image from "next/image";
-// import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -23,44 +17,14 @@ import { ChevronDownIcon } from "lucide-react";
 import Image from "next/image";
 import slider1 from "../../../public/images/home/slider1.jpg";
 
-const slides = [
-  {
-    image: "/images/home/slider1.jpg",
-    title: "نحو مستقبل صحي أفضل",
-    text: "نساعدك على الوصول إلى رعاية طبية متكاملة.",
-    button: "احجز الآن",
-  },
-  {
-    image: "/images/home/slider2.jpeg",
-    title: "رعاية طبية عالية الجودة",
-    text: "خبراء في تقديم الحلول الصحية الشاملة.",
-    button: "اكتشف المزيد",
-  },
-  {
-    image: "/images/home/slider3.jpeg",
-    title: "مستقبل الطب الحديث",
-    text: "نؤمن بأن كل مريض يستحق الأفضل.",
-    button: "تواصل معنا",
-  },
-];
+
 
 interface SearchingData {
   type: string;
   country: string;
   city: string;
 }
-// const Searching = [
-//   {
-//     id: 1,
-//     type: "center",
-//     link: "#",
-//   },
-//   {
-//     id: 2,
-//     type: "therapist",
-//     link: "#",
-//   },
-// ];
+
 
 export default function Hero() {
   const { setValue, watch, register, handleSubmit } = useForm<SearchingData>();
@@ -87,11 +51,6 @@ export default function Hero() {
                 onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-cols gap-3 "
               >
-                {/* <Input
-                      type=""
-                      placeholder="المختص/المركز"
-                      {...register("type")}
-                    /> */}
                 <Select
                   onValueChange={(value) => setValue("type", value)}
                   value={selectedType}
@@ -122,6 +81,41 @@ export default function Hero() {
     </section>
   );
 }
+
+
+
+// const slides = [
+//   {
+//     image: "/images/home/slider1.jpg",
+//     title: "نحو مستقبل صحي أفضل",
+//     text: "نساعدك على الوصول إلى رعاية طبية متكاملة.",
+//     button: "احجز الآن",
+//   },
+//   {
+//     image: "/images/home/slider2.jpeg",
+//     title: "رعاية طبية عالية الجودة",
+//     text: "خبراء في تقديم الحلول الصحية الشاملة.",
+//     button: "اكتشف المزيد",
+//   },
+//   {
+//     image: "/images/home/slider3.jpeg",
+//     title: "مستقبل الطب الحديث",
+//     text: "نؤمن بأن كل مريض يستحق الأفضل.",
+//     button: "تواصل معنا",
+//   },
+// ];
+// const Searching = [
+//   {
+//     id: 1,
+//     type: "center",
+//     link: "#",
+//   },
+//   {
+//     id: 2,
+//     type: "therapist",
+//     link: "#",
+//   },
+// ];
 
 
 

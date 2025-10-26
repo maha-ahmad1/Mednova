@@ -71,7 +71,7 @@ export function RegistrationForm() {
 
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setError,
   } = methods;
 

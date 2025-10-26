@@ -7,6 +7,7 @@ import { Cairo } from "next/font/google";
 import { Providers } from "../providers/QueryClientProvider";
 import { SessionProviderWrapper } from "@/providers/SessionProviderWrapper";
 import { Toaster } from "@/components/ui/sonner";
+import "leaflet/dist/leaflet.css";
 
 const cairo = Cairo({
   subsets: ["arabic"],

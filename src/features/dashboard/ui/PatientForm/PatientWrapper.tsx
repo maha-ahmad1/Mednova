@@ -8,19 +8,20 @@ import { useState } from "react";
 
 export default function PatientWrapper() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [globalErrors, setGlobalErrors] = useState<Record<string, string>>({});
 
   type PatientFormState = {
-    full_name: string
-    email: string
-    phone: string
-    birth_date: string
-    gender?: "male" | "female" | undefined
-    address: string
-    emergency_phone?: string
-    relationship?: string
-    image?: File | null
-    countryCode?: string
-  }
+    full_name: string;
+    email: string;
+    phone: string;
+    birth_date: string;
+    gender?: "male" | "female" | undefined;
+    address: string;
+    emergency_phone?: string;
+    relationship?: string;
+    image?: File | null;
+    countryCode?: string;
+  };
 
   const [formData, setFormData] = useState<PatientFormState>({
     full_name: "",
@@ -59,6 +60,7 @@ export default function PatientWrapper() {
             onNext={nextStep}
             formData={formData}
             updateFormData={updateFormData}
+            globalErrors={globalErrors}
           />
         )}
 
@@ -68,6 +70,8 @@ export default function PatientWrapper() {
             onBack={prevStep}
             formData={formData}
             updateFormData={updateFormData}
+            handleGlobalErrors={globalErrors}
+            setGlobalErrors={setGlobalErrors}
           />
         )}
       </div>

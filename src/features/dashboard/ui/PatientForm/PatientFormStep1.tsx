@@ -34,9 +34,11 @@ interface PatientFormStep1Props {
   onNext: () => void
   formData: PatientFormData
   updateFormData: (data: Partial<PatientFormData>) => void
+  globalErrors?: Record<string, string>
+
 }
 
-export function PatientFormStep1({ onNext, formData, updateFormData }: PatientFormStep1Props) {
+export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors  }: PatientFormStep1Props) {
   const { data: session, status } = useSession()
   const [networkError, setNetworkError] = useState(false)
   const [countryCode, setCountryCode] = useState("+968")
@@ -74,6 +76,17 @@ export function PatientFormStep1({ onNext, formData, updateFormData }: PatientFo
       })
     }
   }, [session?.user, methods, formData])
+
+  
+  const { setError } = methods
+
+    useEffect(() => {
+    if (globalErrors) {
+      Object.entries(globalErrors).forEach(([field, message]) => {
+        setError(field as keyof PatientFormData, { type: "server", message })
+      })
+    }
+  }, [globalErrors, setError])
 
   if (status === "loading") {
     return (
@@ -148,7 +161,6 @@ export function PatientFormStep1({ onNext, formData, updateFormData }: PatientFo
       relationship: data.relationship,
       countryCode: countryCode, 
     })
-    toast.success("تم حفظ البيانات الشخصية بنجاح")
 
     onNext()
   }

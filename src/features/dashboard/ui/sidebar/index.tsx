@@ -7,20 +7,44 @@ import { sidebarMenus } from "@/constants/sidebar-menu";
 import { LogOut } from "lucide-react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-
+import { SidebarSkeleton } from "./SidebarSkeleton";
 const userRole: keyof typeof sidebarMenus = "patient";
 
 export function Sidebar() {
   const pathname = usePathname();
   const menuItems = sidebarMenus[userRole];
-  const { data: session } = useSession();
+  const { data: session,status } = useSession();
+  
+if (status === "loading") {
+  return (
+    <aside className="fixed right-10 top-30 z-40 w-72 bg-white shadow-xl border border-gray-100 rounded-2xl overflow-hidden">
+      <div className="flex flex-col items-center p-6 bg-[#32A88D]/10 border-b border-gray-100 animate-pulse">
+        <div className="w-20 h-20 rounded-full bg-gray-200 mb-3" />
 
- const user = {
-  name: session?.user?.full_name || "اسم المستخدم",
-  email: session?.user?.email || "email@example.com",
-  image: session?.user?.image || "/images/placeholder.svg"
-};
-console.log("Session user:", session?.user?.image);
+        <div className="h-4 w-32 bg-gray-200 rounded mb-2" />
+
+        <div className="h-3 w-28 bg-gray-200 rounded" />
+      </div>
+
+      <nav className="flex flex-col gap-2 p-4 bg-white animate-pulse">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="h-10 bg-gray-200 rounded-xl" />
+        ))}
+      </nav>
+
+      <div className="border-t border-gray-100 p-4 animate-pulse">
+        <div className="h-8 bg-gray-200 rounded-xl" />
+      </div>
+    </aside>
+  );
+}
+
+  const user = {
+    name: session?.user?.full_name || "اسم المستخدم",
+    email: session?.user?.email || "email@example.com",
+    image: session?.user?.image || "/images/placeholder.svg",
+  };
+  console.log("Session image:", session?.user?.image);
 
   return (
     <aside className=" fixed right-10 top-30 z-40 w-72 bg-white shadow-xl border border-gray-100 rounded-2xl overflow-hidden transition-all duration-300 ">

@@ -47,6 +47,7 @@ export function LoginForm() {
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
 
+
   const {
     register,
     handleSubmit,
@@ -58,18 +59,27 @@ export function LoginForm() {
   });
 
   const mutation = useMutation({
+    
     mutationFn: (data: LoginData) => loginUser(data),
     onSuccess: async (data) => {
       console.log("✅ تسجيل الدخول بنجاح:", data);
       if (data.success) {
-     
         await signIn("credentials", {
           redirect: false,
           access_token: data.data.access_token,
           user: JSON.stringify(data.data.user),
         });
+        const user = data.data.user; 
+        const isCompleted = user.phone && user.gender && user.birth_date;
 
-        router.push("/profile/patient");
+        if (!isCompleted) {
+          if (user.type_account === "patient") router.push("/account/patient");
+          else if (user.type_account === "therapist")
+            router.push("/account/therapist");
+          else router.push("/account/rehabilitation-center");
+        } else {
+          router.push("/");
+        }
       } else {
         setServerError(data.message || "حدث خطأ غير متوقع");
       }

@@ -1,7 +1,7 @@
 "use client";
 import { FormInput } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider ,Controller} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -12,27 +12,73 @@ import {
   ChartLine,
 } from "lucide-react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+// import { useState } from "react";
+//import { TherapistFormValues } from "@/app/api/therapist";
+import { medicalSpecialties } from "@/constants/medicalSpecialties";
+import { FormSelect } from "@/shared/ui/forms";
+// import Image from "next/image";
+// import { Button } from "@/components/ui/button";
+
 const step2Schema = z.object({
   medical_specialties_id: z.string().min(1, "يرجى اختيار التخصص"),
   university_name: z.string().min(1, "اسم الجامعة مطلوب"),
   graduation_year: z.string().min(1, "سنة التخرج مطلوبة"),
   countries_certified: z.string().min(1, "يرجى إدخال الدول المعتمد فيها"),
   experience_years: z.string().min(1, "عدد سنوات الخبرة مطلوب"),
+  // image: z.instanceof(File, { message: "يرجى رفع صورة شخصية" }),
 });
 
 type Step2Data = z.infer<typeof step2Schema>;
 
+interface TherapistStep2Props {
+  onNext: () => void;
+  onBack: () => void;
+  formData: Partial<z.infer<typeof step2Schema>>;
+  updateFormData: (
+    data: Partial<Record<string, string | File | undefined>>
+  ) => void;
+  setGlobalErrors?: (errors: Record<string, string>) => void;
+}
+
 export function TherapistFormStep2({
   onNext,
   onBack,
-}: {
-  onNext: () => void;
-  onBack: () => void;
-}) {
+  formData,
+  updateFormData,
+}: TherapistStep2Props) {
   const methods = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
     mode: "onChange",
+    defaultValues: {
+      medical_specialties_id: formData.medical_specialties_id || "",
+      university_name: formData.university_name || "",
+      graduation_year: formData.graduation_year || "",
+      countries_certified: formData.countries_certified || "",
+      experience_years: formData.experience_years || "",
+    },
   });
+
+  // const [profileImage, setProfileImage] = useState<File | null>(
+  //   formData.image && typeof formData.image !== "string" ? formData.image : null
+  // );
+  // const [imagePreview, setImagePreview] = useState<string | null>(
+  //   formData.image && typeof formData.image === "string" ? formData.image : null
+  // );
+
+  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     setProfileImage(file);
+  //     methods.setValue("image", file, { shouldValidate: true });
+  //     setImagePreview(URL.createObjectURL(file));
+  //   }
+  // };
+
+  // const removeImage = () => {
+  //   setProfileImage(null);
+  //   methods.resetField("image");
+  //   setImagePreview(null);
+  // };
 
   const {
     handleSubmit,
@@ -41,7 +87,7 @@ export function TherapistFormStep2({
   } = methods;
 
   const onSubmit = (data: Step2Data) => {
-    console.log("Step 2 data:", data);
+    updateFormData(data);
     onNext();
   };
 
@@ -53,14 +99,23 @@ export function TherapistFormStep2({
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" dir="rtl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <FormInput
-              label="التخصص الطبي"
-              placeholder="أدخل تخصصك"
-              icon={Briefcase}
-              iconPosition="right"
-              rtl
-              error={errors.medical_specialties_id?.message}
-              {...register("medical_specialties_id")}
+            <Controller
+              control={methods.control}
+              name="medical_specialties_id"
+              render={({ field }) => (
+                <FormSelect
+                  label="التخصص الطبي"
+                  placeholder="اختر التخصص"
+                  options={medicalSpecialties.map((s) => ({
+                    value: s.id,
+                    label: s.name,
+                  }))}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  rtl
+                  error={errors.medical_specialties_id?.message}
+                />
+              )}
             />
 
             <FormInput
@@ -107,7 +162,34 @@ export function TherapistFormStep2({
               {...register("countries_certified")}
             />
           </div>
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <FormInput
+              label="الصورة الشخصية"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
 
+            {imagePreview && (
+              <div className="relative w-32 h-32">
+                <Image
+                  src={imagePreview}
+                  alt="Profile preview"
+                  fill
+                  className="rounded-lg object-cover"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  className="absolute top-1 right-1"
+                  onClick={removeImage}
+                >
+                  إزالة
+                </Button>
+              </div>
+            )}
+          </div> */}
           <div className="flex justify-between mt-4">
             <FormSubmitButton
               align="left"

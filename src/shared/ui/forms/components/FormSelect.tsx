@@ -66,7 +66,7 @@ export const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
 
-          <SelectContent className={cn("")}>
+          <SelectContent className={cn("max-h-36 overflow-auto")}>
             {options.map((opt) => (
               <SelectItem className="flex-row-reverse " key={opt.value} value={opt.value}>
                 {opt.label}

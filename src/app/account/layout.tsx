@@ -1,7 +1,7 @@
 "use client";
 
 import { Navbar } from "@/shared/ui/navbar";
-import { Sidebar } from "@/features/dashboard/ui/sidebar";
+// import { Sidebar } from "@/features/dashboard/ui/sidebar";
 import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({
@@ -11,7 +11,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex min-h-screen bg-gray-50" dir="rtl">
-      <Sidebar /> 
+      {/* <Sidebar /> */}
 
       <div className={cn("flex-1 flex flex-col")}>
         <Navbar/>

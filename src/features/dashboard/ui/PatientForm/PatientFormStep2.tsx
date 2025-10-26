@@ -6,7 +6,6 @@ import { useForm, Controller, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { FormInput, FormSelect } from "@/shared/ui/forms"
-import { Home } from "lucide-react"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
@@ -14,14 +13,12 @@ import { useSession } from "next-auth/react"
 import { usePatient } from "../../hooks/usePatient"
 import type { PatientFormValues } from "@/types/patient"
 import Image from "next/image"
-import { Loader2 } from "lucide-react"
-import { WifiOff, RefreshCw } from "lucide-react"
+import { WifiOff, RefreshCw,Home,Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import type { AxiosError } from "axios"
-import { handleFormErrors } from "@/lib/handleFormErrors"
 import { showSuccessToast } from "@/lib/toastUtils"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+
 
 // ✅ Zod Schema for Step 2
 const patientStep2Schema = z.object({
@@ -37,6 +34,7 @@ export interface PatientFormData {
   relationship?: string
   address?: string
   countryCode?: string
+  
 }
 
 type PatientStep2FormData = z.infer<typeof patientStep2Schema>
@@ -46,10 +44,18 @@ interface PatientFormStep2Props {
   onBack: () => void
   formData: PatientFormData
   updateFormData: (data: PatientFormData) => void
+  handleGlobalErrors: Record<string, string>
+  setGlobalErrors?: (errors: Record<string, string>) => void
 }
 
-export function PatientFormStep2({ onNext, onBack, formData, updateFormData }: PatientFormStep2Props) {
-  const { storePatient } = usePatient()
+export function PatientFormStep2({ onNext, onBack, formData, updateFormData, setGlobalErrors }: PatientFormStep2Props) {
+  // pass a callback into usePatient so the hook can surface validation errors back up to the wrapper
+  const { storePatient } = usePatient({
+    onValidationError: (errors: Record<string, string>) => {
+      // persist errors in the wrapper so they remain until the user navigates back and sees them
+      setGlobalErrors?.(errors)
+    },
+  })
   const { data: session, status } = useSession()
   const [isLoading, setIsLoading] = useState(false)
   const [imageFile, setImageFile] = useState<File | null>(formData.image || null)
@@ -154,7 +160,6 @@ export function PatientFormStep2({ onNext, onBack, formData, updateFormData }: P
   const {
     handleSubmit,
     formState: { errors },
-    setError,
   } = methods
 
   const onSubmit = async (data: PatientStep2FormData) => {
@@ -192,52 +197,19 @@ export function PatientFormStep2({ onNext, onBack, formData, updateFormData }: P
       console.log(" Payload to send:", payload)
 
       const response = await storePatient(payload)
-
       console.log(" Response received:", response)
       showSuccessToast("تم حفظ البيانات بنجاح!")
+      setGlobalErrors?.({})
       updateFormData({
         ...formData,
         gender: data.gender,
         address: data.address,
         image: imageFile,
       })
-      router.replace("/profile/patientinfo")
-
+      router.replace("/")
       onNext()
     } catch (error: unknown) {
-      const err = error as AxiosError<{ message?: string; data?: Record<string, string[]> }>
-      console.log(" Error caught in onSubmit:", error)
-      console.log(" Error response:", err.response)
-      console.log(" Error status:", err.response?.status)
-      console.log(" Error data:", err.response?.data)
-
-      if (err.code === "ERR_NETWORK" || err.message === "Network Error") {
-        toast.error("فشل الاتصال بالخادم. يرجى التأكد من أن الخادم يعمل.")
-        setNetworkError(true)
-        return
-      }
-
-      if (err.response?.status === 401) {
-        console.log(" 401 Unauthorized error detected")
-        toast.error("انتهت جلستك. يرجى تسجيل الدخول مرة أخرى")
-        return
-      }
-
-      if (err.response?.status === 422) {
-        console.log(" 422 Validation error detected")
-        handleFormErrors<PatientStep2FormData>(
-          error as AxiosError<{
-            message?: string
-            data?: Record<string, string[]>
-          }>,
-          setError,
-        )
-        return
-      }
-
-      console.log(" Other error type")
-      const errorMessage = err.response?.data?.message || "حدث خطأ أثناء حفظ البيانات"
-      toast.error(errorMessage)
+      console.log(" Error thrown while submitting, delegating to mutation handler:", error)
     } finally {
       setIsLoading(false)
       console.log(" Form submission completed")
@@ -256,14 +228,6 @@ export function PatientFormStep2({ onNext, onBack, formData, updateFormData }: P
 
   return (
     <>
-      {/* <div className="mb-10 mr-60 ">
-        <h1 className="text-2xl font-bold">معلومات المريض الشخصية</h1>
-
-        <p className="text-sm text-gray-600 leading-relaxed mt-2">
-          يرجى تعبئة البيانات التالية بدقة لتسهيل إجراءات المتابعة الطبية داخل منصة
-          <span className="text-[#32A88D] font-medium"> ميدنوفا</span>.
-        </p>
-      </div> */}
 
       <Card className="max-w-5xl mx-auto shadow-lg border-0">
         <CardHeader className="space-y-2" dir="rtl">

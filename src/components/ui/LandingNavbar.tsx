@@ -9,15 +9,14 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDownIcon, Menu, X } from "lucide-react";
-
-
 import Link from "next/link";
+
 
 const NavLink = [
   {
     id: 1,
     title: "الرئيسية",
-    link: "#",
+    link: "/",
   },
   {
     id: 2,
@@ -92,6 +91,11 @@ const NavLink = [
       },
     ],
   },
+  {
+    id: 5,
+    title: "المختصين",
+    link: "/therapistsAndCenters",
+  }
 ];
 
 export default function LandingNavbar() {
@@ -147,7 +151,7 @@ export default function LandingNavbar() {
           <button className="text-secondary rounded-lg border border-secondary px-4 py-2 ">
             <Link href="/auth/login">تسجيل دخول</Link>
           </button>
-          <button className="bg-primary  text-white px-4 py-2 rounded-lg hover:brightness-90 transition">
+          <button className="bg-gradient-to-r from-secondary to-primary text-white px-4 py-2 rounded-lg hover:brightness-90 transition">
             <Link href="/auth/register">إنشاء حساب</Link>
           </button>
         </div>

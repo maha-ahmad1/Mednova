@@ -1,9 +1,7 @@
 "use client";
+
+
 import { useForm } from "react-hook-form";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import { Pagination, Autoplay } from "swiper/modules";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,6 +14,7 @@ import {
 import { ChevronDownIcon } from "lucide-react";
 import Image from "next/image";
 import slider1 from "../../../public/images/home/slider1.jpg";
+import { useRouter } from "next/navigation";
 
 
 
@@ -27,9 +26,18 @@ interface SearchingData {
 
 
 export default function Hero() {
+  const router = useRouter();
   const { setValue, watch, register, handleSubmit } = useForm<SearchingData>();
   const onSubmit = (data: SearchingData) => {
     console.log(data);
+    const query = new URLSearchParams (Object.entries(data).reduce((acc, [key, value]) => {
+      if (value !== undefined && value !== null) {
+        acc[key] = String(value);
+      }
+      return acc;
+    }, {} as Record<string, string>)
+  ).toString();
+    router.push(`/searchResults?${query}`);
   };
   const selectedType = watch("type");
   return (
@@ -117,6 +125,13 @@ export default function Hero() {
 //   },
 // ];
 
+
+
+
+// import { Swiper, SwiperSlide } from "swiper/react";
+// import "swiper/css";
+// import "swiper/css/pagination";
+// import { Pagination, Autoplay } from "swiper/modules";
 
 
 

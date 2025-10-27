@@ -7,6 +7,7 @@ import { Cairo } from "next/font/google";
 import { Providers } from "../providers/QueryClientProvider";
 import { SessionProviderWrapper } from "@/providers/SessionProviderWrapper";
 import { Toaster } from "@/components/ui/sonner";
+import LandingNavbar from "@/components/ui/LandingNavbar";
 
 const cairo = Cairo({
   subsets: ["arabic"],
@@ -29,6 +30,7 @@ export default function RootLayout({
         <Providers>
           <SessionProviderWrapper>
             <Suspense fallback={null}>
+              <LandingNavbar />
               <main className="min-h-screen">{children}</main>
               <Toaster richColors position="top-center" />
             </Suspense>

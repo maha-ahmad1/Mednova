@@ -11,5 +11,4 @@ export const countries = [
     name: "Palestine",
     cities: ["Gaza", "Ramallah", "Hebron", "Nablus"]
   },
-  // أضف باقي الدول والمدن حسب الحاجة
 ];

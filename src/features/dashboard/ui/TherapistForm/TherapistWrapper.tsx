@@ -7,6 +7,7 @@ import { TherapistFormStep2 } from "./TherapistFormStep2";
 import { TherapistFormStep3 } from "./TherapistFormStep3";
 import { TherapistFormStep4 } from "./TherapistFormStep4";
 import { TherapistFormStep5 } from "./TherapistFormStep5";
+
 export default function TherapistWrapper() {
   const [currentStep, setCurrentStep] = useState(1);
   const [globalErrors, setGlobalErrors] = useState<Record<string, string>>({});

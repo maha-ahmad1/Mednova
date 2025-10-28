@@ -13,6 +13,7 @@ declare module "next-auth" {
       gender?: string | null;
       image?: string | null;
     } & DefaultSession["user"];
+     role?: string;
   }
 
   interface User extends DefaultUser {

@@ -49,7 +49,10 @@ export const authOptions: NextAuthOptions = {
 
         if (credentials?.access_token && credentials?.user) {
           const user = JSON.parse(credentials.user) as UserT;
-          const accessToken = credentials.access_token.replace(/^Bearer\s+/i, "");
+          const accessToken = credentials.access_token.replace(
+            /^Bearer\s+/i,
+            ""
+          );
 
           return { ...user, accessToken };
         }
@@ -73,6 +76,7 @@ export const authOptions: NextAuthOptions = {
         const typedUser = user as UserT;
         token.user = typedUser;
         token.accessToken = typedUser.accessToken ?? token.accessToken;
+        token.role = typedUser.type_account;
       }
 
       if (trigger === "update" && session?.user) {
@@ -80,6 +84,7 @@ export const authOptions: NextAuthOptions = {
           ...token.user,
           ...session.user,
         } as UserT;
+        token.role = session.user.type_account ?? token.role;
       }
 
       return token;
@@ -88,6 +93,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.user = token.user as UserT;
       session.accessToken = token.accessToken as string;
+      session.role = token.role as string;
       return session;
     },
   },

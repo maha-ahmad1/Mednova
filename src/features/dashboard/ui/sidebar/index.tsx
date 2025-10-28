@@ -53,16 +53,16 @@ if (status === "loading") {
           <Image
             src={user.image}
             alt="User avatar"
-            width={80}
-            height={80}
+            width={100}
+            height={100}
             className="rounded-full border-2 border-[#32A88D] shadow-sm"
           />
-          <button
+          {/* <button
             className="absolute bottom-0 right-0 bg-[#32A88D] text-white text-xs rounded-full p-1 hover:bg-[#2b8e77]"
             title="تغيير الصورة"
           >
             ✎
-          </button>
+          </button> */}
         </div>
         <h3 className="mt-3 text-lg font-semibold text-gray-800">
           {user.name}

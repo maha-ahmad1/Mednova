@@ -4,7 +4,8 @@ export interface TherapistFormValues {
   customer_id: string;
   full_name?: string;
   email?: string;
-  image: string | File;
+  // image is optional for updates that don't change the image
+  image?: string | File;
   gender?: "Male" | "Female";
   formatted_address?: string;
   medical_specialties_id?: string;
@@ -22,8 +23,6 @@ export interface TherapistFormValues {
   location_id?: number;
   country?: string;
   city?: string;
-
-  // ✅ الشكل الجديد للدوام
   day_of_week?: string[];
   start_time_morning?: string;
   end_time_morning?: string;

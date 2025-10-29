@@ -1,4 +1,4 @@
-import { RehabilitationCenterForm } from "@/features/dashboard/ui/RehabilitationCenter";
+import { RehabilitationCenterForm } from "@/features/dashboard/ui/Center";
 export default function PatientPage() {
   return (
     <div>

@@ -56,7 +56,7 @@ export function TherapistLicensesCard({
   };
 
   return (
-    <Card>
+    <Card className="bg-white rounded-xl shadow-lg p-6">
       <CardHeader className="flex justify-between items-center">
         <CardTitle>التراخيص والمستندات</CardTitle>
         {!editing ? (

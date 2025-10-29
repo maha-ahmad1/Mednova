@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { FormInput, type FormInputProps } from "./FormInput"
+
 export interface CountryCode {
   code: string
   label?: string
@@ -48,20 +49,27 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
       onCountryCodeChange?.(code)
     }
 
+    // ✅ تزامن مع القيمة القادمة من الـ parent
+    React.useEffect(() => {
+      if (countryCodeValue) {
+        setInternalCountryCode(countryCodeValue)
+      }
+    }, [countryCodeValue])
+
     return (
-      <div className={cn("space-y-2 ", containerClassName)} dir={rtl ? "rtl" : "ltr"}>
+      <div className={cn("space-y-2", containerClassName)} dir={rtl ? "rtl" : "ltr"}>
         {label && (
           <Label htmlFor={inputProps.id} className={cn("block", rtl && "text-right")}>
             {label}
           </Label>
         )}
-        <div className="flex gap-2 ">
+        <div className="flex gap-2">
           <Select value={currentCountryCode} onValueChange={handleCountryCodeChange}>
             <SelectTrigger className="w-24 py-6">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {countryCodes.map((country:CountryCode) => (
+              {countryCodes.map((country: CountryCode) => (
                 <SelectItem key={country.code} value={country.code}>
                   {country.label || country.code}
                 </SelectItem>

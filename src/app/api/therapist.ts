@@ -1,6 +1,7 @@
 import { AxiosInstance } from "axios";
 
 export interface TherapistFormValues {
+  schedule_id?: string;
   customer_id: string;
   full_name?: string;
   email?: string;
@@ -89,9 +90,6 @@ export const storeTherapistDetails = async (
   }
 
   const response = await axios.post("/api/therapist/store", formData, {
-    // headers: {
-    //   "Content-Type": "multipart/form-data",
-    // },
   });
 
   return response.data;

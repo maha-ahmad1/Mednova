@@ -236,6 +236,8 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
                       countryCodeValue={countryCode}
                       onCountryCodeChange={setCountryCode}
                       error={errors.emergency_phone?.message}
+                      type="number"
+                      className="no-spinner"
                     />
                   )}
                 />

@@ -1,242 +1,168 @@
-// "use client";
+"use client";
 
-// import React, { useState } from "react";
-// import { User, Mail, Phone, Loader2 } from "lucide-react";
-// import { Button } from "@/components/ui/button";
-// import { Badge } from "@/components/ui/badge";
-// import { Card } from "@/components/ui/card";
-// import { FormInput, FormSelect, FormFileUpload } from "@/shared/ui/forms";
-// import { FormPhoneInput } from "@/shared/ui/forms";
-// import { personalSchema } from "@/features/profile/schemas/personalSchema";
-// import 
+import React, { useState, useEffect } from "react";
+import { FormInput, FormPhoneInput, FormSelect, FormFileUpload } from "@/shared/ui/forms";
+import { Button } from "@/components/ui/button";
+import { Loader2, User } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import type { TherapistProfile } from "@/types/therpist";
+import { useUpdateTherapist } from "@/features/profile/hooks/useUpdateTherapist";
 
+interface TherapistPersonalCardProps {
+  profile: TherapistProfile;
+  userId: string;
+  refetch: () => void;
+}
 
-// export function TherapistPersonalCard({
-//   details,
-//   isUpdating,
-//   serverErrors = {},
-//   onSave,
-// }: {
-//   details: any;
-//   isUpdating: boolean;
-//   serverErrors?: Record<string, string>;
-//   onSave: (values: any) => void;
-// }) {
-//   const [editing, setEditing] = useState(false);
-//   const [formValues, setFormValues] = useState<any>({
-//     full_name: details?.full_name ?? "",
-//     email: details?.email ?? "",
-//     phone: details?.phone ?? "",
-//     birth_date: details?.birth_date ?? "",
-//     gender: details?.gender ?? "",
-//     image: null,
-//   });
-//   const [countryCode, setCountryCode] = useState("+970");
+export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({ profile, userId, refetch }) => {
+  const [editing, setEditing] = useState(false);
+  const [formValues, setFormValues] = useState<Record<string, any>>({});
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
+  const [localProfile, setLocalProfile] = useState<Partial<TherapistProfile> | null>(null);
+  const [countryCode, setCountryCode] = useState("+968");
 
-//   const handleCancel = () => {
-//     setFormValues({
-//       full_name: details?.full_name ?? "",
-//       email: details?.email ?? "",
-//       phone: details?.phone ?? "",
-//       birth_date: details?.birth_date ?? "",
-//       gender: details?.gender ?? "",
-//       image: null,
-//     });
-//     setEditing(false);
-//   };
+  const { update, isUpdating } = useUpdateTherapist({
+    onValidationError: (errs) => setServerErrors(errs || {}),
+  });
 
-//   const handleSave = () => {
-//     onSave(formValues);
-//     setEditing(false);
-//   };
+  useEffect(() => {
+    if (!editing) {
+      setFormValues({});
+    }
+  }, [profile]);
 
-//   return (
-//     <Card title="المعلومات الشخصية">
-//       <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6">
-//         <div className="flex flex-col lg:flex-row lg:items-start gap-6">
-//           {/* الصورة */}
-//           <div className="flex flex-col items-center lg:items-start gap-2">
-//             <div
-//               className={`w-32 h-32 rounded-full overflow-hidden bg-gray-100 border-2 ${
-//                 editing ? "border-green-500 ring-2 ring-green-200" : "border-gray-200"
-//               }`}
-//             >
-//               {editing && formValues.image instanceof File ? (
-//                 <img
-//                   src={URL.createObjectURL(formValues.image)}
-//                   alt="Preview"
-//                   className="w-full h-full object-cover"
-//                 />
-//               ) : details?.image ? (
-//                 <img
-//                   src={details.image}
-//                   alt={details.full_name ?? "Avatar"}
-//                   className="w-full h-full object-cover"
-//                 />
-//               ) : (
-//                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
-//                   <User className="w-8 h-8" />
-//                 </div>
-//               )}
-//             </div>
+  const splitPhone = (p?: string | null) => {
+    if (!p) return { country: "+968", local: "" };
 
-//             {editing ? (
-//               <FormFileUpload
-//                 label="تغيير الصورة"
-//                 accept="image/*"
-//                 onChange={(e) => {
-//                   const file = e.target.files?.[0];
-//                   if (file) {
-//                     setFormValues((s: any) => ({ ...s, image: file }));
-//                   }
-//                 }}
-//                 className="text-xs text-center"
-//               />
-//             ) : null}
+    if (p.startsWith("+968")) return { country: "+968", local: p.slice(4) };
 
-//             {details?.image && !editing && (
-//               <Button
-//                 variant="ghost"
-//                 size="sm"
-//                 onClick={() => window.open(details.image, "_blank")}
-//               >
-//                 عرض الصورة
-//               </Button>
-//             )}
-//           </div>
+    const m = p.match(/^\+(\d{1,4})(.*)$/);
+    return m ? { country: `+${m[1]}`, local: m[2].trim() } : { country: "+968", local: p };
+  };
 
-//           {/* باقي التفاصيل */}
-//           <div className="flex-1">
-//             <div
-//               className={`flex justify-end mb-4 p-2 rounded-md ${
-//                 editing ? "bg-green-50 border border-green-200" : ""
-//               }`}
-//             >
-//               {editing ? (
-//                 <div className="flex gap-2">
-//                   <Button
-//                     onClick={handleSave}
-//                     disabled={isUpdating}
-//                     size="sm"
-//                     className="bg-green-500 hover:bg-green-600"
-//                   >
-//                     {isUpdating ? (
-//                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-//                     ) : null}
-//                     حفظ
-//                   </Button>
-//                   <Button onClick={handleCancel} variant="outline" size="sm">
-//                     إلغاء
-//                   </Button>
-//                 </div>
-//               ) : (
-//                 <Button onClick={() => setEditing(true)} variant="outline" size="sm">
-//                   تعديل
-//                 </Button>
-//               )}
-//             </div>
+  const startEdit = () => {
+    const source = localProfile ?? profile;
+    const { country, local } = splitPhone(source?.phone);
+    setCountryCode(country);
+    setFormValues({
+      full_name: source?.full_name ?? "",
+      email: source?.email ?? "",
+      phone: local ?? "",
+      birth_date: source?.birth_date ? String(source.birth_date) : "",
+      gender: source?.gender === "Male" ? "male" : source?.gender === "Female" ? "female" : "",
+      image: null,
+    });
+    setEditing(true);
+  };
 
-//             {/* وضع العرض */}
-//             {!editing ? (
-//               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 space-y-2">
-//                 <Field label="الاسم الكامل" value={details?.full_name ?? "-"} />
-//                 <Field label="البريد الإلكتروني" value={details?.email ?? "-"} />
-//                 <Field label="الهاتف" value={details?.phone ?? "-"} />
-//                 <Field
-//                   label="تاريخ الميلاد"
-//                   value={formatDateForDisplay(details?.birth_date) ?? "-"}
-//                 />
-//                 <Field
-//                   label="الجنس"
-//                   value={
-//                     details?.gender ? (
-//                       <Badge variant={details.gender === "male" ? "secondary" : "default"}>
-//                         {details.gender === "male" ? "ذكر" : "أنثى"}
-//                       </Badge>
-//                     ) : (
-//                       "-"
-//                     )
-//                   }
-//                 />
-//                 <Field label="نوع الحساب" value={details?.type_account ?? "-"} />
-//               </div>
-//             ) : (
-//               // وضع التعديل
-//               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 space-y-2 bg-gray-50 p-4 rounded-md">
-//                 <FormInput
-//                   label="الاسم الكامل"
-//                   icon={User}
-//                   value={String(formValues.full_name ?? "")}
-//                   onChange={(e) =>
-//                     setFormValues((s: any) => ({
-//                       ...s,
-//                       full_name: e.target.value,
-//                     }))
-//                   }
-//                   rtl
-//                   error={
-//                     serverErrors.full_name ??
-//                     personalSchema.shape.full_name.safeParse(
-//                       formValues.full_name ?? ""
-//                     ).error?.issues[0]?.message
-//                   }
-//                 />
+  const cancelEdit = () => {
+    setEditing(false);
+    setFormValues({});
+    setServerErrors({});
+  };
 
-//                 <FormInput
-//                   label="البريد الإلكتروني"
-//                   type="email"
-//                   icon={Mail}
-//                   value={String(formValues.email ?? "")}
-//                   onChange={(e) =>
-//                     setFormValues((s: any) => ({ ...s, email: e.target.value }))
-//                   }
-//                   rtl
-//                 />
+  const handleSave = async () => {
+    try {
+      const phoneWithCode = countryCode && formValues.phone ? `${countryCode}${formValues.phone}` : formValues.phone;
+      const payload: TherapistFormValues = { ...formValues, phone: phoneWithCode, customer_id: String(userId) };
+      await update(payload);
+      const refetchResult = await refetch();
+      const fresh: TherapistProfile | undefined = refetchResult?.data || refetchResult;
+      if (fresh) {
+        setLocalProfile(fresh);
+      }
+      setEditing(false);
+      setServerErrors({});
+      toast.success("تم حفظ التغييرات بنجاح");
+    } catch (err) {
+      console.error(err);
+      toast.error("حدث خطأ أثناء التحديث");
+    }
+  };
 
-//                 <FormPhoneInput
-//                   label="الهاتف"
-//                   placeholder="0000 0000"
-//                   icon={Phone}
-//                   iconPosition="right"
-//                   rtl
-//                   countryCodeValue={countryCode}
-//                   onCountryCodeChange={(c) => setCountryCode(c)}
-//                   value={String(formValues.phone ?? "")}
-//                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-//                     setFormValues((s: any) => ({ ...s, phone: e.target.value }))
-//                   }
-//                 />
+  const Field: React.FC<{ label: string; value?: React.ReactNode }> = ({ label, value }) => (
+    <div className="flex flex-col">
+      <span className="text-sm text-gray-500">{label}</span>
+      <span className="mt-1 text-gray-800">{value ?? "-"}</span>
+    </div>
+  );
 
-//                 <FormInput
-//                   label="تاريخ الميلاد"
-//                   type="date"
-//                   value={String(formValues.birth_date ?? "")}
-//                   onChange={(e) =>
-//                     setFormValues((s: any) => ({
-//                       ...s,
-//                       birth_date: e.target.value,
-//                     }))
-//                   }
-//                   rtl
-//                 />
+  const displayProfile = localProfile ?? profile;
+  const imageSrc = editing && formValues.image instanceof File ? URL.createObjectURL(formValues.image) : displayProfile.image;
 
-//                 <FormSelect
-//                   label="الجنس"
-//                   options={[
-//                     { value: "male", label: "ذكر" },
-//                     { value: "female", label: "أنثى" },
-//                   ]}
-//                   value={String(formValues.gender ?? "")}
-//                   onValueChange={(val) =>
-//                     setFormValues((s: any) => ({ ...s, gender: val }))
-//                   }
-//                   rtl
-//                 />
-//               </div>
-//             )}
-//           </div>
-//         </div>
-//       </div>
-//     </Card>
-//   );
-// }
+  return (
+    <div className=" bg-white rounded-xl shadow-lg p-6">
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* <div className="flex flex-col items-center">
+          <div className={`w-32 h-32 rounded-full overflow-hidden border-2 ${editing ? "border-green-500 ring-2 ring-green-200" : "border-gray-200"}`}>
+            {imageSrc ? (
+              <img src={imageSrc} className="object-cover w-full h-full" />
+            ) : (
+              <div className="flex items-center justify-center w-full h-full text-gray-400">
+                <User className="w-8 h-8" />
+              </div>
+            )}
+          </div>
+          {editing && (
+            <FormFileUpload
+              label="تغيير الصورة"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) setFormValues((s) => ({ ...s, image: file }));
+              }}
+            />
+          )}
+        </div> */}
+
+        <div className="flex-1">
+          <div className="flex justify-end mb-4">
+            {editing ? (
+              <div className="flex gap-2">
+                <Button onClick={handleSave} disabled={isUpdating} size="sm" className="bg-green-500 hover:bg-green-600">
+                  {isUpdating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  حفظ
+                </Button>
+                <Button onClick={cancelEdit} variant="outline" size="sm">
+                  إلغاء
+                </Button>
+              </div>
+            ) : (
+              <Button onClick={startEdit} variant="outline" size="sm">
+                تعديل
+              </Button>
+            )}
+          </div>
+
+          {!editing ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Field label="الاسم الكامل" value={displayProfile.full_name ?? "-"} />
+              <Field label="البريد الإلكتروني" value={displayProfile.email ?? "-"} />
+              <Field label="الهاتف" value={displayProfile.phone ?? "-"} />
+              <Field label="تاريخ الميلاد" value={displayProfile.birth_date ?? "-"} />
+              <Field
+                label="الجنس"
+                value={<Badge>{displayProfile.gender === "Male" ? "ذكر" : "أنثى"}</Badge>}
+              />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-md">
+              <FormInput label="الاسم الكامل" value={formValues.full_name} onChange={(e) => setFormValues((s) => ({ ...s, full_name: e.target.value }))} rtl />
+              <FormInput label="البريد الإلكتروني" value={formValues.email} onChange={(e) => setFormValues((s) => ({ ...s, email: e.target.value }))} rtl />
+              <FormPhoneInput label="الهاتف" countryCodeValue={countryCode} onCountryCodeChange={setCountryCode} value={formValues.phone} onChange={(e) => setFormValues((s) => ({ ...s, phone: e.target.value }))} rtl />
+              <FormInput label="تاريخ الميلاد" type="date" value={formValues.birth_date} onChange={(e) => setFormValues((s) => ({ ...s, birth_date: e.target.value }))} rtl />
+              <FormSelect
+                label="الجنس"
+                options={[{ value: "male", label: "ذكر" }, { value: "female", label: "أنثى" }]}
+                value={formValues.gender}
+                onValueChange={(val) => setFormValues((s) => ({ ...s, gender: val }))}
+                rtl
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};

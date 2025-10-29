@@ -31,6 +31,7 @@ export function TherapistMedicalCard({
     graduation_year: "",
     experience_years: "",
     countries_certified: "",
+    
   });
 
   useEffect(() => {
@@ -58,9 +59,9 @@ export function TherapistMedicalCard({
 
     try {
       await update(payload);
-      await refetch(); // ← انتظر جلب البيانات الجديدة أولًا
+      await refetch();
       toast.success("تم تحديث المؤهلات بنجاح");
-      setEditing(false); // ← بعد أن يتم تحديث البيانات فعليًا
+      setEditing(false); 
     } catch {
       toast.error("حدث خطأ أثناء التحديث");
     }
@@ -72,9 +73,9 @@ export function TherapistMedicalCard({
 console.log("Server Errors in MedicalCard:", serverErrors);
 
   return (
-    <Card>
-      <CardHeader className="flex justify-between items-center">
-        <CardTitle>المؤهلات الطبية</CardTitle>
+    <Card className="bg-white rounded-xl shadow-lg p-6">
+      <CardHeader className="flex justify-between items-center ">
+        <CardTitle >المؤهلات الطبية</CardTitle>
         {!editing ? (
           <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
             تعديل

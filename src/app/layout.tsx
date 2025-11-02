@@ -1,5 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
+
 // import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
 import { Suspense } from "react";
@@ -7,7 +8,7 @@ import { Cairo } from "next/font/google";
 import { Providers } from "../providers/QueryClientProvider";
 import { SessionProviderWrapper } from "@/providers/SessionProviderWrapper";
 import { Toaster } from "@/components/ui/sonner";
-import LandingNavbar from "@/components/ui/LandingNavbar";
+import NavbarWrapper from "@/components/ui/NavbarWrapper";
 
 const cairo = Cairo({
   subsets: ["arabic"],
@@ -19,19 +20,24 @@ export const metadata: Metadata = {
   description: "Medical Innovation",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+export default async function RootLayout({
+  children}: Readonly<{
   children: React.ReactNode;
-}>) {
+}>)    
+ {
+
+
   return (
     <html lang="ar" dir="rtl">
       <body className={cairo.variable}>
         <Providers>
           <SessionProviderWrapper>
             <Suspense fallback={null}>
-              <LandingNavbar />
-              <main className="min-h-screen">{children}</main>
+              <main className="min-h-screen">
+                <NavbarWrapper>{children}
+                </NavbarWrapper>
+                {children}
+                </main>
               <Toaster richColors position="top-center" />
             </Suspense>
             {/* <Analytics /> */}

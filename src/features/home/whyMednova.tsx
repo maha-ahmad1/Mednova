@@ -4,9 +4,9 @@ import whyMednova from "../../../public/images/home/whyMednova.jpg";
 export default function WhyMednova() {
   return (
     <section className=" bg-[#F8F7F7] py-20 px-14 md:px-18 lg:px-28 ">
-      <div className="grid  grid-cols-1 gap-10 md:grid-cols-[2fr_1fr]">
+      <div className="grid  grid-cols-1  md:grid-cols-[2fr_1fr] p-10">
         <div className=" order-2 md:order-none flex flex-col mt-20 w-[80%] text-center md:text-start mx-auto md:mx-0">
-          <div className="text-2xl font-bold  p-2">
+          <div className="text-2xl font-bold  p-2 text-[#212121]">
             لماذا منصة مدنوفا؟
           </div>
            <div className="w-20 h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full mb-2 mx-auto md:mx-0"></div>

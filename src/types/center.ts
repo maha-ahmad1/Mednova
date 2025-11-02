@@ -7,7 +7,6 @@ export interface CenterProfile {
   gender?: "Male" | "Female"
   image?: string
 
-  /** تفاصيل المركز */
   center_details?: {
     id: number
     specialty_id?: number[]
@@ -35,7 +34,6 @@ export interface CenterProfile {
     end_time_evening?: string
   }>
 
-  /** الموقع */
   location_details?: {
     id: number
     country?: string

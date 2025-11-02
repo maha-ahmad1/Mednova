@@ -76,7 +76,7 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
               ))}
             </SelectContent>
           </Select>
-          <FormInput ref={ref} type="tel" containerClassName="flex-1" rtl={rtl} {...inputProps} />
+          <FormInput ref={ref} type="number" className="no-spinner" containerClassName="flex-1" rtl={rtl} {...inputProps} />
         </div>
       </div>
     )

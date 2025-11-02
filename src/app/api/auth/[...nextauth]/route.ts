@@ -1,6 +1,6 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { UserT } from "@/types/next-auth";
+import NextAuth, { type NextAuthOptions } from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import type { UserT } from "@/types/next-auth"
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,56 +14,56 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (credentials?.email && credentials?.password) {
-          const res = await fetch(
-            "https://demoapplication.jawebhom.com/api/auth/login",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: credentials.email,
-                password: credentials.password,
-              }),
-            }
-          );
+          const res = await fetch("https://demoapplication.jawebhom.com/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          })
 
-          const data = await res.json();
-          if (!res.ok || !data?.success) return null;
+          const data = await res.json()
+          if (!res.ok || !data?.success) return null
 
-          const rawToken: string = data.data.access_token || "";
-          const accessToken = rawToken.replace(/^Bearer\s+/i, "");
+          const rawToken: string = data.data.access_token || ""
+          const accessToken = rawToken.replace(/^Bearer\s+/i, "")
 
-          const user: UserT = {
-            id: String(data.data.user.id),
-            full_name: data.data.user.full_name,
-            email: data.data.user.email,
-            phone: data.data.user.phone,
-            type_account: data.data.user.type_account,
-            birth_date: data.data.user.birth_date,
-            gender: data.data.user.gender,
-            image: data.data.user.image,
+          const user = data.data.user
+
+          // const isCompleted = Boolean(
+          //   user.phone && user.gender && user.birth_date
+          // );
+
+          const typedUser: UserT = {
+            id: String(user.id),
+            full_name: user.full_name,
+            email: user.email,
+            phone: user.phone,
+            type_account: user.type_account,
+            birth_date: user.birth_date,
+            gender: user.gender,
+            image: user.image,
             accessToken,
-          };
-
-          return user;
+            // isCompleted: Boolean(user.is_completed),
+          }
+            console.log("user" +user)
+          return typedUser
         }
 
         if (credentials?.access_token && credentials?.user) {
-          const user = JSON.parse(credentials.user) as UserT;
-          const accessToken = credentials.access_token.replace(
-            /^Bearer\s+/i,
-            ""
-          );
-
-          return { ...user, accessToken };
+          const user = JSON.parse(credentials.user) as UserT
+          const accessToken = credentials.access_token.replace(/^Bearer\s+/i, "")
+          return { ...user, accessToken }
         }
 
-        return null;
+        return null
       },
     }),
   ],
 
   pages: {
-    signIn: "/auth/login",
+    signIn: "/login",
   },
 
   session: {
@@ -73,34 +73,37 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        const typedUser = user as UserT;
-        token.user = typedUser;
-        token.accessToken = typedUser.accessToken ?? token.accessToken;
-        token.role = typedUser.type_account;
+        const typedUser = user as UserT
+        token.user = typedUser
+        token.accessToken = typedUser.accessToken ?? token.accessToken
+        token.role = typedUser.type_account
+        // token.isCompleted = typedUser.isCompleted
       }
 
       if (trigger === "update" && session?.user) {
         token.user = {
           ...token.user,
           ...session.user,
-        } as UserT;
-        token.role = session.user.type_account ?? token.role;
+        } as UserT
+        token.role = session.user.type_account ?? token.role
+        // token.isCompleted = session.user.isCompleted ?? token.isCompleted
       }
 
-      return token;
+      return token
     },
 
     async session({ session, token }) {
-      session.user = token.user as UserT;
-      session.accessToken = token.accessToken as string;
-      session.role = token.role as string;
-      return session;
+      session.user = token.user as UserT
+      session.accessToken = token.accessToken as string
+      session.role = token.role as string
+      session.isCompleted = token.isCompleted as boolean
+      return session
     },
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-};
+}
 
-const handler = NextAuth(authOptions);
+const handler = NextAuth(authOptions)
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST }

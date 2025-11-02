@@ -13,7 +13,7 @@ export interface TherapistFormValues {
   university_name?: string;
   graduation_year?: string;
   countries_certified?: string;
-  experience_years?: string;
+  experience_years?: number;
   license_number?: string;
   license_authority?: string;
   certificate_file?: File | null;
@@ -47,14 +47,13 @@ export const storeTherapistDetails = async (
   formData.append("university_name", data.university_name || "");
   formData.append("graduation_year", data.graduation_year || "");
   formData.append("countries_certified", data.countries_certified || "");
-  formData.append("experience_years", data.experience_years || "");
+  formData.append("experience_years", String(data.experience_years ?? ""));
   formData.append("license_number", data.license_number || "");
   formData.append("license_authority", data.license_authority || "");
 
   if (data.certificate_file)
     formData.append("certificate_file", data.certificate_file);
-  if (data.license_file)
-    formData.append("license_file", data.license_file);
+  if (data.license_file) formData.append("license_file", data.license_file);
 
   formData.append("bio", data.bio || "");
 
@@ -73,7 +72,7 @@ export const storeTherapistDetails = async (
 
   formData.append("start_time_morning", data.start_time_morning || "");
   formData.append("end_time_morning", data.end_time_morning || "");
-  
+
   const parseHasEvening = (val: unknown) => {
     if (val === true) return true;
     if (String(val) === "1") return true;
@@ -89,8 +88,7 @@ export const storeTherapistDetails = async (
     formData.append("end_time_evening", data.end_time_evening || "");
   }
 
-  const response = await axios.post("/api/therapist/store", formData, {
-  });
+  const response = await axios.post("/api/therapist/store", formData, {});
 
   return response.data;
 };

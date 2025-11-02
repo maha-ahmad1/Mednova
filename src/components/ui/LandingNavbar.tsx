@@ -149,10 +149,10 @@ export default function LandingNavbar() {
         </div>
         <div className="hidden md:flex gap-6 items-center">
           <button className="text-secondary rounded-lg border border-secondary px-4 py-2 ">
-            <Link href="/auth/login">تسجيل دخول</Link>
+            <Link href="/login">تسجيل دخول</Link>
           </button>
           <button className="bg-gradient-to-r from-secondary to-primary text-white px-4 py-2 rounded-lg hover:brightness-90 transition">
-            <Link href="/auth/register">إنشاء حساب</Link>
+            <Link href="/register">إنشاء حساب</Link>
           </button>
         </div>
         <div className="lg:hidden p-4 flex justify-between items-center">

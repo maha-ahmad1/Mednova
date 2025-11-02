@@ -12,8 +12,10 @@ declare module "next-auth" {
       birth_date?: string | null;
       gender?: string | null;
       image?: string | null;
+      isCompleted?: boolean
     } & DefaultSession["user"];
      role?: string;
+     isCompleted?: boolean
   }
 
   interface User extends DefaultUser {
@@ -45,6 +47,8 @@ declare module "next-auth/jwt" {
   }
 }
 
+
+
 export interface UserT {
   id: string;
   full_name: string;
@@ -55,6 +59,7 @@ export interface UserT {
   gender?: string | null;
   image?: string | null;
   accessToken?: string;
+  isCompleted?: boolean
 }
 
 

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Mail } from "lucide-react";
 import type { AxiosError } from "axios";
 import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 import {
   Card,
@@ -47,6 +48,8 @@ export function LoginForm() {
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
 
+  const { data: session } = useSession();
+  console.log("session " + session?.role);
 
   const {
     register,
@@ -59,7 +62,6 @@ export function LoginForm() {
   });
 
   const mutation = useMutation({
-    
     mutationFn: (data: LoginData) => loginUser(data),
     onSuccess: async (data) => {
       console.log("✅ تسجيل الدخول بنجاح:", data);
@@ -69,21 +71,22 @@ export function LoginForm() {
           access_token: data.data.access_token,
           user: JSON.stringify(data.data.user),
         });
-        const user = data.data.user; 
-        const isCompleted = user.phone && user.gender && user.birth_date;
 
-        if (!isCompleted) {
-          if (user.type_account === "patient") router.push("/account/patient");
-          else if (user.type_account === "therapist")
-            router.push("/account/therapist");
-          else router.push("/account/rehabilitation-center");
+        const user = data.data.user;
+                console.log("✅ user.is_completed", user.is_completed);
+
+        if (!user.is_completed) {
+          router.push("/profile/create");
+
         } else {
-          router.push("/");
+          router.push("/profile"); 
         }
       } else {
         setServerError(data.message || "حدث خطأ غير متوقع");
       }
+      
     },
+
     onError: (
       error: AxiosError<{ message?: string; data?: Record<string, string> }>
     ) => {
@@ -208,10 +211,7 @@ export function LoginForm() {
           <a href="#" className="text-[#4B5563] text-md cursor-default">
             ليس لديك حساب؟
           </a>{" "}
-          <Link
-            href="/auth/register"
-            className="text-[#32A88D] hover:underline"
-          >
+          <Link href="/register" className="text-[#32A88D] hover:underline">
             أنشئ حسابك الآن
           </Link>
         </div>

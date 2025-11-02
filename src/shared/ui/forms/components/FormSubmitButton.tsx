@@ -35,14 +35,14 @@ const FormSubmitButton = React.forwardRef<HTMLButtonElement, FormSubmitButtonPro
         : "justify-end"
 
     return (
-      <div className={cn("flex w-full", alignmentClass)}>
+      <div className={cn("flex w-full cursor-pointer", alignmentClass)}>
         <Button
           ref={ref}
           type="submit"
           variant={variant}
           size={size}
           disabled={isLoading || disabled}
-          className={cn(className)}
+          className={cn(className) }
           {...props}
         >
           {isLoading ? loadingText : children}

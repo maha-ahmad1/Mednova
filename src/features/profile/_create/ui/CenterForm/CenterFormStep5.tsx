@@ -17,6 +17,7 @@ import type { SubmitHandler } from "react-hook-form";
 
 const step5Schema = z.object({
   bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
+  status: z.string().optional(),
 });
 
 type Step5Data = z.infer<typeof step5Schema>;

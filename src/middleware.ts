@@ -6,12 +6,18 @@ interface TokenUser {
   id?: string;
   type_account?: string;
   isCompleted?: boolean;
+  // possible snake_case fields present in some tokens
+  is_completed?: boolean;
+  status?: string;
 }
 
 interface Token {
   user?: TokenUser;
   role?: string;
   isCompleted?: boolean;
+  // token may include snake_case fields depending on backend
+  is_completed?: boolean;
+  status?: string;
   accessToken?: string;
 }
 
@@ -46,24 +52,21 @@ export async function middleware(req: NextRequest) {
   console.log(" bS===");
 
   if (token) {
-    const isCompleted = token.is_completed ?? token.user?.is_completed ?? false;
-    const status = token.status ?? token.user?.status;
+    const isCompleted = token.is_completed ?? token.isCompleted ?? token.user?.is_completed ?? token.user?.isCompleted ?? false;
+    const status = token.status ?? token.user?.status ?? undefined;
     console.log("status" + status);
 
     if (!isCompleted) {
-      // لم يملأ البيانات بعد
       if (!pathname.startsWith("/profile/create")) {
         url.pathname = "/profile/create";
         return NextResponse.redirect(url);
       }
     } else if (status === "not_active") {
-      // مكتمل البيانات لكن لم يفعل بعد
       if (!pathname.startsWith("/profile/pending")) {
         url.pathname = "/profile/pending";
         return NextResponse.redirect(url);
       }
     } else if (status === "active") {
-      // مفعل بالكامل
       if (
         pathname.startsWith("/profile/create") ||
         pathname.startsWith("/profile/pending")

@@ -23,6 +23,7 @@ interface TherapistStep4Props {
 }
 const step4Schema = z.object({
   bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
+  status: z.string().optional(),
 });
 
 type Step4Data = z.infer<typeof step4Schema>;

@@ -1,5 +1,4 @@
 import { Clock, FileCheck, Shield } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function PendingProfilePage() {
   return (

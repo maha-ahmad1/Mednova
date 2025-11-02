@@ -11,6 +11,7 @@ import { personal1Schema, personal2Schema } from "@/lib/validation";
 import PatientPersonal1Card from "./PatientPersonal1Card";
 import PatientPersonal2Card from "./PatientPersonal2Card";
 import type { PatientProfile } from "@/types/patient";
+import type { ZodTypeAny } from "zod";
 import { signIn } from "next-auth/react";
 
 export default function PatientInfo() {
@@ -32,10 +33,10 @@ export default function PatientInfo() {
   });
 
   const [editingCard, setEditingCard] = useState<string | null>(null);
-  const [formValues, setFormValues] = useState<Record<string, any>>({});
+  const [formValues, setFormValues] = useState<Record<string, unknown>>({});
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
-  const [localProfile, setLocalProfile] =
-    useState<Partial<PatientProfile> | null>(null);
+  const localProfileState = useState<Partial<PatientProfile> | null>(null);
+  const localProfile = localProfileState[0];
 
   // إعادة تعيين عند الخروج من وضع التعديل
   useEffect(() => {
@@ -114,7 +115,7 @@ export default function PatientInfo() {
 
     const schema = card === "personal1" ? personal1Schema : personal2Schema;
 
-    const fieldSchema = schema.shape[field as keyof typeof schema.shape];
+    const fieldSchema = (schema.shape as Record<string, ZodTypeAny | undefined>)[field];
     if (fieldSchema) {
       const result = fieldSchema.safeParse(formValues[field] ?? "");
       clientError = result.error?.issues[0]?.message;
@@ -145,12 +146,12 @@ export default function PatientInfo() {
 
       if (card === "personal1") {
         const payload: Partial<PatientProfile> = {
-          full_name: formValues.full_name,
-          email: formValues.email,
+          full_name: formValues.full_name as string | undefined,
+          email: formValues.email as string | undefined,
           phone: formValues.countryCode
-            ? `${formValues.countryCode}${formValues.phone}`
-            : formValues.phone,
-          birth_date: formValues.birth_date,
+            ? `${formValues.countryCode}${(formValues.phone as string | undefined) ?? ""}`
+            : (formValues.phone as string | undefined),
+          birth_date: formValues.birth_date as string | undefined,
           customer_id: String(userId),
         };
         await update(payload);
@@ -172,9 +173,9 @@ export default function PatientInfo() {
 
         const locationPayload = {
           customer_id: String(userId),
-          country: formValues.country,
-          city: formValues.city,
-          formatted_address: formValues.formatted_address,
+          country: formValues.country as string | undefined,
+          city: formValues.city as string | undefined,
+          formatted_address: formValues.formatted_address as string | undefined,
         };
 
         await update(patientPayload);

@@ -19,7 +19,7 @@ export default function CenterWrapper() {
     image?: File
     specialty_id?: string[]
     year_establishment?: string
-    has_commercial_registration?: 0 | 1
+  has_commercial_registration?: boolean
     commercial_registration_number?: string
     commercial_registration_file?: File | null
     commercial_registration_authority?: string
@@ -28,7 +28,8 @@ export default function CenterWrapper() {
     license_number?: string
     bio?: string
     day_of_week?: string[]
-    is_have_evening_time?: 0 | 1
+  is_have_evening_time?: boolean
+  status?: string
     start_time_morning?: string
     end_time_morning?: string
     start_time_evening?: string
@@ -44,7 +45,7 @@ export default function CenterWrapper() {
     image: undefined,
     specialty_id: [],
     year_establishment: "",
-    has_commercial_registration: 0,
+  has_commercial_registration: false,
     commercial_registration_number: "",
     commercial_registration_file: null,
     commercial_registration_authority: "",
@@ -53,7 +54,7 @@ export default function CenterWrapper() {
     license_number: "",
     bio: "",
     day_of_week: [],
-    is_have_evening_time: 0,
+  is_have_evening_time: false,
     start_time_morning: "",
     end_time_morning: "",
     start_time_evening: "",

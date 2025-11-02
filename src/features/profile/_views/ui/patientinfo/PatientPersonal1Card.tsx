@@ -7,6 +7,7 @@ import { FormPhoneInput } from "@/shared/ui/forms/components/FormPhoneInput";
 import { Loader2, Edit, User, Mail, Phone, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useSession } from "next-auth/react";
+import type { PatientProfile } from "@/types/patient";
 interface Props {
   patient: PatientProfile;
   onSave: (card: string) => void;
@@ -16,8 +17,8 @@ interface Props {
   editingCard: string | null;
   startEdit: (card: string) => void;
   cancelEdit: () => void;
-  formValues: Record<string, any>;
-  setFormValues: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  formValues: Record<string, unknown>;
+  setFormValues: React.Dispatch<React.SetStateAction<Record<string, unknown>>>;
   getFieldError: (field: string, card: string) => string | undefined;
 }
 
@@ -25,7 +26,7 @@ export default function PatientPersonal1Card({
   patient,
   onSave,
   isUpdating,
-  errors,
+  
   editingCard,
   startEdit,
   cancelEdit,
@@ -35,7 +36,7 @@ export default function PatientPersonal1Card({
 }: Props) {
   const isEditing = editingCard === "personal1";
 
-  const handleChange = (field: keyof PatientProfile, value: string | File) => {
+  const handleChange = (field: string, value: string | File) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -60,9 +61,9 @@ export default function PatientPersonal1Card({
     if (!dateString) return "-";
     return new Date(dateString).toLocaleDateString("ar-EG");
   };
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
 
-  
+
   console.log("session:", session);
   return (
     <div className="bg-gradient-to-l from-[#32A88D]/10 to-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300">
@@ -161,7 +162,7 @@ export default function PatientPersonal1Card({
                 الاسم الكامل
               </label>
               <Input
-                value={formValues.full_name || ""}
+                value={(formValues.full_name as string) || ""}
                 onChange={(e) => handleChange("full_name", e.target.value)}
                 className="bg-white border-gray-300 focus:border-[#32A88D]"
                 placeholder="أدخل الاسم الكامل"
@@ -180,7 +181,7 @@ export default function PatientPersonal1Card({
               </label>
               <Input
                 type="email"
-                value={formValues.email || ""}
+                value={(formValues.email as string) || ""}
                 onChange={(e) => handleChange("email", e.target.value)}
                 className="bg-white border-gray-300 focus:border-[#32A88D]"
                 placeholder="example@email.com"
@@ -199,11 +200,11 @@ export default function PatientPersonal1Card({
               </label>
               <FormPhoneInput
                 label=""
-                countryCodeValue={formValues.countryCode || "+968"}
+                countryCodeValue={(formValues.countryCode as string) || "+968"}
                 onCountryCodeChange={(code) =>
-                  handleChange("countryCode" as any, code)
+                  setFormValues((prev) => ({ ...prev, countryCode: code }))
                 }
-                value={formValues.phone || ""}
+                value={(formValues.phone as string) || ""}
                 onChange={(e) => handleChange("phone", e.target.value)}
                 rtl
                 iconPosition="right"
@@ -220,7 +221,7 @@ export default function PatientPersonal1Card({
               </label>
               <Input
                 type="date"
-                value={formValues.birth_date || ""}
+                value={(formValues.birth_date as string) || ""}
                 onChange={(e) => handleChange("birth_date", e.target.value)}
                 className="bg-white border-gray-300 focus:border-[#32A88D]"
               />

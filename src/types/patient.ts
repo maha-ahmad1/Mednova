@@ -2,10 +2,14 @@ export interface PatientFormValues {
   customer_id: string
   gender: "Male" | "Female"
   birth_date?: string
-  address: string
+  address?: string
   image?: File | null
   emergency_phone?: string
   relationship?: string
+  formatted_address?: string
+  country?: string
+  city?: string
+  status?: string
 }
 
 

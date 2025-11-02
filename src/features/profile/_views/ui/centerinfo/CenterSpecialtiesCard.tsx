@@ -9,13 +9,13 @@ import { Badge } from "@/components/ui/badge"
 import { useUpdateCenter } from "@/features/profile/_views/hooks/useUpdateCenter"
 import type { CenterProfile } from "@/types/center"
 import { centerSpecialtiesSchema } from "@/lib/validation"
-import { Loader2, Edit, GraduationCap, Calendar, Building, CheckCircle2 } from "lucide-react"
+import { Loader2, Edit, GraduationCap, Building, CheckCircle2 } from "lucide-react"
 
 type CenterSpecialtiesCardProps = {
-  details: CenterProfile["center_details"] & {
+  details?: CenterProfile["center_details"] & {
     medicalSpecialties?: Array<{ id: number; name: string }>
   }
-  medicalSpecialtiesData: { id: number; name: string; description: string }[]
+  medicalSpecialtiesData?: { id: number; name: string; description?: string }[]
   userId: string
   refetch: () => void
   serverErrors?: Record<string, string>
@@ -42,7 +42,7 @@ export function CenterSpecialtiesCard({
   >(null)
 
   const [localMedicalSpecialtiesData, setLocalMedicalSpecialtiesData] = useState<
-    { id: number; name: string; description: string }[]
+    { id: number; name: string; description?: string }[]
   >([])
 
   const { update, isUpdating } = useUpdateCenter({
@@ -163,7 +163,7 @@ export function CenterSpecialtiesCard({
     </div>
   )
 
-  const displayDetails = localDetails ?? details
+  
 
   return (
     <div className="bg-gradient-to-l from-[#32A88D]/10 to-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300">
@@ -253,7 +253,7 @@ export function CenterSpecialtiesCard({
           <div className="space-y-6">
             {/* التخصصات الطبية */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                 <GraduationCap className="w-4 h-4 text-[#32A88D]" />
                 التخصصات الطبية
               </label>
@@ -283,7 +283,7 @@ export function CenterSpecialtiesCard({
 
             {/* سنة التأسيس */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                 <Building className="w-4 h-4 text-[#32A88D]" />
                 سنة التأسيس
               </label>

@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import { redirect } from "next/navigation"
+
 import PatientProfile from "./_views/patient/ProfileView"
 import TherapistProfile from "./_views/therapist/ProfileView"
 import CenterProfile from "./_views/center/ProfileView"

@@ -24,7 +24,6 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { countries } from "@/constants/countries";
-import { signIn } from "next-auth/react";
 
 const patientStep2Schema = z.object({
   gender: z.enum(["male", "female"]).refine((val) => !!val, {
@@ -33,6 +32,7 @@ const patientStep2Schema = z.object({
   formatted_address: z.string().min(1, "العنوان مطلوب"),
   country: z.string().min(1, "حقل البلد مطلوب."),
   city: z.string().min(1, "حقل المدينة مطلوب."),
+  status: z.string().optional(),
 });
 
 export interface PatientFormData {
@@ -221,8 +221,7 @@ export function PatientFormStep2({
         country: data.country,
         city: data.city,
       };
-
-      const response = await storePatient(payload);
+      await storePatient(payload);
       setGlobalErrors?.({});
       updateFormData({
         ...formData,

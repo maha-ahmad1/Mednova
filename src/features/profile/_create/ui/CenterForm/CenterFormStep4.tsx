@@ -55,8 +55,9 @@ const days = [
 interface Step4Props {
   onBack: () => void
   onNext: () => void
-  formData: Partial<Step4Data>
-  updateFormData: (data: Partial<Step4Data>) => void
+  // Accept more flexible formData since outer wrapper uses boolean flags
+  formData: Partial<Record<string, unknown>>
+  updateFormData: (data: Partial<Record<string, unknown>>) => void
   globalErrors?: Record<string, string>
   setGlobalErrors?: (errors: Record<string, string>) => void
 }
@@ -66,14 +67,18 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
     resolver: zodResolver(step4Schema),
     mode: "onChange",
     defaultValues: {
-      day_of_week: formData.day_of_week || [],
-      start_time_morning: formData.start_time_morning || "",
-      end_time_morning: formData.end_time_morning || "",
-      is_have_evening_time: formData.is_have_evening_time === 1 ? 1 : 0,
-      start_time_evening: formData.start_time_evening || "",
-      end_time_evening: formData.end_time_evening || "",
-      country: formData.country || "",
-      city: formData.city || "",
+      day_of_week: (formData.day_of_week as string[]) || [],
+      start_time_morning: (formData.start_time_morning as string) || "",
+      end_time_morning: (formData.end_time_morning as string) || "",
+      // support both numeric (0|1) and boolean flags from outer state
+      is_have_evening_time:
+        formData.is_have_evening_time === 1 || formData.is_have_evening_time === true
+          ? 1
+          : 0,
+      start_time_evening: (formData.start_time_evening as string) || "",
+      end_time_evening: (formData.end_time_evening as string) || "",
+      country: (formData.country as string) || "",
+      city: (formData.city as string) || "",
     },
   })
 

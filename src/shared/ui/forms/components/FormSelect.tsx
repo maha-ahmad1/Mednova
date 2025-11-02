@@ -22,6 +22,7 @@ interface FormSelectProps {
   placeholder?: string;
   labelClassName?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 export const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
@@ -36,6 +37,7 @@ export const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
       placeholder = "أختر",
       labelClassName,
       className,
+      disabled,
     },
     ref
   ) => {
@@ -62,6 +64,7 @@ export const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
               error && "border-red-500 focus:ring-red-500",
               className
             )}
+              disabled={disabled}
           >
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,7 +13,6 @@ import PatientPersonal1Card from "./PatientPersonal1Card";
 import PatientPersonal2Card from "./PatientPersonal2Card";
 import type { PatientProfile } from "@/types/patient";
 import { signIn } from "next-auth/react";
-
 
 export default function PatientInfo() {
   const { data: session } = useSession();
@@ -123,186 +123,84 @@ export default function PatientInfo() {
 
     return serverError ?? clientError;
   };
-const handleSave = async (card: string) => {
-  try {
-    let validationResult;
+  const handleSave = async (card: string) => {
+    try {
+      let validationResult;
 
-    // 1️⃣ التحقق من صحة البيانات حسب البطاقة
-    if (card === "personal1") {
-      validationResult = personal1Schema.safeParse(formValues);
-    } else {
-      validationResult = personal2Schema.safeParse(formValues);
-    }
+      if (card === "personal1") {
+        validationResult = personal1Schema.safeParse(formValues);
+      } else {
+        validationResult = personal2Schema.safeParse(formValues);
+      }
 
-    if (!validationResult.success) {
-      const fieldErrors: Record<string, string> = {};
-      validationResult.error.issues.forEach((issue) => {
-        const field = issue.path[0] as string;
-        fieldErrors[field] = issue.message;
+      if (!validationResult.success) {
+        const fieldErrors: Record<string, string> = {};
+        validationResult.error.issues.forEach((issue) => {
+          const field = issue.path[0] as string;
+          fieldErrors[field] = issue.message;
+        });
+        setServerErrors(fieldErrors);
+        toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
+        return;
+      }
+
+      if (card === "personal1") {
+        const payload: Partial<PatientProfile> = {
+          full_name: formValues.full_name,
+          email: formValues.email,
+          phone: formValues.countryCode
+            ? `${formValues.countryCode}${formValues.phone}`
+            : formValues.phone,
+          birth_date: formValues.birth_date,
+          customer_id: String(userId),
+        };
+        await update(payload);
+      } else if (card === "personal2") {
+        const emergencyPhone = formValues.emergencyCountryCode
+          ? `${formValues.emergencyCountryCode}${formValues.emergency_contact}`
+          : formValues.emergency_contact;
+
+        const patientPayload = {
+          customer_id: String(userId),
+          gender:
+            formValues.gender === "male"
+              ? "Male"
+              : formValues.gender === "female"
+              ? "Female"
+              : undefined,
+          emergency_phone: emergencyPhone,
+        };
+
+        const locationPayload = {
+          customer_id: String(userId),
+          country: formValues.country,
+          city: formValues.city,
+          formatted_address: formValues.formatted_address,
+        };
+
+        await update(patientPayload);
+        await updateLocation(locationPayload);
+      }
+
+      // 3️⃣ إعادة جلب البيانات من API
+      await refetch();
+
+      // 4️⃣ تحديث session/JWT لتحديث isCompleted
+      await signIn("credentials", {
+        redirect: false,
+        email: session?.user?.email || "",
+        password: "", // حسب الحاجة إذا تستخدم كلمة سر أو طريقة أخرى
       });
-      setServerErrors(fieldErrors);
-      toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
-      return;
+
+      // 5️⃣ تنظيف الحالة المحلية
+      setEditingCard(null);
+      setServerErrors({});
+      toast.success("تم حفظ التعديلات بنجاح");
+    } catch (err) {
+      console.error("handleSave error:", err);
+      toast.error("حدث خطأ أثناء التحديث");
     }
-
-    // 2️⃣ تجهيز payload حسب البطاقة
-    if (card === "personal1") {
-      const payload: Partial<PatientProfile> = {
-        full_name: formValues.full_name,
-        email: formValues.email,
-        phone: formValues.countryCode
-          ? `${formValues.countryCode}${formValues.phone}`
-          : formValues.phone,
-        birth_date: formValues.birth_date,
-        customer_id: String(userId),
-      };
-      await update(payload);
-    } else if (card === "personal2") {
-      const emergencyPhone = formValues.emergencyCountryCode
-        ? `${formValues.emergencyCountryCode}${formValues.emergency_contact}`
-        : formValues.emergency_contact;
-
-      const patientPayload = {
-        customer_id: String(userId),
-        gender:
-          formValues.gender === "male"
-            ? "Male"
-            : formValues.gender === "female"
-            ? "Female"
-            : undefined,
-        emergency_phone: emergencyPhone,
-      };
-
-      const locationPayload = {
-        customer_id: String(userId),
-        country: formValues.country,
-        city: formValues.city,
-        formatted_address: formValues.formatted_address,
-      };
-
-      await update(patientPayload);
-      await updateLocation(locationPayload);
-    }
-
-    // 3️⃣ إعادة جلب البيانات من API
-    await refetch();
-
-    // 4️⃣ تحديث session/JWT لتحديث isCompleted
-    await signIn("credentials", {
-      redirect: false,
-      email: session?.user?.email || "",
-      password: "", // حسب الحاجة إذا تستخدم كلمة سر أو طريقة أخرى
-    });
-
-    // 5️⃣ تنظيف الحالة المحلية
-    setEditingCard(null);
-    setServerErrors({});
-    toast.success("تم حفظ التعديلات بنجاح");
-  } catch (err) {
-    console.error("handleSave error:", err);
-    toast.error("حدث خطأ أثناء التحديث");
-  }
-};
-
-  // const handleSave = async (card: string) => {
-  //   try {
-  //     let validationResult;
-  //     if (card === "personal1") {
-  //       validationResult = personal1Schema.safeParse(formValues);
-  //     } else {
-  //       validationResult = personal2Schema.safeParse(formValues);
-  //     }
-
-  //     if (!validationResult.success) {
-  //       const fieldErrors: Record<string, string> = {};
-  //       validationResult.error.issues.forEach((issue) => {
-  //         const field = issue.path[0] as string;
-  //         fieldErrors[field] = issue.message;
-  //       });
-  //       setServerErrors(fieldErrors);
-  //       toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
-  //       return;
-  //     }
-
-  //     if (card === "personal1") {
-  //       const payload: Partial<PatientProfile> = {
-  //         full_name: formValues.full_name,
-  //         email: formValues.email,
-  //         phone: formValues.countryCode
-  //           ? `${formValues.countryCode}${formValues.phone}`
-  //           : formValues.phone,
-  //         birth_date: formValues.birth_date,
-  //         customer_id: String(userId),
-  //       };
-
-  //       await update(payload);
-  //     } else if (card === "personal2") {
-  //       const emergencyPhone = formValues.emergencyCountryCode
-  //         ? `${formValues.emergencyCountryCode}${formValues.emergency_contact}`
-  //         : formValues.emergency_contact;
-
-  //       const dataToValidate = {
-  //         formatted_address: formValues.formatted_address,
-  //         country: formValues.country,
-  //         city: formValues.city,
-  //         gender: formValues.gender,
-  //         emergency_contact: formValues.emergency_contact,
-  //       };
-
-  //       const validationResult = personal2Schema.safeParse(dataToValidate);
-
-  //       if (!validationResult.success) {
-  //         const fieldErrors: Record<string, string> = {};
-  //         validationResult.error.issues.forEach((issue) => {
-  //           const field = issue.path[0] as string;
-  //           fieldErrors[field] = issue.message;
-  //         });
-  //         setServerErrors(fieldErrors);
-  //         toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
-  //         return;
-  //       }
-
-  //       // ✅ التحديث الصحيح للـ patient
-  //       const patientPayload = {
-  //         customer_id: String(userId),
-  //         gender:
-  //           formValues.gender === "male"
-  //             ? "Male"
-  //             : formValues.gender === "female"
-  //             ? "Female"
-  //             : undefined,
-  //         emergency_phone: emergencyPhone,
-  //       };
-
-  //       const locationPayload = {
-  //         customer_id: String(userId),
-  //         country: formValues.country,
-  //         city: formValues.city,
-  //         formatted_address: formValues.formatted_address,
-  //       };
-
-  //       try {
-  //         await update(patientPayload); 
-  //         await updateLocation(locationPayload);
-  //         await refetch();
-  //         toast.success("تم حفظ التعديلات بنجاح");
-  //       } catch (error) {
-  //         toast.error("حدث خطأ أثناء التحديث");
-  //       }
-
-  //       setEditingCard(null);
-  //       setServerErrors({});
-  //     }
-
-  //     await refetch();
-  //     setEditingCard(null);
-  //     setServerErrors({});
-  //     toast.success("تم حفظ التغييرات بنجاح");
-  //   } catch (err) {
-  //     console.error("handleSave error:", err);
-  //     toast.error("حدث خطأ أثناء التحديث");
-  //   }
-  // };
+  };
 
   return (
     <div className="container max-w-5xl mx-auto">

@@ -1,11 +1,12 @@
 import { Footer } from "@/shared/ui/Footer";
-import Hero from "./hero";
-import LandingNavbar from "@/components/ui/LandingNavbar";
 import WhyMednova from "./whyMednova";
-import SmartGlove from "./smartGlove";
-import Services from "./Services";
-import MostRatedProfessionals from "./mostRatedProfessionals";
+import Hero from "./hero";
 import Program from "./program";
+import SmartGlove from "./smartGlove";
+import MostRatedProfessionals from "./mostRatedProfessionals";
+import Services from "./Services";
+
+
 export default function HomeSections() {
   return (
     <>

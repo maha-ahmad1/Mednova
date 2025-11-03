@@ -1,6 +1,7 @@
 "use client"
-import HomeSections from "@/features/home";
 import { useSession } from "next-auth/react";
+import HomeSections from "@/features/home/ui";
+
 
 export default function Home() {
   const { data: session } = useSession();

@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import therapist from "../../../public/images/home/therapist.jpg";
 import { MessageSquareIcon, VideoIcon, StarIcon } from "lucide-react";
 
 import axios from "axios";
@@ -15,9 +14,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
 
 
@@ -150,7 +147,7 @@ export default function TherapistsAndCenters() {
                     className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                   >
       
-                    <Image src={therapist} alt="therapist" className="w-full h-48 object-cover" />
+                    <Image src={"/images/home/therapist.jpg"} alt="therapist" className="w-full h-48 object-cover" width={100} height={100} />
                     <div className="text-[#4B5563]  mt-2 text-start mx-3">
                       <div></div>
                       <div className="mb-4">

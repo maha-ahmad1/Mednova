@@ -2,10 +2,9 @@ import { Clock, FileCheck, Shield } from "lucide-react";
 
 export default function PendingProfilePage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="h-screen flex items-center justify-center ">
       <div className="max-w-md w-full">
         <div className="bg-gradient-to-l from-white to-white/90 rounded-2xl shadow-2xl border border-gray-100 p-8 text-center">
-          {/* أيقونة رئيسية */}
           <div className="relative mb-6">
             <div className="w-20 h-20 bg-gradient-to-br from-[#32A88D] to-[#2a8a7a] rounded-full flex items-center justify-center mx-auto shadow-lg">
               <FileCheck className="w-10 h-10 text-white" />
@@ -17,18 +16,15 @@ export default function PendingProfilePage() {
             </div>
           </div>
 
-          {/* العنوان الرئيسي */}
           <h1 className="text-2xl font-bold text-gray-800 mb-3">
             حسابك تحت المراجعة
           </h1>
 
-          {/* الرسالة التوضيحية */}
           <p className="text-gray-600 mb-6 leading-relaxed">
             نعمل على مراجعة معلومات حسابك للتأكد من صحتها وكفايتها. 
             هذه العملية تستغرق عادةً من 24 إلى 48 ساعة.
           </p>
 
-          {/* معلومات إضافية */}
           <div className="bg-blue-50/50 border border-blue-200 rounded-xl p-4 mb-6">
             <div className="flex items-center justify-center gap-2 text-blue-700 mb-2">
               <Shield className="w-5 h-5" />

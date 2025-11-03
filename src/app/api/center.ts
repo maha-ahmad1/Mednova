@@ -26,7 +26,7 @@ export interface CenterFormValues {
   country?: string;
   formatted_address?: string;
 }
-
+//هذه هي الدالة التي تحول البيانات من فورم عادي إلى FormData ثم ترسلها للسيرفر عبر API:
 export const storeCenterDetails = async (
   axios: AxiosInstance,
   data: CenterFormValues
@@ -110,3 +110,4 @@ export const storeCenterDetails = async (
 
   return response.data;
 };
+// يعني انا هنا بتعامل مع الداتا لي من الفورم وبجهزها للارسال وبالكستم هوك بخليه يستقبله ويهندل الايرور هناك 

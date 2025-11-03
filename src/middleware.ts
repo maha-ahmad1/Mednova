@@ -44,7 +44,7 @@ export async function middleware(req: NextRequest) {
   console.log("🔐 Full Token:", token);
 
   if (!token && pathname.startsWith("/profile")) {
-    console.log("🚫 No token found, redirecting to /auth/login");
+    console.log("🚫 No token found, redirecting to /login");
 
     url.pathname = "/login";
     return NextResponse.redirect(url);

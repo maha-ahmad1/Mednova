@@ -194,7 +194,7 @@ export default function Hero() {
               </div>
               <div className="hidden md:flex gap-6 items-center">
                 <button className="text-secondary rounded-lg border border-secondary px-4 py-2 ">
-                  <Link href="/auth/login">تسجيل دخول</Link>
+                  <Link href="/login">تسجيل دخول</Link>
                 </button>
               </div>
               <div className="md:hidden p-4 flex justify-between items-center">

@@ -252,7 +252,7 @@ export default function Hero() {
                       رحلتك للشفاء تبدأ بميدنوفا
                     </span>
                   </div>
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900  mb-2">
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800  mb-2">
                     راحة جسدك تبدأ من هنا
                   </h1>
 

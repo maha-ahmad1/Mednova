@@ -34,8 +34,8 @@ export default async function RootLayout({
           <SessionProviderWrapper>
             <Suspense fallback={null}>
               <main className="min-h-screen">
-                <NavbarWrapper>{children}
-                </NavbarWrapper>
+                {/* <NavbarWrapper>{children}
+                </NavbarWrapper> */}
                 {children}
                 </main>
               <Toaster richColors position="top-center" />

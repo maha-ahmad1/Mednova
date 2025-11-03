@@ -39,7 +39,7 @@ type TypeItem = {
 };
 
 export default function MostRatedProfessionals() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["mostRatedProfessionals"],
@@ -48,7 +48,7 @@ export default function MostRatedProfessionals() {
         const token = session?.accessToken;
 
         const res = await axios.get(
-          "https://demoapplication.jawebhom.com/api/rating",
+          "https://demoapplication.jawebhom.com/api/rating?typeServiceProvider=therapist",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -67,21 +67,25 @@ export default function MostRatedProfessionals() {
         throw err;
       }
     },
-    enabled: !!session?.accessToken,
+    enabled: status === "authenticated",
   });
+   const items = data?.data?.slice(0, 4) || [];
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading data</p>;
 
   return (
     <section className=" py-20 px-14 md:px-18 lg:px-28">
       <div className="flex flex-col gap-7  mx-auto text-center">
         <div className="  max-w-[400] flex flex-col mx-auto ">
-          <h1 className="text-2xl font-bold  p-2">المختصون الأكثر تقييما</h1>
-          <div className=" w-20 h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full mb-2  mx-auto"></div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">المختصون الأكثر تقييما</h1>
+          {/* <div className=" w-20 h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full mb-2  mx-auto"></div> */}
         </div>
+        {status === "loading" || isLoading  ? (
+          <p className="text-gray-500 text-center">جاري التحميل...</p>
+        ) : error ? (
+          <p className="text-red-500 text-center">حدث خطأ في تحميل البيانات</p>
+        ) : (
         <div className=" flex flex-col md:flex-row gap-5 justify-center">
-          {data?.data?.slice(0, 4).map((data: TypeItem) => {
+          {items.map((data: TypeItem) => {
             return (
               <div
                 key={data.id}
@@ -108,7 +112,7 @@ export default function MostRatedProfessionals() {
                       </p>
                     </div>
                     <p className="text-xs text-start">
-                      {data.therapist_details.university_name}
+                      {data.therapist_details?.university_name}
                     </p>
                   </div>
                 </div>
@@ -150,6 +154,7 @@ export default function MostRatedProfessionals() {
             );
           })}
         </div>
+        )}
       </div>
     </section>
   );

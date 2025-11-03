@@ -65,8 +65,8 @@ export default function Services() {
     <section className=" bg-[#F8F7F7]  py-20 px-14 md:px-18 lg:px-28">
       <div className="flex flex-col gap-7  mx-auto text-center">
         <div className="  max-w-[400] flex flex-col mx-auto ">
-          <h1 className="text-2xl font-bold  p-2">خدماتنا المميزة</h1>
-          <div className=" w-20 h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full mb-2  mx-auto"></div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">خدماتنا المميزة</h1>
+          {/* <div className=" w-20 h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full mb-2  mx-auto"></div> */}
           <p className="text-[#4B5563] text-lg leading-7">
             نوفّر خدمات طبية متكاملة ومبتكرة لعلاج الفيزيائي، مصمّمة لتلبية
             احتياجاتك الصحية بدقة، باستخدام أحدث التقنيات وأفضل المختصين.

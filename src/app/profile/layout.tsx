@@ -17,13 +17,11 @@ export default function DashboardLayout({
 
   return (
     <div className="flex min-h-screen bg-gray-50" dir="rtl">
-{!isCreatePage && !isPendingPage && <Sidebar />}
+      {!isCreatePage && !isPendingPage && <Sidebar />}
       <div className={cn("flex-1 flex flex-col")}>
-        <Navbar />
+        {!isCreatePage && !isPendingPage && <Navbar />}
 
-        <main className="flex-1 container mx-auto px-6 py-8">
-          {children}
-        </main>
+        <main className="flex-1 container mx-auto px-6 py-8">{children}</main>
       </div>
     </div>
   );

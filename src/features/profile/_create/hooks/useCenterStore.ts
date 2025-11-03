@@ -10,10 +10,10 @@ interface UseCenterOptions {
 }
 
 export const useCenterStore = (options?: UseCenterOptions) => {
-  const axios = useAxiosInstance()
+  const axios = useAxiosInstance() //useAxiosInstance عادة يكون Hook جاهز من عندك لتهيئة Axios مع التوكن أو الإعدادات العامة.
 
   const mutation = useMutation({
-    mutationFn: (data: CenterFormValues) => storeCenterDetails(axios, data),
+    mutationFn: (data: CenterFormValues) => storeCenterDetails(axios, data), //هي الدالة التي سترسل البيانات للسيرفر (storeCenterDetails
     onError: (error: AxiosError<AxiosErrorResponse>) => {
       const status = error.response?.status
       const errorData = error.response?.data

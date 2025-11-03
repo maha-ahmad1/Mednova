@@ -150,7 +150,6 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
 
   const getFieldError = (field: keyof typeof formValues) => {
     const serverError = serverErrors[String(field)];
-    // personalSchema.shape has specific Zod types; assert a generic indexable shape
     const shape = personalSchema.shape as Record<string, z.ZodTypeAny>;
     const parser = shape[String(field)];
     const clientError = parser?.safeParse(formValues[field] ?? "").error
@@ -161,19 +160,10 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
   return (
     <div className="bg-gradient-to-b from-[#32A88D]/10 to-white rounded-2xl shadow-sm border border-gray-100 p-6 pl-8 hover:shadow-xl transition-all duration-300">
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* صورة الملف الشخصي */}
-        {/* <div className="flex-shrink-0 flex justify-center lg:justify-start">
-          <div className="w-24 h-24 bg-[#32A88D] rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-            {displayProfile.full_name?.charAt(0) || 'U'}
-          </div>
-        </div> */}
-
+    
         <div className="flex-1">
           <div className="flex justify-between items-start mb-6">
             <div>
-              {/* <h2 className="text-2xl font-bold text-gray-800">
-                {displayProfile.full_name || "لم يتم تعيين الاسم"}
-              </h2> */}
               <p className="text-2xl font-bold text-gray-800">البيانات الشخصية</p>
             </div>
             
@@ -274,6 +264,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                   rtl
                   error={getFieldError("email")}
                   className="bg-white"
+                  readOnly
                 />
                 <FormPhoneInput
                   label="رقم الهاتف"

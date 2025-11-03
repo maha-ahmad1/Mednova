@@ -8,6 +8,7 @@ import { Loader2, Edit, User, Mail, Phone, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useSession } from "next-auth/react";
 import type { PatientProfile } from "@/types/patient";
+import { FormInput } from "@/shared/ui/forms";
 interface Props {
   patient: PatientProfile;
   onSave: (card: string) => void;
@@ -26,7 +27,7 @@ export default function PatientPersonal1Card({
   patient,
   onSave,
   isUpdating,
-  
+
   editingCard,
   startEdit,
   cancelEdit,
@@ -62,7 +63,6 @@ export default function PatientPersonal1Card({
     return new Date(dateString).toLocaleDateString("ar-EG");
   };
   const { data: session } = useSession();
-
 
   console.log("session:", session);
   return (
@@ -175,16 +175,20 @@ export default function PatientPersonal1Card({
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+              {/* <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[#32A88D]" />
                 البريد الإلكتروني
-              </label>
-              <Input
+              </label> */}
+              <FormInput
+                label=" البريد الإلكتروني"
                 type="email"
                 value={(formValues.email as string) || ""}
                 onChange={(e) => handleChange("email", e.target.value)}
                 className="bg-white border-gray-300 focus:border-[#32A88D]"
                 placeholder="example@email.com"
+                readOnly
+                icon={Mail}
+                iconPosition="right"
               />
               {getFieldError("email", "personal1") && (
                 <p className="text-red-500 text-sm mt-1">
@@ -232,41 +236,6 @@ export default function PatientPersonal1Card({
               )}
             </div>
           </div>
-
-          {/* {(formValues.full_name || formValues.email) && (
-            <div className="bg-white p-4 rounded-lg border border-gray-200 mt-6">
-              <h5 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
-                <User className="w-4 h-4 text-[#32A88D]" />
-                معاينة البيانات:
-              </h5>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                {formValues.full_name && (
-                  <div>
-                    <span className="text-gray-500">الاسم: </span>
-                    <span className="text-gray-800 font-medium">{formValues.full_name}</span>
-                  </div>
-                )}
-                {formValues.email && (
-                  <div>
-                    <span className="text-gray-500">البريد: </span>
-                    <span className="text-gray-800 font-medium">{formValues.email}</span>
-                  </div>
-                )}
-                {formValues.phone && (
-                  <div>
-                    <span className="text-gray-500">الهاتف: </span>
-                    <span className="text-gray-800 font-medium">{formValues.phone}</span>
-                  </div>
-                )}
-                {formValues.birth_date && (
-                  <div>
-                    <span className="text-gray-500">تاريخ الميلاد: </span>
-                    <span className="text-gray-800 font-medium">{formatDate(formValues.birth_date)}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )} */}
         </div>
       )}
     </div>

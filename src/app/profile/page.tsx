@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/authOptions"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 import PatientProfile from "./_views/patient/ProfileView"
 import TherapistProfile from "./_views/therapist/ProfileView"

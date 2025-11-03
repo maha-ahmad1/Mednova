@@ -1,14 +1,26 @@
 export const countries = [
   {
-    name: "Egypt",
-    cities: ["Cairo", "Alexandria", "Giza", "Shubra El Kheima"]
+    name: "السعودية",
+    cities: ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة", "الدمام", "الخبر"]
   },
   {
-    name: "United States",
-    cities: ["New York", "Los Angeles", "Chicago", "Houston"]
+    name: "الإمارات",
+    cities: ["دبي", "أبو ظبي", "الشارقة", "عجمان", "العين", "رأس الخيمة"]
   },
   {
-    name: "Palestine",
-    cities: ["Gaza", "Ramallah", "Hebron", "Nablus"]
+    name: "الكويت",
+    cities: ["الكويت", "الفروانية", "حولي", "الأحمدي", "الجهراء", "مبارك الكبير"]
   },
+  {
+    name: "قطر",
+    cities: ["الدوحة", "الريان", "أم صلال", "الخور", "الوكرة", "الشحانية"]
+  },
+  {
+    name: "البحرين",
+    cities: ["المنامة", "المحرق", "الرفاع", "مدينة حمد", "الحد", "سترة"]
+  },
+  {
+    name: "عمان",
+    cities: ["مسقط", "صلالة", "نزوى", "صحار", "البريمي", "السيب"]
+  }
 ];

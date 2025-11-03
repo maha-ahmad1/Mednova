@@ -218,15 +218,7 @@ export function TherapistBioCard({
               </ul>
             </div>
 
-            {/* معاينة سريعة */}
-            {/* {bio && (
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <h5 className="font-medium text-gray-700 mb-2">معاينة النبذة:</h5>
-                <div className="text-sm text-gray-600 max-h-32 overflow-y-auto">
-                  {bio.length > 150 ? `${bio.substring(0, 150)}...` : bio}
-                </div>
-              </div>
-            )} */}
+          
           </div>
         </div>
       )}

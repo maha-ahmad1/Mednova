@@ -8,8 +8,10 @@ import type { TherapistProfile } from "@/types/therpist";
 import { useUpdateSchedule } from "@/features/profile/_views/hooks/useUpdateSchedule";
 import type { TherapistFormValues } from "@/app/api/therapist";
 import { scheduleSchema } from "@/lib/validation";
-import { Loader2, Edit, Calendar, Clock, Sun, Moon } from "lucide-react";
+import { Loader2, Edit, Calendar, Sun, Moon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { isAxiosError } from "axios";
+import { ZodTypeAny } from "zod";
 
 type TherapistScheduleCardProps = {
   details: TherapistProfile;
@@ -83,14 +85,30 @@ export function TherapistscheduleCard({
     });
   };
 
+  // const getFieldError = (field: keyof typeof values) => {
+  //   const serverError = serverErrors[field];
+  //   const clientError = scheduleSchema.shape[field]
+  //     ? (scheduleSchema.shape[field] as any).safeParse(values[field])?.error
+  //         ?.issues?.[0]?.message
+  //     : undefined;
+  //   return serverError ?? clientError;
+  // };
+
   const getFieldError = (field: keyof typeof values) => {
-    const serverError = serverErrors[field];
-    const clientError = scheduleSchema.shape[field]
-      ? (scheduleSchema.shape[field] as any).safeParse(values[field])?.error
-          ?.issues?.[0]?.message
-      : undefined;
-    return serverError ?? clientError;
-  };
+  const serverError = serverErrors[field];
+
+  const shapeField = scheduleSchema.shape[field] as ZodTypeAny | undefined;
+  let clientError: string | undefined;
+
+  if (shapeField) {
+    const result = shapeField.safeParse(values[field]);
+    if (!result.success) {
+      clientError = result.error.issues[0]?.message;
+    }
+  }
+
+  return serverError ?? clientError;
+};
 
   const toggleDay = (dayKey: string) => {
     setValues((v) => ({
@@ -127,24 +145,30 @@ export function TherapistscheduleCard({
       setEditing(false);
       setServerErrors({});
       refetch();
-    } catch (error: any) {
-      const apiErrors = error?.response?.data?.data || {};
-      if (Object.keys(apiErrors).length > 0) {
-        setServerErrors(apiErrors);
-        toast.error("تحقق من الحقول قبل الحفظ");
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        const apiErrors = error.response?.data?.data || {};
+        if (apiErrors && Object.keys(apiErrors).length > 0) {
+          setServerErrors(apiErrors);
+          toast.error("تحقق من الحقول قبل الحفظ");
+        } else {
+          toast.error("حدث خطأ أثناء التحديث");
+        }
       } else {
-        toast.error("حدث خطأ أثناء التحديث");
+        toast.error("حدث خطأ غير متوقع");
       }
     }
   };
 
-  const FieldDisplay: React.FC<{ 
-    icon: React.ReactNode; 
-    label: string; 
+  const FieldDisplay: React.FC<{
+    icon: React.ReactNode;
+    label: string;
     value: React.ReactNode;
     className?: string;
   }> = ({ icon, label, value, className }) => (
-    <div className={`flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-100 ${className}`}>
+    <div
+      className={`flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-100 ${className}`}
+    >
       <div className="text-[#32A88D] mt-1">{icon}</div>
       <div className="flex-1">
         <span className="text-sm text-gray-500 block mb-2">{label}</span>
@@ -155,15 +179,15 @@ export function TherapistscheduleCard({
 
   const formatTime = (time: string) => {
     if (!time) return "-";
-    return new Date(`2000-01-01T${time}`).toLocaleTimeString('ar-EG', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
+    return new Date(`2000-01-01T${time}`).toLocaleTimeString("ar-EG", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
   const getDayLabel = (dayKey: string) => {
-    return days.find(d => d.key === dayKey)?.label || dayKey;
+    return days.find((d) => d.key === dayKey)?.label || dayKey;
   };
 
   return (
@@ -173,11 +197,11 @@ export function TherapistscheduleCard({
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
           <h3 className="text-xl font-bold text-gray-800">دوام العمل</h3>
         </div>
-        
+
         {!editing ? (
-          <Button 
-            onClick={startEdit} 
-            variant="outline" 
+          <Button
+            onClick={startEdit}
+            variant="outline"
             size="sm"
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
@@ -186,20 +210,18 @@ export function TherapistscheduleCard({
           </Button>
         ) : (
           <div className="flex gap-2">
-            <Button 
-              onClick={handleSave} 
+            <Button
+              onClick={handleSave}
               disabled={isUpdating}
               size="sm"
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
             >
-              {isUpdating && (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              )}
+              {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
               حفظ التغييرات
             </Button>
-            <Button 
-              onClick={cancelEdit} 
-              variant="outline" 
+            <Button
+              onClick={cancelEdit}
+              variant="outline"
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
@@ -217,19 +239,21 @@ export function TherapistscheduleCard({
             value={
               values.day_of_week.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {values.day_of_week.map(day => (
-                    <Badge 
-                      key={day} 
+                  {values.day_of_week.map((day) => (
+                    <Badge
+                      key={day}
                       className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
                     >
                       {getDayLabel(day)}
                     </Badge>
                   ))}
                 </div>
-              ) : "-"
+              ) : (
+                "-"
+              )
             }
           />
-          
+
           <FieldDisplay
             icon={<Sun className="w-5 h-5" />}
             label="دوام الصباح"
@@ -237,24 +261,32 @@ export function TherapistscheduleCard({
               values.start_time_morning && values.end_time_morning ? (
                 <div className="flex items-center gap-2">
                   <Badge className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm">
-                    {formatTime(values.start_time_morning)} - {formatTime(values.end_time_morning)}
+                    {formatTime(values.start_time_morning)} -{" "}
+                    {formatTime(values.end_time_morning)}
                   </Badge>
                 </div>
-              ) : "-"
+              ) : (
+                "-"
+              )
             }
           />
-          
+
           <FieldDisplay
             icon={<Moon className="w-5 h-5" />}
             label="دوام المساء"
             value={
-              values.is_have_evening_time && values.start_time_evening && values.end_time_evening ? (
+              values.is_have_evening_time &&
+              values.start_time_evening &&
+              values.end_time_evening ? (
                 <div className="flex items-center gap-2">
                   <Badge className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">
-                    {formatTime(values.start_time_evening)} - {formatTime(values.end_time_evening)}
+                    {formatTime(values.start_time_evening)} -{" "}
+                    {formatTime(values.end_time_evening)}
                   </Badge>
                 </div>
-              ) : "لا يوجد دوام مسائي"
+              ) : (
+                "لا يوجد دوام مسائي"
+              )
             }
           />
         </div>
@@ -264,11 +296,11 @@ export function TherapistscheduleCard({
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
             تعديل دوام العمل
           </h4>
-          
+
           <div className="space-y-6">
             {/* أيام العمل */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <label className=" text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#32A88D]" />
                 أيام العمل
               </label>
@@ -297,7 +329,7 @@ export function TherapistscheduleCard({
 
             {/* دوام الصباح */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <label className=" text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                 <Sun className="w-4 h-4 text-amber-500" />
                 دوام الصباح
               </label>
@@ -307,7 +339,10 @@ export function TherapistscheduleCard({
                   type="time"
                   value={values.start_time_morning}
                   onChange={(e) =>
-                    setValues((v) => ({ ...v, start_time_morning: e.target.value }))
+                    setValues((v) => ({
+                      ...v,
+                      start_time_morning: e.target.value,
+                    }))
                   }
                   rtl
                   error={getFieldError("start_time_morning")}
@@ -319,7 +354,10 @@ export function TherapistscheduleCard({
                   type="time"
                   value={values.end_time_morning}
                   onChange={(e) =>
-                    setValues((v) => ({ ...v, end_time_morning: e.target.value }))
+                    setValues((v) => ({
+                      ...v,
+                      end_time_morning: e.target.value,
+                    }))
                   }
                   rtl
                   error={getFieldError("end_time_morning")}
@@ -344,7 +382,9 @@ export function TherapistscheduleCard({
                     }
                     className="accent-[#32A88D] w-4 h-4"
                   />
-                  <span className="font-medium text-gray-700">يوجد دوام مسائي</span>
+                  <span className="font-medium text-gray-700">
+                    يوجد دوام مسائي
+                  </span>
                 </div>
               </div>
 

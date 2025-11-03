@@ -173,7 +173,7 @@ export function TherapistLicensesCard({
             label="ملف الشهادة"
             value={
               <FileLink 
-                url={details?.certificate_file}
+                url={details?.certificate_file ?? undefined}
                 label="عرض الشهادة"
                 icon={<Award className="w-4 h-4" />}
               />
@@ -185,7 +185,7 @@ export function TherapistLicensesCard({
             label="ملف الترخيص"
             value={
               <FileLink 
-                url={details?.license_file}
+                url={details?.license_file ?? undefined}
                 label="عرض الترخيص"
                 icon={<Shield className="w-4 h-4" />}
               />

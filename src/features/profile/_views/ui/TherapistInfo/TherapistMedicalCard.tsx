@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FormInput, FormSelect } from "@/shared/ui/forms";
 import { useUpdateTherapist } from "@/features/profile/_views/hooks/useUpdateTherapist";

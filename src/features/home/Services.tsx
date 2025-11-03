@@ -62,7 +62,7 @@ const ServicesCard = [
 
 export default function Services() {
   return (
-    <section className=" bg-[#F8F7F7]  py-20 px-14 md:px-18 lg:px-28">
+    <section className=" bg-[#F8F7F7]  py-20 px-5 md:px-18 lg:px-28">
       <div className="flex flex-col gap-7  mx-auto text-center">
         <div className="  max-w-[400] flex flex-col mx-auto ">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">خدماتنا المميزة</h1>
@@ -72,10 +72,10 @@ export default function Services() {
             احتياجاتك الصحية بدقة، باستخدام أحدث التقنيات وأفضل المختصين.
           </p>
         </div>
-        <div className=" flex flex-col md:flex-row gap-4">
+        <div className=" flex flex-col md:flex-row gap-4 mx-auto">
           {ServicesCard.map((Service) => {
             return (
-              <Card className="max-w-sm" key={Service.id}>
+              <Card className="max-w-sm " key={Service.id}>
                 <CardHeader>
                   <CardTitle className="mx-auto">
                     <div className="mx-auto border-2 border-dashed border-primary rounded-full p-2 bg-[#F8F7F7] mb-3 w-[50px] h-[50px]">

@@ -73,7 +73,7 @@ export default function MostRatedProfessionals() {
 
 
   return (
-    <section className=" py-20 px-14 md:px-18 lg:px-28">
+    <section className=" py-20 px-5 md:px-18 lg:px-28">
       <div className="flex flex-col gap-7  mx-auto text-center">
         <div className="  max-w-[400] flex flex-col mx-auto ">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">المختصون الأكثر تقييما</h1>

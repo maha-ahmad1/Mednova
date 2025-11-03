@@ -3,8 +3,8 @@ import Image from "next/image";
 import whyMednova from "../../../public/images/home/whyMednova.jpg";
 export default function WhyMednova() {
   return (
-    <section className=" bg-[#F8F7F7] py-20 px-14 md:px-18 lg:px-28 ">
-      <div className="grid  grid-cols-1  md:grid-cols-[2fr_1fr] p-10">
+    <section className=" bg-[#F8F7F7] py-20 px-5 md:px-10 lg:px-28 ">
+      <div className="grid  grid-cols-1  md:grid-cols-[2fr_1fr] md:pt-10">
         <div className=" order-2 md:order-none flex flex-col mt-30 w-[80%] text-center md:text-start mx-auto md:mx-0">
           <div className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
             لماذا منصة مدنوفا؟

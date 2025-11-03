@@ -142,190 +142,190 @@ export default function Hero() {
   const selectedType = watch("type");
   {
     return (
-      <section className="relative h-screen  ">
-        <div className=" mx-auto px-6 lg:px-16">
-          <div className=" rounded-xl  overflow-hidden">
-            <header className=" flex items-center justify-between px-6 ">
-              <div className="text-lg font-bold">
-                <Logo />
-              </div>
+      <section className="relative min-h-screen flex flex-col">
+        <header className=" fixed top-0 left-0 bg-white w-full z-50 flex items-center justify-between px-6 ">
+          <div className="text-lg font-bold">
+            <Logo />
+          </div>
 
-              <div>
-                <ul className="hidden md:flex">
-                  {NavLink.map((link) => {
-                    return (
-                      <li key={link.id}>
-                        {link.dropdown ? (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger
-                              asChild
-                              className="mx-2   hover:border-b-2 hover:border-b-secondary  mt-1  flex items-center gap-0.5 "
-                            >
-                              <Link
-                                href={link.link}
-                                className=" font-medium text-[#424952]"
-                              >
-                                {link.title}
-                                <ChevronDownIcon className="w-4 h-4 mt-1  " />
-                              </Link>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              {link.dropdown.map((item) => {
-                                return (
-                                  <DropdownMenuItem key={item.id}>
-                                    {item.title}
-                                  </DropdownMenuItem>
-                                );
-                              })}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        ) : (
+          <div>
+            <ul className="hidden md:flex">
+              {NavLink.map((link) => {
+                return (
+                  <li key={link.id}>
+                    {link.dropdown ? (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          asChild
+                          className="mx-2   hover:border-b-2 hover:border-b-secondary  mt-1  flex items-center gap-0.5 "
+                        >
                           <Link
                             href={link.link}
-                            className=" font-medium text-[#4B5563] mx-2   hover:border-b-2 hover:border-b-secondary  mt-1 flex items-center"
+                            className=" font-medium text-[#424952]"
                           >
                             {link.title}
+                            <ChevronDownIcon className="w-4 h-4 mt-1  " />
                           </Link>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-              <div className="hidden md:flex gap-6 items-center">
-                <button className="text-secondary rounded-lg border border-secondary px-4 py-2 ">
-                  <Link href="/auth/login">تسجيل دخول</Link>
-                </button>
-              </div>
-              <div className="md:hidden p-4 flex justify-between items-center">
-                <button onClick={() => setIsOpen(!isOpen)}>
-                  {isOpen ? (
-                    <X className="w-6 h-6" />
-                  ) : (
-                    <Menu className="w-6 h-6" />
-                  )}
-                </button>
-                {isOpen && (
-                  <div className="fixed inset-0 z-50 bg-black/20">
-                    <div className="bg-white w-64 h-full p-4 shadow-md relative">
-                      <div className="flex items-center justify-between border-b-2">
-                        <div className="">
-                          <Logo />
-                        </div>
-                        <button
-                          onClick={() => setIsOpen(false)}
-                          className=" text-gray-600 hover:text-black"
-                        >
-                          <X className="w-6 h-6" />
-                        </button>
-                      </div>
-
-                      <ul className="flex flex-col gap-2 mt-12">
-                        {NavLink.map((link) => (
-                          <li key={link.id}>
-                            <Link
-                              href={link.link}
-                              className="p-2 hover:bg-gray-100 rounded flex items-center justify-between"
-                              onClick={() => setIsOpen(false)}
-                            >
-                              {link.title}
-                              {link.dropdown && (
-                                <span className="ml-2">
-                                  <ChevronDownIcon />
-                                </span>
-                              )}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          {link.dropdown.map((item) => {
+                            return (
+                              <DropdownMenuItem key={item.id}>
+                                {item.title}
+                              </DropdownMenuItem>
+                            );
+                          })}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      <Link
+                        href={link.link}
+                        className=" font-medium text-[#4B5563] mx-2   hover:border-b-2 hover:border-b-secondary  mt-1 flex items-center"
+                      >
+                        {link.title}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          <div className="hidden md:flex gap-6 items-center">
+            <button className="text-secondary rounded-lg border border-secondary px-4 py-2 ">
+              <Link href="/auth/login">تسجيل دخول</Link>
+            </button>
+          </div>
+          <div className="md:hidden p-4 flex justify-between items-center">
+            <button onClick={() => setIsOpen(!isOpen)}>
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+            {isOpen && (
+              <div className="fixed inset-0 z-50 bg-black/20">
+                <div className="bg-white w-64 h-full p-4 shadow-md relative">
+                  <div className="flex items-center justify-between border-b-2">
+                    <div className="">
+                      <Logo />
                     </div>
-                  </div>
-                )}
-              </div>
-            </header>
-            <div className="  flex flex-col  items-center justify-center">
-              {/* الي بلم كلشي  */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-7 text-center md:text-start">
-                  <div className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-md text-sm mb-4">
-                    <span className="text-xs font-medium">
-                      رحلتك للشفاء تبدأ بميدنوفا
-                    </span>
-                  </div>
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800  mb-2">
-                    راحة جسدك تبدأ من هنا
-                  </h1>
-
-                  <p className="text-[#4B5563] max-w-2xl mb-6 text-md">
-                    استعد صحتك وثقتك بنفسك بمساعدة أفضل أخصائي العلاج الطبيعي
-                    والتأهيلي{" "}
-                  </p>
-
-                  <div className="flex items-center justify-center md:justify-start gap-4 mb-8">
-                    <Link
-                      href="/therapistsAndCenters"
-                      className="inline-flex items-center justify-center rounded-md bg-primary text-white px-5 py-3 text-sm font-medium shadow-lg "
+                    <button
+                      onClick={() => setIsOpen(false)}
+                      className=" text-gray-600 hover:text-black"
                     >
-                      ابدأ البحث الآن <ArrowLeft />
-                    </Link>
+                      <X className="w-6 h-6" />
+                    </button>
                   </div>
+
+                  <ul className="flex flex-col gap-2 mt-12">
+                    {NavLink.map((link) => (
+                      <li key={link.id}>
+                        <Link
+                          href={link.link}
+                          className="p-2 hover:bg-gray-100 rounded flex items-center justify-between"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          {link.title}
+                          {link.dropdown && (
+                            <span className="ml-2">
+                              <ChevronDownIcon />
+                            </span>
+                          )}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="pb-10 lg:col-span-5 relative flex justify-center lg:justify-end">
-                  <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,_#c3f7e8_0%,_#9ee6cf_35%,_rgba(255,255,255,0)_70%)] blur-3xl opacity-95"></div>
+              </div>
+            )}
+          </div>
+        </header>
+        <div className="pt-[15%] md:pt-[8%] mx-auto px-4 md:px-8 lg:px-16 w-full">
+          <div className="rounded-xl overflow-hidden pt-6 md:pt-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+              <div className="  transform -translate-y-4 text-center md:text-start order-2 md:order-1 lg:pr-20 xl:pr-32">
+                <div className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-md text-xs md:text-sm mb-3 md:mb-4">
+                  <span className="font-medium">
+                    رحلتك للشفاء تبدأ بميدنوفا
+                  </span>
+                </div>
 
-                  <div className="hidden lg:block relative  w-72 h-72 md:w-80 md:h-80 lg:w-96 lg:h-96">
-                    <Image
-                      src={doe}
-                      alt="doctor"
-                      width={300}
-                      height={300}
-                      className=" relative rounded-full object-cover  "
-                    />
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800 mb-3 leading-tight ">
+                  راحة جسدك تبدأ من هنا
+                </h1>
 
-                    <div className="absolute -right-3 top-20 w-10 h-10 rounded-full bg-primary   text-white flex items-center justify-center shadow">
-                      <MessageSquareIcon />
-                    </div>
-                    <div className="absolute right-70 top-50 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow">
-                      <VideoIcon />
-                    </div>
+                <p className="text-[#4B5563] max-w-xl mx-auto md:mx-0 mb-6 text-sm md:text-base">
+                  استعد صحتك وثقتك بنفسك بمساعدة أفضل أخصائي العلاج الطبيعي
+                  والتأهيلي
+                </p>
+
+                <div className="flex items-center justify-center md:justify-start gap-3 md:gap-4">
+                  <Link
+                    href="/therapistsAndCenters"
+                    className="inline-flex items-center justify-center rounded-md bg-primary text-white px-5 py-2.5 text-sm font-medium shadow-lg"
+                  >
+                    ابدأ البحث الآن <ArrowLeft className="mr-1" />
+                  </Link>
+                </div>
+              </div>
+
+              <div className="relative flex justify-center md:justify-end order-1 md:order-2">
+                <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,_#c3f7e8_0%,_#9ee6cf_35%,_rgba(255,255,255,0)_70%)] blur-2xl opacity-90"></div>
+
+                <div className="  relative w-60 h-60 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96">
+                  <Image
+                    src={doe}
+                    alt="doctor"
+                    className="rounded-full object-cover w-full h-full lg:absolute lg:-top-10 lg:left-10"
+                  />
+
+                  {/* <div className="absolute -right-2 top-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-white flex items-center justify-center shadow">
+                    <MessageSquareIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
+                  <div className="absolute right-16 top-12 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-white flex items-center justify-center shadow">
+                    <VideoIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </div> */}
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="absolute lg:top-[100%] lg:left-1/2 transform lg:-translate-x-1/2 lg:-translate-y-1/2 bg-gray-300 p-5 rounded-xl shadow-lg lg:w-[70%]">
-          <p className="text-xl font-bold mb-4 text-[#212121] text-center">
+
+        <div className="hidden md:block absolute md:bottom-[-70px] lg:bottom-[-80px] left-1/2 -translate-x-1/2 bg-[radial-gradient(circle,_#c3f7e8_0%,_#9ee6cf_100%,_rgba(255,255,255,0)_70%)] p-5 rounded-xl shadow-lg w-[90%] md:w-[75%] lg:w-[65%]">
+          <p className="text-lg md:text-xl font-bold mb-4 text-[#212121] text-center">
             ابحث عن المختصين والمراكز التأهيلية بسهولة
           </p>
-          {/* text-[#212121] */}
-          <div className="bg-white p-3 rounded-xl   shadow-lg  text-center w-full  mt-5">
+
+          <div className="bg-white p-4 rounded-xl shadow-lg w-full">
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-cols gap-3 "
+              className="grid grid-cols-1 md:grid-cols-4 gap-3 items-center"
             >
               <Select
                 onValueChange={(value) => setValue("type", value)}
                 value={selectedType}
               >
+                <SelectTrigger>
+                  <SelectValue placeholder="المختص/المركز" />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="center">مركز</SelectItem>
                   <SelectItem value="therapist">مختص</SelectItem>
                 </SelectContent>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="المختص/المركز" />
-                </SelectTrigger>
               </Select>
-              <Input type="" placeholder="الدولة" {...register("country")} />
-              <Input type="" placeholder="المدينة" {...register("city")} />
-              <Button type="submit">ابحث</Button>
-              <Button
-                type="submit"
-                variant="outline"
-                className="bg-white text-primary border-1-primary "
-              >
-                مسح
-              </Button>
+
+              <Input placeholder="الدولة" {...register("country")} />
+              <Input placeholder="المدينة" {...register("city")} />
+
+              <div className="flex gap-2">
+                <Button type="submit" className="flex-1">
+                  ابحث
+                </Button>
+                <Button type="reset" variant="outline" className="flex-1">
+                  مسح
+                </Button>
+              </div>
             </form>
           </div>
         </div>

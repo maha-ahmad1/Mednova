@@ -2,10 +2,11 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
+import * as z from "zod"
 import { FormInput, FormSelect } from "@/shared/ui/forms"
 import { FormPhoneInput } from "@/shared/ui/forms/components/FormPhoneInput"
 import { Button } from "@/components/ui/button"
-import { Loader2, Edit, Phone, Calendar, Building, User } from "lucide-react"
+import { Loader2, Edit, Phone, Calendar, User } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import type { CenterProfile } from "@/types/center"
@@ -15,12 +16,14 @@ import { centerSchema } from "@/lib/validation"
 interface CenterPersonalCardProps {
   profile: CenterProfile
   userId: string
-  refetch: () => void
+  // refetch may return the profile directly or an object with `data`.
+  refetch: () => Promise<CenterProfile | { data?: CenterProfile } | void>
 }
 
 export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile, userId, refetch }) => {
   const [editing, setEditing] = useState(false)
-  const [formValues, setFormValues] = useState<Record<string, any>>({})
+  type FormValues = Partial<Record<"phone" | "birth_date" | "gender" | "countryCode" | "image", unknown>>
+  const [formValues, setFormValues] = useState<FormValues>({})
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({})
   const [localProfile, setLocalProfile] = useState<Partial<CenterProfile> | null>(null)
 
@@ -32,7 +35,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
     if (!editing) {
       setFormValues({})
     }
-  }, [profile])
+  }, [profile, editing])
 
   const startEdit = () => {
     const source = localProfile ?? profile
@@ -73,29 +76,50 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
     }
     try {
       // Combine country code and phone number before sending
-      const payload = {
-        ...formValues,
-        phone: formValues.countryCode ? `${formValues.countryCode}${formValues.phone}` : formValues.phone,
-        customer_id: String(userId),
-      }
+      const phone =
+        typeof formValues.countryCode === "string" && typeof formValues.phone === "string"
+        ? `${String(formValues.countryCode)}${formValues.phone}`
+        : typeof formValues.phone === "string"
+        ? formValues.phone
+        : undefined
 
-      // Remove countryCode from payload as it's not a server field
-      delete payload.countryCode
+      const payload = {
+        customer_id: String(userId),
+        phone,
+        birth_date: formValues.birth_date as string | undefined,
+        gender: formValues.gender as string | undefined,
+        image: formValues.image as File | string | undefined,
+      } as unknown as import("@/app/api/center").CenterFormValues
 
       await update(payload)
       const refetchResult = await refetch()
-      const fresh: CenterProfile | undefined = refetchResult?.data || refetchResult
+
+      let fresh: CenterProfile | undefined
+      const r = refetchResult as unknown
+      if (!r) {
+        fresh = undefined
+      } else if (typeof r === "object" && r !== null && "data" in r) {
+        fresh = (r as { data?: CenterProfile }).data
+      } else {
+        fresh = r as CenterProfile | undefined
+      }
+
       if (fresh) setLocalProfile(fresh)
       setEditing(false)
       setServerErrors({})
       toast.success("تم حفظ التغييرات بنجاح")
-    } catch {
+    } catch (err) {
+      // preserve existing behavior: show generic error toast
+      console.error(err)
       toast.error("حدث خطأ أثناء التحديث")
     }
   }
 
-  const getFieldError = (field: keyof typeof formValues) => {
-    return serverErrors[field] ?? undefined
+  const getFieldError = (field: string) => {
+    const serverError = serverErrors[field]
+    const shape = centerSchema.shape as Record<string, z.ZodTypeAny>
+    const clientError = shape[field]?.safeParse((formValues as Record<string, unknown>)[field] ?? "").error?.issues?.[0]?.message
+    return serverError ?? clientError
   }
 
   const FieldDisplay: React.FC<{ 
@@ -213,9 +237,9 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormPhoneInput
               label="رقم الهاتف"
-              countryCodeValue={formValues.countryCode || "+968"}
+              countryCodeValue={String((formValues.countryCode as string) ?? "+968")}
               onCountryCodeChange={(code) => setFormValues((s) => ({ ...s, countryCode: code }))}
-              value={formValues.phone || ""}
+              value={(formValues.phone as string) ?? ""}
               onChange={(e) => setFormValues((s) => ({ ...s, phone: e.target.value }))}
               rtl
               iconPosition="right"
@@ -227,7 +251,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
             <FormInput
               label="تاريخ التأسيس"
               type="date"
-              value={formValues.birth_date}
+              value={formValues.birth_date as string | undefined}
               onChange={(e) => setFormValues((s) => ({ ...s, birth_date: e.target.value }))}
               rtl
               error={getFieldError("birth_date")}
@@ -240,7 +264,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
                 { value: "Male", label: "ذكر" },
                 { value: "Female", label: "أنثى" },
               ]}
-              value={formValues.gender}
+              value={formValues.gender as string | undefined}
               onValueChange={(val) => setFormValues((s) => ({ ...s, gender: val }))}
               rtl
               error={getFieldError("gender")}

@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import * as z from "zod";
 import {
   FormInput,
   FormPhoneInput,
   FormSelect,
 } from "@/shared/ui/forms";
 import { Button } from "@/components/ui/button";
-import { Loader2, Edit, AlertCircle } from "lucide-react";
+import { Loader2, Edit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import type { TherapistProfile } from "@/types/therpist";
@@ -18,7 +19,8 @@ import { personalSchema } from "@/lib/validation";
 interface TherapistPersonalCardProps {
   profile: TherapistProfile;
   userId: string;
-  refetch: () => void;
+  // refetch may return either the fresh profile or an object with a `data` field
+  refetch: () => Promise<TherapistProfile | { data?: TherapistProfile } | void>;
   serverErrors?: Record<string, string>;
 }
 
@@ -28,7 +30,9 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
   refetch,
 }) => {
   const [editing, setEditing] = useState(false);
-  const [formValues, setFormValues] = useState<Record<string, any>>({});
+  type PersonalSchemaType = z.infer<typeof personalSchema>;
+  type FormValues = Partial<Record<keyof PersonalSchemaType | "image", unknown>>;
+  const [formValues, setFormValues] = useState<FormValues>({});
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [localProfile, setLocalProfile] =
     useState<Partial<TherapistProfile> | null>(null);
@@ -40,7 +44,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
     if (!editing) {
       setFormValues({});
     }
-  }, [profile]);
+  }, [profile, editing]);
 
   const splitPhone = (p?: string | null) => {
     if (!p) return { country: "+968", local: "" };
@@ -96,21 +100,32 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
 
     try {
       const phoneWithCode =
-        countryCode && formValues.phone
+        countryCode && typeof formValues.phone === "string" && formValues.phone
           ? `${countryCode}${formValues.phone}`
-          : formValues.phone;
+          : typeof formValues.phone === "string"
+          ? formValues.phone
+          : undefined;
       const payload: TherapistFormValues = {
-        ...formValues,
+        full_name: (formValues.full_name as string) ?? undefined,
+        email: (formValues.email as string) ?? undefined,
+        birth_date: (formValues.birth_date as string) ?? undefined,
+        gender: (formValues.gender as string) ?? undefined,
         phone: phoneWithCode,
         customer_id: String(userId),
-      };
+      } as unknown as TherapistFormValues;
       await update(payload);
       const refetchResult = await refetch();
-      const fresh: TherapistProfile | undefined =
-        refetchResult?.data || refetchResult;
-      if (fresh) {
-        setLocalProfile(fresh);
+      let fresh: TherapistProfile | undefined;
+      const r = refetchResult as unknown;
+      if (!r) {
+        fresh = undefined;
+      } else if (typeof r === "object" && r !== null && "data" in r) {
+        // r is an object that contains `data`
+        fresh = (r as { data?: TherapistProfile }).data;
+      } else {
+        fresh = r as TherapistProfile | undefined;
       }
+      if (fresh) setLocalProfile(fresh);
       setEditing(false);
       setServerErrors({});
       
@@ -134,10 +149,12 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
   const displayProfile = localProfile ?? profile;
 
   const getFieldError = (field: keyof typeof formValues) => {
-    const serverError = serverErrors[field];
-    const clientError = personalSchema.shape[field]?.safeParse(
-      formValues[field] ?? ""
-    ).error?.issues[0]?.message;
+    const serverError = serverErrors[String(field)];
+    // personalSchema.shape has specific Zod types; assert a generic indexable shape
+    const shape = personalSchema.shape as Record<string, z.ZodTypeAny>;
+    const parser = shape[String(field)];
+    const clientError = parser?.safeParse(formValues[field] ?? "").error
+      ?.issues?.[0]?.message;
     return serverError ?? clientError;
   };
 
@@ -240,7 +257,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormInput
                   label="الاسم الكامل"
-                  value={formValues.full_name}
+                  value={formValues.full_name as string | undefined}
                   onChange={(e) =>
                     setFormValues((s) => ({ ...s, full_name: e.target.value }))
                   }
@@ -250,7 +267,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                 />
                 <FormInput
                   label="البريد الإلكتروني"
-                  value={formValues.email}
+                  value={formValues.email as string | undefined}
                   onChange={(e) =>
                     setFormValues((s) => ({ ...s, email: e.target.value }))
                   }
@@ -262,7 +279,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                   label="رقم الهاتف"
                   countryCodeValue={countryCode}
                   onCountryCodeChange={setCountryCode}
-                  value={formValues.phone}
+                  value={formValues.phone as string | undefined}
                   onChange={(e) =>
                     setFormValues((s) => ({ ...s, phone: e.target.value }))
                   }
@@ -273,7 +290,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                 <FormInput
                   label="تاريخ الميلاد"
                   type="date"
-                  value={formValues.birth_date}
+                  value={formValues.birth_date as string | undefined}
                   onChange={(e) =>
                     setFormValues((s) => ({ ...s, birth_date: e.target.value }))
                   }
@@ -287,7 +304,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                     { value: "male", label: "ذكر" },
                     { value: "female", label: "أنثى" },
                   ]}
-                  value={formValues.gender}
+                  value={formValues.gender as string | undefined}
                   onValueChange={(val) =>
                     setFormValues((s) => ({ ...s, gender: val }))
                   }

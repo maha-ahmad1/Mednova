@@ -7,9 +7,6 @@ export interface User {
   image?: string
   role?: UserRole
 }
-
-declare module "next-auth" {
-  interface Session {
-    user?: User
-  }
-}
+// Note: `next-auth` module augmentation is defined in `src/types/next-auth.d.ts`.
+// This file only exports the local `User` types used across the app to avoid
+// duplicate module augmentation declarations which cause TS errors.

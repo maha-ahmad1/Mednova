@@ -7,7 +7,7 @@ export const personalSchema = z.object({
   birth_date: z
     .string()
     .refine((val) => !isNaN(Date.parse(val)), "تاريخ غير صالح"),
-  gender: z.enum(["male", "female"], { message: "الجنس مطلوب" }),
+  gender: z.enum(["male", "female"] as const, { message: "الجنس مطلوب" }),
   // image: z.instanceof(File).optional().refine((file) => !file || file.size < 5 * 1024 * 1024, 'الصورة كبيرة جدًا (أقل من 5MB)'),
 });
 
@@ -104,7 +104,7 @@ export const personal1Schema = z.object({
 
 export const personal2Schema = z.object({
   emergency_contact: z.string().min(8, "رقم جهة الاتصال قصير جدًا"),
-  gender: z.enum(["male", "female"], { message: "الجنس مطلوب" }),
+  gender: z.enum(["male", "female"] as const, { message: "الجنس مطلوب" }),
   country: z.string().min(2, "الدولة مطلوبة"),
   city: z.string().min(2, "المدينة مطلوبة"),
   formatted_address: z.string().min(3, "العنوان يجب أن يكون أكثر من 3 أحرف"),
@@ -116,9 +116,7 @@ export const centerSchema = z.object({
     .nonempty("تاريخ التأسيس مطلوب")
     .refine((val) => !isNaN(Date.parse(val)), "تاريخ التأسيس غير صالح"),
 
-  gender: z.enum(["Male", "Female"], {
-    errorMap: () => ({ message: "النوع مطلوب" }),
-  }),
+  gender: z.enum(["Male", "Female"] as const, { message: "النوع مطلوب" }),
 
   // image: z
   //   .instanceof(File)

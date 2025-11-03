@@ -66,7 +66,6 @@ export const useUpdateCenter = (opts?: UseUpdateCenterOptions) => {
         formData.append(key, String(val));
       });
 
-      // return axios.post("/api/center/update", formData);
 
       const res = await axios.post("/api/center/update", formData);
       return res.data;

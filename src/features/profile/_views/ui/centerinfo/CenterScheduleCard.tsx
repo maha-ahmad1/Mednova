@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { FormInput } from "@/shared/ui/forms"
 import { toast } from "sonner"
@@ -8,7 +9,8 @@ import type { CenterProfile } from "@/types/center"
 import { useUpdateSchedule } from "@/features/profile/_views/hooks/useUpdateSchedule"
 import { scheduleSchema } from "@/lib/validation"
 import type { CenterFormValues } from "@/app/api/center"
-import { Loader2, Edit, Calendar, Clock, Sun, Moon } from "lucide-react"
+import type { TherapistFormValues } from "@/app/api/therapist"
+import { Loader2, Edit, Calendar, Sun, Moon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 type CenterScheduleCardProps = {
@@ -83,9 +85,8 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
 
   const getFieldError = (field: keyof typeof values) => {
     const serverError = serverErrors[field]
-    const clientError = scheduleSchema.shape[field]
-      ? (scheduleSchema.shape[field] as any).safeParse(values[field])?.error?.issues?.[0]?.message
-      : undefined
+    const shape = scheduleSchema.shape as Record<string, z.ZodTypeAny>
+    const clientError = shape[String(field)]?.safeParse((values as Record<string, unknown>)[String(field)])?.error?.issues?.[0]?.message
     return serverError ?? clientError
   }
 
@@ -119,13 +120,15 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
     }
 
     try {
-      await update(payload)
+      // use the therapist-shaped update fn by casting payload to the expected type
+      await update(payload as unknown as TherapistFormValues)
       toast.success("تم تحديث الجدول بنجاح")
       setEditing(false)
       setServerErrors({})
       refetch()
-    } catch (error: any) {
-      const apiErrors = error?.response?.data?.data || {}
+    } catch (error: unknown) {
+      const e = error as { response?: { data?: { data?: Record<string, string> } } } | undefined
+      const apiErrors = e?.response?.data?.data ?? {}
       if (Object.keys(apiErrors).length > 0) {
         setServerErrors(apiErrors)
         toast.error("تحقق من الحقول قبل الحفظ")
@@ -265,7 +268,7 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
           <div className="space-y-6">
             {/* أيام العمل */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#32A88D]" />
                 أيام العمل
               </label>
@@ -294,7 +297,7 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
 
             {/* دوام الصباح */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                 <Sun className="w-4 h-4 text-amber-500" />
                 دوام الصباح
               </label>

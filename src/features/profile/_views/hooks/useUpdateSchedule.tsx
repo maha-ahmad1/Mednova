@@ -17,10 +17,11 @@ export const useUpdateSchedule = (opts?: useUpdateScheduleOptions) => {
     mutationFn: (data: TherapistFormValues) => {
       const formData = new FormData();
 
-      const hasEvening =
-        data.is_have_evening_time === true ||
-        data.is_have_evening_time === 1 ||
-        String(data.is_have_evening_time) === "1";
+      // const hasEvening =
+      //   data.is_have_evening_time === true ||
+      //   data.is_have_evening_time === 1 ||
+      //   String(data.is_have_evening_time) === "1";
+      const hasEvening = Number(data.is_have_evening_time) === 1;
 
       Object.entries(data).forEach(([key, val]) => {
         if (val === undefined || val === null) return;

@@ -126,8 +126,9 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
       setEditing(false)
       setServerErrors({})
       refetch()
-    } catch (error: any) {
-      const apiErrors = error?.response?.data?.data || {}
+    } catch (error: unknown) {
+      const e = error as { response?: { data?: { data?: Record<string, string> } } } | undefined
+      const apiErrors = e?.response?.data?.data ?? {}
       if (Object.keys(apiErrors).length > 0) {
         setServerErrors(apiErrors)
         toast.error("تحقق من الحقول قبل الحفظ")

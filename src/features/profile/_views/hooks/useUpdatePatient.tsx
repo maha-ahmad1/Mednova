@@ -6,7 +6,7 @@ import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react"; 
 
-export type PatientFormValues = Record<string, any>;
+export type PatientFormValues = Record<string, unknown>;
 
 type UseUpdatePatientOptions = {
   onValidationError?: (errors: Record<string, string>) => void;

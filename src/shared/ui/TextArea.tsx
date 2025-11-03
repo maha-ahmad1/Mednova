@@ -11,6 +11,7 @@ interface TextareaProps {
   placeholder?: string
   value?: string
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  className?: string
 }
 
 export function TextArea({
@@ -20,9 +21,10 @@ export function TextArea({
   placeholder,
   value,
   onChange,
+  className,
 }: TextareaProps) {
   return (
-    <div className={cn("space-y-2 w-full ", rtl && "text-right")}>
+    <div className={cn("space-y-2 w-full ", rtl && "text-right", className)}>
       {label && <Label>{label}</Label>}
 
       <Textarea

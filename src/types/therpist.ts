@@ -1,5 +1,5 @@
-
 export type Schedule = {
+  id?: string;
   day_of_week?: string[];
   start_time_morning?: string;
   end_time_morning?: string;

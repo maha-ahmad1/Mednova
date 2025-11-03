@@ -57,7 +57,7 @@ export function ResetPasswordForm() {
     onSuccess: (data) => {
       if (data.success) {
         resetAll();
-        router.push("/auth/login");
+        router.push("/login");
       } else {
         setServerError(data.message || "حدث خطأ أثناء إعادة التعيين");
       }

@@ -15,6 +15,7 @@ export interface FormInputProps
   rtl?: boolean;
   containerClassName?: string;
   labelClassName?: string;
+  type?: string;
 }
 
 const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(

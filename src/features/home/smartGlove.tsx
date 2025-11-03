@@ -5,7 +5,7 @@ export default function SmartGlove() {
     <section className=" bg-[#F8F7F7] py-20 px-14 md:px-18 lg:px-28 ">
       <div className="grid  grid-cols-1 gap-10 md:grid-cols-2">
         <div className=" order-2 md:order-none flex flex-col mt-20 ">
-          <h1 className="text-2xl font-bold  pb-2 mx-auto md:mx-0">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
             القفاز الذكي من مدنوفا
           </h1>
 
@@ -13,7 +13,7 @@ export default function SmartGlove() {
             {" "}
             استعد مرونة يدك مع قفاز إعادة التأهيل الذكي
           </h2> */}
-          <div className="w-20 h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full mb-2 mx-auto md:mx-0"></div>
+          {/* <div className="w-20 h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full mb-2 mx-auto md:mx-0"></div> */}
 
           <p className="text-[#4B5563] text-lg  leading-8">
             إذا كنت تبحث عن قفازات طبية يعيد لك القدرة على استخدام يدك بشكل

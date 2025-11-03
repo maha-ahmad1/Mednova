@@ -9,7 +9,6 @@ import Program from "./program";
 export default function HomeSections() {
   return (
     <>
-      <LandingNavbar />
       <Hero />
       <WhyMednova />
       <Program />

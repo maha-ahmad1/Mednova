@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormPhoneInput } from "@/shared/ui/forms/components/FormPhoneInput";
 import { FormSelect } from "@/shared/ui/forms";
 import { countries } from "@/constants/countries";
 import type { PatientProfile } from "@/types/patient";
-import { Loader2, Edit, Phone, User, MapPin, Navigation, AlertCircle } from "lucide-react";
+import { Loader2, Edit, User, MapPin, Navigation, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+
+
 
 interface Props {
   patient: PatientProfile;
@@ -19,8 +21,8 @@ interface Props {
   editingCard: string | null;
   startEdit: (card: string) => void;
   cancelEdit: () => void;
-  formValues: Record<string, any>;
-  setFormValues: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  formValues: Record<string, unknown>;
+  setFormValues: React.Dispatch<React.SetStateAction<Record<string, unknown>>>;
   getFieldError: (field: string, card: string) => string | undefined;
 }
 
@@ -28,7 +30,6 @@ export default function PatientPersonal2Card({
   patient,
   onSave,
   isUpdating,
-  errors,
   editingCard,
   startEdit,
   cancelEdit,
@@ -38,7 +39,7 @@ export default function PatientPersonal2Card({
 }: Props) {
   const isEditing = editingCard === "personal2";
 
-  const handleChange = (field: keyof typeof formValues, value: string) => {
+  const handleChange = (field: string, value: string) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -60,15 +61,15 @@ export default function PatientPersonal2Card({
 
       setFormValues((prev) => ({
         ...prev,
-        country: prev.country ?? patient.location_details?.country ?? "",
-        city: prev.city ?? patient.location_details?.city ?? "",
+        country: (prev as Record<string, unknown>).country ?? patient.location_details?.country ?? "",
+        city: (prev as Record<string, unknown>).city ?? patient.location_details?.city ?? "",
         formatted_address:
-          prev.formatted_address ??
+          (prev as Record<string, unknown>).formatted_address ??
           patient.location_details?.formatted_address ??
           "",
-        gender: prev.gender ?? patient.gender?.toLowerCase() ?? "",
-        emergency_contact: prev.emergency_contact ?? emergencyNumber,
-        emergencyCountryCode: prev.emergencyCountryCode ?? emergencyCountryCode,
+        gender: (prev as Record<string, unknown>).gender ?? (patient.gender?.toLowerCase() as string) ?? "",
+        emergency_contact: (prev as Record<string, unknown>).emergency_contact ?? emergencyNumber,
+        emergencyCountryCode: (prev as Record<string, unknown>).emergencyCountryCode ?? emergencyCountryCode,
       }));
     }
   }, [isEditing, patient, setFormValues]);
@@ -211,11 +212,11 @@ export default function PatientPersonal2Card({
               </label>
               <FormPhoneInput
                 label=""
-                countryCodeValue={formValues.emergencyCountryCode || "+968"}
+                countryCodeValue={(formValues.emergencyCountryCode as string) || "+968"}
                 onCountryCodeChange={(code) =>
-                  handleChange("emergencyCountryCode" as any, code)
+                  handleChange("emergencyCountryCode", code)
                 }
-                value={formValues.emergency_contact || ""}
+                value={(formValues.emergency_contact as string) || ""}
                 onChange={(e) =>
                   handleChange("emergency_contact", e.target.value)
                 }
@@ -238,7 +239,7 @@ export default function PatientPersonal2Card({
                   { value: "male", label: "ذكر" },
                   { value: "female", label: "أنثى" },
                 ]}
-                value={formValues.gender}
+                value={(formValues.gender as string) ?? ""}
                 onValueChange={(val) =>
                   setFormValues((s) => ({ ...s, gender: val }))
                 }
@@ -257,7 +258,7 @@ export default function PatientPersonal2Card({
               </label>
               <FormSelect
                 placeholder="اختر الدولة"
-                value={formValues.country || ""}
+                value={(formValues.country as string) || ""}
                 onValueChange={(val) =>
                   setFormValues((v) => ({ ...v, country: val, city: "" }))
                 }
@@ -278,8 +279,8 @@ export default function PatientPersonal2Card({
                 المدينة
               </label>
               <FormSelect
-                placeholder={formValues.country ? "اختر المدينة" : "اختر الدولة أولاً"}
-                value={formValues.city || ""}
+                placeholder={(formValues.country as string) ? "اختر المدينة" : "اختر الدولة أولاً"}
+                value={(formValues.city as string) || ""}
                 onValueChange={(val) => handleChange("city", val)}
                 options={(selectedCountry?.cities || []).map((c) => ({
                   value: c,
@@ -299,7 +300,7 @@ export default function PatientPersonal2Card({
                 العنوان التفصيلي
               </label>
               <Input
-                value={formValues.formatted_address || ""}
+                value={(formValues.formatted_address as string) || ""}
                 onChange={(e) =>
                   handleChange("formatted_address", e.target.value)
                 }
@@ -315,27 +316,27 @@ export default function PatientPersonal2Card({
           </div>
 
           {/* معاينة سريعة للموقع */}
-          {(formValues.country || formValues.city) && (
+          {(typeof formValues.country === "string" || typeof formValues.city === "string") && (
             <div className="bg-white p-4 rounded-lg border border-gray-200 mt-6">
               <h5 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#32A88D]" />
                 معاينة الموقع:
               </h5>
               <div className="flex flex-wrap gap-2">
-                {formValues.country && (
+                {typeof formValues.country === "string" && (
                   <Badge className="bg-green-100 text-green-800">
-                    {formValues.country}
+                    {formValues.country as string}
                   </Badge>
                 )}
-                {formValues.city && (
+                {typeof formValues.city === "string" && (
                   <Badge className="bg-purple-100 text-purple-800">
-                    {formValues.city}
+                    {formValues.city as string}
                   </Badge>
                 )}
               </div>
-              {formValues.formatted_address && (
+              {typeof formValues.formatted_address === "string" && (
                 <p className="text-gray-600 text-sm mt-2">
-                  {formValues.formatted_address}
+                  {formValues.formatted_address as string}
                 </p>
               )}
             </div>

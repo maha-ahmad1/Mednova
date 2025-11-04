@@ -85,9 +85,9 @@ export default function MostRatedProfessionals() {
       }
 
       const response = await storeConsultationRequest(payload);
-      toast.success("تم إرسال طلبك بنجاح، الرجاء انتظار موافقة المختص");
+      // toast.success("تم إرسال طلبك بنجاح، الرجاء انتظار موافقة المختص");
     } catch (error) {
-      toast.error("حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى");
+      // toast.error("حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى");
       console.error("❌ Error sending consultation request:", error);
     }
   };

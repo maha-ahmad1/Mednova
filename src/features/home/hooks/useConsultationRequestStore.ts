@@ -34,22 +34,25 @@ export const useConsultationRequestStore = () => {
     onError: (error: AxiosError) => {
       console.error("❌ Error:", error.response?.data || error.message);
 
-      const errorData = error.response?.data;
+      type ErrorResponse = {
+        message?: string;
+        data?: Record<string, string>;
+      };
+
+      const errorData = error.response?.data as ErrorResponse | undefined;
+
       let errorMessage = "حدث خطأ غير متوقع، حاول مرة أخرى";
 
-      if (errorData && typeof errorData === "object") {
-        // إذا كانت الأخطاء داخل data
-        if (errorData.data && typeof errorData.data === "object") {
+      if (errorData) {
+        if (errorData.data) {
           const messages = Object.values(errorData.data).filter(
             (val) => typeof val === "string"
           ) as string[];
 
           if (messages.length > 0) {
-            errorMessage = messages.join("\n"); // كل رسالة بسطر
+            errorMessage = messages.join("\n");
           }
-        }
-        // fallback إذا كانت هناك رسالة عامة
-        else if (typeof errorData.message === "string") {
+        } else if (errorData.message) {
           errorMessage = errorData.message;
         }
       }

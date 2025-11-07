@@ -38,7 +38,6 @@ export default function PatientInfo() {
   const localProfileState = useState<Partial<PatientProfile> | null>(null);
   const localProfile = localProfileState[0];
 
-  // إعادة تعيين عند الخروج من وضع التعديل
   useEffect(() => {
     if (!editingCard) {
       setFormValues({});
@@ -46,7 +45,6 @@ export default function PatientInfo() {
     }
   }, [data, editingCard]);
 
-  // معالجة تحميل البيانات
   if (isLoading) {
     return (
       <div dir="rtl" className="min-h-[60vh] flex items-center justify-center">
@@ -64,7 +62,6 @@ export default function PatientInfo() {
 
   const d = (data ?? {}) as PatientProfile;
 
-  // بدء التعديل
   const startEdit = (card: string) => {
     setEditingCard(card);
     const source = localProfile ?? d;
@@ -108,7 +105,6 @@ export default function PatientInfo() {
     setServerErrors({});
   };
 
-  // جلب رسالة الخطأ للحقل
   const getFieldError = (field: string, card: string) => {
     const serverError = serverErrors[field];
     let clientError: string | undefined;
@@ -182,17 +178,14 @@ export default function PatientInfo() {
         await updateLocation(locationPayload);
       }
 
-      // 3️⃣ إعادة جلب البيانات من API
       await refetch();
 
-      // 4️⃣ تحديث session/JWT لتحديث isCompleted
       await signIn("credentials", {
         redirect: false,
         email: session?.user?.email || "",
-        password: "", // حسب الحاجة إذا تستخدم كلمة سر أو طريقة أخرى
+        password: "", 
       });
 
-      // 5️⃣ تنظيف الحالة المحلية
       setEditingCard(null);
       setServerErrors({});
       toast.success("تم حفظ التعديلات بنجاح");

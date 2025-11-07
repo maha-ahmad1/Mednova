@@ -84,7 +84,7 @@ export default function WhyMednova() {
 
           {/* الصورة */}
           <div className="lg:col-span-5 relative">
-            <div className="relative w-full max-w-md mx-auto">
+            <div className="relative w-90  max-w-md mx-auto">
               {/* شكل خلفي */}
               <div className="absolute inset-0 bg-gradient-to-r from-[#32A88D]/20 to-blue-500/20 rounded-2xl blur-xl -z-10 transform scale-110"></div>
               
@@ -103,7 +103,7 @@ export default function WhyMednova() {
               </div>
 
               {/* بطاقة عائمة */}
-              <div className="absolute -bottom-6 -left-6 z-20">
+              {/* <div className="absolute -bottom-6 -left-6 z-20">
                 <div className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 animate-float">
                   <div className="w-12 h-12 bg-[#32A88D] rounded-xl flex items-center justify-center">
                     <div className="w-6 h-6 bg-white rounded-md"></div>
@@ -113,10 +113,10 @@ export default function WhyMednova() {
                     <div className="text-xs text-gray-600">مختص معتمد</div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* بطاقة عائمة ثانية */}
-              <div className="absolute -top-6 -right-6 z-20">
+              {/* <div className="absolute -top-6 -right-6 z-20">
                 <div 
                   className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 animate-float"
                   style={{ animationDelay: "1.5s" }}
@@ -129,7 +129,7 @@ export default function WhyMednova() {
                     <div className="text-xs text-gray-600">رضا العملاء</div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

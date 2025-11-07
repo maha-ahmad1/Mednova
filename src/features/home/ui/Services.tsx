@@ -48,7 +48,7 @@ const ServicesCard = [
     title: "قريبون منك",
     details:
       "نوصلك بأقرب مراكز التأهيل وأخصائيي العلاج الطبيعي حسب موقعك، لتبدأ رحلة التعافي بسهولة وفي المكان الأنسب لك.",
-    icon: "/images/home/icons/follow-there-are-close.svg",
+    icon: "/images/home/icons/there-are-close.svg",
   },
 ];
 

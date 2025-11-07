@@ -205,7 +205,7 @@ export default function Program() {
                     </div>
                     
                     <Button 
-                      className="bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-6 py-2 transition-all duration-300 shadow-lg hover:shadow-xl"
+                      className="cursor-pointer bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-6 py-2 transition-all duration-300 shadow-lg hover:shadow-xl"
                     >
                       <PlayCircle className="ml-2 w-4 h-4" />
                       طلب البرنامج

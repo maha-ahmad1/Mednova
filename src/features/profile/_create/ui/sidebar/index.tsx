@@ -66,7 +66,7 @@ export function Sidebar() {
 
   if (status === "loading" || isLoadingProfile) {
     return (
-      <aside className="fixed right-10 top-30 z-40 w-72 bg-white shadow-xl border border-gray-100 rounded-2xl overflow-hidden">
+      <aside className="fixed right-10 top-30 z-40   shadow-xl border  rounded-2xl overflow-hidden hidden lg:block w-64 shrink-0 border-l border-gray-100 bg-white">
         <div className="flex flex-col items-center p-6 bg-[#32A88D]/10 border-b border-gray-100 animate-pulse">
           <div className="w-20 h-20 rounded-full bg-gray-200 mb-3" />
           <div className="h-4 w-32 bg-gray-200 rounded mb-2" />

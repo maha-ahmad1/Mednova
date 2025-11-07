@@ -23,7 +23,7 @@ export const sidebarMenus = {
 
   therapist: [
     { icon: LayoutDashboard, label: "لوحة التحكم", href: "/" },
-    { icon: Calendar, label: "المواعيد", href: "/appointments" },
+    { icon: Calendar, label: "المواعيد", href: "/profile/consultations" },
     { icon: Activity, label: "الجلسات", href: "/sessions" },
     { icon: FileText, label: "التقارير", href: "/reports" },
     { icon: HelpCircle, label: "المساعدة", href: "/help" },

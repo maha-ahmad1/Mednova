@@ -10,7 +10,7 @@ import { SessionProviderWrapper } from "@/providers/SessionProviderWrapper";
 import { Toaster } from "@/components/ui/sonner";
 import "leaflet/dist/leaflet.css";
 import NavbarWrapper from "@/components/ui/NavbarWrapper";
-
+import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
 const cairo = Cairo({
   subsets: ["arabic"],
   weight: ["400", "700"],
@@ -35,8 +35,8 @@ export default async function RootLayout({
           <SessionProviderWrapper>
             <Suspense fallback={null}>
               <main className="min-h-screen">
-                {/* <NavbarWrapper>{children}
-                </NavbarWrapper> */}
+                {/* <LandingNavbar>{children}
+                </LandingNavbar> */}
                 {children}
                 </main>
               <Toaster richColors position="top-center" />

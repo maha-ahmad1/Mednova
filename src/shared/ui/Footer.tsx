@@ -35,7 +35,7 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-3 text-gray-600">
                 <MapPin className="h-4 w-4 text-[#32A88D]" />
-                <span className="text-sm">المملكة العربية السعودية</span>
+                <span className="text-sm">سلطنة عمان</span>
               </div>
             </div>
           </div>

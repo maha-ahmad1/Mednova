@@ -28,7 +28,7 @@ export const useConsultationRequestStore = () => {
     },
 
     onSuccess: () => {
-      toast.success("تم إرسال طلبك بنجاح، الرجاء انتظار موافقة المختص");
+      toast.success("تم إرسال طلبك بنجاح، الرجاء انتظار الموافقة ");
     },
 
     onError: (error: AxiosError) => {

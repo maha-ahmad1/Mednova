@@ -20,20 +20,20 @@ const NavLink = [
   {
     id: 2,
     title: "خدماتنا",
-    link: "#",
-    dropdown: [
-      { id: 1, title: "حجز موعد", link: "#" },
-      {
-        id: 2,
-        title: "استشارات",
-        link: "#",
-      },
-      {
-        id: 3,
-        title: "برنامج رحلة التعافي",
-        link: "#",
-      },
-    ],
+    link: "/TherapistsAndCenters",
+    // dropdown: [
+    //   { id: 1, title: "حجز موعد", link: "#" },
+    //   {
+    //     id: 2,
+    //     title: "استشارات",
+    //     link: "#",
+    //   },
+    //   {
+    //     id: 3,
+    //     title: "برنامج رحلة التعافي",
+    //     link: "#",
+    //   },
+    // ],
   },
   {
     id: 3,

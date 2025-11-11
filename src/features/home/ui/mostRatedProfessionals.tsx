@@ -231,6 +231,18 @@ export default function MostRatedProfessionals() {
                 </div>
 
                 {/* زر طلب الاستشارة */}
+
+                     {/* <ConsultationDialog
+                  provider={{
+                    id: data.id,
+                    full_name: data.full_name,
+                    type_account: "therapist",
+                    image: data.image,
+                    average_rating: String(data.average_rating),
+                    total_reviews: data.total_reviews,
+                    therapist_details: data.therapist_details,
+                  }}
+                /> */}
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button 

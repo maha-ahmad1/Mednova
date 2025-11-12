@@ -20,7 +20,7 @@ const NavLink = [
   {
     id: 2,
     title: "خدماتنا",
-    link: "/TherapistsAndCenters",
+    link: "/therapistsandcenters",
     // dropdown: [
     //   { id: 1, title: "حجز موعد", link: "#" },
     //   {

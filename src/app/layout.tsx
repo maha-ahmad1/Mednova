@@ -11,6 +11,8 @@ import { Toaster } from "@/components/ui/sonner";
 import "leaflet/dist/leaflet.css";
 import NavbarWrapper from "@/components/ui/NavbarWrapper";
 import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
+import EchoProvider from "@/providers/ClientEchoWrapper";
+
 const cairo = Cairo({
   subsets: ["arabic"],
   weight: ["400", "700"],
@@ -22,23 +24,19 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({
-  children}: Readonly<{
+  children,
+}: Readonly<{
   children: React.ReactNode;
-}>)    
- {
-
-
+}>) {
   return (
     <html lang="ar" dir="rtl">
       <body className={cairo.variable}>
         <Providers>
           <SessionProviderWrapper>
             <Suspense fallback={null}>
-              <main className="min-h-screen">
-                {/* <LandingNavbar>{children}
-                </LandingNavbar> */}
-                {children}
-                </main>
+              <EchoProvider>
+                <main className="min-h-screen">{children}</main>
+              </EchoProvider>
               <Toaster richColors position="top-center" />
             </Suspense>
             {/* <Analytics /> */}

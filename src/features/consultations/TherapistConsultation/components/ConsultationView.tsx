@@ -9,6 +9,7 @@ import ConsultationList from "./ConsultationList";
 import ConsultationDetails from "./ConsultationDetails";
 import { useFetcher } from "@/hooks/useFetcher";
 import { useSession } from "next-auth/react";
+import { useConsultationStore } from "@/store/consultationStore";
 
 interface ConsultationViewProps {
   userType?: UserType;
@@ -27,9 +28,9 @@ export default function ConsultationView({}: ConsultationViewProps) {
     "/api/consultation-request/get-status-request"
   );
 
-  const [requests, setRequests] = useState<ConsultationRequest[]>([]);
-  const [selectedRequest, setSelectedRequest] =
-    useState<ConsultationRequest | null>(null);
+  // استخدام الـ store بدلاً من useState المحلي
+  const { requests, setRequests, addRequest } = useConsultationStore();
+  const [selectedRequest, setSelectedRequest] = useState<ConsultationRequest | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   const { data: session } = useSession();
@@ -50,7 +51,7 @@ export default function ConsultationView({}: ConsultationViewProps) {
     } else {
       setRequests([]);
     }
-  }, [data]);
+  }, [data, setRequests]);
 
   useEffect(() => {
     if (error) {
@@ -78,9 +79,7 @@ export default function ConsultationView({}: ConsultationViewProps) {
   };
 
   const handleRequestUpdate = (updatedRequest: ConsultationRequest) => {
-    setRequests((prev) =>
-      prev.map((req) => (req.id === updatedRequest.id ? updatedRequest : req))
-    );
+    // سيتم التعامل مع التحديثات عبر الـ store تلقائياً
     setSelectedRequest(updatedRequest);
   };
 
@@ -114,7 +113,7 @@ export default function ConsultationView({}: ConsultationViewProps) {
             />
           ) : (
             <ConsultationList
-              requests={requests}
+              requests={requests} // استخدام الـ requests من الـ store
               selectedRequest={selectedRequest}
               onSelectRequest={handleSelectRequest}
               isMobile={isMobile}
@@ -125,7 +124,7 @@ export default function ConsultationView({}: ConsultationViewProps) {
         ) : (
           <>
             <ConsultationList
-              requests={requests}
+              requests={requests} // استخدام الـ requests من الـ store
               selectedRequest={selectedRequest}
               onSelectRequest={handleSelectRequest}
               isMobile={isMobile}
@@ -141,7 +140,7 @@ export default function ConsultationView({}: ConsultationViewProps) {
                 onRequestUpdate={handleRequestUpdate}
               />
             ) : (
-              <div className="lg:col-span-2 ">
+              <div className="lg:col-span-2">
                 <Card className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg h-full flex items-center justify-center min-h-[400px] sm:min-h-[500px]">
                   <CardContent className="text-center py-8 sm:py-12 px-4 sm:px-6">
                     <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-[#32A88D]/10 to-[#32A88D]/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
@@ -151,12 +150,13 @@ export default function ConsultationView({}: ConsultationViewProps) {
                       اختر طلب استشارة
                     </h3>
                     <p className="text-gray-500 text-sm sm:text-base lg:text-lg max-w-md mx-auto">
-                      اختر طلب استشارة من القائمة على اليمين لعرض التفاصيل
-                      الكاملة واتخاذ الإجراء المناسب
+                      {requests.length === 0 
+                        ? "لا توجد طلبات استشارة حالياً" 
+                        : "اختر طلب استشارة من القائمة على اليمين لعرض التفاصيل الكاملة واتخاذ الإجراء المناسب"
+                      }
                     </p>
                   </CardContent>
                 </Card>
-              
               </div>
             )}
           </>

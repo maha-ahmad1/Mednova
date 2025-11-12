@@ -12,6 +12,7 @@ import "leaflet/dist/leaflet.css";
 // import NavbarWrapper from "@/components/ui/NavbarWrapper";
 import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
 import EchoProvider from "@/providers/ClientEchoWrapper";
+import { StoreDebugger } from "@/lib/StoreDebugger";
 
 const cairo = Cairo({
   subsets: ["arabic"],
@@ -35,6 +36,7 @@ export default async function RootLayout({
           <SessionProviderWrapper>
             <Suspense fallback={null}>
               <EchoProvider>
+                <StoreDebugger />
                 <main className="min-h-screen">{children}</main>
               </EchoProvider>
               <Toaster richColors position="top-center" />

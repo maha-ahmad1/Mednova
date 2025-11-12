@@ -1,13 +1,25 @@
+// providers/ClientEchoWrapper.tsx
 "use client";
-
-import { ReactNode } from "react";
 import { useEchoNotifications } from "@/hooks/useEchoNotifications";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
-interface EchoProviderProps {
-  children: ReactNode;
-}
+export default function EchoProvider({ 
+  children 
+}: { 
+  children: React.ReactNode 
+}) {
+  const { data: session } = useSession();
+  useEchoNotifications();
 
-export default function EchoProvider({ children }: EchoProviderProps) {
-  useEchoNotifications(); 
+  useEffect(() => {
+    console.log("🔍 حالة الجلسة في EchoProvider:", {
+      hasSession: !!session,
+      userId: session?.user?.id,
+      role: session?.role,
+      hasToken: !!session?.accessToken
+    });
+  }, [session]);
+
   return <>{children}</>;
 }

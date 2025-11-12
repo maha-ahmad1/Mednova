@@ -9,7 +9,7 @@ import { Providers } from "../providers/QueryClientProvider";
 import { SessionProviderWrapper } from "@/providers/SessionProviderWrapper";
 import { Toaster } from "@/components/ui/sonner";
 import "leaflet/dist/leaflet.css";
-import NavbarWrapper from "@/components/ui/NavbarWrapper";
+// import NavbarWrapper from "@/components/ui/NavbarWrapper";
 import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
 import EchoProvider from "@/providers/ClientEchoWrapper";
 

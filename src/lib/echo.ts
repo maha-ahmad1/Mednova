@@ -16,12 +16,12 @@ export const createEcho = (accessToken: string) => {
     cluster: "eu",
     // key: process.env.NEXT_PUBLIC_PUSHER_APP_KEY!,
     // cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER!,
-    forceTLS: true,
-    authEndpoint: "https://demoapplication.jawebhom.com/broadcasting/auth",
-    auth: {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
+     forceTLS: true,
+    // authEndpoint: "https://demoapplication.jawebhom.com/broadcasting/auth",
+    // auth: {
+    //   headers: {
+    //     Authorization: `Bearer ${accessToken}`,
+    //   },
+    // },
   });
 };

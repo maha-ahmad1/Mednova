@@ -20,7 +20,7 @@ export const NavLinks: NavLink[] = [
   {
     id: 2,
     title: "خدماتنا",
-    link: "/therapistsandcenters",
+    link: "/specialists",
     // dropdown: [
     //   { id: 1, title: "حجز موعد", link: "#" },
     //   { id: 2, title: "استشارات", link: "#" },
@@ -53,6 +53,6 @@ export const NavLinks: NavLink[] = [
   {
     id: 5,
     title: "المختصين",
-    link: "/therapistsandcenters",
+    link: "/specialists",
   },
 ];

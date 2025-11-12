@@ -10,6 +10,7 @@ if (typeof window !== "undefined") {
  * دالة لإنشاء Echo instance لكل مستخدم بالتوكن الخاص به
  */
 export const createEcho = (accessToken: string) => {
+  console.log("accessToken 55   :: " +accessToken)
   return new Echo({
     broadcaster: "pusher",
     key: "8e0c74bbc25e86b98813", // استبدلي بالمفتاح الحقيقي
@@ -17,11 +18,11 @@ export const createEcho = (accessToken: string) => {
     // key: process.env.NEXT_PUBLIC_PUSHER_APP_KEY!,
     // cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER!,
      forceTLS: true,
-    // authEndpoint: "https://demoapplication.jawebhom.com/broadcasting/auth",
-    // auth: {
-    //   headers: {
-    //     Authorization: `Bearer ${accessToken}`,
-    //   },
-    // },
+     authEndpoint: "https://demoapplication.jawebhom.com/api/broadcasting/auth",
+    auth: {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
   });
 };

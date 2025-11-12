@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { MessageSquareIcon, VideoIcon, StarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import LandingNavbar from "@/components/ui/LandingNavbar";
+// import LandingNavbar from "@/components/ui/LandingNavbar";
 import {
   Dialog,
   DialogContent,
@@ -80,7 +80,7 @@ export default function SearchResults() {
   if (error) return <p>Error loading data</p>;
   return (
     <>
-      <LandingNavbar />
+      {/* <LandingNavbar /> */}
 
       <section className="bg-[#F8F7F7] py-30 px-5 md:px-16 lg:px-28 min-h-screen">
         <div className="flex flex-col md:flex-row gap-5 justify-center flex-wrap">

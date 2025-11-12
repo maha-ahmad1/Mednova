@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { createEcho } from "@/lib/echo";
 import { useConsultationStore } from "@/store/consultationStore";
 import { toast } from "sonner";
+import type { ConsultationRequest } from "@/types/consultation";
 
 export const useEchoNotifications = () => {
   const { data: session } = useSession();
@@ -24,11 +25,11 @@ export const useEchoNotifications = () => {
     const channel = echo.private(channelName);
 
     // الاستماع لطلب استشارة جديد
-    channel.listen("ConsultationRequestedBroadcast", (event: any) => {
+    channel.listen("ConsultationRequestedBroadcast", (event: ConsultationRequest) => {
       console.log("📨 تم استقبال طلب استشارة جديد:", event);
       
       // عرض الإشعار
-      toast.success(`قام ${event.patient_name} بطلب استشارة جديدة`);
+      toast.success(`قام ${event.id} بطلب استشارة جديدة`);
       
       // إضافة الطلب إلى الـ store
       addRequest(event);

@@ -31,7 +31,6 @@ import {
 import { User, Briefcase, Building2, Mail, Phone } from "lucide-react";
 import type { AxiosError } from "axios";
 
-// ---------------- Zod Schema ----------------
 const registrationSchema = z
   .object({
     full_name: z.string().min(1, "الاسم الكامل مطلوب"),
@@ -71,14 +70,14 @@ export function RegistrationForm() {
 
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setError,
   } = methods;
 
   const mutation = useMutation({
     mutationFn: (data: RegistrationData) => registerUser(data),
     onSuccess: (data) => {
-      if (data.success) router.push("/auth/login");
+      if (data.success) router.push("/login");
       else setServerError(data.message || "حدث خطأ غير متوقع");
     },
     onError: (
@@ -258,7 +257,7 @@ export function RegistrationForm() {
           <span className="text-[#4B5563] text-md cursor-default">
             لديك حساب بالفعل؟
           </span>{" "}
-          <Link href="/auth/login" className="text-[#32A88D] hover:underline">
+          <Link href="/login" className="text-[#32A88D] hover:underline">
             تسجيل دخول
           </Link>
         </div>

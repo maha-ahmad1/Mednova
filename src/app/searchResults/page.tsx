@@ -6,16 +6,13 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { MessageSquareIcon, VideoIcon, StarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import therapist from "../../../public/images/home/therapist.jpg";
 import LandingNavbar from "@/components/ui/LandingNavbar";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
 
 type MedicalSpecialties = {
@@ -95,9 +92,11 @@ export default function SearchResults() {
                   className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 >
                   <Image
-                    src={therapist}
+                    src="/images/home/therapist.jpg"
                     alt="therapist"
                     className="w-full h-48 object-cover"
+                    width={100}
+                    height={100}
                   />
                   <div className="text-[#4B5563]  mt-2 text-start mx-3">
                     <div></div>

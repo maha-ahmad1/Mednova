@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Mail } from "lucide-react";
 import type { AxiosError } from "axios";
 import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 import {
   Card,
@@ -47,6 +48,9 @@ export function LoginForm() {
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
 
+  const { data: session } = useSession();
+  console.log("session " + session?.role);
+
   const {
     register,
     handleSubmit,
@@ -62,18 +66,27 @@ export function LoginForm() {
     onSuccess: async (data) => {
       console.log("✅ تسجيل الدخول بنجاح:", data);
       if (data.success) {
-     
         await signIn("credentials", {
           redirect: false,
           access_token: data.data.access_token,
           user: JSON.stringify(data.data.user),
         });
 
-        router.push("/profile/patient");
+        const user = data.data.user;
+                console.log("✅ user.is_completed", user.is_completed);
+
+        if (!user.is_completed) {
+          router.push("/profile/create");
+
+        } else {
+          router.push("/profile"); 
+        }
       } else {
         setServerError(data.message || "حدث خطأ غير متوقع");
       }
+      
     },
+
     onError: (
       error: AxiosError<{ message?: string; data?: Record<string, string> }>
     ) => {
@@ -198,10 +211,7 @@ export function LoginForm() {
           <a href="#" className="text-[#4B5563] text-md cursor-default">
             ليس لديك حساب؟
           </a>{" "}
-          <Link
-            href="/auth/register"
-            className="text-[#32A88D] hover:underline"
-          >
+          <Link href="/register" className="text-[#32A88D] hover:underline">
             أنشئ حسابك الآن
           </Link>
         </div>

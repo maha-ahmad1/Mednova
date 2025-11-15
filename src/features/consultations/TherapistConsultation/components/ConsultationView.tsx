@@ -9,38 +9,32 @@ import ConsultationList from "./ConsultationList";
 import ConsultationDetails from "./ConsultationDetails";
 import { useFetcher } from "@/hooks/useFetcher";
 import { useSession } from "next-auth/react";
+import { useConsultationStore } from "@/store/consultationStore";
 
 interface ConsultationViewProps {
   userType?: UserType;
 }
+
 interface ApiResponse {
   success: boolean;
   message: string;
   data: ConsultationRequest[];
   status: string;
 }
-export default function ConsultationView({}: // userType = "therapist",
-ConsultationViewProps) {
+
+export default function ConsultationView({}: ConsultationViewProps) {
   const { data, isLoading, error } = useFetcher<ApiResponse>(
     ["consultations"],
     "/api/consultation-request/get-status-request"
   );
 
-  const [requests, setRequests] = useState<ConsultationRequest[]>([]);
-  const [selectedRequest, setSelectedRequest] =
-    useState<ConsultationRequest | null>(null);
+  // استخدام الـ store بدلاً من useState المحلي
+  const { requests, setRequests, addRequest } = useConsultationStore();
+  const [selectedRequest, setSelectedRequest] = useState<ConsultationRequest | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [showRequestList, setShowRequestList] = useState(true);
 
   const { data: session } = useSession();
-  console.log("rols ", session?.role);
 
-  // const role =
-  //   session?.role === "consultable"
-  //     ? "consultable"
-  //     : session?.role === "patient"
-  //     ? "patient"
-  //     : undefined;
   const roleMap: Record<string, "patient" | "consultable"> = {
     patient: "patient",
     therapist: "consultable",
@@ -50,8 +44,6 @@ ConsultationViewProps) {
   const role = roleMap[session?.role ?? ""] ?? undefined;
 
   useEffect(() => {
-    console.log("📦 Raw data from API:", data);
-
     if (Array.isArray(data?.data)) {
       setRequests(data.data);
     } else if (Array.isArray(data)) {
@@ -59,9 +51,7 @@ ConsultationViewProps) {
     } else {
       setRequests([]);
     }
-
-    console.log("✅ consultations (normalized):", data?.data || data);
-  }, [data]);
+  }, [data, setRequests]);
 
   useEffect(() => {
     if (error) {
@@ -73,9 +63,6 @@ ConsultationViewProps) {
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 1024);
-      if (window.innerWidth >= 1024) {
-        setShowRequestList(true);
-      }
     };
 
     checkScreenSize();
@@ -85,19 +72,14 @@ ConsultationViewProps) {
 
   const handleSelectRequest = (request: ConsultationRequest) => {
     setSelectedRequest(request);
-    if (isMobile) {
-      setShowRequestList(false);
-    }
   };
 
   const handleBackToList = () => {
-    setShowRequestList(true);
+    setSelectedRequest(null);
   };
 
   const handleRequestUpdate = (updatedRequest: ConsultationRequest) => {
-    setRequests((prev) =>
-      prev.map((req) => (req.id === updatedRequest.id ? updatedRequest : req))
-    );
+    // سيتم التعامل مع التحديثات عبر الـ store تلقائياً
     setSelectedRequest(updatedRequest);
   };
 
@@ -119,45 +101,65 @@ ConsultationViewProps) {
       className="container max-w-7xl mx-auto sm:px-4 sm:py-6 md:ml-10 flex-1 bg-gray-50 py-6 px-4"
       dir="rtl"
     >
-      <div className="grid grid-cols-1 mx-auto max-w-5xl w-full space-y-6 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-        {(showRequestList || !isMobile) && (
-          <ConsultationList
-            requests={requests}
-            selectedRequest={selectedRequest}
-            onSelectRequest={handleSelectRequest}
-            isMobile={isMobile}
-            onBackToList={handleBackToList}
-            userRole={role}
-          />
-        )}
-
-        {((!showRequestList && isMobile) || !isMobile) && selectedRequest && (
-          <ConsultationDetails
-            request={selectedRequest}
-            isMobile={isMobile}
-            onBackToList={handleBackToList}
-            userRole={role}
-            onRequestUpdate={handleRequestUpdate}
-          />
-        )}
-
-        {!selectedRequest && (!isMobile || (isMobile && showRequestList)) && (
-          <div className="lg:col-span-2 hidden lg:block">
-            <Card className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg h-full flex items-center justify-center min-h-[400px] sm:min-h-[500px]">
-              <CardContent className="text-center py-8 sm:py-12 px-4 sm:px-6">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-[#32A88D]/10 to-[#32A88D]/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                  <MessageCircle className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-[#32A88D]" />
-                </div>
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-700 mb-2 sm:mb-3">
-                  اختر طلب استشارة
-                </h3>
-                <p className="text-gray-500 text-sm sm:text-base lg:text-lg max-w-md mx-auto">
-                  اختر طلب استشارة من القائمة على اليمين لعرض التفاصيل الكاملة
-                  واتخاذ الإجراء المناسب
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+      <div className="grid grid-cols-1 mx-auto max-w-5xl w-full gap-4 lg:grid-cols-3 sm:gap-6 lg:gap-8">
+        {isMobile ? (
+          selectedRequest ? (
+            <ConsultationDetails
+              request={selectedRequest}
+              isMobile={isMobile}
+              onBackToList={handleBackToList}
+              userRole={role}
+              onRequestUpdate={handleRequestUpdate}
+            />
+          ) : (
+            <ConsultationList
+              requests={requests} // استخدام الـ requests من الـ store
+              selectedRequest={selectedRequest}
+              onSelectRequest={handleSelectRequest}
+              isMobile={isMobile}
+              onBackToList={handleBackToList}
+              userRole={role}
+            />
+          )
+        ) : (
+          <>
+            <ConsultationList
+              requests={requests} // استخدام الـ requests من الـ store
+              selectedRequest={selectedRequest}
+              onSelectRequest={handleSelectRequest}
+              isMobile={isMobile}
+              onBackToList={handleBackToList}
+              userRole={role}
+            />
+            {selectedRequest ? (
+              <ConsultationDetails
+                request={selectedRequest}
+                isMobile={isMobile}
+                onBackToList={handleBackToList}
+                userRole={role}
+                onRequestUpdate={handleRequestUpdate}
+              />
+            ) : (
+              <div className="lg:col-span-2">
+                <Card className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg h-full flex items-center justify-center min-h-[400px] sm:min-h-[500px]">
+                  <CardContent className="text-center py-8 sm:py-12 px-4 sm:px-6">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-[#32A88D]/10 to-[#32A88D]/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                      <MessageCircle className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-[#32A88D]" />
+                    </div>
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-700 mb-2 sm:mb-3">
+                      اختر طلب استشارة
+                    </h3>
+                    <p className="text-gray-500 text-sm sm:text-base lg:text-lg max-w-md mx-auto">
+                      {requests.length === 0 
+                        ? "لا توجد طلبات استشارة حالياً" 
+                        : "اختر طلب استشارة من القائمة على اليمين لعرض التفاصيل الكاملة واتخاذ الإجراء المناسب"
+                      }
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

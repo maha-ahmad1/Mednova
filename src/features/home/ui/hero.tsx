@@ -35,6 +35,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Badge } from "@/components/ui/badge";
+import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
 
 interface SearchingData {
   type: string;
@@ -377,6 +378,7 @@ export default function Hero() {
             </div>
           </div>
         )}
+        <LandingNavbar />
 
         {/* المحتوى الرئيسي */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-12 lg:py-20 sm:px-0 3xl:px-32">
@@ -409,7 +411,7 @@ export default function Hero() {
                 className="bg-gradient-to-r w-[40%] md:w-[50%] from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 asChild
               >
-                <Link href="/therapistsAndCenters">
+                <Link href="/specialists">
                   ابدأ البحث الآن
                   <ArrowLeft className="mr-2 w-5 h-5" />
                 </Link>

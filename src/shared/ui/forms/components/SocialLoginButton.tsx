@@ -8,6 +8,7 @@ export interface SocialLoginButtonProps {
   iconSrc?: string;
   label?: string;
   className?: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 const providerDefaults = {

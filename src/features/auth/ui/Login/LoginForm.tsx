@@ -203,8 +203,10 @@ export function LoginForm() {
         </div>
 
         <div className="grid grid-cols-2 gap-8">
-          <SocialLoginButton provider="google" />
-          <SocialLoginButton provider="facebook" />
+          <SocialLoginButton provider="google" 
+          onClick={() => signIn("google")}/>
+          <SocialLoginButton provider="facebook" 
+          onClick={() => signIn("facebook")}/>
         </div>
 
         <div>

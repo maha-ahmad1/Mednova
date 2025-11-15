@@ -1,5 +1,7 @@
 import NextAuth, { type NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
 import type { UserT } from "@/types/next-auth"
 
 export const authOptions: NextAuthOptions = {
@@ -59,6 +61,14 @@ export const authOptions: NextAuthOptions = {
 
         return null
       },
+    }),
+     GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID!,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
     }),
   ],
 

@@ -71,47 +71,48 @@ export function Navbar() {
                 )}
               </button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent
               align="end"
-              dir="rtl"
-              className="w-36 bg-white/80 backdrop-blur-lg 
-               border-gray-200/60 rounded-md shadow-md p-1"
+              sideOffset={0}
+              className=" text-right w-36 bg-white/80 backdrop-blur-lg 
+               border-gray-200/60 rounded-md shadow-md p-1   translate-x-12"
             >
               <DropdownMenuItem
                 className="flex items-center gap-2 px-3 py-2 rounded-md 
                  hover:bg-gray-100/60 text-gray-700 transition "
               >
-                <User className="w-4 h-4 text-gray-900" />
                 <Link href="/profile" className="text-sm w-full text-right">
                   {session.user.full_name}
                 </Link>
+                <User className="w-4 h-4 text-gray-900" />
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex items-center gap-2 px-3 py-2 rounded-md 
                hover:bg-gray-100/60 text-gray-700 transition "
               >
-                <Settings className="w-4 h-4 text-gray-900" />
                 <Link href="/settings" className="text-sm w-full text-right">
                   الإعدادات
                 </Link>
+                <Settings className="w-4 h-4 text-gray-900" />
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex items-center gap-2 px-3 py-2 rounded-md
                hover:bg-gray-100/60 text-gray-700 transition"
               >
-                <HelpCircle className="w-4 h-4 text-gray-900" />
                 <Link href="/help" className="text-sm w-full text-right">
                   المساعدة
                 </Link>
+                <HelpCircle className="w-4 h-4 text-gray-900" />
               </DropdownMenuItem>
               <div className="h-px bg-gray-200 my-1"></div>
               <DropdownMenuItem
-                className="flex items-center gap-2 px-3 py-2 rounded-md 
-                hover:bg-red-50  transition "
+                className="ml-1.5 flex items-center gap-2 px-3 py-2 rounded-md
+               hover:bg-gray-100/60 text-gray-700 transition"
                 onClick={() => signOut()}
               >
-                <LogOut className="w-4 h-4 text-gray-900" />
                 <span className="text-sm text-gray-700">تسجيل الخروج</span>
+                <LogOut className="w-4 h-4 text-gray-900" />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -82,81 +82,80 @@ export default function Navbar() {
           ))}
         </nav>
 
-       {session?.user ? (
-            <div className="hidden lg:flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center bg-destructive text-[10px]">
-                  3
-                </Badge>
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 group">
-                    {session.user.image ? (
-                      <Image
-                        src={session.user.image}
-                        width={38}
-                        height={38}
-                        alt="User Image"
-                        className="mb-1 rounded-full border-2 border-gray-300 object-cover !w-10 !h-10  cursor-pointer"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-semibold cursor-pointer">
-                        {session.user.name?.[0] || "U"}
-                      </div>
-                    )}
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  dir="rtl"
-                  className="w-36 bg-white/80 backdrop-blur-lg 
-                           border-gray-200/60 rounded-md shadow-md p-1"
-                >
-                  <DropdownMenuItem
-                    className="flex items-center gap-2 px-3 py-2 rounded-md 
-                             hover:bg-gray-100/60 text-gray-700 transition "
-                  >
-                    <User className="w-4 h-4 text-gray-900" />
-                    <Link href="/profile" className="text-sm w-full text-right">
-                      {session.user.full_name}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="flex items-center gap-2 px-3 py-2 rounded-md 
-                           hover:bg-gray-100/60 text-gray-700 transition "
-                  >
-                    <Settings className="w-4 h-4 text-gray-900" />
-                    <Link
-                      href="/settings"
-                      className="text-sm w-full text-right"
-                    >
-                      الإعدادات
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="flex items-center gap-2 px-3 py-2 rounded-md
-                           hover:bg-gray-100/60 text-gray-700 transition"
-                  >
-                    <HelpCircle className="w-4 h-4 text-gray-900" />
-                    <Link href="/help" className="text-sm w-full text-right">
-                      المساعدة
-                    </Link>
-                  </DropdownMenuItem>
-                  <div className="h-px bg-gray-200 my-1"></div>
-                  <DropdownMenuItem
-                    className="flex items-center gap-2 px-3 py-2 rounded-md 
-                            hover:bg-red-50  transition "
-                    onClick={() => signOut()}
-                  >
-                    <LogOut className="w-4 h-4 text-gray-900" />
-                    <span className="text-sm text-gray-700">تسجيل الخروج</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          ) : (
+       
+             {session?.user ? (
+               <div className="flex items-center gap-2">
+                 <Button variant="ghost" size="icon" className="relative">
+                   <Bell className="h-5 w-5" />
+                   <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center bg-destructive text-[10px]">
+                     3
+                   </Badge>
+                 </Button>
+                 <DropdownMenu>
+                   <DropdownMenuTrigger asChild>
+                     <button className="flex items-center gap-2 group">
+                       {session.user.image ? (
+                         <Image
+                           src={session.user.image}
+                           width={38}
+                           height={38}
+                           alt="User Image"
+                           className="mb-1 rounded-full border-2 border-gray-300 object-cover !w-10 !h-10  cursor-pointer"
+                         />
+                       ) : (
+                         <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-semibold cursor-pointer">
+                           {session.user.name?.[0] || "U"}
+                         </div>
+                       )}
+                     </button>
+                   </DropdownMenuTrigger>
+       
+                   <DropdownMenuContent
+                     align="end"
+                     sideOffset={0}
+                     className=" text-right w-36 bg-white/80 backdrop-blur-lg 
+                      border-gray-200/60 rounded-md shadow-md p-1"
+                   >
+                     <DropdownMenuItem
+                       className="flex items-center gap-2 px-3 py-2 rounded-md 
+                        hover:bg-gray-100/60 text-gray-700 transition "
+                     >
+                       <Link href="/profile" className="text-sm w-full text-right">
+                         {session.user.full_name}
+                       </Link>
+                       <User className="w-4 h-4 text-gray-900" />
+                     </DropdownMenuItem>
+                     <DropdownMenuItem
+                       className="flex items-center gap-2 px-3 py-2 rounded-md 
+                      hover:bg-gray-100/60 text-gray-700 transition "
+                     >
+                       <Link href="/settings" className="text-sm w-full text-right">
+                         الإعدادات
+                       </Link>
+                       <Settings className="w-4 h-4 text-gray-900" />
+                     </DropdownMenuItem>
+                     <DropdownMenuItem
+                       className="flex items-center gap-2 px-3 py-2 rounded-md
+                      hover:bg-gray-100/60 text-gray-700 transition"
+                     >
+                       <Link href="/help" className="text-sm w-full text-right">
+                         المساعدة
+                       </Link>
+                       <HelpCircle className="w-4 h-4 text-gray-900" />
+                     </DropdownMenuItem>
+                     <div className="h-px bg-gray-200 my-1"></div>
+                     <DropdownMenuItem
+                       className="ml-1.5 flex items-center gap-2 px-3 py-2 rounded-md
+                      hover:bg-gray-100/60 text-gray-700 transition"
+                       onClick={() => signOut()}
+                     >
+                       <span className="text-sm text-gray-700">تسجيل الخروج</span>
+                       <LogOut className="w-4 h-4 text-gray-900" />
+                     </DropdownMenuItem>
+                   </DropdownMenuContent>
+                 </DropdownMenu>
+               </div>
+             ) : (
             <Button
               variant="outline"
               className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-6 py-2 transition-all duration-200"

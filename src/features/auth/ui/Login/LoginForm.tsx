@@ -9,6 +9,7 @@ import * as z from "zod";
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import type { AxiosError } from "axios";
+import axios from "axios";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 
@@ -29,6 +30,12 @@ import {
 } from "@/shared/ui/forms";
 
 import { loginUser, type LoginData } from "@/features/auth/api/authApi";
+type BackendErrorResponse = {
+  success: boolean;
+  message?: string;
+  data?: Record<string, string>;
+  status?: string;
+};
 
 const loginSchema = z.object({
   email: z.string().email("بريد إلكتروني غير صالح"),
@@ -63,58 +70,107 @@ export function LoginForm() {
 
   const mutation = useMutation({
     mutationFn: (data: LoginData) => loginUser(data),
+
     onSuccess: async (data) => {
-      console.log("✅ تسجيل الدخول بنجاح:", data);
-      if (data.success) {
-        await signIn("credentials", {
-          redirect: false,
-          access_token: data.data.access_token,
-          user: JSON.stringify(data.data.user),
-        });
+      console.log("response from backend:", data);
 
-        const user = data.data.user;
-                console.log("✅ user.is_completed", user.is_completed);
-
-        if (!user.is_completed) {
-          router.push("/profile/create");
-
-        } else {
-          router.push("/profile"); 
-        }
-      } else {
-        setServerError(data.message || "حدث خطأ غير متوقع");
-      }
-      
-    },
-
-    onError: (
-      error: AxiosError<{ message?: string; data?: Record<string, string> }>
-    ) => {
-      console.error("خطأ أثناء تسجيل الدخول:", error);
-
-      if (error.response) {
-        const responseData = error.response.data;
-        const backendErrors = responseData.data || {};
-
-        Object.entries(backendErrors).forEach(([field, message]) => {
-          if (typeof message === "string") {
+      if (!data.success) {
+        if (data.data) {
+          Object.entries(data.data).forEach(([field, message]) => {
             setError(field as keyof LoginFormData, {
               type: "server",
-              message,
+              message: message as string,
             });
-          }
-        });
-
-        if (responseData.message && Object.keys(backendErrors).length === 0) {
-          setServerError(responseData.message);
+          });
         }
-      } else if (error.request) {
-        setServerError("لا يوجد اتصال بالخادم");
+        if (data.message) {
+          setServerError(data.message);
+        }
+        return;
+      }
+      await signIn("credentials", {
+        redirect: false,
+        access_token: data.data.access_token,
+        user: JSON.stringify(data.data.user),
+      });
+
+      const user = data.data.user;
+      if (!user.is_completed) {
+        router.push("/profile/create");
+      } else {
+        router.push("/profile");
+      }
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        const backendData = error.response?.data as BackendErrorResponse;
+        if (backendData?.data?.error) {
+          setServerError(backendData.data.error);
+        } else if (backendData?.message) {
+          setServerError(backendData.message);
+        } else {
+          setServerError("حدث خطأ غير متوقع");
+        }
       } else {
         setServerError("حدث خطأ غير متوقع");
       }
     },
   });
+
+  // const mutation = useMutation({
+  //   mutationFn: (data: LoginData) => loginUser(data),
+  //   onSuccess: async (data) => {
+  //     console.log("✅ تسجيل الدخول بنجاح:", data);
+  //     if (data.success) {
+  //       await signIn("credentials", {
+  //         redirect: false,
+  //         access_token: data.data.access_token,
+  //         user: JSON.stringify(data.data.user),
+  //       });
+
+  //       const user = data.data.user;
+  //               console.log("✅ user.is_completed", user.is_completed);
+
+  //       if (!user.is_completed) {
+  //         router.push("/profile/create");
+
+  //       } else {
+  //         router.push("/profile");
+  //       }
+  //     } else {
+  //       setServerError(data.message || "حدث خطأ غير متوقع");
+  //     }
+
+  //   },
+
+  //   onError: (
+  //     error: AxiosError<{ message?: string; data?: Record<string, string> }>
+  //   ) => {
+  //     console.error("خطأ أثناء تسجيل الدخول:", error);
+
+  //     if (error.response) {
+  //       const responseData = error.response.data;
+  //       const backendErrors = responseData.data || {};
+
+  //       Object.entries(backendErrors).forEach(([field, message]) => {
+  //         if (typeof message === "string") {
+  //           setError(field as keyof LoginFormData, {
+  //             type: "server",
+  //             message,
+  //           });
+  //         }
+  //       });
+
+  //       if (responseData.message && Object.keys(backendErrors).length === 0) {
+  //         setServerError(responseData.message);
+  //       }
+  //     } else if (error.request) {
+  //       setServerError("لا يوجد اتصال بالخادم");
+  //     } else {
+  //       setServerError("حدث خطأ غير متوقع");
+  //     }
+  //   },
+  // });
 
   const onSubmit = (data: LoginFormData) => {
     setServerError(null);
@@ -203,10 +259,14 @@ export function LoginForm() {
         </div>
 
         <div className="grid grid-cols-2 gap-8">
-          <SocialLoginButton provider="google" 
-          onClick={() => signIn("google")}/>
-          <SocialLoginButton provider="facebook" 
-          onClick={() => signIn("facebook")}/>
+          <SocialLoginButton
+            provider="google"
+            onClick={() => signIn("google")}
+          />
+          <SocialLoginButton
+            provider="facebook"
+            onClick={() => signIn("facebook")}
+          />
         </div>
 
         <div>

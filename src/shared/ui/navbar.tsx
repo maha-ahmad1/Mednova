@@ -75,7 +75,7 @@ export function Navbar() {
             <DropdownMenuContent
               align="end"
               sideOffset={0}
-              className=" text-right w-36 bg-white/80 backdrop-blur-lg 
+              className=" text-right w-37 bg-white/80 backdrop-blur-lg 
                border-gray-200/60 rounded-md shadow-md p-1   translate-x-12"
             >
               <DropdownMenuItem
@@ -107,8 +107,8 @@ export function Navbar() {
               </DropdownMenuItem>
               <div className="h-px bg-gray-200 my-1"></div>
               <DropdownMenuItem
-                className="ml-1.5 flex items-center gap-2 px-3 py-2 rounded-md
-               hover:bg-gray-100/60 text-gray-700 transition"
+                className="pl-5.5 flex items-center gap-2  py-2 rounded-md
+               bg-gray-100/60 text-gray-700 transition"
                 onClick={() => signOut()}
               >
                 <span className="text-sm text-gray-700">تسجيل الخروج</span>

@@ -24,16 +24,11 @@ import {
   MessageCircle,
   Video,
   ArrowLeft,
-  Search,
-  MapPin,
-  Building,
-  User,
-  Star,
-  Shield,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
 
 interface SearchingData {
@@ -129,6 +124,7 @@ const NavLink = [
 ];
 
 export default function Hero() {
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const { setValue, watch, register, handleSubmit } = useForm<SearchingData>();
@@ -157,7 +153,6 @@ export default function Hero() {
       <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
         {/* شريط التنقل */}
         <LandingNavbar />
-
         {/* المحتوى الرئيسي */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-12 lg:py-20 sm:px-0 3xl:px-32">
           {/* النص والعنوان */}

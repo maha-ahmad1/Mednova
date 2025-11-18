@@ -41,7 +41,7 @@ export const useConsultationRequestActions = (
           message = "تم بدء الاستشارة بنجاح";
           break;
         case "cancelled":
-          message = "تم رفض طلب الاستشارة بنجاح";
+          message = "تم إلغاء طلب الاستشارة بنجاح";
           break;
       }
       toast.success(message);

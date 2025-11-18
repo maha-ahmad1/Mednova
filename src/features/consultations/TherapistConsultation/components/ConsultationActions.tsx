@@ -5,7 +5,6 @@ import { Check, Video, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import type { ConsultationRequest } from "@/types/consultation";
-// import { consultationApi } from "@/lib/api-client";
 import RejectDialog from "./RejectDialog";
 import { useConsultationRequestActions } from "../../hooks/useConsultationRequestActions";
 
@@ -23,93 +22,8 @@ export default function ConsultationActions({
   userRole,
 }: ConsultationActionsProps) {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
-  // const [isProcessing, setIsProcessing] = useState(false);
   console.log("request rejected", request);
 
-  // const handleAccept = async () => {
-  //   setIsProcessing(true);
-  //   try {
-  //     await consultationApi.updateConsultationStatus(
-  //       {
-  //         id: request.id,
-  //         status: "accepted",
-  //         action_by: "consultable",
-  //         consultant_nature: request.type,
-  //       },
-  //       token
-  //     );
-
-  //     const updatedRequest: ConsultationRequest = {
-  //       ...request,
-  //       status: "accepted",
-  //     };
-
-  //     onRequestUpdate(updatedRequest);
-  //     toast.success("تم قبول طلب الاستشارة بنجاح");
-  //   } catch (error) {
-  //     console.log("[v0] Error accepting request:", error);
-  //     toast.error("حدث خطأ في قبول الطلب");
-  //   } finally {
-  //     setIsProcessing(false);
-  //   }
-  // };
-
-  // const handleStartConsultation = async () => {
-  //   setIsProcessing(true);
-  //   try {
-  //     await consultationApi.updateConsultationStatus(
-  //       {
-  //         id: request.id,
-  //         status: "completed",
-  //         action_by: "consultable",
-  //         consultant_nature: request.type,
-  //       },
-  //       token
-  //     );
-
-  //     const updatedRequest: ConsultationRequest = {
-  //       ...request,
-  //       status: "completed",
-  //     };
-
-  //     onRequestUpdate(updatedRequest);
-  //     toast.success("تم بدء الاستشارة بنجاح");
-  //   } catch (error) {
-  //     console.log("[v0] Error starting consultation:", error);
-  //     toast.error("حدث خطأ في بدء الاستشارة");
-  //   } finally {
-  //     setIsProcessing(false);
-  //   }
-  // };
-
-  // const handleRejectConfirm = async (reason: string) => {
-  //   setIsProcessing(true);
-  //   try {
-  //     await consultationApi.updateConsultationStatus(
-  //       {
-  //         id: request.id,
-  //         status: "cancelled",
-  //         action_by: "consultable",
-  //         action_reason: reason,
-  //         consultant_nature: request.type,
-  //       },
-  //       token
-  //     );
-  //     const updatedRequest: ConsultationRequest = {
-  //       ...request,
-  //       status: "cancelled",
-  //     };
-
-  //     onRequestUpdate(updatedRequest);
-  //     toast.success("تم رفض طلب الاستشارة بنجاح");
-  //     setRejectDialogOpen(false);
-  //   } catch (error) {
-  //     console.log("[v0] Error rejecting request:", error);
-  //     toast.error("حدث خطأ في رفض الطلب");
-  //   } finally {
-  //     setIsProcessing(false);
-  //   }
-  // };
   const { acceptRequest, startConsultation, rejectRequest, isProcessing } =
     useConsultationRequestActions(token, userRole);
 
@@ -157,7 +71,7 @@ export default function ConsultationActions({
                 جاري الرفض...
               </>
             ) : (
-              "رفض الطلب"
+              "إلغاء الإستشارة"
             )}
           </Button>
         )}
@@ -173,10 +87,10 @@ export default function ConsultationActions({
           <div className="w-full text-center p-4 sm:p-6 bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-lg sm:rounded-xl">
             {/* <X className="w-8 h-8 sm:w-12 sm:h-12 text-red-600 mx-auto mb-2 sm:mb-3" /> */}
             <p className="font-semibold text-red-800 text-sm sm:text-lg">
-              تم رفض طلب الاستشارة
+              تم إلغاء طلب الاستشارة
             </p>
             <p className="text-red-600 text-xs sm:text-sm mt-1 sm:mt-2">
-              سيتم إعلام المريض بقرار الرفض
+              سيتم إعلام المريض بقرار الإلغاء
             </p>
           </div>
         )}
@@ -225,7 +139,7 @@ export default function ConsultationActions({
               className="cursor-pointer border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-1 sm:flex-initial"
             >
               {/* <X className="w-4 h-4 sm:w-5 sm:h-5" /> */}
-              رفض الطلب
+              إلغاء الإستشارة
             </Button>
           </>
         )}
@@ -244,7 +158,7 @@ export default function ConsultationActions({
             ) : (
               <>
                 <Video className="w-4 h-4 sm:w-5 sm:h-5" />
-                بدء الاستشارة الآن
+                بدء المحادثة الآن
               </>
             )}
           </Button>
@@ -283,7 +197,7 @@ export default function ConsultationActions({
             </Button>
           </div>
         )}
-
+        
         {request.status === "completed" && (
           <div className="w-full text-center p-4 sm:p-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg sm:rounded-xl">
             <Check className="w-8 h-8 sm:w-12 sm:h-12 text-green-600 mx-auto mb-2 sm:mb-3" />

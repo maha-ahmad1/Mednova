@@ -18,8 +18,8 @@ export const getStatusBadge = (status: string) => {
       variant: "destructive" as const,
       className: "bg-red-100 text-red-800 border-red-200",
     },
-    waiting: {
-      label: "في انتظار البدء",
+    active: {
+      label: "نشطة",
       variant: "outline" as const,
       className: "bg-blue-100 text-blue-800 border-blue-200",
     },
@@ -53,5 +53,5 @@ export const getRemainingTime = (createdAt: string) => {
   const diffHours = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60))
   const remaining = 24 - diffHours
 
-  return remaining > 0 ? `${remaining} ساعة` : "منتهي"
+  return remaining > 0 ? `${remaining} ساعة ` : "منتهي"
 }

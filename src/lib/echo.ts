@@ -2,12 +2,14 @@
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 import { setupPusherListeners } from "@/utils/echo-helpers";
-import type { EchoConnector } from "@/types/echo";
 
+// تعريف الأنواع المطلوبة
+declare global {
+  interface Window {
+    Pusher: typeof Pusher;
+  }
+}
 
-// تعريف نوع لـ window مع Pusher
-
-// نوع مخصص للإعدادات
 interface EchoConfig {
   broadcaster: 'pusher';
   key: string;
@@ -20,14 +22,63 @@ interface EchoConfig {
       Accept: string;
     };
   };
-  enabledTransports?: string[];
-  disabledTransports?: string[];
+  enabledTransports?: ('ws' | 'wss')[];
+  disabledTransports?: ('sockjs' | 'xhr_polling' | 'xhr_streaming')[];
 }
+
+// أنواع لـ Pusher Connector
+interface PusherConnection {
+  state: string;
+  bind: (event: string, callback: (error?: unknown) => void) => void;
+}
+
+interface PusherConnectorOptions {
+  auth: {
+    headers: {
+      Authorization: string;
+    };
+  };
+}
+
+interface PusherConnector {
+  pusher: {
+    connection: PusherConnection;
+  };
+  options: PusherConnectorOptions;
+}
+
+// نوع مخصص لـ Echo مع معرفة Connector
+// @ts-expect-error: Echo generic parameter not required for our limited usage
+type CustomEcho = Echo & {
+  connector: PusherConnector;
+};
+
+let echoInstance: CustomEcho | null = null;
 
 /**
  * دالة لإنشاء Echo instance لكل مستخدم بالتوكن الخاص به
  */
-export const createEcho = (accessToken: string): Echo => {
+export const createEcho = (accessToken: string): CustomEcho => {
+  // إذا كان هناك instance نشط، أرجعها
+  if (
+    echoInstance && 
+    echoInstance.connector.pusher.connection.state === 'connected' &&
+    echoInstance.connector.options.auth.headers.Authorization === `Bearer ${accessToken}`
+  ) {
+    console.log("🔁 إعادة استخدام اتصال Echo موجود");
+    return echoInstance;
+  }
+  
+  // إذا كان هناك instance قديم بتوكن مختلف، افصله
+  if (
+    echoInstance && 
+    echoInstance.connector.options.auth.headers.Authorization !== `Bearer ${accessToken}`
+  ) {
+    console.log("🔄 تغيير التوكن، فصل الاتصال القديم");
+    echoInstance.disconnect();
+    echoInstance = null;
+  }
+  
   console.log("🔑 إنشاء Echo بالتوكن:", accessToken ? "موجود" : "مفقود");
   
   const config: EchoConfig = {
@@ -51,13 +102,13 @@ export const createEcho = (accessToken: string): Echo => {
     Pusher.logToConsole = true;
   }
 
-  const echo = new Echo(config);
+  // إنشاء instance جديدة مع النوع الصحيح
+  echoInstance = new Echo(config) as CustomEcho;
 
   // طريقة آمنة للوصول إلى اتصال Pusher
   setTimeout(() => {
     try {
-      // التحقق من اتصال Pusher بعد فترة قصيرة
-      const pusher = (echo.connector as any).pusher;
+      const pusher = echoInstance!.connector.pusher;
       if (pusher && pusher.connection) {
         pusher.connection.bind('connected', () => {
           console.log('✅ Pusher متصل بنجاح');
@@ -75,6 +126,16 @@ export const createEcho = (accessToken: string): Echo => {
       console.warn('⚠️ لا يمكن الوصول إلى اتصال Pusher:', error);
     }
   }, 1000);
-setupPusherListeners(echo);
-  return echo;
+
+  setupPusherListeners(echoInstance);
+  return echoInstance;
+};
+
+// دالة لتنظيف الـ instance
+export const cleanupEcho = (): void => {
+  if (echoInstance) {
+    echoInstance.disconnect();
+    echoInstance = null;
+    console.log("🧹 تم تنظيف Echo instance");
+  }
 };

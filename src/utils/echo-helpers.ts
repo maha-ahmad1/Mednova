@@ -1,9 +1,11 @@
 // utils/echo-helpers.ts
 import Echo from "laravel-echo";
+import type { PusherConnector } from "@/types/echo";
 
-export const setupPusherListeners = (echo: Echo): void => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const setupPusherListeners = (echo: Echo<any>): void => {
   // استخدام أي للوصول إلى الخصائص الداخلية مؤقتاً
-  const connector = echo.connector as any;
+  const connector = echo.connector as unknown as PusherConnector;
   
   if (connector.pusher && connector.pusher.connection) {
     const connection = connector.pusher.connection;

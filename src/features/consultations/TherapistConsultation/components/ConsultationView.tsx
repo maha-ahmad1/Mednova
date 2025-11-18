@@ -25,11 +25,10 @@ interface ApiResponse {
 export default function ConsultationView({}: ConsultationViewProps) {
   const { data, isLoading, error } = useFetcher<ApiResponse>(
     ["consultations"],
-    "/api/consultation-request/get-status-request"
+    "/api/consultation-request/get-status-request?limit=30"
   );
 
-  // استخدام الـ store بدلاً من useState المحلي
-  const { requests, setRequests, addRequest } = useConsultationStore();
+  const { requests, setRequests, updateRequest } = useConsultationStore();
   const [selectedRequest, setSelectedRequest] = useState<ConsultationRequest | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -79,10 +78,14 @@ export default function ConsultationView({}: ConsultationViewProps) {
   };
 
   const handleRequestUpdate = (updatedRequest: ConsultationRequest) => {
-    // سيتم التعامل مع التحديثات عبر الـ store تلقائياً
+    // تحديث الطلب في الـ store مباشرة
+    updateRequest(updatedRequest.id, updatedRequest);
+    
+    // تحديث الطلب المحدد
     setSelectedRequest(updatedRequest);
+    
+    console.log("🔄 تم تحديث الطلب في الـ store:", updatedRequest);
   };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -124,7 +127,7 @@ export default function ConsultationView({}: ConsultationViewProps) {
         ) : (
           <>
             <ConsultationList
-              requests={requests} // استخدام الـ requests من الـ store
+              requests={requests} 
               selectedRequest={selectedRequest}
               onSelectRequest={handleSelectRequest}
               isMobile={isMobile}

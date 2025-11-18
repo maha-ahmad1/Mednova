@@ -19,29 +19,30 @@ export const useConsultationStore = create<ConsultationState>((set, get) => ({
   addRequest: (request) =>
     set((state) => {
       console.log("➕ إضافة طلب جديد:", request);
-      
+
       // تجنب التكرار
-      const exists = state.requests.find(r => r.id === request.id);
+      const exists = state.requests.find((r) => r.id === request.id);
       if (exists) {
         console.log("⚠️ الطلب موجود مسبقاً، يتم التحديث:", request.id);
-        return { 
-          requests: state.requests.map(r => r.id === request.id ? request : r) 
+        return {
+          requests: state.requests.map((r) =>
+            r.id === request.id ? request : r
+          ),
         };
       }
-      
+
       console.log("✅ إضافة طلب جديد إلى القائمة");
-      return { 
-        requests: [request, ...state.requests] 
+      return {
+        requests: [request, ...state.requests],
       };
     }),
   updateRequest: (id, updates) =>
     set((state) => {
       console.log("✏️ تحديث الطلب:", id, updates);
-      return {
-        requests: state.requests.map((request) =>
-          request.id === id ? { ...request, ...updates } : request
-        ),
-      };
+      const updatedRequests = state.requests.map((request) =>
+        request.id === id ? { ...request, ...updates } : request
+      );
+      return { requests: updatedRequests };
     }),
   removeRequest: (id) =>
     set((state) => {

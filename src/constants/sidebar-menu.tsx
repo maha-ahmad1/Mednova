@@ -12,9 +12,9 @@ import {
 export const sidebarMenus = {
   patient: [
     { icon: LayoutDashboard, label: "لوحة التحكم", href: "/" },
-    { icon: UserPlus, label: "التسجيل", href: "/register" },
+    { icon: UserPlus, label: "الصفحة الشخصية", href: "/profile" },
     { icon: Users, label: "المستخدمين", href: "/users" },
-    { icon: Calendar, label: "المواعيد", href: "/appointments" },
+    { icon: Calendar, label: "طلبات الاستشارة", href: "/profile/consultations" },
     { icon: Activity, label: "الجلسات", href: "/sessions" },
     { icon: FileText, label: "التقارير", href: "/reports" },
     { icon: Settings, label: "الإعدادات", href: "/settings" },

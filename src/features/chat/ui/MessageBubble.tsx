@@ -1,6 +1,5 @@
 import { memo } from "react";
 import NextImage from "next/image";
-import { FileIcon } from "lucide-react";
 import type { Message } from "@/types/chat";
 
 interface MessageBubbleProps {
@@ -32,7 +31,7 @@ const MessageBubble = memo(({ message, isMyMessage }: MessageBubbleProps) => {
   return (
     <div className={`flex ${isMyMessage ? "justify-end" : "justify-start"}`}>
       <div
-        className={`flex items-end gap-2 max-w-[75%] ${
+        className={`flex items-end gap-8 m-1 max-w-[75%] ${
           isMyMessage ? "flex-row-reverse" : "flex-row"
         }`}
       >

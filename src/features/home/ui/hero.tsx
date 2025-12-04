@@ -45,7 +45,7 @@ const NavLink = [
   },
   {
     id: 2,
-    title: "المعالحين",
+    title: "المعالجين",
     link: "#",
     dropdown: [
       { id: 1, title: "حجز موعد", link: "#" },
@@ -190,13 +190,15 @@ export default function Hero() {
                 </Link>
               </Button>
 
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-[#32A88D] w-[40%] md:w-[80%] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-8 py-4 text-lg transition-all duration-300"
-              >
-                تعرف أكثر
-              </Button>
+              <Link href="#services">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="cursor-pointer border-[#32A88D] w-[40%] md:w-[80%] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-8 py-4 text-lg transition-all duration-300"
+                >
+                  تعرف أكثر
+                </Button>
+              </Link>
             </div>
 
             {/* إحصائيات */}

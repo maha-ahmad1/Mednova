@@ -19,7 +19,7 @@ export const NavLinks: NavLink[] = [
   },
   {
     id: 2,
-    title: "المعالحين",
+    title: "المعالجين",
     link: "/specialists",
     // dropdown: [
     //   { id: 1, title: "حجز موعد", link: "#" },

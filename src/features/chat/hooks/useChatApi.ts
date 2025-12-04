@@ -24,38 +24,6 @@ interface ApiErrorResponse {
 
 
 
-// // في useChatApi.ts - تحديث useMessages
-// export const useMessages = (chatRequestId: number, limit?: number) => {
-//   const axiosInstance = useAxiosInstance();
-
-//   return useQuery({
-//     queryKey: ['messages', chatRequestId],
-//     queryFn: async (): Promise<Message[]> => {
-//       const url = limit
-//         ? `/api/messages/${String(chatRequestId)}?limit=${limit}`
-//         : `/api/messages/${String(chatRequestId)}`;
-
-//       const response = await axiosInstance.get(url);
-//       console.log(chatRequestId)
-//       if (!response.data.success) {
-//         throw new Error(response.data.message || 'فشل في جلب الرسائل');
-//       }
-
-//       const messages = response.data.data || [];
-
-//       logger.info("📥 جلب الرسائل من API:", {
-//         chatRequestId,
-//         count: messages.length
-//       });
-
-//       return messages;
-//     },
-//     enabled: !!chatRequestId && chatRequestId > 0,
-//     retry: 1,
-//     staleTime: 0, // 🔥 البيانات دائماً قديمة - يسمح بالتحديثات الفورية من Pusher
-//     gcTime: 1000 * 60 * 10, // 🔥 احتفظ بالبيانات في الذاكرة لمدة 10 دقائق
-//   });
-// };
 
 export const useMessages = (chatRequestId: number, limit = 15) => {
   const axiosInstance = useAxiosInstance();
@@ -114,17 +82,7 @@ export const useMessages = (chatRequestId: number, limit = 15) => {
 
       console.log(`📝 الرسائل المستلمة: ${messagesArray.length} رسالة`);
 
-      // إذا كان هناك رسائل، احصل على timestamp آخر رسالة
-      // let manualNextCursor = null;
-      // if (messagesArray.length > 0) {
-      //   const lastMessage = messagesArray[messagesArray.length - 1];
-      //   manualNextCursor = new Date(lastMessage.created_at)
-      //     .getTime()
-      //     .toString();
-      //   console.log(
-      //     `⏰ آخر timestamp: ${manualNextCursor} (${lastMessage.created_at})`
-      //   );
-      // }
+    
 
       const cleanedMessages = messagesArray.filter(
         (msg: Message) =>

@@ -9,7 +9,11 @@
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 // import type { ConsultationRequest } from "@/types/consultation";
-// import { getStatusBadge, getTypeIcon } from "@/lib/consultation-helpers";
+// import {
+//   getStatusBadge,
+//   getTypeIcon,
+//   getRemainingTime,
+// } from "@/lib/consultation-helpers";
 
 // interface ConsultationListProps {
 //   requests: ConsultationRequest[];
@@ -32,6 +36,10 @@
 //   const [activeTab, setActiveTab] = useState<"all" | "video" | "chat">("all");
 
 //   const filteredRequests = requests.filter((request) => {
+//     if (request.status === "cancelled") {
+//       return false;
+//     }
+
 //     if (activeTab === "all") return true;
 //     return request.type === activeTab;
 //   });
@@ -133,20 +141,10 @@
 //                   </div>
 //                 ) : (
 //                   searchedRequests.map((request) => {
-//                     console.log("request.image", request.data.patient.image);
-//                     // 🟢 تحديد المعروض حسب الدور
 //                     const isPatient = userRole === "patient";
 //                     const displayName = isPatient
 //                       ? request.data.consultant.full_name
 //                       : request.data.patient.full_name;
-//                     const secondaryName = isPatient
-//                       ? request.data.patient.full_name
-//                       : request.data.consultant.full_name;
-
-//                     const initials = displayName
-//                       .split(" ")
-//                       .map((n) => n[0])
-//                       .join("");
 
 //                     return (
 //                       <div
@@ -170,10 +168,6 @@
 //                               }
 //                               alt="صورة المستخدم"
 //                               className="w-full h-full object-cover rounded-full"
-//                               // onError={(e) => {
-//                               //   (e.currentTarget as HTMLImageElement).src =
-//                               //     "/default-avatar.png";
-//                               // }}
 //                             />
 //                           </Avatar>
 
@@ -190,20 +184,22 @@
 //                               </div>
 //                             </div>
 
-//                             {/* <p className="text-xs text-gray-600 line-clamp-2 mb-2 sm:mb-3 leading-relaxed text-right">
-//                               {isPatient
-//                                 ? `المريض: ${secondaryName}`
-//                                 : `المعالج: ${secondaryName}`}
-//                             </p> */}
-
 //                             <div className="flex flex-row-reverse items-center justify-between">
 //                               <div className="flex flex-row-reverse items-center gap-2 sm:gap-4 text-xs text-gray-500">
 //                                 <span className="flex flex-row-reverse items-center gap-1 text-xs">
 //                                   <Clock className="w-3 h-3" />
+//                                   {/* {new Date(
+//                                     request.created_at
+//                                   ).toLocaleDateString("ar-SA")} */}
 //                                   {new Date(
 //                                     request.created_at
-//                                   ).toLocaleDateString("ar-SA")}
+//                                   ).toLocaleDateString("en-US")}
 //                                 </span>
+
+//                                 {/* <span className="text-gray-400">•</span> */}
+//                                 {/* <span className="text-[#32A88D] font-medium">
+//                                   {getRemainingTime(request.created_at)}
+//                                 </span> */}
 //                               </div>
 //                             </div>
 //                           </div>
@@ -233,17 +229,12 @@
 //         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
 //           background: #94a3b8;
 //         }
-//         .line-clamp-2 {
-//           display: -webkit-box;
-//           -webkit-line-clamp: 2;
-//           -webkit-box-orient: vertical;
-//           overflow: hidden;
-//         }
 //       `}</style>
 //     </div>
 //   );
 // }
-// components/ConsultationList.tsx
+
+
 
 "use client";
 
@@ -281,6 +272,7 @@ export default function ConsultationList({
 }: ConsultationListProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "video" | "chat">("all");
+console.log("requests:", requests);
 
   const filteredRequests = requests.filter((request) => {
     if (request.status === "cancelled") {
@@ -301,6 +293,15 @@ export default function ConsultationList({
         .includes(searchQuery.toLowerCase())
   );
 
+  // Deduplicate requests by `id` to avoid duplicate React keys
+  const uniqueRequestsMap = new Map<number, typeof requests[0]>();
+  for (const req of searchedRequests) {
+    if (!uniqueRequestsMap.has(req.id)) {
+      uniqueRequestsMap.set(req.id, req);
+    }
+  }
+  const uniqueRequests = Array.from(uniqueRequestsMap.values());
+console.log("Rendered ConsultationList with requests:", requests);
   return (
     <div
       className={`lg:col-span-1 ${
@@ -317,7 +318,7 @@ export default function ConsultationList({
                 variant="outline"
                 className="bg-[#32A88D]/10 text-[#32A88D] border-[#32A88D]/20 text-xs"
               >
-                {filteredRequests.length}
+                {uniqueRequests.length}
               </Badge>
             </CardTitle>
 
@@ -377,7 +378,8 @@ export default function ConsultationList({
 
             <TabsContent value={activeTab} className="m-0">
               <div className="max-h-[400px] sm:max-h-[500px] lg:max-h-[600px] overflow-y-auto custom-scrollbar">
-                {searchedRequests.length === 0 ? (
+                {uniqueRequests.length === 0 ? (
+                  
                   <div className="text-center py-8 sm:py-12">
                     <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto mb-3 sm:mb-4" />
                     <p className="text-gray-500 text-sm sm:text-base">
@@ -387,7 +389,7 @@ export default function ConsultationList({
                     </p>
                   </div>
                 ) : (
-                  searchedRequests.map((request) => {
+                  uniqueRequests.map((request) => {
                     const isPatient = userRole === "patient";
                     const displayName = isPatient
                       ? request.data.consultant.full_name
@@ -480,3 +482,9 @@ export default function ConsultationList({
     </div>
   );
 }
+
+
+
+
+
+

@@ -5,8 +5,6 @@ export interface User {
   image?: string;
 }
 
-
-
 export interface Message {
   id: number;
   sender_id: number | User;
@@ -58,6 +56,9 @@ export interface SendMessageData {
   receiver_id: number;
   message: string;
   chat_request_id: number;
+  // Optional attachment support for uploading files/images
+  attachment?: File | null;
+  attachment_type?: "image" | "file" | "voice" | null;
 }
 
 export interface UpdateChatData {
@@ -77,7 +78,7 @@ export interface PusherMessageEvent {
     message: string;
     attachment: string | null;
     attachment_type: string | null;
-    is_read: number; 
+    is_read: number;
     read_at: string | null;
     status: string;
     created_at: string;

@@ -25,7 +25,7 @@ import { useSession } from "next-auth/react";
 export const useAxiosInstance = () => {
   const { data: session } = useSession();
   const token = session?.accessToken;
-  console.log("Token in axios instance:", token);
+  // console.log("Token in axios instance:", token);
   return axios.create({
     baseURL: "https://demoapplication.jawebhom.com",
     headers: {

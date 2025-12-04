@@ -11,7 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 import "leaflet/dist/leaflet.css";
 // import NavbarWrapper from "@/components/ui/NavbarWrapper";
 import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
-import EchoProvider from "@/providers/ClientEchoWrapper";
+ import EchoProvider from "@/providers/ClientEchoWrapper";
 import { StoreDebugger } from "@/lib/StoreDebugger";
 
 const cairo = Cairo({

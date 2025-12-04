@@ -10,6 +10,7 @@ import ConsultationDetails from "./ConsultationDetails";
 import { useFetcher } from "@/hooks/useFetcher";
 import { useSession } from "next-auth/react";
 import { useConsultationStore } from "@/store/consultationStore";
+import { useEchoNotifications } from '@/hooks/useEchoNotifications';
 
 interface ConsultationViewProps {
   userType?: UserType;
@@ -23,6 +24,8 @@ interface ApiResponse {
 }
 
 export default function ConsultationView({}: ConsultationViewProps) {
+
+
   const { data, isLoading, error } = useFetcher<ApiResponse>(
     ["consultations"],
     "/api/consultation-request/get-status-request?limit=30"

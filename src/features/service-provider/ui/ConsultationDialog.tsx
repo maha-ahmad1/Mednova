@@ -23,7 +23,6 @@ interface ConsultationDialogProps {
 export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({ provider }) => {
   const { data: session } = useSession();
   const { storeConsultationRequest, Loading: isSubmitting } = useConsultationRequestStore();
-
   const handleRequest = async (type: "chat" | "video") => {
     if (!session?.user?.id) {
       toast.error("يجب تسجيل الدخول أولاً");

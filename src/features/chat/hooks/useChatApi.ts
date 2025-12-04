@@ -1,8 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAxiosInstance } from '@/lib/axios/axiosInstance';
-import type { Message, ChatRequest, SendMessageData } from '@/types/chat';
-import type { AxiosError } from 'axios';
-import { toast } from 'sonner';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
+import { useAxiosInstance } from "@/lib/axios/axiosInstance";
+import type { Message, ChatRequest, SendMessageData } from "@/types/chat";
+import type { AxiosError, AxiosProgressEvent } from "axios";
+import { toast } from "sonner";
+import { logger } from "@/lib/logger";
+import { useSession } from "next-auth/react";
 
 // تعريف نوع لاستجابة الخطأ من API
 interface ApiErrorResponse {
@@ -14,27 +21,149 @@ interface ApiErrorResponse {
   status?: string;
 }
 
-export const useMessages = (chatRequestId: number, limit?: number) => {
+
+
+
+// // في useChatApi.ts - تحديث useMessages
+// export const useMessages = (chatRequestId: number, limit?: number) => {
+//   const axiosInstance = useAxiosInstance();
+
+//   return useQuery({
+//     queryKey: ['messages', chatRequestId],
+//     queryFn: async (): Promise<Message[]> => {
+//       const url = limit
+//         ? `/api/messages/${String(chatRequestId)}?limit=${limit}`
+//         : `/api/messages/${String(chatRequestId)}`;
+
+//       const response = await axiosInstance.get(url);
+//       console.log(chatRequestId)
+//       if (!response.data.success) {
+//         throw new Error(response.data.message || 'فشل في جلب الرسائل');
+//       }
+
+//       const messages = response.data.data || [];
+
+//       logger.info("📥 جلب الرسائل من API:", {
+//         chatRequestId,
+//         count: messages.length
+//       });
+
+//       return messages;
+//     },
+//     enabled: !!chatRequestId && chatRequestId > 0,
+//     retry: 1,
+//     staleTime: 0, // 🔥 البيانات دائماً قديمة - يسمح بالتحديثات الفورية من Pusher
+//     gcTime: 1000 * 60 * 10, // 🔥 احتفظ بالبيانات في الذاكرة لمدة 10 دقائق
+//   });
+// };
+
+export const useMessages = (chatRequestId: number, limit = 15) => {
   const axiosInstance = useAxiosInstance();
 
-  return useQuery({
-    queryKey: ['messages', chatRequestId, limit],
-    queryFn: async (): Promise<Message[]> => {
-      const url = limit 
-        ? `/api/messages/${String(chatRequestId)}?limit=${limit}`
-        : `/api/messages/${String(chatRequestId)}`;
-      
-      const response = await axiosInstance.get(url);
-      
-      if (!response.data.success) {
-        console.error('❌ فشل في جلب الرسائل:', response.data);
-        throw new Error(response.data.message || 'فشل في جلب الرسائل');
+  return useInfiniteQuery({
+    queryKey: ["messages", chatRequestId],
+    queryFn: async ({ pageParam = null }) => {
+      const params = new URLSearchParams();
+      params.append("limit", String(limit));
+      params.append("order", "desc"); // إضافة ترتيب تنازلي
+
+      // معالجة خاصة للـ cursor اليدوي
+      if (pageParam) {
+        // تحقق إذا كان cursor يدوياً (timestamp)
+        if (typeof pageParam === "string" && /^\d+$/.test(pageParam)) {
+          // هذا cursor يدوي، أضفه كـ created_before
+          params.append("created_before", pageParam);
+          console.log(`📅 استخدام cursor يدوي (timestamp): ${pageParam}`);
+        } else {
+          // استخدام الـ cursor العادي
+          params.append("next_cursor", pageParam);
+          console.log(`🎯 استخدام cursor عادي: ${pageParam}`);
+        }
       }
-      
-      return response.data.data || [];
+
+      const response = await axiosInstance.get(
+        `/api/messages/${chatRequestId}?${params.toString()}`
+      );
+
+      if (!response.data.success) {
+        throw new Error("فشل في جلب الرسائل");
+      }
+
+      const apiData = response.data.data;
+      console.log("📨 API Response:", {
+        keys: Object.keys(apiData),
+        next_cursor: apiData.next_cursor,
+        hasNextCursor: !!apiData.next_cursor,
+      });
+
+       let messagesArray: Message[] = [];
+ 
+      if (apiData["0"] && Array.isArray(apiData["0"])) {
+        messagesArray = apiData["0"];
+      } else if (apiData.data && Array.isArray(apiData.data)) {
+        messagesArray = apiData.data;
+      } else {
+        const keys = Object.keys(apiData);
+        for (const key of keys) {
+          if (Array.isArray(apiData[key]) && apiData[key].length > 0) {
+            messagesArray = apiData[key];
+            break;
+          }
+        }
+      }
+
+      console.log(`📝 الرسائل المستلمة: ${messagesArray.length} رسالة`);
+
+      // إذا كان هناك رسائل، احصل على timestamp آخر رسالة
+      // let manualNextCursor = null;
+      // if (messagesArray.length > 0) {
+      //   const lastMessage = messagesArray[messagesArray.length - 1];
+      //   manualNextCursor = new Date(lastMessage.created_at)
+      //     .getTime()
+      //     .toString();
+      //   console.log(
+      //     `⏰ آخر timestamp: ${manualNextCursor} (${lastMessage.created_at})`
+      //   );
+      // }
+
+      const cleanedMessages = messagesArray.filter(
+        (msg: Message) =>
+          msg &&
+          typeof msg === "object" &&
+          msg.id &&
+          msg.sender_id &&
+          msg.created_at
+      );
+
+      return {
+        data: cleanedMessages,
+        next_cursor: apiData.next_cursor,
+        // manual_cursor: manualNextCursor, // إضافة cursor يدوي
+      };
     },
-    enabled: !!chatRequestId && chatRequestId > 0, 
-    retry: 1, 
+getNextPageParam: (lastPage) => {
+  console.log(`🔍 فحص للصفحة التالية:`, {
+    nextCursor: lastPage.next_cursor,
+    dataLength: lastPage.data?.length || 0,
+    hasData: !!lastPage.data && lastPage.data.length > 0,
+  });
+
+  // التحقق البسيط: إذا كان هناك cursor وكانت هناك بيانات
+  if (lastPage.next_cursor && lastPage.data && lastPage.data.length > 0) {
+    console.log(`✅ إرجاع cursor للصفحة التالية: ${lastPage.next_cursor.substring(0, 50)}...`);
+    return lastPage.next_cursor;
+  }
+
+  console.log("❌ لا يوجد cursor صالح للصفحة التالية");
+  return undefined;
+},
+    enabled: !!chatRequestId && chatRequestId > 0,
+    staleTime: 1000 * 60 * 5,
+    initialPageParam: null,
+    retry: 1,
+    refetchOnWindowFocus: false,
+    // إضافة إعدادات مهمة للتحديث التلقائي
+    refetchInterval: 30000, // تحديث كل 30 ثانية
   });
 };
 
@@ -43,103 +172,162 @@ export const useSendMessage = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: SendMessageData) => {
-      const response = await axiosInstance.post('/api/messages/sent', {
-        ...data,
-        chat_request_id: String(data.chat_request_id) 
-      });
-      
+    // Accept either:
+    // - SendMessageData (no attachment)
+    // - FormData
+    // - an object: { formData: FormData, onUploadProgress?: (ev: ProgressEvent) => void, chat_request_id?: number }
+    mutationFn: async (
+      payload:
+        | SendMessageData
+        | FormData
+        | {
+            formData: FormData;
+            onUploadProgress?: (ev?: AxiosProgressEvent) => void;
+            chat_request_id?: number;
+          }
+    ) => {
+      let response;
+
+      // If caller passed wrapper with formData and callback
+      if (payload && typeof payload === "object" && "formData" in payload) {
+        const wrapper = payload as {
+          formData: FormData;
+          onUploadProgress?: (ev?: AxiosProgressEvent) => void;
+        };
+        response = await axiosInstance.post(
+          "/api/messages/sent",
+          wrapper.formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            onUploadProgress: wrapper.onUploadProgress,
+          }
+        );
+      } else if (payload instanceof FormData) {
+        response = await axiosInstance.post("/api/messages/sent", payload, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        const d = payload as SendMessageData;
+        response = await axiosInstance.post("/api/messages/sent", {
+          ...d,
+          chat_request_id: String(d.chat_request_id),
+        });
+      }
+
       if (!response.data.success) {
-        const errorMsg = response.data.data?.error || response.data.message || 'فشل في إرسال الرسالة';
-        console.error('❌ فشل في إرسال الرسالة:', response.data);
+        const errorMsg =
+          response.data.data?.error ||
+          response.data.message ||
+          "فشل في إرسال الرسالة";
         throw new Error(errorMsg);
       }
-      
+
       return response.data.data;
     },
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['messages', variables.chat_request_id] });
-      toast.success('تم إرسال الرسالة بنجاح');
+      // Determine chat_request_id whether variables is FormData or object
+      let chatId: number | null = null;
+      if (variables instanceof FormData) {
+        const v = variables.get("chat_request_id");
+        chatId = v ? Number(v) : null;
+      } else {
+        chatId = (variables as SendMessageData).chat_request_id;
+      }
+
+      if (chatId) {
+        queryClient.invalidateQueries({ queryKey: ["messages", chatId] });
+      }
+      toast.success("تم إرسال الرسالة بنجاح");
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
-      console.error('❌ خطأ في إرسال الرسالة:', error);
-      
+      // console.error('❌ خطأ في إرسال الرسالة:', error);
+
       const errorData = error.response?.data;
-      const errorMessage = errorData?.data?.error || 
-                          errorData?.message || 
-                          error.message || 
-                          'حدث خطأ في الإرسال';
+      const errorMessage =
+        errorData?.data?.error ||
+        errorData?.message ||
+        error.message ||
+        "حدث خطأ في الإرسال";
       toast.error(errorMessage);
     },
   });
 };
-
-// export const useUpdateChat = () => {
-//   const axiosInstance = useAxiosInstance();
-
-//   return useMutation({
-//     mutationFn: async (data: UpdateChatData) => {
-//       const response = await axiosInstance.post('/api/consultation-request/chat/update-chatting', data);
-      
-//       if (!response.data.success) {
-//         throw new Error(response.data.message || 'فشل في تحديث بيانات الشات');
-//       }
-      
-//       return response.data.data;
-//     },
-//     onError: (error: AxiosError<ApiErrorResponse>) => {
-//       console.error('❌ خطأ في تحديث الشات:', error);
-//       const errorData = error.response?.data;
-//       const errorMessage = errorData?.message || error.message || 'فشل في تحديث بيانات الشات';
-//       toast.error(errorMessage);
-//     },
-//   });
-// };
 
 export const useMarkAsRead = () => {
   const axiosInstance = useAxiosInstance();
-  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (senderId: number) => {
-      const response = await axiosInstance.get(`/api/messages/mark-as-read/${senderId}`);
-      
+      const response = await axiosInstance.get(
+        `/api/messages/mark-as-read/${senderId}`
+      );
+
       if (!response.data.success) {
-        throw new Error(response.data.data?.error || response.data.message || 'فشل في تحديث حالة الرسالة');
+        throw new Error(
+          response.data.data?.error ||
+            response.data.message ||
+            "فشل في تحديث حالة الرسالة"
+        );
       }
-      
+
       return response.data.data;
     },
-    onSuccess: (data, variables) => {
-      console.log("✅ تم تعليم رسائل المرسل كمقروءة:", variables);
+    onSuccess: (data, senderId) => {
+      logger.info(`✅ تم تعليم رسائل المرسل ${senderId} كمقروءة`);
     },
-    onError: (error: AxiosError<ApiErrorResponse>) => {
-      console.error('❌ خطأ في تعليم الرسائل كمقروءة:', error);
-      
+    onError: (error: AxiosError<ApiErrorResponse>, senderId) => {
+      logger.error(`❌ فشل في تعليم رسائل المرسل ${senderId}:`, error);
+
       const errorData = error.response?.data;
-      const errorMessage = errorData?.data?.error || 
-                          errorData?.message || 
-                          error.message || 
-                          'فشل في تحديث حالة القراءة';
+      const errorMessage =
+        errorData?.data?.error ||
+        errorData?.message ||
+        error.message ||
+        "فشل في تحديث حالة القراءة";
       toast.error(errorMessage);
     },
   });
 };
 
-// الحصول على المحادثات الحالية
-export const useCurrentChats = () => {
-  const axiosInstance = useAxiosInstance();
+// export const useCurrentChats = () => {
+//   const axiosInstance = useAxiosInstance();
+//   const { data: session } = useSession();
 
-  return useQuery({
-    queryKey: ['current-chats'],
-    queryFn: async (): Promise<ChatRequest[]> => {
-      const response = await axiosInstance.get('/api/messages/messengers/current-user');
-      
-      if (!response.data.success) {
-        throw new Error(response.data.message || 'فشل في جلب المحادثات');
-      }
-      
-      return response.data.data || [];
-    },
-  });
-};
+//   return useQuery({
+//     queryKey: ['current-chats'],
+//     queryFn: async (): Promise<ChatRequest[]> => {
+//       const response = await axiosInstance.get('/api/messages/messengers/current-user');
+
+//       if (!response.data.success) {
+//         throw new Error(response.data.message || 'فشل في جلب المحادثات');
+//       }
+
+//       // تحويل البيانات من الشكل الجديد إلى الشكل المتوقع
+//       const chatList: ChatListItem[] = response.data.data || [];
+
+//       return chatList.map(chatItem => {
+//         const messenger = chatItem.messengers;
+//         const isPatient = session?.role === 'patient';
+
+//         return {
+//           id: chatItem.id,
+//           patient_id: isPatient ? session?.user?.id || 0 : messenger.id,
+//           consultant_id: isPatient ? messenger.id : session?.user?.id || 0,
+//           consultant_type: messenger.type_account as 'therapist' | 'rehabilitation_center',
+//           status: chatItem.status,
+//           created_at: chatItem.started_at || new Date().toISOString(),
+//           updated_at: chatItem.started_at || new Date().toISOString(),
+//           consultant_full_name: isPatient ? messenger.full_name : '',
+//           patient_full_name: isPatient ? '' : messenger.full_name,
+//           patient_image: isPatient ? session?.user?.image || '' : messenger.image,
+//           consultant_image: isPatient ? messenger.image : session?.user?.image || '',
+//           last_message: '', // يمكن إضافته إذا كان متوفراً في الـ API
+//           unread_count: chatItem.unread_messages_count
+//         };
+//       });
+//     },
+//     refetchInterval: 30000,
+//     staleTime: 1000 * 60 * 5,
+//     enabled: !!session, // فقط عندما يكون المستخدم مسجلاً
+//   });
+// };

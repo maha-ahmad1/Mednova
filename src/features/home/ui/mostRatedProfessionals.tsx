@@ -80,7 +80,7 @@ export default function MostRatedProfessionals() {
 
       if (type === "video") {
         payload.requested_day = "Thursday";
-        payload.requested_time = "2025-10-30 14:00";
+        payload.requested_time = "2026-10-30 14:00";
         payload.type_appointment = "online";
       }
 

@@ -1,148 +1,128 @@
 "use client";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+// import { useState } from "react";
+// import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { Logo } from "@/shared/ui/Logo";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import {
-  ChevronDown,
-  Menu,
-  X,
   MessageCircle,
   Video,
   ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+// import { useRouter } from "next/navigation";
+// import { useSession } from "next-auth/react";
 import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
 
-interface SearchingData {
-  type: string;
-  country: string;
-  city: string;
-}
+// interface SearchingData {
+//   type: string;
+//   country: string;
+//   city: string;
+// }
 
-const NavLink = [
-  {
-    id: 1,
-    title: "الرئيسية",
-    link: "/",
-  },
-  {
-    id: 2,
-    title: "المعالجين",
-    link: "#",
-    dropdown: [
-      { id: 1, title: "حجز موعد", link: "#" },
-      {
-        id: 2,
-        title: "استشارات",
-        link: "#",
-      },
-      {
-        id: 3,
-        title: "برنامج رحلة التعافي",
-        link: "#",
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: "التخصصات",
-    link: "#",
-    dropdown: [
-      { id: 1, title: "العلاج العضلي الهيكلي", link: "#" },
-      {
-        id: 2,
-        title: "العلاج العصبي",
-        link: "#",
-      },
-      {
-        id: 3,
-        title: "علاج الأطفال (الاضطرابات الحركية)",
-        link: "#",
-      },
-      {
-        id: 4,
-        title: "العلاج بعد العمليات والجراحة",
-        link: "#",
-      },
-      {
-        id: 5,
-        title: "العلاج اليدوي (Manual Therapy)",
-        link: "#",
-      },
-      {
-        id: 6,
-        title: "العلاج باستخدام الأجهزة (الكهربائي، الموجات، الليزر)",
-        link: "#",
-      },
-      {
-        id: 7,
-        title: "إعادة التأهيل الوظيفي",
-        link: "#",
-      },
-      {
-        id: 8,
-        title: "العلاج القلبي التنفسي",
-        link: "#",
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: "الأجهزة",
-    link: "#",
-    dropdown: [
-      {
-        id: 1,
-        title: "جهاز القفاز الذكي",
-        link: "#",
-      },
-    ],
-  },
-  {
-    id: 5,
-    title: "المختصين",
-    link: "/therapistsAndCenters",
-  },
-];
+// const NavLink = [
+//   {
+//     id: 1,
+//     title: "الرئيسية",
+//     link: "/",
+//   },
+//   {
+//     id: 2,
+//     title: "المعالجين",
+//     link: "#",
+//     dropdown: [
+//       { id: 1, title: "حجز موعد", link: "#" },
+//       {
+//         id: 2,
+//         title: "استشارات",
+//         link: "#",
+//       },
+//       {
+//         id: 3,
+//         title: "برنامج رحلة التعافي",
+//         link: "#",
+//       },
+//     ],
+//   },
+//   {
+//     id: 3,
+//     title: "التخصصات",
+//     link: "#",
+//     dropdown: [
+//       { id: 1, title: "العلاج العضلي الهيكلي", link: "#" },
+//       {
+//         id: 2,
+//         title: "العلاج العصبي",
+//         link: "#",
+//       },
+//       {
+//         id: 3,
+//         title: "علاج الأطفال (الاضطرابات الحركية)",
+//         link: "#",
+//       },
+//       {
+//         id: 4,
+//         title: "العلاج بعد العمليات والجراحة",
+//         link: "#",
+//       },
+//       {
+//         id: 5,
+//         title: "العلاج اليدوي (Manual Therapy)",
+//         link: "#",
+//       },
+//       {
+//         id: 6,
+//         title: "العلاج باستخدام الأجهزة (الكهربائي، الموجات، الليزر)",
+//         link: "#",
+//       },
+//       {
+//         id: 7,
+//         title: "إعادة التأهيل الوظيفي",
+//         link: "#",
+//       },
+//       {
+//         id: 8,
+//         title: "العلاج القلبي التنفسي",
+//         link: "#",
+//       },
+//     ],
+//   },
+//   {
+//     id: 4,
+//     title: "الأجهزة",
+//     link: "#",
+//     dropdown: [
+//       {
+//         id: 1,
+//         title: "جهاز القفاز الذكي",
+//         link: "#",
+//       },
+//     ],
+//   },
+//   {
+//     id: 5,
+//     title: "المختصين",
+//     link: "/therapistsAndCenters",
+//   },
+// ];
 
 export default function Hero() {
-  const { data: session } = useSession();
-  const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
-  const { setValue, watch, register, handleSubmit } = useForm<SearchingData>();
+  // const router = useRouter();
+  // const {  watch } = useForm<SearchingData>();
 
-  const onSubmit = (data: SearchingData) => {
-    console.log(data);
-    const query = new URLSearchParams(
-      Object.entries(data).reduce((acc, [key, value]) => {
-        if (value !== undefined && value !== null) {
-          acc[key] = String(value);
-        }
-        return acc;
-      }, {} as Record<string, string>)
-    ).toString();
-    router.push(`/searchResults?${query}`);
-  };
+  // const onSubmit = (data: SearchingData) => {
+  //   console.log(data);
+  //   const query = new URLSearchParams(
+  //     Object.entries(data).reduce((acc, [key, value]) => {
+  //       if (value !== undefined && value !== null) {
+  //         acc[key] = String(value);
+  //       }
+  //       return acc;
+  //     }, {} as Record<string, string>)
+  //   ).toString();
+  //   router.push(`/searchResults?${query}`);
+  // };
 
-  const selectedType = watch("type");
+  // const selectedType = watch("type");
 
   return (
     <section className="relative md:px-10 bg-gradient-to-br from-[#32A88D]/5 via-white to-blue-50/30 overflow-hidden">
@@ -272,100 +252,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* <div className="relative z-20 -translate-y-0">
-          <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 mx-auto max-w-4xl">
-            <div className="text-center mb-6">
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                ابحث عن المختصين والمراكز التأهيلية بسهولة
-              </h3>
-              <p className="text-gray-600">
-                اختر النوع والمكان للعثور على أفضل المختصين المناسبين لاحتياجاتك
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div className="md:col-span-1">
-                  <Select
-                    onValueChange={(value) => setValue("type", value)}
-                    value={selectedType}
-                  >
-                    <SelectTrigger className="w-full h-12 bg-gray-50 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#32A88D] focus:border-[#32A88D] transition-all duration-200">
-                      <SelectValue
-                        placeholder={
-                          <div className="flex items-center gap-2 text-gray-500">
-                            <User className="w-4 h-4" />
-                            <span>النوع</span>
-                          </div>
-                        }
-                      />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white border-gray-200 rounded-xl shadow-lg">
-                      <SelectItem
-                        value="center"
-                        className="flex items-center gap-2"
-                      >
-                        <Building className="w-4 h-4" />
-                        مركز
-                      </SelectItem>
-                      <SelectItem
-                        value="therapist"
-                        className="flex items-center gap-2"
-                      >
-                        <User className="w-4 h-4" />
-                        مختص
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="md:col-span-2">
-                  <div className="relative">
-                    <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      type="text"
-                      placeholder="الدولة"
-                      {...register("country")}
-                      className="w-full h-12 bg-gray-50 border-gray-200 rounded-xl pr-10 focus:ring-2 focus:ring-[#32A88D] focus:border-[#32A88D] transition-all duration-200"
-                    />
-                  </div>
-                </div>
-
-                <div className="md:col-span-2">
-                  <div className="relative">
-                    <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      type="text"
-                      placeholder="المدينة"
-                      {...register("city")}
-                      className="w-full h-12 bg-gray-50 border-gray-200 rounded-xl pr-10 focus:ring-2 focus:ring-[#32A88D] focus:border-[#32A88D] transition-all duration-200"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="flex-1 bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl py-3 shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  <Search className="ml-2 w-5 h-5" />
-                  ابحث الآن
-                </Button>
-
-                <Button
-                  type="reset"
-                  variant="outline"
-                  size="lg"
-                  className="flex-1 border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl py-3 transition-all duration-300"
-                >
-                  مسح البحث
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div> */}
+       
       </div>
 
       {/* أنيميشن للعناصر العائمة */}

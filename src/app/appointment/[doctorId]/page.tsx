@@ -47,22 +47,22 @@ export default function AppointmentPage() {
   // Use providerId from Zustand store or from URL params
   const providerId = currentConsultation?.providerId || (params.id as string);
 
-  if (!session) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-gray-600 mb-4">يجب تسجيل الدخول أولاً</p>
-        </div>
-      </div>
-    );
-  }
+  // if (!session) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center min-h-screen">
+  //       <div className="text-center">
+  //         <p className="text-gray-600 mb-4">يجب تسجيل الدخول أولاً</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
     <LandingNavbar />
     <BookingPage 
       doctorId={providerId}
-      patientId={session.user?.id}
+      patientId={session?.user?.id}
     />
     </>
     

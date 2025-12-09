@@ -10,18 +10,90 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useConsultationFlow } from "@/hooks/use-consultation-flow";
-// import { ServiceProvider } from '@/types/provider';
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useConsultationRequestStore } from "@/features/home/hooks/useConsultationRequestStore";
+import { useConsultationTypeStore } from "@/store/ConsultationTypeStore";
+import { toast } from "sonner";
+import { ServiceProvider } from '../types/provider';
 
 interface ConsultationDialogProps {
   provider: ServiceProvider;
 }
 
 export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({ provider }) => {
-  const { initiateConsultation, isLoading } = useConsultationFlow();
+  const { data: session } = useSession();
+  const router = useRouter();
+  const { storeConsultationRequest, Loading: isSubmitting } = useConsultationRequestStore();
+  const { setConsultation } = useConsultationTypeStore();
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+
+  const handleChatConsultation = async () => {
+    if (!session?.user?.id) {
+      toast.error("يجب تسجيل الدخول أولاً");
+      router.push("/login");
+      return;
+    }
+
+    try {
+      // تحضير بيانات الاستشارة النصية
+      const payload = {
+        patient_id: session.user.id,
+        consultant_id: provider.id,
+        consultant_type: provider.type_account === "therapist" ? "therapist" : "rehabilitation_center",
+        consultant_nature: "chat",
+        type_appointment: "online"
+      };
+
+      console.log("📤 إرسال بيانات الاستشارة النصية:", payload);
+
+      // إرسال البيانات إلى الـ API
+      await storeConsultationRequest(payload);
+
+      // حفظ معلومات الاستشارة في الـ store
+      setConsultation({
+        providerId: provider.id.toString(),
+        providerName: provider.full_name,
+        consultationType: "chat",
+        consultantType: provider.type_account === "therapist" ? "therapist" : "rehabilitation_center",
+      });
+
+      // إغلاق الـ Dialog
+      setIsDialogOpen(false);
+
+      // الانتقال إلى صفحة الدفع
+      router.push("/payment");
+
+    } catch (error) {
+      console.error("❌ خطأ في إرسال طلب الاستشارة النصية:", error);
+      // toast.error سيتم عرضه من useConsultationRequestStore
+    }
+  };
+
+  const handleVideoConsultation = () => {
+    // if (!session?.user?.id) {
+    //   toast.error("يجب تسجيل الدخول أولاً");
+    //   // router.push("/login");
+    //   return;
+    // }
+
+    // حفظ معلومات الاستشارة في الـ store للاستخدام في صفحة الحجز
+    setConsultation({
+      providerId: provider.id.toString(),
+      providerName: provider.full_name,
+      consultationType: "video",
+      consultantType: provider.type_account === "therapist" ? "therapist" : "rehabilitation_center",
+    });
+
+    // إغلاق الـ Dialog
+    setIsDialogOpen(false);
+
+    // الانتقال إلى صفحة الحجز
+    router.push(`/appointment/${provider.id}`);
+  };
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button 
           size="lg" 
@@ -46,10 +118,10 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({ provider
         
         <div className="py-6">
           <div className="grid grid-cols-2 gap-4">
-            {/* Chat Consultation */}
+            {/* استشارة نصية */}
             <button
-              onClick={() => initiateConsultation(provider, "chat")}
-              disabled={isLoading}
+              onClick={handleChatConsultation}
+              disabled={isSubmitting}
               className="group flex flex-col items-center gap-3 p-6 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 hover:border-blue-300 rounded-2xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center group-hover:bg-blue-600 transition-colors">
@@ -59,10 +131,10 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({ provider
               <span className="text-xs text-blue-600 text-center">محادثة فورية عبر النص</span>
             </button>
 
-            {/* Video Consultation */}
+            {/* استشارة فيديو */}
             <button
-              onClick={() => initiateConsultation(provider, "video")}
-              disabled={isLoading}
+              onClick={handleVideoConsultation}
+              disabled={isSubmitting}
               className="group flex flex-col items-center gap-3 p-6 bg-green-50 hover:bg-green-100 border-2 border-green-200 hover:border-green-300 rounded-2xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center group-hover:bg-green-600 transition-colors">
@@ -73,10 +145,10 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({ provider
             </button>
           </div>
 
-          {isLoading && (
+          {isSubmitting && (
             <div className="flex items-center justify-center gap-2 mt-6 p-4 bg-gray-50 rounded-xl">
               <Loader2 className="w-5 h-5 text-[#32A88D] animate-spin" />
-              <span className="text-gray-600">جاري التوجيه...</span>
+              <span className="text-gray-600">جاري إرسال الطلب...</span>
             </div>
           )}
         </div>

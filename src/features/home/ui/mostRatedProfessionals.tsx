@@ -65,14 +65,14 @@ export default function MostRatedProfessionals() {
     consultantId: number,
     type: "chat" | "video"
   ) => {
-    if (!session?.user?.id) {
-      toast.error("يجب تسجيل الدخول أولاً");
-      return;
-    }
+    // if (!session?.user?.id) {
+    //   toast.error("يجب تسجيل الدخول أولاً");
+    //   return;
+    // }
 
     try {
       const payload: ConsultationRequestPayload = {
-        patient_id: session.user.id, 
+        patient_id: session?.user?.id,
         consultant_id: consultantId,
         consultant_type: "therapist",
         consultant_nature: type,

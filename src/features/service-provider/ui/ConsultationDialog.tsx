@@ -10,45 +10,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useSession } from "next-auth/react";
-import { useConsultationRequestStore } from "@/features/home/hooks/useConsultationRequestStore";
-import { toast } from "sonner";
-import { ServiceProvider } from '../types/provider';
-
+import { useConsultationFlow } from "@/hooks/use-consultation-flow";
+// import { ServiceProvider } from '@/types/provider';
 
 interface ConsultationDialogProps {
   provider: ServiceProvider;
 }
 
 export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({ provider }) => {
-  const { data: session } = useSession();
-  const { storeConsultationRequest, Loading: isSubmitting } = useConsultationRequestStore();
-  const handleRequest = async (type: "chat" | "video") => {
-    if (!session?.user?.id) {
-      toast.error("يجب تسجيل الدخول أولاً");
-      return;
-    }
-
-    try {
-      const payload = {
-        patient_id: session.user.id,
-        consultant_id: provider.id,
-        consultant_type: provider.type_account === "therapist" ? "therapist" : "rehabilitation_center",
-        consultant_nature: type,
-        ...(type === "video" && {
-          requested_day: "Thursday",
-          requested_time: "2025-10-30 14:00",
-          type_appointment: "online"
-        })
-      };
-
-      await storeConsultationRequest(payload);
-    //   toast.success("تم إرسال طلبك بنجاح، الرجاء انتظار الموافقة ");
-    } catch (error) {
-    //   toast.error("حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى");
-      console.error("❌ Error sending consultation request:", error);
-    }
-  };
+  const { initiateConsultation, isLoading } = useConsultationFlow();
 
   return (
     <Dialog>
@@ -76,11 +46,11 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({ provider
         
         <div className="py-6">
           <div className="grid grid-cols-2 gap-4">
-            {/* استشارة نصية */}
+            {/* Chat Consultation */}
             <button
-              onClick={() => handleRequest("chat")}
-              disabled={isSubmitting}
-              className="group flex flex-col items-center gap-3 p-6 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 hover:border-blue-300 rounded-2xl transition-all duration-300 hover:scale-105"
+              onClick={() => initiateConsultation(provider, "chat")}
+              disabled={isLoading}
+              className="group flex flex-col items-center gap-3 p-6 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 hover:border-blue-300 rounded-2xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center group-hover:bg-blue-600 transition-colors">
                 <MessageSquare className="w-6 h-6 text-white" />
@@ -89,11 +59,11 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({ provider
               <span className="text-xs text-blue-600 text-center">محادثة فورية عبر النص</span>
             </button>
 
-            {/* استشارة فيديو */}
+            {/* Video Consultation */}
             <button
-              onClick={() => handleRequest("video")}
-              disabled={isSubmitting}
-              className="group flex flex-col items-center gap-3 p-6 bg-green-50 hover:bg-green-100 border-2 border-green-200 hover:border-green-300 rounded-2xl transition-all duration-300 hover:scale-105"
+              onClick={() => initiateConsultation(provider, "video")}
+              disabled={isLoading}
+              className="group flex flex-col items-center gap-3 p-6 bg-green-50 hover:bg-green-100 border-2 border-green-200 hover:border-green-300 rounded-2xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center group-hover:bg-green-600 transition-colors">
                 <Video className="w-6 h-6 text-white" />
@@ -103,10 +73,10 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({ provider
             </button>
           </div>
 
-          {isSubmitting && (
+          {isLoading && (
             <div className="flex items-center justify-center gap-2 mt-6 p-4 bg-gray-50 rounded-xl">
               <Loader2 className="w-5 h-5 text-[#32A88D] animate-spin" />
-              <span className="text-gray-600">جاري إرسال الطلب...</span>
+              <span className="text-gray-600">جاري التوجيه...</span>
             </div>
           )}
         </div>

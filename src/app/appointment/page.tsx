@@ -4,7 +4,7 @@ import AppointmentBookingPage from "@/features/consultationtype/video/ui/Booking
 export default function Video() {
   return (
     <div className="">
-      <AppointmentBookingPage  />
+      {/* <AppointmentBookingPage  /> */}
     </div>
   );
 }

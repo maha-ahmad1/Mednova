@@ -25,7 +25,7 @@ export interface CenterFormValues {
   city?: string;
   country?: string;
   formatted_address?: string;
-  timezone:string
+  timezone?:string
 }
 //هذه هي الدالة التي تحول البيانات من فورم عادي إلى FormData ثم ترسلها للسيرفر عبر API:
 export const storeCenterDetails = async (

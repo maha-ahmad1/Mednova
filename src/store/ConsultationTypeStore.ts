@@ -1,8 +1,8 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface ConsultationData {
-  providerId: string;
+  providerId:  string;
   providerName: string;
   consultationType: 'chat' | 'video';
   consultantType: 'therapist' | 'rehabilitation_center';
@@ -45,7 +45,7 @@ export const useConsultationTypeStore= create<ConsultationTypeStore>()(
     }),
     {
       name: 'consultation-storage',
-      getStorage: () => localStorage,
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

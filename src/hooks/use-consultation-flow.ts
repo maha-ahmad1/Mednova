@@ -4,6 +4,8 @@ import { useSession } from 'next-auth/react';
 // import { useConsultationStore } from '@/stores/consultation-store';
 // import { ServiceProvider } from '@/types/provider';
 import { useConsultationTypeStore } from '@/store/ConsultationTypeStore';
+import { ServiceProvider } from '@/features/service-provider/types/provider';
+
 
 export const useConsultationFlow = () => {
   const router = useRouter();
@@ -27,15 +29,15 @@ export const useConsultationFlow = () => {
 
     startLoading();
     
-    try {
+      try {
       // Store consultation data in Zustand
       const consultationData = {
-        providerId: provider.id,
+        providerId: String(provider.id),
         providerName: provider.full_name,
         consultationType: type,
-        consultantType: provider.type_account === 'therapist' 
-          ? 'therapist' 
-          : 'rehabilitation_center',
+        consultantType: (provider.type_account === 'therapist'
+          ? 'therapist'
+          : 'rehabilitation_center') as 'therapist' | 'rehabilitation_center',
       };
 
       setConsultation(consultationData);

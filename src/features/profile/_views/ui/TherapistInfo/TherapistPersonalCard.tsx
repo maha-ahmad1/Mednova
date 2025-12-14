@@ -15,13 +15,16 @@ import type { TherapistProfile } from "@/types/therpist";
 import { useUpdateTherapist } from "@/features/profile/_views/hooks/useUpdateTherapist";
 import { TherapistFormValues } from "@/app/api/therapist";
 import { personalSchema } from "@/lib/validation";
+import type { QueryObserverResult } from "@tanstack/react-query";
 
 interface TherapistPersonalCardProps {
   profile: TherapistProfile;
   userId: string;
   // refetch may return either the fresh profile or an object with a `data` field
-  refetch: () => Promise<TherapistProfile | { data?: TherapistProfile } | void>;
+  // refetch: () => Promise<TherapistProfile | { data?: TherapistProfile } | void>;
   serverErrors?: Record<string, string>;
+    refetch: () => Promise<QueryObserverResult<TherapistProfile | null, Error>>
+
 }
 
 export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({

@@ -42,6 +42,10 @@ export type CenterDetails = {
   commercial_registration_number: string;
   commercial_registration_file: string | null;
   commercial_registration_authority: string;
+  services?: {
+    id: number;
+    name: string;
+  }[];
 };
 
 export type ServiceProvider = {

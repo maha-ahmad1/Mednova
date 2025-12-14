@@ -1,4 +1,3 @@
-// components/StoreDebugger.tsx (مؤقت للاختبار فقط)
 "use client";
 import { useConsultationStore } from "@/store/consultationStore";
 import { useEffect } from "react";

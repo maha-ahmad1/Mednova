@@ -7,11 +7,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { countries } from "@/constants/countries"
 import { FormSelect } from "@/shared/ui/forms"
+import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector"
 
 const step4Schema = z
   .object({
     country: z.string().min(1, "حقل البلد مطلوب."),
     city: z.string().min(1, "حقل المدينة مطلوب."),
+    timezone: z.string().min(1, "حقل المنطقة الزمنية مطلوب."),
     day_of_week: z.array(z.string()).min(1, "حقل أيام الدوام مطلوب."),
     start_time_morning: z.string().min(1, "حقل بداية الدوام الصباحي مطلوب."),
     end_time_morning: z.string().min(1, "حقل نهاية الدوام الصباحي مطلوب."),
@@ -70,6 +72,7 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
       day_of_week: (formData.day_of_week as string[]) || [],
       start_time_morning: (formData.start_time_morning as string) || "",
       end_time_morning: (formData.end_time_morning as string) || "",
+      timezone: (formData.timezone as string) || "",
       // support both numeric (0|1) and boolean flags from outer state
       is_have_evening_time:
         formData.is_have_evening_time === 1 || formData.is_have_evening_time === true
@@ -154,6 +157,25 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
                   />
                 )
               }}
+            />
+          </div>
+
+          {/* Timezone */}
+          <div className="mb-4">
+            <Controller
+              name="timezone"
+              control={control}
+              render={({ field, fieldState }) => (
+                <div>
+                  <label className="block mb-1 font-medium">المنطقة الزمنية</label>
+                  <TimeZoneSelector
+                    selectedTimeZone={field.value}
+                    onSelect={(val) => field.onChange(val)}
+                    apiBaseUrl={process.env.NEXT_PUBLIC_API_URL}
+                  />
+                  {fieldState.error && <p className="text-red-500 text-sm mt-1">{fieldState.error.message}</p>}
+                </div>
+              )}
             />
           </div>
 

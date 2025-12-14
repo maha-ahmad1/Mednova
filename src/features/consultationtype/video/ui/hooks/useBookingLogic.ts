@@ -68,22 +68,25 @@ export function useBookingLogic({
     return "";
   }, []);
 
-  const ensureDate = useCallback((date: any): Date | null => {
-    if (!date) return null;
+  const ensureDate = useCallback(
+    (date: Date | string | null | undefined): Date | null => {
+      if (!date) return null;
 
-    // If already a Date object, return it
-    if (date instanceof Date) {
-      return isNaN(date.getTime()) ? null : date;
-    }
+      // If already a Date object, return it
+      if (date instanceof Date) {
+        return isNaN(date.getTime()) ? null : date;
+      }
 
-    // If it's a string, try to convert it
-    if (typeof date === "string") {
-      const parsed = new Date(date);
-      return isNaN(parsed.getTime()) ? null : parsed;
-    }
+      // If it's a string, try to convert it
+      if (typeof date === "string") {
+        const parsed = new Date(date);
+        return isNaN(parsed.getTime()) ? null : parsed;
+      }
 
-    return null;
-  }, []);
+      return null;
+    },
+    []
+  );
 
   // دالة لتحميل الأوقات المتاحة مع المنطقة الزمنية
   const loadAvailableSlots = useCallback(
@@ -187,16 +190,21 @@ export function useBookingLogic({
           console.warn("لا توجد أوقات متاحة لهذا اليوم");
           setGroupedSlots({ morning: [], afternoon: [], evening: [] });
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("خطأ في تحميل الأوقات المتاحة:", error);
 
-        // عرض تفاصيل الخطأ
-        if (error.response) {
-          console.error("تفاصيل الخطأ:", error.response.data);
+        // عرض تفاصيل الخطأ إن وُجدت بشكل آمن
+        if (
+          error &&
+          typeof error === "object" &&
+          "response" in error &&
+          error !== null
+        ) {
+          const err = error as { response?: { data?: unknown } };
+          console.error("تفاصيل الخطأ:", err.response?.data);
         }
 
         setGroupedSlots({ morning: [], afternoon: [], evening: [] });
-        // toast.error("حدث خطأ في تحميل الأوقات المتاحة");
       } finally {
         setIsLoadingSlots(false);
       }
@@ -232,7 +240,8 @@ export function useBookingLogic({
   }, [provider, selectedTimeZone]);
 
   const handleTimeZoneChange = useCallback(
-    (newTimeZone: string) => {
+    (newTimeZone?: string) => {
+      if (!newTimeZone) return;
       console.log("تغيير المنطقة الزمنية إلى:", newTimeZone);
       setSelectedTimeZone(newTimeZone);
 

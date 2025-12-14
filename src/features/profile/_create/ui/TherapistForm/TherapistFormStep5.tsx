@@ -156,6 +156,8 @@ export function TherapistFormStep5({
         start_time_morning: schedulePayload.start_time_morning,
         end_time_morning: schedulePayload.end_time_morning,
         is_have_evening_time: schedulePayload.is_have_evening_time,
+         timezone:
+          typeof formData.timezone === "string" ? formData.timezone : undefined,
       } as Record<string, unknown>;
 
       if (eveningFlag) {

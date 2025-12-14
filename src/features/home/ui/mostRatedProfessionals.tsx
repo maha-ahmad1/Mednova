@@ -3,18 +3,8 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { MessageSquare, Video, Star, MapPin, GraduationCap, Award, Loader2 } from "lucide-react";
-import { useSession } from "next-auth/react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Star, MapPin, GraduationCap, Award } from "lucide-react";
 import { useFetcher } from "@/hooks/useFetcher";
-import { useConsultationRequestStore } from "../hooks/useConsultationRequestStore";
-import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ConsultationDialog } from "@/features/service-provider/ui/ConsultationDialog";
@@ -41,57 +31,57 @@ type TypeItem = {
   average_rating: number;
 };
 
-interface ConsultationRequestPayload {
-  patient_id: string | number;
-  consultant_id: number;
-  consultant_type: string;
-  consultant_nature: "chat" | "video";
-  requested_day?: string;
-  requested_time?: string;
-  type_appointment?: string;
-}
+// interface ConsultationRequestPayload {
+//   patient_id: string | number;
+//   consultant_id: number;
+//   consultant_type: string;
+//   consultant_nature: "chat" | "video";
+//   requested_day?: string;
+//   requested_time?: string;
+//   type_appointment?: string;
+// }
 
 export default function MostRatedProfessionals() {
-  const { data: session, status } = useSession();
+  // const { data: session } = useSession();
   
   const { data, isLoading, error } = useFetcher<TypeItem[]>(
     ["mostRatedProfessionals"],
     "/api/rating?typeServiceProvider=therapist"
   );
 
-  const { storeConsultationRequest, Loading: isSubmitting } =
-    useConsultationRequestStore();
+  // const { storeConsultationRequest } =
+  //   useConsultationRequestStore();
 
-  const handleRequest = async (
-    consultantId: number,
-    type: "chat" | "video"
-  ) => {
-    // if (!session?.user?.id) {
-    //   toast.error("يجب تسجيل الدخول أولاً");
-    //   return;
-    // }
+  // const handleRequest = async (
+  //   consultantId: number,
+  //   type: "chat" | "video"
+  // ) => {
+  //   // if (!session?.user?.id) {
+  //   //   toast.error("يجب تسجيل الدخول أولاً");
+  //   //   return;
+  //   // }
 
-    try {
-      const payload: ConsultationRequestPayload = {
-        patient_id: session?.user?.id,
-        consultant_id: consultantId,
-        consultant_type: "therapist",
-        consultant_nature: type,
-      };
+  //   try {
+  //     const payload: ConsultationRequestPayload = {
+  //       patient_id: session?.user?.id,
+  //       consultant_id: consultantId,
+  //       consultant_type: "therapist",
+  //       consultant_nature: type,
+  //     };
 
-      if (type === "video") {
-        payload.requested_day = "Thursday";
-        payload.requested_time = "2026-10-30 14:00";
-        payload.type_appointment = "online";
-      }
+  //     if (type === "video") {
+  //       payload.requested_day = "Thursday";
+  //       payload.requested_time = "2026-10-30 14:00";
+  //       payload.type_appointment = "online";
+  //     }
 
-      const response = await storeConsultationRequest(payload);
-      // toast.success("تم إرسال طلبك بنجاح، الرجاء انتظار موافقة المختص");
-    } catch (error) {
-      // toast.error("حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى");
-      console.error("❌ Error sending consultation request:", error);
-    }
-  };
+  //     const response = await storeConsultationRequest(payload);
+  //     // toast.success("تم إرسال طلبك بنجاح، الرجاء انتظار موافقة المختص");
+  //   } catch (error) {
+  //     // toast.error("حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى");
+  //     console.error("❌ Error sending consultation request:", error);
+  //   }
+  // };
 
   // Fix: data is now TypeItem[] so slice should work
   const items = data?.slice(0, 4) || [];

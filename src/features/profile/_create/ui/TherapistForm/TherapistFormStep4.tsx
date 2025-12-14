@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { countries } from "@/constants/countries";
 import { FormSelect } from "@/shared/ui/forms";
+import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector";
 
 const step4Schema = z
   .object({
@@ -18,6 +19,7 @@ const step4Schema = z
     is_have_evening_time: z.union([z.literal(0), z.literal(1)]),
     start_time_evening: z.string().optional(),
     end_time_evening: z.string().optional(),
+    timezone: z.string().min(1, "حقل المنطقة الزمنية مطلوب."),
   })
   .superRefine((data, ctx) => {
     const hasEvening = data.is_have_evening_time === 1;
@@ -158,7 +160,29 @@ export function TherapistFormStep4({
               }}
             />
           </div>
-
+          <div className="mb-4">
+            <Controller
+              name="timezone"
+              control={control}
+              render={({ field, fieldState }) => (
+                <div>
+                  <label className="block mb-1 font-medium">
+                    المنطقة الزمنية
+                  </label>
+                  <TimeZoneSelector
+                    selectedTimeZone={field.value}
+                    onSelect={(val) => field.onChange(val)}
+                    apiBaseUrl={process.env.NEXT_PUBLIC_API_URL}
+                  />
+                  {fieldState.error && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+          </div>
           {/* Days */}
           <div className="flex flex-wrap gap-3 mb-4">
             {days.map((d) => (

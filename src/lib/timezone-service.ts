@@ -263,14 +263,52 @@ export class TimeZoneService {
     }
   }
 
-  // كاش أبسط للمناطق الزمنية
-  static async getAllTimeZones(): Promise<TimeZoneOption[]> {
-    return this.getTimeZonesFromAPI();
+  // دالة fallback للحصول على المناطق الزمنية (بدون API)
+  static getFallbackTimeZones(): TimeZoneOption[] {
+    if (this.cache) return this.cache;
+    
+    try {
+      // استخدام Intl للحصول على المناطق الزمنية المتاحة
+      const timeZones = Intl.supportedValuesOf('timeZone');
+      const zones: TimeZoneOption[] = timeZones.map((zone: string) => ({
+        id: zone,
+        label: this.formatZoneLabel(zone),
+        offset: this.getOffsetForZone(zone)
+      }));
+      
+      this.cache = zones;
+      return zones;
+    } catch (error) {
+      console.error('Error getting fallback timezones:', error);
+      // قائمة افتراضية إذا فشل كل شيء
+      return [
+        { id: 'UTC', label: 'UTC', offset: '+00:00' },
+        { id: 'Asia/Riyadh', label: 'Riyadh', offset: '+03:00' },
+        { id: 'Europe/London', label: 'London', offset: '+00:00' },
+        { id: 'America/New_York', label: 'New York', offset: '-05:00' },
+        { id: 'Asia/Dubai', label: 'Dubai', offset: '+04:00' },
+        { id: 'Asia/Kolkata', label: 'Kolkata', offset: '+05:30' },
+      ];
+    }
+  }
+
+  // للحصول على كل المناطق الزمنية (مع fallback)
+  static async getAllTimeZones(apiBaseUrl?: string): Promise<TimeZoneOption[]> {
+    try {
+      return await this.getTimeZonesFromAPI(apiBaseUrl);
+    } catch (error) {
+      console.warn('Using fallback timezones due to API error:', error);
+      return this.getFallbackTimeZones();
+    }
   }
 
   // اكتشاف المنطقة الزمنية للمستخدم
   static detectUserTimeZone(): string {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    } catch {
+      return 'UTC';
+    }
   }
 
   // التحقق من صحة المنطقة الزمنية

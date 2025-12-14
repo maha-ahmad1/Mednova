@@ -3,7 +3,6 @@
 import React from "react";
 import Image from "next/image";
 import { Star, MapPin, GraduationCap, Award, Building2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 // import { ServiceProvider } from "@/types/therapist";
 // import { ConsultationDialog } from "./ConsultationDialog";

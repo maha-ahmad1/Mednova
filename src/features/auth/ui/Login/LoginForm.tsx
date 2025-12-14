@@ -231,7 +231,7 @@ export function LoginForm() {
                 تذكرني
               </Label>
               <Link
-                href="/auth/forgot-password"
+                href="/forgot-password"
                 className="text-sm text-[#32A88D] cursor-pointer"
               >
                 نسيت كلمة المرور؟

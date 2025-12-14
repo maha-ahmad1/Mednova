@@ -4,9 +4,10 @@ import { MapPin, ArrowRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { format } from "date-fns"
+import type { ServiceProvider } from "@/features/service-provider/types/provider"
 
 interface Props {
-  provider: any
+  provider?: ServiceProvider | null
   consultantType?: string
   selectedDate?: Date
   selectedTime?: string

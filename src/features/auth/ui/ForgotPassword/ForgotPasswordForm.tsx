@@ -53,7 +53,7 @@ export function ForgotPassword() {
           data.message || "تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني."
         );
         setServerError(null);
-        router.push(`/auth/code-verification`);
+        router.push(`/code-verification`);
         console.log("✅ Forgot Password successful:", data.email);
       } else {
         setServerError(data.message || "حدث خطأ أثناء إرسال البريد.");

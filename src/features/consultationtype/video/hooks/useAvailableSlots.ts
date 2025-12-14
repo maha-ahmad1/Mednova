@@ -85,10 +85,9 @@ export const useAvailableSlots = ({
         }
         
         return response.data.available_slots;
-      } catch (error: any) {
-        // التعامل مع حالة 422 بشكل صريح
-        if (error?.status === 422) {
-          return []; // لا توجد مواعيد متاحة
+      } catch (error) {
+      if (error instanceof Error && error.message.includes('422')) {
+          return [];
         }
         throw error;
       }
@@ -135,9 +134,6 @@ export const useAvailableSlots = ({
       return slots;
     },
 
-    onError: (err) => {
-       console.error("Error fetching available slots:", err);
-      // يمكن إضافة إشعار خطأ هنا إذا لزم الأمر
-    },
+ 
   });
 };

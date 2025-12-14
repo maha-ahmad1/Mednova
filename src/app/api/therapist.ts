@@ -30,7 +30,7 @@ export interface TherapistFormValues {
   is_have_evening_time?: boolean;
   start_time_evening?: string;
   end_time_evening?: string;
-  timezone:string;
+  timezone?:string;
 
 }
 

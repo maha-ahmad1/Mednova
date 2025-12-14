@@ -52,21 +52,21 @@ export type ServiceProvider = {
   id: number;
   image: string;
   full_name: string;
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
   type_account: "therapist" | "rehabilitation_center";
-  birth_date: string;
-  gender: string;
-  location_details: LocationDetails;
+  birth_date?: string;
+  gender?: string;
+  location_details?: LocationDetails;
  therapist_details?: Partial<TherapistDetails>;
-  center_details: CenterDetails | null;
-  medicalSpecialties: MedicalSpecialty[];
-  average_rating: string | null;
-  total_reviews: number;
-  is_completed: boolean;
-  status: string;
-  is_banned: number;
-  timezone: string | null;
+  center_details?: CenterDetails | null;
+  medicalSpecialties?: MedicalSpecialty[];
+  average_rating?: string | null;
+  total_reviews?: number;
+  is_completed?: boolean;
+  status?: string;
+  is_banned?: number;
+  timezone?: string | null;
 };
 
 export type SearchFilters = {

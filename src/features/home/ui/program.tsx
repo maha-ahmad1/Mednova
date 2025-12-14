@@ -8,7 +8,6 @@ import { Star, Clock, Calendar, Users, ArrowLeft, PlayCircle, Award } from "luci
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ConsultationDialog } from "@/features/service-provider/ui/ConsultationDialog";
 
 type TypeItem = {
   id: number;

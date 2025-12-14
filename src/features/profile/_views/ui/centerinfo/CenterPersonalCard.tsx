@@ -12,12 +12,13 @@ import { toast } from "sonner"
 import type { CenterProfile } from "@/types/center"
 import { useUpdateCenter } from "@/features/profile/_views/hooks/useUpdateCenter"
 import { centerSchema } from "@/lib/validation"
+import type { QueryObserverResult } from "@tanstack/react-query";
 
 interface CenterPersonalCardProps {
   profile: CenterProfile
   userId: string
   // refetch may return the profile directly or an object with `data`.
-  refetch: () => Promise<CenterProfile | { data?: CenterProfile } | void>
+  refetch: () => Promise<QueryObserverResult<CenterProfile | null, Error>>
 }
 
 export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile, userId, refetch }) => {

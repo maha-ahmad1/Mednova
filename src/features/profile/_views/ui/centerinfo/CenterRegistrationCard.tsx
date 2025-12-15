@@ -29,6 +29,7 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
     license_number: details?.license_number || "",
     license_authority: details?.license_authority || "",
     license_file: null as File | null,
+    
   })
 
   const { update, isUpdating } = useUpdateCenter()

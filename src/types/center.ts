@@ -6,6 +6,7 @@ export interface CenterProfile {
   birth_date?: string
   gender?: "Male" | "Female"
   image?: string
+  timezone:string
 
   center_details?: {
     id: number

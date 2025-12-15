@@ -1,3 +1,4 @@
+// hooks/useConsultationRequestStore.ts - تحديث
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useAxiosInstance } from "@/lib/axios/axiosInstance";
@@ -13,7 +14,12 @@ interface ConsultationRequest {
   type_appointment?: string | undefined;
 }
 
-export const useConsultationRequestStore = () => {
+interface UseConsultationRequestStoreOptions {
+  onSuccess?: () => void;
+  onError?: (error: AxiosError) => void;
+}
+
+export const useConsultationRequestStore = (options?: UseConsultationRequestStoreOptions) => {
   const axios = useAxiosInstance();
 
   const mutation = useMutation({
@@ -23,16 +29,28 @@ export const useConsultationRequestStore = () => {
         formData.append(key, String(value));
       });
 
+      console.log('📤 إرسال بيانات الاستشارة:', Object.fromEntries(formData));
+      
       const res = await axios.post("/api/consultation-request/store", formData);
       return res.data;
     },
 
-    onSuccess: () => {
-      toast.success("تم إرسال طلبك بنجاح، الرجاء انتظار الموافقة ");
+    onSuccess: (data, variables) => {
+      // رسالة نجاح مختلفة حسب نوع الاستشارة
+      if (variables.consultant_nature === 'chat') {
+        toast.success("تم بدء الاستشارة النصية بنجاح");
+      } else {
+        toast.success("تم حجز الموعد بنجاح");
+      }
+      
+      // استدعاء onSuccess إذا كان موجوداً
+      if (options?.onSuccess) {
+        options.onSuccess();
+      }
     },
 
     onError: (error: AxiosError) => {
-      console.error("❌ Error:", error.response?.data || error.message);
+      console.error("❌ خطأ في تخزين الاستشارة:", error.response?.data || error.message);
 
       type ErrorResponse = {
         message?: string;
@@ -58,6 +76,11 @@ export const useConsultationRequestStore = () => {
       }
 
       toast.error(errorMessage);
+      
+      // استدعاء onError إذا كان موجوداً
+      if (options?.onError) {
+        options.onError(error);
+      }
     },
   });
 

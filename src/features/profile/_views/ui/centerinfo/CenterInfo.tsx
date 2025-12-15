@@ -17,7 +17,7 @@ export default function CenterInfo() {
   const userId = session?.user?.id;
 
   
-console.log("roles" + session?.role)
+   console.log("roles" + session?.role)
 
   const { data, isLoading, isError, error, refetch } =
     useFetcher<CenterProfile>(

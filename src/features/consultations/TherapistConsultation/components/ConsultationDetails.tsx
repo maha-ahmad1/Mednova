@@ -128,76 +128,7 @@ export default function ConsultationDetails({
             </div>
           </div>
 
-          {/* {(request.data.patient_message_count > 0 ||
-            request.data.consultant_message_count > 0) && (
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <div className="p-3 sm:p-4 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-100">
-                <p className="text-xs sm:text-sm text-blue-600 mb-2">
-                  رسائل المريض
-                </p>
-                <p className="font-semibold text-blue-800 text-sm sm:text-base">
-                  {request.data.patient_message_count || 0}
-                </p>
-              </div>
-              <div className="p-3 sm:p-4 bg-green-50 rounded-lg sm:rounded-xl border border-green-100">
-                <p className="text-xs sm:text-sm text-green-600 mb-2">
-                  رسائل{" "}
-                  {request.data.consultant_type === "therapist"
-                    ? "المعالج"
-                    : "المركز"}
-                </p>
-                <p className="font-semibold text-green-800 text-sm sm:text-base">
-                  {request.data.consultant_message_count || 0}
-                </p>
-              </div>
-            </div>
-          )} */}
-
-          {/* <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            <div className="p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm">
-              <p className="text-xs sm:text-sm text-gray-600 mb-2">
-                تاريخ الإنشاء
-              </p>
-              <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                {new Date(request.created_at).toLocaleDateString("ar-SA")}
-              </p>
-            </div>
-            <div className="p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm">
-              <p className="text-xs sm:text-sm text-gray-600 mb-2">الوقت</p>
-              <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                {new Date(request.created_at).toLocaleTimeString("ar-SA")}
-              </p>
-            </div>
-          </div> */}
-
-          {/* {request.data.first_patient_message_at && (
-            <div className="p-3 sm:p-4 bg-yellow-50 rounded-lg sm:rounded-xl border border-yellow-100">
-              <p className="text-xs sm:text-sm text-yellow-600 mb-2">
-                أول رسالة من المريض
-              </p>
-              <p className="font-semibold text-yellow-800 text-sm sm:text-base">
-                {new Date(request.data.first_patient_message_at).toLocaleString(
-                  "ar-SA"
-                )}
-              </p>
-            </div>
-          )} */}
-
-          {/* {request.data.first_consultant_reply_at && (
-            <div className="p-3 sm:p-4 bg-purple-50 rounded-lg sm:rounded-xl border border-purple-100">
-              <p className="text-xs sm:text-sm text-purple-600 mb-2">
-                أول رد من{" "}
-                {request.data.consultant_type === "therapist"
-                  ? "المعالج"
-                  : "المركز"}
-              </p>
-              <p className="font-semibold text-purple-800 text-sm sm:text-base">
-                {new Date(
-                  request.data.first_consultant_reply_at
-                ).toLocaleString("ar-SA")}
-              </p>
-            </div>
-          )} */}
+         
         </div>
       </div>
 

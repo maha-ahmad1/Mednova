@@ -30,6 +30,8 @@ export interface TherapistFormValues {
   is_have_evening_time?: boolean;
   start_time_evening?: string;
   end_time_evening?: string;
+  timezone?:string;
+
 }
 
 export const storeTherapistDetails = async (
@@ -87,6 +89,7 @@ export const storeTherapistDetails = async (
     formData.append("start_time_evening", data.start_time_evening || "");
     formData.append("end_time_evening", data.end_time_evening || "");
   }
+  formData.append("timezone", data.timezone  || "");
 
   const response = await axios.post("/api/therapist/store", formData, {});
 

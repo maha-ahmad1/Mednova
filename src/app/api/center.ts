@@ -25,6 +25,7 @@ export interface CenterFormValues {
   city?: string;
   country?: string;
   formatted_address?: string;
+  timezone?:string
 }
 //هذه هي الدالة التي تحول البيانات من فورم عادي إلى FormData ثم ترسلها للسيرفر عبر API:
 export const storeCenterDetails = async (
@@ -105,6 +106,8 @@ export const storeCenterDetails = async (
   formData.append("city", data.city || "");
   formData.append("country", data.country || "");
   formData.append("formatted_address", data.formatted_address || "");
+  formData.append("timezone", data.timezone  || "");
+
 
   const response = await axios.post("/api/center/store", formData);
 

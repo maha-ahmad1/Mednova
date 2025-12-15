@@ -139,12 +139,13 @@ export function CenterFormStep5({
         city: typeof formData.city === "string" ? formData.city : undefined,
         country:
           typeof formData.country === "string" ? formData.country : undefined,
+        timezone:
+          typeof formData.timezone === "string" ? formData.timezone : undefined,
         formatted_address:
           typeof formData.formatted_address === "string"
             ? formData.formatted_address
             : undefined,
       } as Record<string, unknown>;
-
       if (eveningFlag) {
         (rawPayload as Record<string, unknown>).start_time_evening =
           formData.start_time_evening || "";

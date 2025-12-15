@@ -37,6 +37,7 @@ export default function CenterWrapper() {
     city?: string
     country?: string
     formatted_address?: string
+    timezone?: string
   }
 
   const [formData, setFormData] = useState<CenterState>({
@@ -62,6 +63,7 @@ export default function CenterWrapper() {
     city: "",
     country: "",
     formatted_address: "",
+    timezone: "",
   })
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 5))

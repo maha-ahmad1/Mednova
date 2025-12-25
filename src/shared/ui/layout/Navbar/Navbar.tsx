@@ -9,7 +9,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { Logo } from "@/shared/ui/Logo";
+import { Logo } from "@/shared/ui/components/Logo";
 import { ChevronDown, Menu,
   HelpCircle,
   User,
@@ -21,6 +21,7 @@ import MobileMenu from "./MobileMenu";
 import { useSession, signOut } from "next-auth/react";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import { NotificationDropdown } from "@/features/notifications/components/NotificationDropdown";
 
 
 export default function Navbar() {
@@ -85,12 +86,7 @@ export default function Navbar() {
        
              {session?.user ? (
                <div className="flex items-center gap-2">
-                 <Button variant="ghost" size="icon" className="relative">
-                   <Bell className="h-5 w-5" />
-                   <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center bg-destructive text-[10px]">
-                     3
-                   </Badge>
-                 </Button>
+               <NotificationDropdown/>
                  <DropdownMenu>
                    <DropdownMenuTrigger asChild>
                      <button className="flex items-center gap-2 group">

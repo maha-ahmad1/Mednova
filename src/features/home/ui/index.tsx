@@ -1,4 +1,4 @@
-import { Footer } from "@/shared/ui/Footer";
+import { Footer } from "@/shared/ui/components/Footer";
 import WhyMednova from "./whyMednova";
 import Hero from "./hero";
 import Program from "./program";

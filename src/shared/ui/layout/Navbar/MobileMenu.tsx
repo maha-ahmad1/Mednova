@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/shared/ui/Logo";
+import { Logo } from "@/shared/ui/components/Logo";
 import { X, ChevronDown } from "lucide-react";
 import { NavLinks, NavLink } from "./NavLinks";
 

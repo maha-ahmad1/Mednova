@@ -1,9 +1,8 @@
-// features/chat/ui/ChatPage.tsx - الإصدار المحسن
 "use client";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Card } from "@/components/ui/card";
+//import { Card } from "@/components/ui/card";
 // import ChatList from "./ChatList";
 import ChatInterface from "./ChatInterface";
 import type { ChatRequest } from "@/types/chat";

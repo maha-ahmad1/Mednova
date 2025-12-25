@@ -102,34 +102,7 @@ export default function WhyMednova() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#32A88D] to-transparent rounded-tr-2xl"></div>
               </div>
 
-              {/* بطاقة عائمة */}
-              {/* <div className="absolute -bottom-6 -left-6 z-20">
-                <div className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 animate-float">
-                  <div className="w-12 h-12 bg-[#32A88D] rounded-xl flex items-center justify-center">
-                    <div className="w-6 h-6 bg-white rounded-md"></div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-bold text-gray-800">+500</div>
-                    <div className="text-xs text-gray-600">مختص معتمد</div>
-                  </div>
-                </div>
-              </div> */}
-
-              {/* بطاقة عائمة ثانية */}
-              {/* <div className="absolute -top-6 -right-6 z-20">
-                <div 
-                  className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 animate-float"
-                  style={{ animationDelay: "1.5s" }}
-                >
-                  <div className="w-12 h-12 bg-[#2a8a7a] rounded-xl flex items-center justify-center">
-                    <div className="w-6 h-6 bg-white rounded-md"></div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-bold text-gray-800">98%</div>
-                    <div className="text-xs text-gray-600">رضا العملاء</div>
-                  </div>
-                </div>
-              </div> */}
+          
             </div>
           </div>
         </div>

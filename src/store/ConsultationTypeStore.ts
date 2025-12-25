@@ -10,6 +10,7 @@ interface ConsultationData {
   requestedDay?: string;
   requestedTime?: string;
   appointmentType?: 'online' | 'in-person';
+  video_room_link?: string;
 }
 
 interface ConsultationTypeStore {

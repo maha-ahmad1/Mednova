@@ -30,6 +30,12 @@ export type ConsultationData = {
   first_consultant_reply_at: string | null
   started_at: string | null
   ended_at: string | null
+  appointment?: {
+    requested_day: string
+    requested_time: string
+    confirmed_end_time: string
+    status: string
+  }
 }
 
 export type ConsultationRequest = {
@@ -39,6 +45,15 @@ export type ConsultationRequest = {
   created_at: string
   updated_at: string
   data: ConsultationData
+  video_room_link?: string
+  consultant_approved?: boolean | null
+  patient_approved?: boolean | null
+  appointment?: {
+    requested_day: string
+    requested_time: string
+    confirmed_end_time: string
+    status: string
+  }
 }
 
 // API Request/Response types
@@ -56,3 +71,5 @@ export type ApiResponse<T> = {
   data: T
   status: string
 }
+
+

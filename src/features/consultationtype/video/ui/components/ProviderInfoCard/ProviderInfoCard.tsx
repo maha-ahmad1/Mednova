@@ -28,6 +28,8 @@ export default function ProviderInfoCard({
       return provider?.therapist_details?.medical_specialties?.name || "تخصص المختص"
     } else {
       return provider?.center_details?.services?.[0]?.name || "خدمات تأهيلية"
+            //return provider?.services?.[0]?.name || "خدمات تأهيلية"
+
     }
   }
 

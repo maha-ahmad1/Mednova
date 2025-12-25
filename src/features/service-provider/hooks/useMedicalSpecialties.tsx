@@ -5,6 +5,6 @@ export const useMedicalSpecialties = () => {
   return useFetcher<MedicalSpecialty[]>(
     ["medicalSpecialties"],
     "/api/medical-specialties",
-    60 
+    { staleTime: 60 }
   );
 };

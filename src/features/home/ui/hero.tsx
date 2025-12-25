@@ -1,6 +1,5 @@
 "use client";
-// import { useState } from "react";
-// import { useForm } from "react-hook-form";
+
 import { Button } from "@/components/ui/button";
 import {
   MessageCircle,
@@ -9,120 +8,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-// import { useRouter } from "next/navigation";
-// import { useSession } from "next-auth/react";
+
 import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
 
-// interface SearchingData {
-//   type: string;
-//   country: string;
-//   city: string;
-// }
 
-// const NavLink = [
-//   {
-//     id: 1,
-//     title: "الرئيسية",
-//     link: "/",
-//   },
-//   {
-//     id: 2,
-//     title: "المعالجين",
-//     link: "#",
-//     dropdown: [
-//       { id: 1, title: "حجز موعد", link: "#" },
-//       {
-//         id: 2,
-//         title: "استشارات",
-//         link: "#",
-//       },
-//       {
-//         id: 3,
-//         title: "برنامج رحلة التعافي",
-//         link: "#",
-//       },
-//     ],
-//   },
-//   {
-//     id: 3,
-//     title: "التخصصات",
-//     link: "#",
-//     dropdown: [
-//       { id: 1, title: "العلاج العضلي الهيكلي", link: "#" },
-//       {
-//         id: 2,
-//         title: "العلاج العصبي",
-//         link: "#",
-//       },
-//       {
-//         id: 3,
-//         title: "علاج الأطفال (الاضطرابات الحركية)",
-//         link: "#",
-//       },
-//       {
-//         id: 4,
-//         title: "العلاج بعد العمليات والجراحة",
-//         link: "#",
-//       },
-//       {
-//         id: 5,
-//         title: "العلاج اليدوي (Manual Therapy)",
-//         link: "#",
-//       },
-//       {
-//         id: 6,
-//         title: "العلاج باستخدام الأجهزة (الكهربائي، الموجات، الليزر)",
-//         link: "#",
-//       },
-//       {
-//         id: 7,
-//         title: "إعادة التأهيل الوظيفي",
-//         link: "#",
-//       },
-//       {
-//         id: 8,
-//         title: "العلاج القلبي التنفسي",
-//         link: "#",
-//       },
-//     ],
-//   },
-//   {
-//     id: 4,
-//     title: "الأجهزة",
-//     link: "#",
-//     dropdown: [
-//       {
-//         id: 1,
-//         title: "جهاز القفاز الذكي",
-//         link: "#",
-//       },
-//     ],
-//   },
-//   {
-//     id: 5,
-//     title: "المختصين",
-//     link: "/therapistsAndCenters",
-//   },
-// ];
 
 export default function Hero() {
-  // const router = useRouter();
-  // const {  watch } = useForm<SearchingData>();
-
-  // const onSubmit = (data: SearchingData) => {
-  //   console.log(data);
-  //   const query = new URLSearchParams(
-  //     Object.entries(data).reduce((acc, [key, value]) => {
-  //       if (value !== undefined && value !== null) {
-  //         acc[key] = String(value);
-  //       }
-  //       return acc;
-  //     }, {} as Record<string, string>)
-  //   ).toString();
-  //   router.push(`/searchResults?${query}`);
-  // };
-
-  // const selectedType = watch("type");
 
   return (
     <section className="relative md:px-10 bg-gradient-to-br from-[#32A88D]/5 via-white to-blue-50/30 overflow-hidden">

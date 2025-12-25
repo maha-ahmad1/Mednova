@@ -1,9 +1,10 @@
 "use client";
 
-import { Navbar } from "@/shared/ui/navbar";
 import { Sidebar } from "@/features/profile/_create/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { Navbar } from "@/shared/ui/components/Navbar";
+
 
 export default function DashboardLayout({
   children,

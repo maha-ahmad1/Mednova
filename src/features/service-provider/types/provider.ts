@@ -48,26 +48,64 @@ export type CenterDetails = {
   }[];
 };
 
-export type ServiceProvider = {
+// src/features/service-provider/types/index.ts
+
+export interface ServiceProvider {
   id: number;
-  image: string;
   full_name: string;
-  email?: string;
-  phone?: string;
-  type_account: "therapist" | "rehabilitation_center";
-  birth_date?: string;
-  gender?: string;
-  location_details?: LocationDetails;
- therapist_details?: Partial<TherapistDetails>;
-  center_details?: CenterDetails | null;
+  email: string;
+  phone: string;
+  image: string;
+  bio: string;
+  experience_years: number;
+  average_rating: number;
+  total_reviews: number;
+  therapist_details?: TherapistDetails;
+  center_details?: CenterDetails;
+  location_details?: {
+    country: string;
+    city: string;
+    formatted_address: string;
+  };
+  schedules?: Array<{
+    id: number;
+    day_of_week: string[];
+    start_time_morning: string;
+    end_time_morning: string;
+    is_have_evening_time: boolean;
+    start_time_evening: string;
+    end_time_evening: string;
+    type_time: string;
+  }>;
+  services?: Array<{
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    duration: string;
+  }>;
+  specialties?: Array<{
+    id: number;
+    name: string;
+  }>;
   medicalSpecialties?: MedicalSpecialty[];
-  average_rating?: string | null;
-  total_reviews?: number;
-  is_completed?: boolean;
-  status?: string;
-  is_banned?: number;
-  timezone?: string | null;
-};
+  chat_price?: number;
+  video_price?: number;
+  type_account?: string;
+}
+
+export interface BreadcrumbItem {
+  label: string;
+  href?: string;
+  isCurrent?: boolean;
+}
+
+export interface ScheduleDay {
+  day: string;
+  isAvailable: boolean;
+  morningTime?: string;
+  eveningTime?: string;
+}
 
 export type SearchFilters = {
   country: string;

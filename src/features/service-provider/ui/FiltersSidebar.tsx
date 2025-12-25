@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectTrigger,
@@ -10,7 +9,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { FilterIcon, MapPinIcon } from "lucide-react";
+import { FilterIcon } from "lucide-react";
 import {
   SearchFilters,
   ProviderType,

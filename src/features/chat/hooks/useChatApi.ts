@@ -1,17 +1,14 @@
 import {
-  useQuery,
   useMutation,
   useQueryClient,
   useInfiniteQuery,
 } from "@tanstack/react-query";
 import { useAxiosInstance } from "@/lib/axios/axiosInstance";
-import type { Message, ChatRequest, SendMessageData } from "@/types/chat";
+import type { Message, SendMessageData } from "@/types/chat";
 import type { AxiosError, AxiosProgressEvent } from "axios";
 import { toast } from "sonner";
 import { logger } from "@/lib/logger";
-import { useSession } from "next-auth/react";
 
-// تعريف نوع لاستجابة الخطأ من API
 interface ApiErrorResponse {
   success: boolean;
   message: string;
@@ -20,9 +17,6 @@ interface ApiErrorResponse {
   };
   status?: string;
 }
-
-
-
 
 
 export const useMessages = (chatRequestId: number, limit = 15) => {
@@ -247,45 +241,3 @@ export const useMarkAsRead = () => {
   });
 };
 
-// export const useCurrentChats = () => {
-//   const axiosInstance = useAxiosInstance();
-//   const { data: session } = useSession();
-
-//   return useQuery({
-//     queryKey: ['current-chats'],
-//     queryFn: async (): Promise<ChatRequest[]> => {
-//       const response = await axiosInstance.get('/api/messages/messengers/current-user');
-
-//       if (!response.data.success) {
-//         throw new Error(response.data.message || 'فشل في جلب المحادثات');
-//       }
-
-//       // تحويل البيانات من الشكل الجديد إلى الشكل المتوقع
-//       const chatList: ChatListItem[] = response.data.data || [];
-
-//       return chatList.map(chatItem => {
-//         const messenger = chatItem.messengers;
-//         const isPatient = session?.role === 'patient';
-
-//         return {
-//           id: chatItem.id,
-//           patient_id: isPatient ? session?.user?.id || 0 : messenger.id,
-//           consultant_id: isPatient ? messenger.id : session?.user?.id || 0,
-//           consultant_type: messenger.type_account as 'therapist' | 'rehabilitation_center',
-//           status: chatItem.status,
-//           created_at: chatItem.started_at || new Date().toISOString(),
-//           updated_at: chatItem.started_at || new Date().toISOString(),
-//           consultant_full_name: isPatient ? messenger.full_name : '',
-//           patient_full_name: isPatient ? '' : messenger.full_name,
-//           patient_image: isPatient ? session?.user?.image || '' : messenger.image,
-//           consultant_image: isPatient ? messenger.image : session?.user?.image || '',
-//           last_message: '', // يمكن إضافته إذا كان متوفراً في الـ API
-//           unread_count: chatItem.unread_messages_count
-//         };
-//       });
-//     },
-//     refetchInterval: 30000,
-//     staleTime: 1000 * 60 * 5,
-//     enabled: !!session, // فقط عندما يكون المستخدم مسجلاً
-//   });
-// };

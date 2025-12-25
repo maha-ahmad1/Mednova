@@ -1,5 +1,5 @@
 import { HeroSection } from "@/features/auth/ui/HeroSection";
-import {Logo} from "@/shared/ui/Logo";
+import {Logo} from "@/shared/ui/components/Logo";
 export default function AuthLayout({
   children,
 }: {

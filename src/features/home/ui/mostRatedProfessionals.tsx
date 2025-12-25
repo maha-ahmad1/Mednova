@@ -2,12 +2,13 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { Star, MapPin, GraduationCap, Award } from "lucide-react";
 import { useFetcher } from "@/hooks/useFetcher";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ConsultationDialog } from "@/features/service-provider/ui/ConsultationDialog";
+import { ProviderCard } from "@/features/service-provider/ui/ProviderCard"; // استيراد ProviderCard
+import { ServiceProvider } from "@/features/service-provider/types/provider"; // تأكد من المسار
+import {Award } from "lucide-react";
+
 
 type MedicalSpecialties = {
   id: number;
@@ -31,60 +32,53 @@ type TypeItem = {
   average_rating: number;
 };
 
-// interface ConsultationRequestPayload {
-//   patient_id: string | number;
-//   consultant_id: number;
-//   consultant_type: string;
-//   consultant_nature: "chat" | "video";
-//   requested_day?: string;
-//   requested_time?: string;
-//   type_appointment?: string;
-// }
-
 export default function MostRatedProfessionals() {
-  // const { data: session } = useSession();
   
   const { data, isLoading, error } = useFetcher<TypeItem[]>(
     ["mostRatedProfessionals"],
     "/api/rating?typeServiceProvider=therapist"
   );
-
-  // const { storeConsultationRequest } =
-  //   useConsultationRequestStore();
-
-  // const handleRequest = async (
-  //   consultantId: number,
-  //   type: "chat" | "video"
-  // ) => {
-  //   // if (!session?.user?.id) {
-  //   //   toast.error("يجب تسجيل الدخول أولاً");
-  //   //   return;
-  //   // }
-
-  //   try {
-  //     const payload: ConsultationRequestPayload = {
-  //       patient_id: session?.user?.id,
-  //       consultant_id: consultantId,
-  //       consultant_type: "therapist",
-  //       consultant_nature: type,
-  //     };
-
-  //     if (type === "video") {
-  //       payload.requested_day = "Thursday";
-  //       payload.requested_time = "2026-10-30 14:00";
-  //       payload.type_appointment = "online";
-  //     }
-
-  //     const response = await storeConsultationRequest(payload);
-  //     // toast.success("تم إرسال طلبك بنجاح، الرجاء انتظار موافقة المختص");
-  //   } catch (error) {
-  //     // toast.error("حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى");
-  //     console.error("❌ Error sending consultation request:", error);
-  //   }
-  // };
-
-  // Fix: data is now TypeItem[] so slice should work
+ 
   const items = data?.slice(0, 4) || [];
+
+  // تحويل TypeItem إلى ServiceProvider
+  const convertToServiceProvider = (item: TypeItem): ServiceProvider => {
+    return {
+      id: item.id,
+      full_name: item.full_name,
+      type_account: "therapist",
+      image: item.image || "/images/home/therapist.jpg",
+      // fill required fields with sensible defaults when missing from API
+      email: "",
+      phone: "",
+      bio: "",
+      experience_years: item.therapist_details?.university_name ? 0 : 0,
+      average_rating: typeof item.average_rating === "number" ? item.average_rating : Number(item.average_rating) || 0,
+      total_reviews: item.total_reviews || 0,
+      therapist_details: item.therapist_details
+        ? {
+            id: item.therapist_details.id,
+            medical_specialties: {
+              id: item.therapist_details.medical_specialties.id,
+              name: item.therapist_details.medical_specialties.name,
+              description: item.therapist_details.medical_specialties.description || "",
+            },
+            experience_years: 0,
+            university_name: item.therapist_details.university_name || "",
+            countries_certified: item.therapist_details.countries_certified || "",
+            graduation_year: "",
+            certificate_file: null,
+            license_number: "",
+            license_authority: "",
+            license_file: null,
+            bio: "",
+          }
+        : undefined,
+      // location_details: {
+      //   city: "متصل الآن",
+      // },
+    };
+  };
 
   // حالة التحميل
   if (isLoading) {
@@ -151,102 +145,12 @@ export default function MostRatedProfessionals() {
           </p>
         </div>
 
-        {/* شبكة البطاقات */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {items.map((data: TypeItem) => (
-            <div
-              key={data.id}
-              className="group bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
-            >
-              {/* صورة المختص */}
-              <div className="relative overflow-hidden">
-                <Image
-                  src={ "/images/home/therapist.jpg"}
-                  width={400}
-                  height={300}
-                  alt={data.full_name}
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute top-4 left-4">
-                  <Badge className="bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-xs font-medium">
-                    <MapPin className="w-3 h-3 mr-1" />
-                    متصل الآن
-                  </Badge>
-                </div>
-                <div className="absolute top-4 right-4">
-                  <div className="flex items-center gap-1 bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs">
-                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                    <span>{Number(data.average_rating).toFixed(1) || "0.0"}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* معلومات المختص */}
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl font-bold text-gray-800 line-clamp-1">
-                    {data.full_name}
-                  </h3>
-                </div>
-
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <GraduationCap className="w-4 h-4 text-[#32A88D]" />
-                    <span className="line-clamp-1">{data.therapist_details?.university_name || "غير محدد"}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Award className="w-4 h-4 text-[#32A88D]" />
-                    <span className="line-clamp-1">{data.therapist_details?.medical_specialties?.name || "تخصص عام"}</span>
-                  </div>
-                </div>
-
-                {/* التقييمات */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < Math.floor(Number(data.average_rating))
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "fill-gray-300 text-gray-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-sm text-gray-500">
-                      ({data.total_reviews || 0} تقييم)
-                    </span>
-                  </div>
-                </div>
-
-                {/* زر طلب الاستشارة */}
-
-                     {/* <ConsultationDialog
-                  provider={{
-                    id: data.id,
-                    full_name: data.full_name,
-                    type_account: "therapist",
-                    image: data.image,
-                    average_rating: String(data.average_rating),
-                    total_reviews: data.total_reviews,
-                    therapist_details: data.therapist_details,
-                  }}
-                /> */}
-              <ConsultationDialog
-                  provider={{
-                    id: data.id,
-                    full_name: data.full_name,
-                    type_account: "therapist",
-                    image: data.image,
-                    average_rating: String(data.average_rating),
-                    total_reviews: data.total_reviews,
-                    therapist_details: data.therapist_details,
-                  }}
-                />
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+          {items.map((item: TypeItem) => (
+            <ProviderCard 
+              key={item.id} 
+              provider={convertToServiceProvider(item)} 
+            />
           ))}
         </div>
       </div>

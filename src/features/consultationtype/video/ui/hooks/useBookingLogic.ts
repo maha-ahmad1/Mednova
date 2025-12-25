@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useFetcher } from "@/hooks/useFetcher";
 import type { ServiceProvider } from "@/features/service-provider/types/provider";
@@ -11,9 +9,9 @@ import { useConsultationRequestStore } from "@/features/home/hooks/useConsultati
 import { ar, enUS } from "date-fns/locale";
 import { format } from "date-fns";
 import { slotsApi, type CheckAvailableSlotsParams } from "@/app/api/slots";
-// import type { Provider } from "@/types/Provider" // Declare the Provider type
+import{formatTime,detectUserTimeZone,categorizeTimeSlots,isSlotAvailable,getTimeZoneLabel,SUPPORTED_TIME_ZONES} from '@/utils/timeUtils';
+import{translateDay,translateSessionType,translateProviderType,getLocalizedDay} from '@/utils/translationUtils';
 
-// تم إزالة timeZones الثابتة لأنها ستستورد من TimeZoneService
 
 export function useBookingLogic({
   doctorId,
@@ -48,7 +46,7 @@ export function useBookingLogic({
 
   // اكتشاف المنطقة الزمنية للمستخدم عند التحميل
   useEffect(() => {
-    const detectedTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const detectedTimeZone = detectUserTimeZone();
     setSelectedTimeZone(detectedTimeZone);
   }, []);
 
@@ -109,7 +107,6 @@ export function useBookingLogic({
       try {
         // تنسيق التاريخ بشكل مناسب للـ API
         const formattedDate = validDate.toISOString().split("T")[0]; // YYYY-MM-DD
-        // const dayName = getArabicDayName(date);
         const dayName = getEnglishDay(validDate);
         console.log("بيانات طلب الأوقات:", {
           date: formattedDate,
@@ -145,45 +142,10 @@ export function useBookingLogic({
           const slots = response.data.available_slots;
           console.log("الأوقات المستلمة:", slots);
 
-          // تصنيف الأوقات إلى فترات
-          const morningSlots: string[] = [];
-          const afternoonSlots: string[] = [];
-          const eveningSlots: string[] = [];
+          // استخدام categorizeTimeSlots المشتركة
+          const categorizedSlots = categorizeTimeSlots(slots);
 
-          slots.forEach((slot) => {
-            // تنظيف وتنسيق الوقت
-            const cleanSlot = slot.trim();
-            const timeMatch = cleanSlot.match(/(\d{1,2}):(\d{2})/);
-
-            if (timeMatch) {
-              const hour = Number.parseInt(timeMatch[1]);
-              const minute = timeMatch[2];
-              const formattedTime = `${hour
-                .toString()
-                .padStart(2, "0")}:${minute}`;
-
-              if (hour >= 17 && hour < 23) {
-                eveningSlots.push(formattedTime);
-              } else if (hour >= 4 && hour < 12) {
-                morningSlots.push(formattedTime);
-              } else if (hour >= 12 && hour < 17) {
-                afternoonSlots.push(formattedTime);
-              } else {
-                eveningSlots.push(formattedTime);
-              }
-            }
-          });
-
-          // ترتيب الأوقات تصاعدياً
-          morningSlots.sort((a, b) => a.localeCompare(b));
-          afternoonSlots.sort((a, b) => a.localeCompare(b));
-          eveningSlots.sort((a, b) => a.localeCompare(b));
-
-          setGroupedSlots({
-            morning: morningSlots,
-            afternoon: afternoonSlots,
-            evening: eveningSlots,
-          });
+          setGroupedSlots(categorizedSlots);
 
           console.log("الأوقات المصنفة بنجاح");
         } else {
@@ -219,7 +181,7 @@ export function useBookingLogic({
     ]
   );
 
-  // tأثير عند تغيير التاريخ أو المنطقة الزمنية
+  // تأثير عند تغيير التاريخ أو المنطقة الزمنية
   useEffect(() => {
     if (selectedDate && selectedTimeZone) {
       console.log("تغيير التاريخ أو المنطقة الزمنية، جاري تحميل الأوقات...");
@@ -233,7 +195,7 @@ export function useBookingLogic({
   // تأثير لتحديث المنطقة الزمنية للمستخدم عند التحميل
   useEffect(() => {
     if (!selectedTimeZone && provider) {
-      const detectedTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const detectedTimeZone = detectUserTimeZone();
       setSelectedTimeZone(detectedTimeZone);
       console.log("تعيين المنطقة الزمنية التلقائية:", detectedTimeZone);
     }
@@ -281,18 +243,8 @@ export function useBookingLogic({
   }, []);
 
   const getEnglishDay = (date: Date): string => {
-    const dayMap: Record<string, string> = {
-      الأحد: "Sunday",
-      الاثنين: "Monday",
-      الثلاثاء: "Tuesday",
-      الأربعاء: "Wednesday",
-      الخميس: "Thursday",
-      الجمعة: "Friday",
-      السبت: "Saturday",
-    };
-
-    const arabicDay = format(date, "EEEE", { locale: ar });
-    return dayMap[arabicDay] || format(date, "EEEE", { locale: enUS });
+    // استخدام getLocalizedDay من المساعدين المشتركة
+    return getLocalizedDay(date, "en");
   };
 
   const handleBooking = async () => {
@@ -320,7 +272,6 @@ export function useBookingLogic({
         requested_day: getEnglishDay(selectedDate),
         requested_time: `${format(selectedDate, "yyyy-MM-dd")} ${selectedTime}`,
         type_appointment: "online",
-        // timezone: selectedTimeZone, // إضافة المنطقة الزمنية
       };
 
       console.log("بيانات الحجز المرسلة للـAPI:", {
@@ -341,7 +292,6 @@ export function useBookingLogic({
         requestedDay: getEnglishDay(selectedDate),
         requestedTime: `${format(selectedDate, "yyyy-MM-dd")} ${selectedTime}`,
         appointmentType: "online",
-        // timezone: selectedTimeZone, // إضافة المنطقة الزمنية
       });
 
       router.push("/payment");
@@ -386,7 +336,7 @@ export function useBookingLogic({
     [groupedSlots]
   );
 
-  // تحويل الأوقات إلى مصفوفة مسطحة إذا لزم الأمر
+  // تحويل الأوقات إلى مصفوفة مسطحة
   const availableSlots = useMemo(
     () => [
       ...groupedSlots.morning,
@@ -395,6 +345,12 @@ export function useBookingLogic({
     ],
     [groupedSlots]
   );
+
+  // دالة للتحقق من توفر الوقت المحدد
+  const isSelectedTimeAvailable = useMemo(() => {
+    if (!selectedTime || !selectedDate) return false;
+    return isSlotAvailable(selectedTime, availableSlots, selectedDate);
+  }, [selectedTime, selectedDate, availableSlots]);
 
   return {
     // state
@@ -409,12 +365,15 @@ export function useBookingLogic({
     isPageLoading,
     isLoadingProvider,
     isLoadingSlots,
+    isSelectedTimeAvailable,
     // data
     provider,
     providerType: consultantType,
     availableSlots,
     groupedSlots,
     availableSlotsLength,
+    supportedTimeZones: SUPPORTED_TIME_ZONES,
+    timeZoneLabel: getTimeZoneLabel(selectedTimeZone),
     // actions
     handleBooking,
     isSubmitting,
@@ -427,5 +386,13 @@ export function useBookingLogic({
     getProviderImage,
     getProviderIcon,
     clearConsultation,
+    // المساعدين المشتركة
+    formatTime,
+    translateDay,
+    translateSessionType,
+    translateProviderType,
+    getLocalizedDay,
+    detectUserTimeZone,
+    getTimeZoneLabel,
   } as const;
 }

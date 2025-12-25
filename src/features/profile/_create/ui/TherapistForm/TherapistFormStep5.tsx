@@ -5,7 +5,7 @@ import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
 import * as z from "zod";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { Controller } from "react-hook-form";
-import { TextArea } from "@/shared/ui/TextArea";
+import { TextArea } from "@/shared/ui/components/TextArea";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useTherapist } from "@/features/profile/_create/hooks/useTherapistStore";

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { TextArea } from "@/shared/ui/TextArea";
+import { TextArea } from "@/shared/ui/components/TextArea";
 import { useUpdateTherapist } from "@/features/profile/_views/hooks/useUpdateTherapist";
 import { toast } from "sonner";
 import type { TherapistFormValues } from "@/app/api/therapist";

@@ -24,7 +24,7 @@ export const getNotificationTitle = (type: string): string => {
     'ALERT': 'تنبيه',
   };
   
-  return titleMap[type.toUpperCase()] || 'إشعار جديد';
+  return titleMap[type.toUpperCase()] || 'إشعار ';
 };
 
 export const mapApiNotificationToNotification = (

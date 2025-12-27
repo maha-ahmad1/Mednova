@@ -26,7 +26,7 @@ import Link from "next/link";
 import { NotificationDropdown } from "@/features/notifications/components/NotificationDropdown";
 export function Navbar() {
   const { data: session } = useSession();
-  
+
   return (
     <header className="sticky top-0 z-30 flex h-20 items-center gap-4 border-b bg-card px-12">
       <Button variant="ghost" size="icon" className="md:hidden">
@@ -51,7 +51,7 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           {/* استبدال زر الإشعارات القديم بمكون الإشعارات الجديد */}
           <NotificationDropdown />
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 group">
@@ -79,13 +79,18 @@ export function Navbar() {
             >
               <DropdownMenuItem
                 className="flex items-center gap-2 px-3 py-2 rounded-md 
-                 hover:bg-gray-100/60 text-gray-700 transition"
+             hover:bg-gray-100/60 text-gray-700 transition"
               >
-                <Link href="/profile" className="text-sm w-full text-right">
-                  {session.user.full_name || session.user.name}
+                <Link
+                  href="/profile"
+                  className="text-sm flex-1 text-right truncate block"
+                >
+                  {session.user.full_name}
                 </Link>
-                <User className="w-4 h-4 text-gray-900" />
+
+                <User className="w-4 h-4 text-gray-900 shrink-0" />
               </DropdownMenuItem>
+
               <DropdownMenuItem
                 className="flex items-center gap-2 px-3 py-2 rounded-md 
                hover:bg-gray-100/60 text-gray-700 transition"

@@ -50,9 +50,9 @@ export const NavLinks: NavLink[] = [
       { id: 1, title: "جهاز القفاز الذكي", link: "#" },
     ],
   },
-  {
-    id: 5,
-    title: "المختصين",
-    link: "/specialists",
-  },
+  // {
+  //   id: 5,
+  //   title: "المختصين",
+  //   link: "/specialists",
+  // },
 ];

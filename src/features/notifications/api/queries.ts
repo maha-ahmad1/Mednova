@@ -27,7 +27,7 @@ export const fetchNotifications = async (
   return response.data.data.notification.map((notif) => ({
     id: `api_${notif.id}`,
     type: notif.type.toLowerCase() as Notification['type'],
-    title: 'إشعار جديد', 
+    title: 'إشعار ', 
     message: (() => {
       const maybeMessage = (notif.data as Record<string, unknown> | undefined)?.message;
       if (typeof maybeMessage === 'string') return maybeMessage;

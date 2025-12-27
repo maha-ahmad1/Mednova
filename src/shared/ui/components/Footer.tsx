@@ -60,9 +60,9 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/therapists" className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block">
+                {/* <Link href="/therapists" className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block">
                   المختصين
-                </Link>
+                </Link> */}
               </li>
             </ul>
           </div>

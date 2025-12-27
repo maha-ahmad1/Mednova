@@ -87,7 +87,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         </nav>
 
         {/* زر تسجيل الدخول */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-100">
+        {/* <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-100">
           <Button
             className="w-full bg-[#32A88D] hover:bg-[#2a8a7a] text-white rounded-xl py-3 transition-all duration-200"
             asChild
@@ -96,7 +96,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               تسجيل دخول
             </Link>
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

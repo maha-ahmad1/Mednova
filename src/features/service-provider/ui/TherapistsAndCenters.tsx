@@ -15,10 +15,12 @@ import { useSession } from "next-auth/react";
 import { ProviderCard } from "./ProviderCard";
 import { SearchFilters, ProviderType } from "../types/provider";
 import { FiltersSidebar } from "./FiltersSidebar";
-import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
+// import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
 import { useServiceProviders } from "../hooks/useServiceProviders";
 import { useMedicalSpecialties } from "../hooks/useMedicalSpecialties";
 import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
+import  Navbar  from "@/shared/ui/components/Navbar/Navbar";
+
 
 export default function TherapistsAndCenters() {
   const [selectedTab, setSelectedTab] = useState<ProviderType>("all");
@@ -78,8 +80,7 @@ export default function TherapistsAndCenters() {
   };
   return (
     <>
-      <LandingNavbar />
-
+      <Navbar variant="landing" />
    
       <BreadcrumbNav currentPage="المختصين والمراكز" />
 

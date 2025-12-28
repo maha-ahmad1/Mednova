@@ -17,17 +17,15 @@
 //   );
 // }
 
-
 "use client";
 
 import React, { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
- import BookingPage from "@/features/consultationtype/video/ui/BookingPage";
-import { useConsultationTypeStore } from '@/store/ConsultationTypeStore';
-
-
+// import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
+import BookingPage from "@/features/consultationtype/video/ui/BookingPage";
+import { useConsultationTypeStore } from "@/store/ConsultationTypeStore";
+import Navbar from "@/shared/ui/components/Navbar/Navbar";
 
 export default function AppointmentPage() {
   const router = useRouter();
@@ -40,7 +38,7 @@ export default function AppointmentPage() {
     if (!currentConsultation && params.id) {
       // You can fetch provider data here if needed
       // Or redirect to home page
-      router.push('/');
+      router.push("/");
     }
   }, [currentConsultation, params.id, router]);
 
@@ -59,12 +57,8 @@ export default function AppointmentPage() {
 
   return (
     <>
-    <LandingNavbar />
-    <BookingPage 
-      doctorId={providerId}
-      patientId={session?.user?.id}
-    />
+      <Navbar variant="landing" />
+      <BookingPage doctorId={providerId} patientId={session?.user?.id} />
     </>
-    
   );
 }

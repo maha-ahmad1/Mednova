@@ -9,8 +9,8 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 
-import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
-
+// import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
+import  Navbar  from "@/shared/ui/components/Navbar/Navbar";
 
 
 export default function Hero() {
@@ -22,11 +22,8 @@ export default function Hero() {
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-200/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
 
       <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
-        {/* شريط التنقل */}
-        <LandingNavbar />
-        {/* المحتوى الرئيسي */}
+      <Navbar variant="landing" />        
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-12 lg:py-20 sm:px-0 3xl:px-32">
-          {/* النص والعنوان */}
           <div className="lg:col-span-7 text-center lg:text-right">
             {/* شارة */}
             <div className="inline-flex items-center gap-2 bg-[#32A88D]/10 text-[#32A88D] px-4 py-2 rounded-full text-sm font-medium mb-6">

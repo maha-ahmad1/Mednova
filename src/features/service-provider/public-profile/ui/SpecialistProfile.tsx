@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { ConsultationDialog } from "@/features/service-provider/ui/ConsultationDialog";
 import { useFetcher } from "@/hooks/useFetcher";
-import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
+//import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
 import ProfileHeader from "./components/ProfileHeader";
 import ProfileDetails from "./components/ProfileDetails";
 import ServicesPricing from "./components/ServicesPricing";
@@ -25,6 +25,9 @@ import ReviewsSection from "./components/ReviewsSection";
 import { ServiceProvider } from "@/features/service-provider/types/provider";
 import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
 import {ReviewDialog} from "./components/ReviewDialog";
+import  Navbar  from "@/shared/ui/components/Navbar/Navbar";
+
+
 
 export default function SpecialistProfile() {
   const params = useParams();
@@ -119,8 +122,7 @@ const handleReviewSubmit = async (rating: number, comment: string) => {
 
   return (
     <>
-      <LandingNavbar />
-      
+      <Navbar variant="landing" />      
       {/* Breadcrumb Navigation - Reusable Component */}
       <BreadcrumbNav currentPage="الملف الشخصي" />
 

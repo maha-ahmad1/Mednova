@@ -73,7 +73,7 @@ export default function TimeZoneSelector({
     })
 
     try {
-      const response = await fetch(`https://demoapplication.jawebhom.com/api/customer/update-timezone`, {
+      const response = await fetch(`https://mednovacare.com/api/customer/update-timezone`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

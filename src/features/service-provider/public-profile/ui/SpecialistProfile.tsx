@@ -6,27 +6,21 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  ArrowLeft,
-  BookOpen,
-  Star,
-  Edit,
-  Award,
-} from "lucide-react";
+import { ArrowLeft, BookOpen, Star, Edit, Award } from "lucide-react";
 import { ConsultationDialog } from "@/features/service-provider/ui/ConsultationDialog";
 import { useFetcher } from "@/hooks/useFetcher";
 //import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
-import ProfileHeader from "./components/ProfileHeader";
-import ProfileDetails from "./components/ProfileDetails";
-import ServicesPricing from "./components/ServicesPricing";
-import ScheduleCard from "./components/ScheduleCard";
-import CertificationsCard from "./components/CertificationsCard";
-import ReviewsSection from "./components/ReviewsSection";
+import ProfileHeader from "./profile/ProfileHeader";
+import ProfileDetails from "./profile/ProfileDetails";
+import ServicesPricing from "./profile/ServicesPricing";
+import ScheduleCard from "./profile/ScheduleCard";
+import CertificationsCard from "./profile/CertificationsCard";
+import ReviewsSection from "./profile/ReviewsSection";
 import { ServiceProvider } from "@/features/service-provider/types/provider";
 import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
-import {ReviewDialog} from "./components/ReviewDialog";
-import  Navbar  from "@/shared/ui/components/Navbar/Navbar";
-
+ import { ReviewDialog } from "./profile/ReviewDialog";
+import Navbar from "@/shared/ui/components/Navbar/Navbar";
+// import { ReviewDialog } from "./reviews/ReviewDialog";
 
 
 export default function SpecialistProfile() {
@@ -34,7 +28,7 @@ export default function SpecialistProfile() {
   const router = useRouter();
   const [showReviewDialog, setShowReviewDialog] = useState(false);
 
-const handleReviewSubmit = async (rating: number, comment: string) => {
+  const handleReviewSubmit = async (rating: number, comment: string) => {
     try {
       // استدعاء API لإرسال التقييم
       const response = await fetch("/api/reviews", {
@@ -122,7 +116,7 @@ const handleReviewSubmit = async (rating: number, comment: string) => {
 
   return (
     <>
-      <Navbar variant="landing" />      
+      <Navbar variant="landing" />
       {/* Breadcrumb Navigation - Reusable Component */}
       <BreadcrumbNav currentPage="الملف الشخصي" />
 
@@ -159,24 +153,29 @@ const handleReviewSubmit = async (rating: number, comment: string) => {
 
                 <TabsContent value="bio" className="mt-0 text-right">
                   <div className="space-y-6">
-                  
-
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {/* Profile Details - Reusable Component */}
 
-                     <ServicesPricing services={therapist.services} />
+                      <ServicesPricing services={therapist.services} />
 
                       <ProfileDetails
                         specialties={therapist.specialties || []}
-                        universityName={therapist.therapist_details?.university_name ?? ""}
-                        graduationYear={therapist.therapist_details?.graduation_year ?? ""}
-                        experienceYears={therapist.therapist_details?.experience_years || 0}
-                        medicalSpecialty={therapist.therapist_details?.medical_specialties?.name}
+                        universityName={
+                          therapist.therapist_details?.university_name ?? ""
+                        }
+                        graduationYear={
+                          therapist.therapist_details?.graduation_year ?? ""
+                        }
+                        experienceYears={
+                          therapist.therapist_details?.experience_years || 0
+                        }
+                        medicalSpecialty={
+                          therapist.therapist_details?.medical_specialties?.name
+                        }
                       />
-
                     </div>
 
-                      <div>
+                    <div>
                       <h3 className="text-xl font-semibold text-gray-800 mb-4">
                         نبذة عن المختص
                       </h3>
@@ -221,13 +220,17 @@ const handleReviewSubmit = async (rating: number, comment: string) => {
                           full_name: therapist.full_name,
                           type_account: therapist.type_account || "therapist",
                           image: therapist.image,
-                          average_rating: typeof therapist.average_rating === "number" ? therapist.average_rating : Number(therapist.average_rating) || 0,
+                          average_rating:
+                            typeof therapist.average_rating === "number"
+                              ? therapist.average_rating
+                              : Number(therapist.average_rating) || 0,
                           total_reviews: therapist.total_reviews || 0,
                           therapist_details: therapist.therapist_details,
                           email: therapist.email || "",
                           phone: therapist.phone || "",
                           bio: therapist.therapist_details?.bio || "",
-                          experience_years: therapist.therapist_details?.experience_years || 0,
+                          experience_years:
+                            therapist.therapist_details?.experience_years || 0,
                         }}
                       />
 
@@ -247,15 +250,17 @@ const handleReviewSubmit = async (rating: number, comment: string) => {
 
                 {/* Certifications Card - Reusable Component */}
                 <CertificationsCard
-                  countriesCertified={therapist.therapist_details?.countries_certified}
+                  countriesCertified={
+                    therapist.therapist_details?.countries_certified
+                  }
                 />
                 <ReviewDialog
-            open={showReviewDialog}
-            onOpenChange={setShowReviewDialog}
-            therapistId={therapist.id}
-            therapistName={therapist.full_name}
-            onSubmit={handleReviewSubmit}
-          />
+                  open={showReviewDialog}
+                  onOpenChange={setShowReviewDialog}
+                  therapistId={therapist.id}
+                  therapistName={therapist.full_name}
+                  onSubmit={handleReviewSubmit}
+                />
               </div>
             </div>
           </div>

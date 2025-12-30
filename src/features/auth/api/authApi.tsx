@@ -14,7 +14,7 @@ export interface LoginData {
 }
 
 const api = axios.create({
-  baseURL: "https://demoapplication.jawebhom.com/api",
+  baseURL: "https://mednovacare.com/api",
   headers: {
     "Content-Type": "application/json",
   },

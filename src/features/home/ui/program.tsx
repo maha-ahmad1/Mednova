@@ -30,7 +30,7 @@ export default function Program() {
         const token = session?.accessToken;
 
         const res = await axios.get(
-          "https://demoapplication.jawebhom.com/api/programs/show/get-top-enrolled-program",
+          "https://mednovacare.com/api/programs/show/get-top-enrolled-program",
           {
             headers: {
               Authorization: `Bearer ${token}`,

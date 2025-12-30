@@ -24,7 +24,7 @@ export default function Navbar({
     <>
       <header
         className={`
-          flex items-center justify-between  px-4  lg:px-16
+          flex items-center justify-between  px-4  lg:px-16 
           ${className}
         `}
       >

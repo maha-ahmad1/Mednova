@@ -49,7 +49,7 @@ export default function SearchResults() {
         const token = session?.accessToken;
 
         const res = await axios.get(
-          `https://demoapplication.jawebhom.com/api/customer/service-provider/search`,
+          `https://mednovacare.com/api/customer/service-provider/search`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

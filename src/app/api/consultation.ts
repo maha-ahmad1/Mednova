@@ -1,6 +1,4 @@
  import axios from "axios";
-// import type { ConsultationRequest, ApiResponse } from "@/types/consultation";
-import { AxiosInstance } from "axios";
 
 export interface UpdateStatusValues {
   id: string | number;
@@ -18,15 +16,8 @@ const apiClient = axios.create({
 });
 
 export const consultationApi = {
-  //   storeRequest: async (data: ConsultationRequest, token?: string): Promise<ApiResponse<unknown>> => {
-  //     const response = await apiClient.post("/api/consultation-request/store", data, {
-  //       headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-  //     });
-  //     return response.data;
-  //   },
 
   updateStatus: async (
-    // axios: AxiosInstance,
     params: UpdateStatusValues,
     token?: string
   ) => {

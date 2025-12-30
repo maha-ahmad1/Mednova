@@ -38,7 +38,7 @@ function createEchoInstance(token: string, type: "notifications" | "chat") {
   const pusherClient = new Pusher("8e0c74bbc25e86b98813", {
     cluster: "eu",
     forceTLS: true,
-    authEndpoint: "https://demoapplication.jawebhom.com/api/broadcasting/auth",
+    authEndpoint: "https://mednovacare.com/api/broadcasting/auth",
     auth: {
       headers: {
         Authorization: `Bearer ${token}`,

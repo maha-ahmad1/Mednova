@@ -9,7 +9,7 @@
 //   const token = session?.accessToken;
 
 //   return axios.create({
-//     baseURL: 'https://demoapplication.jawebhom.com',
+//     baseURL: 'https://mednovacare.com',
 //     headers: {
 //       'Content-Type': 'application/json',
 //       Authorization: token ? `Bearer ${token}` : '',
@@ -27,7 +27,7 @@ export const useAxiosInstance = () => {
   const token = session?.accessToken;
   // console.log("Token in axios instance:", token);
   return axios.create({
-    baseURL: "https://demoapplication.jawebhom.com",
+    baseURL: "https://mednovacare.com",
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },

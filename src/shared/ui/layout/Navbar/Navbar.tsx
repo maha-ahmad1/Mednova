@@ -161,7 +161,6 @@ export default function Navbar() {
             </Button>
           )}
 
-        {/* زر القائمة - شاشات صغيرة */}
         <div className="lg:hidden">
           <Button
             variant="ghost"
@@ -174,7 +173,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* القائمة المتنقلة */}
       <MobileMenu 
         isOpen={isMobileMenuOpen} 
         onClose={() => setIsMobileMenuOpen(false)} 

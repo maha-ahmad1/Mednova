@@ -32,6 +32,10 @@ import { toast } from 'sonner';
 import { useConsultationTypeStore } from '@/store/ConsultationTypeStore';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+// import { Navbar } from '@/shared/ui/components/Header';
+// import { Navbar } from '@/shared/ui/components/Navbar';
+import Navbar from '@/shared/ui/components/Navbar/Navbar';
+import BreadcrumbNav from '@/shared/ui/components/BreadcrumbNav';
 
 export default function PaymentPage() {
   const router = useRouter();
@@ -130,10 +134,15 @@ export default function PaymentPage() {
   const consultationTypeText = currentConsultation.consultationType === 'chat' ? 'استشارة نصية' : 'استشارة فيديو';
 
   return (
+<>
+
+<Navbar />
+
+<BreadcrumbNav currentPage="إتمام الدفع" />
     <div className="min-h-screen bg-gradient-to-br from-gray-50/50 via-white to-blue-50/30 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* شريط التقدم */}
-        <div className="mb-12">
+        {/* <div className="mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-[#32A88D] rounded-full flex items-center justify-center text-white text-sm font-bold">1</div>
@@ -150,10 +159,10 @@ export default function PaymentPage() {
               <span className="text-sm font-medium text-[#32A88D] font-bold">إتمام الدفع</span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* العنوان الرئيسي */}
-        <div className="text-center mb-12">
+        {/* <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-[#32A88D]/10 px-6 py-2 rounded-full mb-4">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full animate-pulse"></div>
             <span className="text-sm font-medium text-[#32A88D]">خطوة أخيرة</span>
@@ -164,7 +173,7 @@ export default function PaymentPage() {
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             أكمل عملية الدفع لبدء استشارتك مع {currentConsultation.providerName}
           </p>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* العمود الأيسر: معلومات الاستشارة */}
@@ -462,5 +471,6 @@ export default function PaymentPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

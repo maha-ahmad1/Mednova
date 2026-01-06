@@ -63,7 +63,7 @@ export function OtpInputs() {
       if (data.success) {
         setToken(variables.token);
 
-        router.push("/auth/reset-password");
+        router.push("/reset-password");
       } else {
         setServerError(data.message || "حدث خطأ غير متوقع");
       }

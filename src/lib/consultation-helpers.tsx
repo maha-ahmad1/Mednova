@@ -28,6 +28,11 @@ export const getStatusBadge = (status: string) => {
       variant: "default" as const,
       className: "bg-gray-100 text-gray-800 border-gray-200",
     },
+    //  end: {
+    //   label: "انتهاء",
+    //   variant: "default" as const,
+    //   className: "bg-gray-100 text-gray-800 border-gray-200",
+    // },
   }
 
   const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending

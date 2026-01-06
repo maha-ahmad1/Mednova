@@ -37,6 +37,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Navbar from "@/shared/ui/components/Navbar/Navbar";
+import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
+
 
 type Program = {
   id: number;
@@ -151,9 +154,13 @@ export default function ProgramsListPage() {
   }
 
   return (
+
+    <>
+    {/* <Navbar variant="landing" />
+  <BreadcrumbNav currentPage="البرامج التأهيلية"/> */}
     <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white">
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] text-white py-16">
+      {/* <div className="bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -164,7 +171,7 @@ export default function ProgramsListPage() {
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -363,52 +370,10 @@ export default function ProgramsListPage() {
           </div>
         )}
 
-        {/* Stats Section */}
-        {sortedPrograms.length > 0 && (
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-800">
-                    {data?.stats?.total_enrolled || "١,٢٣٤"}
-                  </div>
-                  <div className="text-gray-600">مشارك في البرامج</div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-800">
-                    {data?.stats?.success_rate || "٩٨"}%
-                  </div>
-                  <div className="text-gray-600">معدل النجاح</div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                  <Star className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-gray-800">
-                    {data?.stats?.avg_rating || "٤.٨"}
-                  </div>
-                  <div className="text-gray-600">متوسط التقييم</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+
       </div>
     </div>
+    </>
   );
 }
 
@@ -632,14 +597,14 @@ function ProgramsListSkeleton() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white">
       {/* Hero Skeleton */}
-      <div className="bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] py-16">
+      {/* <div className="bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <Skeleton className="h-12 w-96 mx-auto mb-4 bg-white/20" />
             <Skeleton className="h-6 w-3/4 mx-auto bg-white/20" />
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Content Skeleton */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -676,5 +641,6 @@ function ProgramsListSkeleton() {
         </div>
       </div>
     </div>
+   
   );
 }

@@ -57,7 +57,7 @@ export const NavLinks: NavLink[] = [
     title: "الأجهزة",
     link: "#",
     dropdown: [
-      { id: 1, title: "جهاز القفاز الذكي", link: "#" },
+      { id: 1, title: "جهاز القفاز الذكي", link: "/smartgloves" },
     ],
   },
   // {

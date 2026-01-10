@@ -1,7 +1,7 @@
 import type { AxiosInstance } from "axios";
 
 export interface CenterFormValues {
-  schedule_id?:  number | string;
+  schedule_id?: number | string;
   customer_id: string;
   gender?: "Male" | "Female";
   birth_date?: string;
@@ -25,7 +25,10 @@ export interface CenterFormValues {
   city?: string;
   country?: string;
   formatted_address?: string;
-  timezone?:string
+  timezone?: string;
+  video_consultation_price?: string | number;
+  chat_consultation_price?: string | number;
+  currency?: string;
 }
 //هذه هي الدالة التي تحول البيانات من فورم عادي إلى FormData ثم ترسلها للسيرفر عبر API:
 export const storeCenterDetails = async (
@@ -106,11 +109,18 @@ export const storeCenterDetails = async (
   formData.append("city", data.city || "");
   formData.append("country", data.country || "");
   formData.append("formatted_address", data.formatted_address || "");
-  formData.append("timezone", data.timezone  || "");
-
-
+  formData.append("timezone", data.timezone || "");
+  formData.append(
+    "video_consultation_price",
+    data.video_consultation_price?.toString() || ""
+  );
+  formData.append(
+    "chat_consultation_price",
+    data.chat_consultation_price?.toString() || ""
+  );
+  formData.append("currency", data.currency || "");
   const response = await axios.post("/api/center/store", formData);
 
   return response.data;
 };
-// يعني انا هنا بتعامل مع الداتا لي من الفورم وبجهزها للارسال وبالكستم هوك بخليه يستقبله ويهندل الايرور هناك 
+// يعني انا هنا بتعامل مع الداتا لي من الفورم وبجهزها للارسال وبالكستم هوك بخليه يستقبله ويهندل الايرور هناك

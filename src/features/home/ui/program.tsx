@@ -155,9 +155,9 @@ export default function Program() {
                   <div className="absolute top-4 right-4">
                     <div className="flex items-center gap-1 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-medium">
+                      {/* <span className="font-medium">
                         {Number(program.ratings_avg_rating).toFixed(1) || "0.0"}
-                      </span>
+                      </span> */}
                     </div>
                   </div>
                 </div>

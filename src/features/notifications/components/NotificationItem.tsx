@@ -93,10 +93,10 @@ export function NotificationItem({
       </div>
 
       <div className="flex items-center justify-between w-full">
-        <div className="text-xs text-muted-foreground">#{data.consultation_id}</div>
-        <div className="text-xs text-muted-foreground">
+        {/* <div className="text-xs text-muted-foreground">#{data.consultation_id}</div> */}
+        {/* <div className="text-xs text-muted-foreground">
           {source === "api" ? "API" : "مباشر"}
-        </div>
+        </div> */}
       </div>
     </div>
   );

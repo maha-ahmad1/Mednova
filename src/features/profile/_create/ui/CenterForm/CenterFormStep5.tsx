@@ -49,7 +49,7 @@ export function CenterFormStep5({
     formState: { errors },
   } = methods;
 
-  const { data: session ,update} = useSession();
+  const { data: session, update } = useSession();
   const router = useRouter();
   const { storeCenter, isStoring } = useCenterStore({
     onValidationError: (errors) => {
@@ -133,6 +133,20 @@ export function CenterFormStep5({
             : undefined,
         bio: data.bio,
         day_of_week: (formData.day_of_week as string[]) || [],
+        video_consultation_price:
+          typeof formData.video_consultation_price === "string" ||
+          typeof formData.video_consultation_price === "number"
+            ? formData.video_consultation_price
+            : undefined,
+
+        chat_consultation_price:
+          typeof formData.chat_consultation_price === "string" ||
+          typeof formData.chat_consultation_price === "number"
+            ? formData.chat_consultation_price
+            : undefined,
+
+        currency:
+          typeof formData.currency === "string" ? formData.currency : undefined,
         is_have_evening_time: isHaveEveningNumber,
         start_time_morning: formData.start_time_morning || "",
         end_time_morning: formData.end_time_morning || "",
@@ -159,11 +173,11 @@ export function CenterFormStep5({
       setGlobalErrors?.({});
       updateFormData({ bio: data.bio });
 
-       await update({
+      await update({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status, 
+          status: data.status,
         },
       });
       showSuccessToast("تم إرسال بيانات المركز بنجاح!");

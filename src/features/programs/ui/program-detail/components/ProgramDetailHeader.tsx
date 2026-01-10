@@ -38,7 +38,7 @@ export function ProgramDetailHeader({ program }: ProgramDetailHeaderProps) {
             )}
             <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
               <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="font-medium">{program.ratings_avg_rating?.toFixed(1) || "0.0"}</span>
+              {/* <span className="font-medium">{program.ratings_avg_rating?.toFixed(1) || "0.0"}</span> */}
               <span className="text-xs opacity-80">({program.ratings_count || 0})</span>
             </div>
           </div>

@@ -26,7 +26,7 @@ export default function Navbar({
         className={`
           sticky top-0 z-50
     flex items-center justify-between
-    px-4 lg:px-16
+    px-4 lg:px-20
     bg-white
           ${className}
         `}

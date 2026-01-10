@@ -30,8 +30,10 @@ export interface TherapistFormValues {
   is_have_evening_time?: boolean;
   start_time_evening?: string;
   end_time_evening?: string;
-  timezone?:string;
-
+  timezone?: string;
+  video_consultation_price?: string | number;
+  chat_consultation_price?: string | number;
+  currency?: string;
 }
 
 export const storeTherapistDetails = async (
@@ -75,6 +77,16 @@ export const storeTherapistDetails = async (
   formData.append("start_time_morning", data.start_time_morning || "");
   formData.append("end_time_morning", data.end_time_morning || "");
 
+  formData.append(
+    "video_consultation_price",
+    data.video_consultation_price?.toString() || ""
+  );
+  formData.append(
+    "chat_consultation_price",
+    data.chat_consultation_price?.toString() || ""
+  );
+  formData.append("currency", data.currency || "");
+
   const parseHasEvening = (val: unknown) => {
     if (val === true) return true;
     if (String(val) === "1") return true;
@@ -89,7 +101,7 @@ export const storeTherapistDetails = async (
     formData.append("start_time_evening", data.start_time_evening || "");
     formData.append("end_time_evening", data.end_time_evening || "");
   }
-  formData.append("timezone", data.timezone  || "");
+  formData.append("timezone", data.timezone || "");
 
   const response = await axios.post("/api/therapist/store", formData, {});
 

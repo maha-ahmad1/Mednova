@@ -23,7 +23,14 @@ export default function DashboardLayout({
       <div className="flex">
         {/* السايدبار */}
         {!isCreatePage && !isPendingPage && (
-          <div className="fixed bottom-0 left-0 right-0 lg:fixed lg:right-10 lg:top-36 h-16 lg:h-auto lg:w-70 z-40 lg:z-30 bg-white border-t lg:border lg:border-gray-100 lg:rounded-2xl shadow-lg lg:shadow-xl overflow-hidden">
+          <div
+            className="   fixed bottom-0 left-0 right-0 h-16
+    lg:top-36 lg:bottom-auto lg:right-10 lg:left-auto lg:h-auto lg:w-70
+    z-40 lg:z-30
+    bg-white border-t lg:border lg:border-gray-100
+    lg:rounded-2xl shadow-lg lg:shadow-xl
+    overflow-hidden"
+          >
             <Sidebar />
           </div>
         )}

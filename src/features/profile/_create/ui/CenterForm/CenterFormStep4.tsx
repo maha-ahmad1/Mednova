@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { useForm, FormProvider, Controller } from "react-hook-form"
-import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
-import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { countries } from "@/constants/countries"
-import { FormSelect } from "@/shared/ui/forms"
-import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector"
+import { useForm, FormProvider, Controller } from "react-hook-form";
+import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
+import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { countries } from "@/constants/countries";
+import { FormSelect } from "@/shared/ui/forms";
+import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector";
 
 const step4Schema = z
   .object({
@@ -22,7 +22,7 @@ const step4Schema = z
     end_time_evening: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    const hasEvening = data.is_have_evening_time === 1
+    const hasEvening = data.is_have_evening_time === 1;
 
     if (hasEvening) {
       if (!data.start_time_evening) {
@@ -30,19 +30,19 @@ const step4Schema = z
           code: z.ZodIssueCode.custom,
           path: ["start_time_evening"],
           message: "حقل بداية الدوام المسائي مطلوب.",
-        })
+        });
       }
       if (!data.end_time_evening) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["end_time_evening"],
           message: "حقل نهاية الدوام المسائي مطلوب.",
-        })
+        });
       }
     }
-  })
+  });
 
-type Step4Data = z.infer<typeof step4Schema>
+type Step4Data = z.infer<typeof step4Schema>;
 
 const days = [
   { key: "Sunday", label: "الأحد" },
@@ -52,19 +52,24 @@ const days = [
   { key: "Thursday", label: "الخميس" },
   { key: "Friday", label: "الجمعة" },
   { key: "Saturday", label: "السبت" },
-]
+];
 
 interface Step4Props {
-  onBack: () => void
-  onNext: () => void
+  onBack: () => void;
+  onNext: () => void;
   // Accept more flexible formData since outer wrapper uses boolean flags
-  formData: Partial<Record<string, unknown>>
-  updateFormData: (data: Partial<Record<string, unknown>>) => void
-  globalErrors?: Record<string, string>
-  setGlobalErrors?: (errors: Record<string, string>) => void
+  formData: Partial<Record<string, unknown>>;
+  updateFormData: (data: Partial<Record<string, unknown>>) => void;
+  globalErrors?: Record<string, string>;
+  setGlobalErrors?: (errors: Record<string, string>) => void;
 }
 
-export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: Step4Props) {
+export function CenterFormStep4({
+  onBack,
+  onNext,
+  formData,
+  updateFormData,
+}: Step4Props) {
   const methods = useForm<Step4Data>({
     resolver: zodResolver(step4Schema),
     mode: "onChange",
@@ -75,7 +80,8 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
       timezone: (formData.timezone as string) || "",
       // support both numeric (0|1) and boolean flags from outer state
       is_have_evening_time:
-        formData.is_have_evening_time === 1 || formData.is_have_evening_time === true
+        formData.is_have_evening_time === 1 ||
+        formData.is_have_evening_time === true
           ? 1
           : 0,
       start_time_evening: (formData.start_time_evening as string) || "",
@@ -83,28 +89,28 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
       country: (formData.country as string) || "",
       city: (formData.city as string) || "",
     },
-  })
+  });
 
-  const { handleSubmit, control, watch, setValue } = methods
-  const selectedDays = watch("day_of_week")
-  const isEvening = watch("is_have_evening_time") === 1
-  const country = watch("country")
+  const { handleSubmit, control, watch, setValue } = methods;
+  const selectedDays = watch("day_of_week");
+  const isEvening = watch("is_have_evening_time") === 1;
+  const country = watch("country");
 
   const toggleDay = (dayKey: string) => {
     if (selectedDays.includes(dayKey)) {
       setValue(
         "day_of_week",
-        selectedDays.filter((d) => d !== dayKey),
-      )
+        selectedDays.filter((d) => d !== dayKey)
+      );
     } else {
-      setValue("day_of_week", [...selectedDays, dayKey])
+      setValue("day_of_week", [...selectedDays, dayKey]);
     }
-  }
+  };
 
   const onSubmit = (data: Step4Data) => {
-    updateFormData(data)
-    onNext()
-  }
+    updateFormData(data);
+    onNext();
+  };
 
   return (
     <FormStepCard
@@ -123,8 +129,8 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
                   label="الدولة"
                   value={field.value}
                   onValueChange={(val) => {
-                    field.onChange(val)
-                    setValue("city", "")
+                    field.onChange(val);
+                    setValue("city", "");
                   }}
                   options={countries.map((c) => ({
                     value: c.name,
@@ -140,7 +146,9 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
               name="city"
               control={control}
               render={({ field, fieldState }) => {
-                const selectedCountry = countries.find((c) => c.name === country)
+                const selectedCountry = countries.find(
+                  (c) => c.name === country
+                );
                 return (
                   <FormSelect
                     label="المدينة"
@@ -155,7 +163,7 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
                     error={fieldState.error?.message}
                     rtl
                   />
-                )
+                );
               }}
             />
           </div>
@@ -167,13 +175,21 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
               control={control}
               render={({ field, fieldState }) => (
                 <div>
-                  <label className="block mb-1 font-medium">المنطقة الزمنية</label>
+                  <label className="block mb-1 font-medium">
+                    المنطقة الزمنية
+                  </label>
                   <TimeZoneSelector
                     selectedTimeZone={field.value}
                     onSelect={(val) => field.onChange(val)}
                     apiBaseUrl={process.env.NEXT_PUBLIC_API_URL}
+                    showHeader={false}
+                    showIcon={false}
                   />
-                  {fieldState.error && <p className="text-red-500 text-sm mt-1">{fieldState.error.message}</p>}
+                  {fieldState.error && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {fieldState.error.message}
+                    </p>
+                  )}
                 </div>
               )}
             />
@@ -185,7 +201,9 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
               <label
                 key={d.key}
                 className={`px-4 py-2 border rounded-lg cursor-pointer ${
-                  selectedDays.includes(d.key) ? "bg-[#32A88D] text-white" : "bg-gray-100"
+                  selectedDays.includes(d.key)
+                    ? "bg-[#32A88D] text-white"
+                    : "bg-gray-100"
                 }`}
               >
                 <input
@@ -206,9 +224,19 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
               control={control}
               render={({ field, fieldState }) => (
                 <div>
-                  <label className="block mb-1 font-medium">بداية الدوام الصباحي</label>
-                  <input type="time" {...field} className="border rounded-md p-2 w-full" />
-                  {fieldState.error && <p className="text-red-500 text-sm mt-1">{fieldState.error.message}</p>}
+                  <label className="block mb-1 font-medium">
+                    بداية الدوام الصباحي
+                  </label>
+                  <input
+                    type="time"
+                    {...field}
+                    className="border rounded-md p-2 w-full"
+                  />
+                  {fieldState.error && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {fieldState.error.message}
+                    </p>
+                  )}
                 </div>
               )}
             />
@@ -217,9 +245,19 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
               control={control}
               render={({ field, fieldState }) => (
                 <div>
-                  <label className="block mb-1 font-medium">نهاية الدوام الصباحي</label>
-                  <input type="time" {...field} className="border rounded-md p-2 w-full" />
-                  {fieldState.error && <p className="text-red-500 text-sm mt-1">{fieldState.error.message}</p>}
+                  <label className="block mb-1 font-medium">
+                    نهاية الدوام الصباحي
+                  </label>
+                  <input
+                    type="time"
+                    {...field}
+                    className="border rounded-md p-2 w-full"
+                  />
+                  {fieldState.error && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {fieldState.error.message}
+                    </p>
+                  )}
                 </div>
               )}
             />
@@ -250,9 +288,19 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
                 control={control}
                 render={({ field, fieldState }) => (
                   <div>
-                    <label className="block mb-1 font-medium">بداية الدوام المسائي</label>
-                    <input type="time" {...field} className="border rounded-md p-2 w-full" />
-                    {fieldState.error && <p className="text-red-500 text-sm mt-1">{fieldState.error.message}</p>}
+                    <label className="block mb-1 font-medium">
+                      بداية الدوام المسائي
+                    </label>
+                    <input
+                      type="time"
+                      {...field}
+                      className="border rounded-md p-2 w-full"
+                    />
+                    {fieldState.error && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {fieldState.error.message}
+                      </p>
+                    )}
                   </div>
                 )}
               />
@@ -261,9 +309,19 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
                 control={control}
                 render={({ field, fieldState }) => (
                   <div>
-                    <label className="block mb-1 font-medium">نهاية الدوام المسائي</label>
-                    <input type="time" {...field} className="border rounded-md p-2 w-full" />
-                    {fieldState.error && <p className="text-red-500 text-sm mt-1">{fieldState.error.message}</p>}
+                    <label className="block mb-1 font-medium">
+                      نهاية الدوام المسائي
+                    </label>
+                    <input
+                      type="time"
+                      {...field}
+                      className="border rounded-md p-2 w-full"
+                    />
+                    {fieldState.error && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {fieldState.error.message}
+                      </p>
+                    )}
                   </div>
                 )}
               />
@@ -273,6 +331,7 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
           {/* Navigation */}
           <div className="flex justify-between mt-6">
             <FormSubmitButton
+              align="left"
               type="button"
               onClick={onBack}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] hover:text-white"
@@ -284,5 +343,5 @@ export function CenterFormStep4({ onBack, onNext, formData, updateFormData }: St
         </form>
       </FormProvider>
     </FormStepCard>
-  )
+  );
 }

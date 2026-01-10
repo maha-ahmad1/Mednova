@@ -24,7 +24,10 @@ export default function Navbar({
     <>
       <header
         className={`
-          flex items-center justify-between  px-4  lg:px-16 
+          sticky top-0 z-50
+    flex items-center justify-between
+    px-4 lg:px-20
+    bg-white
           ${className}
         `}
       >

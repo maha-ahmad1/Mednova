@@ -87,6 +87,20 @@ export function TherapistFormStep5({
       };
 
       const rawPayload = {
+        video_consultation_price:
+          typeof formData.video_consultation_price === "string" ||
+          typeof formData.video_consultation_price === "number"
+            ? formData.video_consultation_price
+            : undefined,
+
+        chat_consultation_price:
+          typeof formData.chat_consultation_price === "string" ||
+          typeof formData.chat_consultation_price === "number"
+            ? formData.chat_consultation_price
+            : undefined,
+
+        currency:
+          typeof formData.currency === "string" ? formData.currency : undefined,
         customer_id: session.user.id,
         full_name:
           typeof formData.full_name === "string"
@@ -156,7 +170,7 @@ export function TherapistFormStep5({
         start_time_morning: schedulePayload.start_time_morning,
         end_time_morning: schedulePayload.end_time_morning,
         is_have_evening_time: schedulePayload.is_have_evening_time,
-         timezone:
+        timezone:
           typeof formData.timezone === "string" ? formData.timezone : undefined,
       } as Record<string, unknown>;
 
@@ -177,7 +191,7 @@ export function TherapistFormStep5({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status, 
+          status: data.status,
         },
       });
       showSuccessToast("تم إرسال بياناتك بنجاح!");

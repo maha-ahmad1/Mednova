@@ -128,7 +128,6 @@
 //             </div>
 //           </div>
 
-         
 //         </div>
 //       </div>
 
@@ -307,8 +306,6 @@
 //   );
 // }
 
-
-
 // "use client";
 
 // import type React from "react";
@@ -352,14 +349,14 @@
 // }: ConsultationDetailsProps) {
 //   const { data: session } = useSession();
 //   const [activeTab, setActiveTab] = useState<"details" | "chat">("details");
-  
+
 //   // ✅ احصل على أحدث نسخة من الـ store
 //   const { requests } = useConsultationStore();
 //   const storeRequest = requests.find((r) => r.id === initialRequest.id);
-  
+
 //   // ✅ استخدم الطلب من الـ store إذا كان موجوداً، وإلا استخدم الـ API
 //   const displayRequest = storeRequest || initialRequest;
-  
+
 //   const patient = displayRequest.data.patient;
 //   const consultant = displayRequest.data.consultant;
 
@@ -369,18 +366,18 @@
 //   // ✅ ✅ ✅ **الجزء الأهم:** اكتشاف إذا كان الرابط من البوشر
 //   const isZoomLinkFromPusher = () => {
 //     if (!storeRequest) return false;
-    
+
 //     // ✅ ✅ ✅ **التصحيح:** قارن بين الـ store والـ API الأصلي
 //     const hasLinkInStore = !!storeRequest.data.video_room_link;
 //     const hasLinkInAPI = !!initialRequest.data.video_room_link;
-    
+
 //     console.log("🔍 اكتشاف مصدر رابط الزوم:", {
 //       storeHasLink: hasLinkInStore,
 //       apiHasLink: hasLinkInAPI,
 //       storeLink: storeRequest.data.video_room_link,
 //       apiLink: initialRequest.data.video_room_link
 //     });
-    
+
 //     // ✅ الرابط من البوشر إذا كان موجوداً في الـ store ولكن ليس في الـ API
 //     return hasLinkInStore && !hasLinkInAPI;
 //   };
@@ -395,14 +392,14 @@
 //     };
 
 //     console.log("🔍 شروط زر الزوم:", conditions);
-    
+
 //     // ✅ يظهر الزر إذا توفرت الشروط
 //     if (conditions.isVideo && conditions.isAcceptedStatus && conditions.hasZoomLink) {
-//       console.log("✅ زر الزوم سيظهر! المصدر:", 
+//       console.log("✅ زر الزوم سيظهر! المصدر:",
 //         conditions.isFromPusher ? "البوشر (Real-time)" : "API (أصلي)");
 //       return true;
 //     }
-    
+
 //     return false;
 //   };
 
@@ -459,8 +456,8 @@
 //                   استشارة فيديو مباشرة
 //                 </h4>
 //                 <p className="text-blue-600 text-sm">
-//                   {isZoomLinkFromPusher() 
-//                     ? "تم إنشاء الرابط مباشرة - انقر للانضمام" 
+//                   {isZoomLinkFromPusher()
+//                     ? "تم إنشاء الرابط مباشرة - انقر للانضمام"
 //                     : "انقر للانضمام إلى جلسة الزوم"}
 //                 </p>
 //               </div>
@@ -782,14 +779,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
 "use client";
 
 import type React from "react";
@@ -833,59 +822,61 @@ export default function ConsultationDetails({
 }: ConsultationDetailsProps) {
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<"details" | "chat">("details");
-  
+
   // ✅ احصل على أحدث نسخة من الـ store
   const { requests } = useConsultationStore();
   const storeRequest = requests.find((r) => r.id === initialRequest.id);
-  
+
   // ✅ استخدم الطلب من الـ store إذا كان موجوداً، وإلا استخدم الـ API
   const displayRequest = storeRequest || initialRequest;
-  
+
   const patient = displayRequest.data.patient;
   const consultant = displayRequest.data.consultant;
 
   // ✅ استخدم حالة الـ store، ليس الـ API
-  const canShowChat = ["active"].includes(displayRequest.status);
+  const canShowChat = ["accepted", "active", "completed"].includes(
+    displayRequest.status
+  );
 
   // ✅ ✅ ✅ **الجزء الأهم:** اكتشاف إذا كان الرابط من البوشر
   const isZoomLinkFromPusher = () => {
     if (!storeRequest) return false;
-    
+
     // ✅ ✅ ✅ **التصحيح:** قارن بين الـ store والـ API الأصلي
     const hasLinkInStore = !!storeRequest.video_room_link;
     const hasLinkInAPI = !!initialRequest.video_room_link;
-    
+
     console.log("🔍 اكتشاف مصدر رابط الزوم:", {
       storeHasLink: hasLinkInStore,
       apiHasLink: hasLinkInAPI,
       storeLink: storeRequest.video_room_link,
-      apiLink: initialRequest.video_room_link
+      apiLink: initialRequest.video_room_link,
     });
-    
+
     // ✅ الرابط من البوشر إذا كان موجوداً في الـ store ولكن ليس في الـ API
     return hasLinkInStore && !hasLinkInAPI;
   };
 
   // ✅ وظيفة التحقق من ظهور زر الزوم
-  const shouldShowZoomButton = () => {
-    const conditions = {
-      isVideo: displayRequest.type === "video",
-      isAcceptedStatus: ["active", "completed"].includes(displayRequest.status),
-      hasZoomLink: !!displayRequest.video_room_link,
-      isFromPusher: isZoomLinkFromPusher(),
-    };
-
-    console.log("🔍 شروط زر الزوم:", conditions);
-    
-    // ✅ يظهر الزر إذا توفرت الشروط
-    if (conditions.isVideo && conditions.isAcceptedStatus && conditions.hasZoomLink) {
-      console.log("✅ زر الزوم سيظهر! المصدر:", 
-        conditions.isFromPusher ? "البوشر (Real-time)" : "API (أصلي)");
-      return true;
-    }
-    
-    return false;
+const shouldShowZoomButton = () => {
+  const conditions = {
+    isVideo: displayRequest.type === "video",
+    isActiveStatus: displayRequest.status === "active", // فقط active
+    hasZoomLink: !!displayRequest.video_room_link,
+    isFromPusher: isZoomLinkFromPusher(),
   };
+
+  console.log("🔍 شروط زر الزوم:", conditions);
+
+  // ✅ يظهر الزر فقط عندما تكون الحالة active
+  if (conditions.isVideo && conditions.isActiveStatus && conditions.hasZoomLink) {
+    console.log("✅ زر الزوم سيظهر! المصدر:",
+      conditions.isFromPusher ? "البوشر (Real-time)" : "API (أصلي)");
+    return true;
+  }
+
+  return false;
+};
 
   // ✅ تسجيل التشخيص في الكونسول
   useEffect(() => {
@@ -896,7 +887,7 @@ export default function ConsultationDetails({
       video_room_link: displayRequest.video_room_link,
       source: isZoomLinkFromPusher() ? "البوشر" : "API",
       initialStatus: initialRequest.status,
-      storeStatus: storeRequest?.status
+      storeStatus: storeRequest?.status,
     });
   }, [displayRequest, storeRequest]);
 
@@ -940,8 +931,8 @@ export default function ConsultationDetails({
                   استشارة فيديو مباشرة
                 </h4>
                 <p className="text-blue-600 text-sm">
-                  {isZoomLinkFromPusher() 
-                    ? "تم إنشاء الرابط مباشرة - انقر للانضمام" 
+                  {isZoomLinkFromPusher()
+                    ? "تم إنشاء الرابط مباشرة - انقر للانضمام"
                     : "انقر للانضمام إلى جلسة الزوم"}
                 </p>
               </div>
@@ -953,13 +944,15 @@ export default function ConsultationDetails({
               }
               className={`w-full ${
                 isZoomLinkFromPusher()
-                  ? 'bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700'
-                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
+                  ? "bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+                  : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
               } text-white py-3 sm:py-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 transition-all`}
             >
               <VideoIcon className="w-5 h-5" />
               <span className="font-semibold">
-                {isZoomLinkFromPusher() ? 'انضم الآن (مباشر)' : 'انضم إلى جلسة الزوم'}
+                {isZoomLinkFromPusher()
+                  ? "انضم الآن (مباشر)"
+                  : "انضم إلى جلسة الزوم"}
               </span>
               <ExternalLink className="w-4 h-4" />
             </Button>
@@ -980,7 +973,7 @@ export default function ConsultationDetails({
       )}
 
       {/* زر تشخيص - يظهر فقط في التطوير */}
-      {process.env.NODE_ENV === 'development' && (
+      {/* {process.env.NODE_ENV === 'development' && (
         <Button
           variant="outline"
           size="sm"
@@ -999,7 +992,7 @@ export default function ConsultationDetails({
           <RefreshCw className="w-3 h-3 ml-1" />
           تشخيص بيانات الزوم
         </Button>
-      )}
+      )} */}
 
       {userRole === "patient" && (
         <>
@@ -1082,17 +1075,18 @@ export default function ConsultationDetails({
         </div>
       </div>
 
-      {canShowChat && (
-        <div className="mb-6 sm:mb-8">
-          <Button
-            onClick={() => setActiveTab("chat")}
-            className="w-full bg-[#32A88D] hover:bg-[#2a8a7a] text-white py-3"
-          >
-            <MessageCircle className="w-5 h-5 ml-2" />
-            الانتقال إلى المحادثة
-          </Button>
-        </div>
-      )}
+      {displayRequest.type === "chat" &&
+        ["accepted", "active"].includes(displayRequest.status) && (
+          <div className="mb-6 sm:mb-8">
+            <Button
+              onClick={() => setActiveTab("chat")}
+              className="w-full bg-[#32A88D] hover:bg-[#2a8a7a] text-white py-3"
+            >
+              <MessageCircle className="w-5 h-5 ml-2" />
+              الانتقال إلى المحادثة
+            </Button>
+          </div>
+        )}
 
       <ConsultationActions
         request={displayRequest} // ✅ استخدم displayRequest
@@ -1139,11 +1133,15 @@ export default function ConsultationDetails({
           consultant_id: displayRequest.data.consultant.id,
           consultant_type: displayRequest.data.consultant_type,
           status: displayRequest.status,
-          first_patient_message_at: displayRequest.data.first_patient_message_at,
-          first_consultant_message_at: displayRequest.data.first_consultant_reply_at,
+          first_patient_message_at:
+            displayRequest.data.first_patient_message_at,
+          first_consultant_message_at:
+            displayRequest.data.first_consultant_reply_at,
           patient_message_count: displayRequest.data.patient_message_count,
-          consultant_message_count: displayRequest.data.consultant_message_count,
-          max_messages_for_patient: displayRequest.data.max_messages_for_patient,
+          consultant_message_count:
+            displayRequest.data.consultant_message_count,
+          max_messages_for_patient:
+            displayRequest.data.max_messages_for_patient,
           created_at: displayRequest.created_at,
           updated_at: displayRequest.updated_at,
           consultant_full_name: displayRequest.data.consultant.full_name,
@@ -1184,16 +1182,11 @@ export default function ConsultationDetails({
               <div className="scale-75 sm:scale-100 origin-right">
                 {getStatusBadge(displayRequest.status)}
               </div>
-              {isZoomLinkFromPusher() && (
-                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-300 px-2 py-0.5">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mr-1"></div>
-                  محدث
-                </Badge>
-              )}
+           
             </div>
           </div>
 
-          {canShowChat && (
+          {displayRequest.type === "chat" && canShowChat && (
             <Tabs
               value={activeTab}
               onValueChange={(value) =>

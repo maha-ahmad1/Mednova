@@ -54,7 +54,7 @@ export function NotificationDropdown() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-96" align="end" forceMount>
+      <DropdownMenuContent className="w-96 ml-6" align="end" forceMount>
         {/* Header */}
         <NotificationHeader
           unreadCount={unreadCount}

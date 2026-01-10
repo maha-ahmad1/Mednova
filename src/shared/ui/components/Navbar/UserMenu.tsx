@@ -37,10 +37,12 @@ export function UserMenu() {
 
       <DropdownMenuContent
         align="end"
-        className="text-right w-40 bg-white/80 backdrop-blur-lg p-1"
+        className="text-right w-40 bg-white/80 backdrop-blur-lg p-1 ml-6"
       >
-        <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 rounded-md 
-             hover:bg-gray-100/60 text-gray-700 transition">
+        <DropdownMenuItem
+          className="flex items-center gap-2 px-3 py-2 rounded-md 
+             hover:bg-gray-100/60 text-gray-700 transition"
+        >
           <Link
             href="/profile"
             className="flex-1  text-sm text-right truncate block"
@@ -66,10 +68,7 @@ export function UserMenu() {
 
         <div className="h-px bg-gray-200 my-1" />
 
-        <DropdownMenuItem
-          onClick={() => signOut()}
-          className="flex gap-2"
-        >
+        <DropdownMenuItem onClick={() => signOut()} className="flex gap-2">
           <span className="flex-1 text-sm">تسجيل الخروج</span>
           <LogOut className="w-4 h-4" />
         </DropdownMenuItem>

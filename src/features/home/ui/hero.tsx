@@ -16,6 +16,10 @@ import  Navbar  from "@/shared/ui/components/Navbar/Navbar";
 export default function Hero() {
 
   return (
+    <>
+          <Navbar variant="landing" />        
+
+    
     <section className="relative md:px-10 bg-gradient-to-br from-[#32A88D]/5 via-white to-blue-50/30 overflow-hidden">
       {/* شكل دائري خلفي */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#32A88D]/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
@@ -23,7 +27,7 @@ export default function Hero() {
 
       <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
         {/* شريط التنقل */}
-      <Navbar variant="landing" />        
+      {/* <Navbar variant="landing" />         */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-12 lg:py-20 sm:px-0 3xl:px-32">
           <div className="lg:col-span-7 text-center lg:text-right">
             {/* شارة */}
@@ -160,5 +164,6 @@ export default function Hero() {
         }
       `}</style>
     </section>
+    </>
   );
 }

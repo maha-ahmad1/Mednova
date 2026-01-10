@@ -92,14 +92,14 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({ provider }) => {
         </div>
 
         <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          {/* <div className="flex items-center gap-2 text-sm text-gray-600">
             {isTherapist ? (
               <GraduationCap className="w-4 h-4 text-[#32A88D]" />
             ) : (
               <Building2 className="w-4 h-4 text-[#32A88D]" />
             )}
             <span className="line-clamp-1">{getEducation()}</span>
-          </div>
+          </div> */}
 
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Award className="w-4 h-4 text-[#32A88D]" />

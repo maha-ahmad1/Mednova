@@ -118,183 +118,131 @@ export function CenterFormStep4({
       description="سجّل مركزك الطبي في منصة ميدنوفا لبدء تقديم الخدمات الطبية والمساهمة في تحسين الرعاية الصحية."
     >
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" dir="rtl">
-          {/* Country & City */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Controller
-              name="country"
-              control={control}
-              render={({ field, fieldState }) => (
-                <FormSelect
-                  label="الدولة"
-                  value={field.value}
-                  onValueChange={(val) => {
-                    field.onChange(val);
-                    setValue("city", "");
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" dir="rtl">
+          {/* Location Section */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">الموقع</h3>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Controller
+                  name="country"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <FormSelect
+                      label="الدولة"
+                      value={field.value}
+                      onValueChange={(val) => {
+                        field.onChange(val);
+                        setValue("city", "");
+                      }}
+                      options={countries.map((c) => ({
+                        value: c.name,
+                        label: c.name,
+                      }))}
+                      error={fieldState.error?.message}
+                      rtl
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="city"
+                  control={control}
+                  render={({ field, fieldState }) => {
+                    const selectedCountry = countries.find(
+                      (c) => c.name === country
+                    );
+                    return (
+                      <FormSelect
+                        label="المدينة"
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        options={
+                          selectedCountry?.cities.map((city) => ({
+                            value: city,
+                            label: city,
+                          })) || []
+                        }
+                        error={fieldState.error?.message}
+                        rtl
+                      />
+                    );
                   }}
-                  options={countries.map((c) => ({
-                    value: c.name,
-                    label: c.name,
-                  }))}
-                  error={fieldState.error?.message}
-                  rtl
                 />
-              )}
-            />
-
-            <Controller
-              name="city"
-              control={control}
-              render={({ field, fieldState }) => {
-                const selectedCountry = countries.find(
-                  (c) => c.name === country
-                );
-                return (
-                  <FormSelect
-                    label="المدينة"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    options={
-                      selectedCountry?.cities.map((city) => ({
-                        value: city,
-                        label: city,
-                      })) || []
-                    }
-                    error={fieldState.error?.message}
-                    rtl
-                  />
-                );
-              }}
-            />
-          </div>
-
-          {/* Timezone */}
-          <div className="mb-4">
-            <Controller
-              name="timezone"
-              control={control}
-              render={({ field, fieldState }) => (
-                <div>
-                  <label className="block mb-1 font-medium">
-                    المنطقة الزمنية
-                  </label>
-                  <TimeZoneSelector
-                    selectedTimeZone={field.value}
-                    onSelect={(val) => field.onChange(val)}
-                    apiBaseUrl={process.env.NEXT_PUBLIC_API_URL}
-                    showHeader={false}
-                    showIcon={false}
-                  />
-                  {fieldState.error && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {fieldState.error.message}
-                    </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Controller
+                  name="timezone"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <div>
+                      <label className="block mb-2 font-medium">
+                        المنطقة الزمنية
+                      </label>
+                      <TimeZoneSelector
+                        selectedTimeZone={field.value}
+                        onSelect={(val) => field.onChange(val)}
+                        apiBaseUrl={process.env.NEXT_PUBLIC_API_URL}
+                        showHeader={false}
+                        showIcon={false}
+                      />
+                      {fieldState.error && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </div>
                   )}
-                </div>
-              )}
-            />
-          </div>
-
-          {/* Days */}
-          <div className="flex flex-wrap gap-3 mb-4">
-            {days.map((d) => (
-              <label
-                key={d.key}
-                className={`px-4 py-2 border rounded-lg cursor-pointer ${
-                  selectedDays.includes(d.key)
-                    ? "bg-[#32A88D] text-white"
-                    : "bg-gray-100"
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  className="hidden"
-                  checked={selectedDays.includes(d.key)}
-                  onChange={() => toggleDay(d.key)}
                 />
-                {d.label}
-              </label>
-            ))}
+              </div>
+            </div>
           </div>
 
-          {/* Morning Time */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <Controller
-              name="start_time_morning"
-              control={control}
-              render={({ field, fieldState }) => (
-                <div>
-                  <label className="block mb-1 font-medium">
-                    بداية الدوام الصباحي
+          {/* Schedule Section */}
+          <div className="pt-4 border-t border-gray-200">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">
+              المواعيد
+            </h3>
+
+            {/* Work Days */}
+            <div className="mb-6">
+              <label className="block font-medium">أيام العمل</label>
+              <div className="flex flex-wrap gap-3 mt-4">
+                {days.map((d) => (
+                  <label
+                    key={d.key}
+                    className={`px-4 py-2 border rounded-lg cursor-pointer transition-colors ${
+                      selectedDays.includes(d.key)
+                        ? "bg-[#32A88D] text-white border-[#32A88D]"
+                        : "bg-gray-100 border-gray-300 hover:bg-gray-200"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      className="hidden"
+                      checked={selectedDays.includes(d.key)}
+                      onChange={() => toggleDay(d.key)}
+                    />
+                    {d.label}
                   </label>
-                  <input
-                    type="time"
-                    {...field}
-                    className="border rounded-md p-2 w-full"
-                  />
-                  {fieldState.error && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {fieldState.error.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            />
-            <Controller
-              name="end_time_morning"
-              control={control}
-              render={({ field, fieldState }) => (
-                <div>
-                  <label className="block mb-1 font-medium">
-                    نهاية الدوام الصباحي
-                  </label>
-                  <input
-                    type="time"
-                    {...field}
-                    className="border rounded-md p-2 w-full"
-                  />
-                  {fieldState.error && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {fieldState.error.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            />
-          </div>
+                ))}
+              </div>
+            </div>
 
-          {/* Evening toggle */}
-          <div className="flex items-center gap-2 mb-3">
-            <Controller
-              name="is_have_evening_time"
-              control={control}
-              render={({ field }) => (
-                <input
-                  type="checkbox"
-                  checked={field.value === 1}
-                  onChange={(e) => field.onChange(e.target.checked ? 1 : 0)}
-                  className="accent-primary"
-                />
-              )}
-            />
-            <span className="font-medium">يوجد دوام مسائي</span>
-          </div>
-
-          {/* Evening Time */}
-          {isEvening && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Morning Time */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <Controller
-                name="start_time_evening"
+                name="start_time_morning"
                 control={control}
                 render={({ field, fieldState }) => (
                   <div>
                     <label className="block mb-1 font-medium">
-                      بداية الدوام المسائي
+                      بداية الدوام الصباحي
                     </label>
                     <input
                       type="time"
                       {...field}
-                      className="border rounded-md p-2 w-full"
+                      className="border rounded-md p-2 w-full mt-3"
                     />
                     {fieldState.error && (
                       <p className="text-red-500 text-sm mt-1">
@@ -305,17 +253,17 @@ export function CenterFormStep4({
                 )}
               />
               <Controller
-                name="end_time_evening"
+                name="end_time_morning"
                 control={control}
                 render={({ field, fieldState }) => (
                   <div>
                     <label className="block mb-1 font-medium">
-                      نهاية الدوام المسائي
+                      نهاية الدوام الصباحي
                     </label>
                     <input
                       type="time"
                       {...field}
-                      className="border rounded-md p-2 w-full"
+                      className="border rounded-md p-2 w-full mt-3"
                     />
                     {fieldState.error && (
                       <p className="text-red-500 text-sm mt-1">
@@ -326,10 +274,75 @@ export function CenterFormStep4({
                 )}
               />
             </div>
-          )}
+
+            {/* Evening toggle */}
+            <div className="flex items-center gap-2 mb-4">
+              <Controller
+                name="is_have_evening_time"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    type="checkbox"
+                    checked={field.value === 1}
+                    onChange={(e) => field.onChange(e.target.checked ? 1 : 0)}
+                    className="accent-primary"
+                  />
+                )}
+              />
+              <span className="font-medium">يوجد دوام مسائي</span>
+            </div>
+
+            {/* Evening Time */}
+            {isEvening && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Controller
+                  name="start_time_evening"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <div>
+                      <label className="block mb-1 font-medium">
+                        بداية الدوام المسائي
+                      </label>
+                      <input
+                        type="time"
+                        {...field}
+                        className="border rounded-md p-2 w-full mt-3"
+                      />
+                      {fieldState.error && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
+                <Controller
+                  name="end_time_evening"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <div>
+                      <label className="block mb-1 font-medium">
+                        نهاية الدوام المسائي
+                      </label>
+                      <input
+                        type="time"
+                        {...field}
+                        className="border rounded-md p-2 w-full mt-3"
+                      />
+                      {fieldState.error && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {fieldState.error.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
+              </div>
+            )}
+          </div>
 
           {/* Navigation */}
-          <div className="flex justify-between mt-6">
+          <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
             <FormSubmitButton
               align="left"
               type="button"

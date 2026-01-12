@@ -1,44 +1,47 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { StepperHeader } from "@/features/profile/_create/ui/StepperHeader"
-import { CenterFormStep2 } from "./CenterFormStep2"
-import { CenterFormStep3 } from "./CenterFormStep3"
-import { CenterFormStep4 } from "./CenterFormStep4"
-import { CenterFormStep5 } from "./CenterFormStep5"
-import { CenterFormStep1 } from "./CenterFormStep1"
-
+import { useState } from "react";
+import { StepperHeader } from "@/features/profile/_create/ui/StepperHeader";
+import { CenterFormStep2 } from "./CenterFormStep2";
+import { CenterFormStep3 } from "./CenterFormStep3";
+import { CenterFormStep4 } from "./CenterFormStep4";
+import { CenterFormStep5 } from "./CenterFormStep5";
+import { CenterFormStep1 } from "./CenterFormStep1";
 
 export default function CenterWrapper() {
-  const [currentStep, setCurrentStep] = useState(1)
-  const [globalErrors, setGlobalErrors] = useState<Record<string, string>>({})
+  const [currentStep, setCurrentStep] = useState(1);
+  const [globalErrors, setGlobalErrors] = useState<Record<string, string>>({});
 
   type CenterState = {
-    gender?: "male" | "female"
-    birth_date?: string
-    image?: File
-    specialty_id?: string[]
-    year_establishment?: string
-  has_commercial_registration?: boolean
-    commercial_registration_number?: string
-    commercial_registration_file?: File | null
-    commercial_registration_authority?: string
-    license_authority?: string
-    license_file?: File | null
-    license_number?: string
-    bio?: string
-    day_of_week?: string[]
-  is_have_evening_time?: boolean
-  status?: string
-    start_time_morning?: string
-    end_time_morning?: string
-    start_time_evening?: string
-    end_time_evening?: string
-    city?: string
-    country?: string
-    formatted_address?: string
-    timezone?: string
-  }
+    gender?: "male" | "female";
+    birth_date?: string;
+    image?: File;
+    specialty_id?: string[];
+    year_establishment?: string;
+    has_commercial_registration?: boolean;
+    commercial_registration_number?: string;
+    commercial_registration_file?: File | null;
+    commercial_registration_authority?: string;
+    license_authority?: string;
+    license_file?: File | null;
+    license_number?: string;
+    bio?: string;
+    day_of_week?: string[];
+    is_have_evening_time?: boolean;
+    status?: string;
+    start_time_morning?: string;
+    end_time_morning?: string;
+    start_time_evening?: string;
+    end_time_evening?: string;
+    city?: string;
+    country?: string;
+    formatted_address?: string;
+    timezone?: string;
+    video_consultation_price?: string;
+    chat_consultation_price?: string;
+    currency?: string;
+    name_center?: string;
+  };
 
   const [formData, setFormData] = useState<CenterState>({
     gender: undefined,
@@ -46,7 +49,7 @@ export default function CenterWrapper() {
     image: undefined,
     specialty_id: [],
     year_establishment: "",
-  has_commercial_registration: false,
+    has_commercial_registration: false,
     commercial_registration_number: "",
     commercial_registration_file: null,
     commercial_registration_authority: "",
@@ -55,7 +58,7 @@ export default function CenterWrapper() {
     license_number: "",
     bio: "",
     day_of_week: [],
-  is_have_evening_time: false,
+    is_have_evening_time: false,
     start_time_morning: "",
     end_time_morning: "",
     start_time_evening: "",
@@ -64,14 +67,18 @@ export default function CenterWrapper() {
     country: "",
     formatted_address: "",
     timezone: "",
-  })
+    video_consultation_price: "",
+    chat_consultation_price: "",
+    currency: "",
+    name_center: "",
+  });
 
-  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 5))
-  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1))
+  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 5));
+  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
   const updateFormData = (newData: Partial<CenterState>) => {
-    setFormData((prev) => ({ ...prev, ...newData }))
-  }
+    setFormData((prev) => ({ ...prev, ...newData }));
+  };
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -136,5 +143,5 @@ export default function CenterWrapper() {
         )}
       </div>
     </div>
-  )
+  );
 }

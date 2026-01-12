@@ -13,7 +13,7 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
     <div className="sticky top-8 space-y-4">
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
         <div className="mb-6">
-          <div className="text-4xl font-bold text-[#32A88D] mb-2">{program.price} ر.س</div>
+          <div className="text-4xl font-bold text-[#32A88D] mb-2">{program.price} ر.ع.</div>
           <p className="text-sm text-gray-600">سعر البرنامج الكامل</p>
         </div>
 

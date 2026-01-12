@@ -363,29 +363,29 @@ export default function PaymentPage() {
                   <div className="space-y-4 mb-6">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600">رسوم الاستشارة</span>
-                      <span className="font-semibold text-gray-800">150 ر.س</span>
+                      <span className="font-semibold text-gray-800">150 ر.ع.</span>
                     </div>
                     
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600">الضريبة المضافة</span>
-                      <span className="font-semibold text-gray-800">15 ر.س</span>
+                      <span className="font-semibold text-gray-800">15 ر.ع.</span>
                     </div>
                     
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600">رسوم الخدمة</span>
-                      <span className="font-semibold text-gray-800">0 ر.س</span>
+                      <span className="font-semibold text-gray-800">0 ر.ع.</span>
                     </div>
                     
                     <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                       <span className="text-gray-600">خصم</span>
-                      <span className="font-semibold text-red-600">-0 ر.س</span>
+                      <span className="font-semibold text-red-600">-0 ر.ع.</span>
                     </div>
                     
                     <div className="border-t border-gray-200 pt-4">
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-bold text-gray-800">المجموع النهائي</span>
                         <div className="text-right">
-                          <span className="text-2xl font-bold text-[#32A88D]">165 ر.س</span>
+                          <span className="text-2xl font-bold text-[#32A88D]">165 ر.ع.</span>
                           <p className="text-sm text-gray-500">شامل جميع الضرائب</p>
                         </div>
                       </div>
@@ -410,7 +410,7 @@ export default function PaymentPage() {
                           <span>إتمام الدفع الآمن</span>
                         </div>
                         <div className="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-lg">
-                          <span>165 ر.س</span>
+                          <span>165 ر.ع.</span>
                           <ArrowRight className="w-5 h-5" />
                         </div>
                       </div>

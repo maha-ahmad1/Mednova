@@ -98,7 +98,7 @@ export default function Hero() {
               <div className="relative z-10">
                 <div className="w-80 h-80 md:w-96 md:h-96 lg:w-[480px] lg:h-[480px] mx-auto">
                   <Image
-                    src="/images/home/doe.png"
+                    src="/images/home/herosection.png"
                     alt="طبيب مختص"
                     width={480}
                     height={480}

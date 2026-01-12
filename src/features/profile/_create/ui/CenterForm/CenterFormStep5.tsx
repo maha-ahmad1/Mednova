@@ -104,6 +104,11 @@ export function CenterFormStep5({
           typeof formData.year_establishment === "string"
             ? formData.year_establishment
             : undefined,
+
+        name_center:
+          typeof formData.name_center === "string"
+            ? formData.name_center
+            : undefined,
         has_commercial_registration:
           formData.has_commercial_registration === 1 ||
           formData.has_commercial_registration === true,

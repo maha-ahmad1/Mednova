@@ -38,6 +38,9 @@ export default function TherapistWrapper() {
     is_have_evening_time?: 0 | 1;
     start_time_evening?: string;
     end_time_evening?: string;
+    video_consultation_price?: string;
+    chat_consultation_price?: string;
+    currency?: string;
   };
 
   const [formData, setFormData] = useState<TherapistState>({
@@ -66,6 +69,9 @@ export default function TherapistWrapper() {
     is_have_evening_time: 0,
     start_time_evening: "",
     end_time_evening: "",
+    video_consultation_price: "",
+    chat_consultation_price: "",
+    currency: "",
   });
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 5));

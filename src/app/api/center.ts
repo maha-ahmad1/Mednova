@@ -29,6 +29,7 @@ export interface CenterFormValues {
   video_consultation_price?: string | number;
   chat_consultation_price?: string | number;
   currency?: string;
+  name_center?: string;
 }
 //هذه هي الدالة التي تحول البيانات من فورم عادي إلى FormData ثم ترسلها للسيرفر عبر API:
 export const storeCenterDetails = async (
@@ -74,6 +75,7 @@ export const storeCenterDetails = async (
       data.commercial_registration_authority || ""
     );
   }
+  formData.append("name_center", data.name_center || "");
 
   formData.append("license_authority", data.license_authority || "");
   if (data.license_file) {

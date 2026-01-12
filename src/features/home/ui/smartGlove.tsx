@@ -20,9 +20,9 @@ export default function SmartGlove() {
                 <Image
                   src={"/images/home/smartGloves.png"}
                   alt="القفاز الذكي من مدنوفا"
-                  width={500}
-                  height={400}
-                  className="w-full h-full object-cover"
+                  width={400}
+                  height={300}
+                  className="w-100 h-100 object-cover"
                 />
                 
                 {/* تأثير زاوية */}

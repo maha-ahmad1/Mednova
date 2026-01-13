@@ -121,11 +121,11 @@ export default function Services() {
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        {/* <div className="text-center mt-12">
           <button className="bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 font-medium">
             اكتشف جميع خدماتنا
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

@@ -4,10 +4,19 @@ import Image from "next/image";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { Star, Clock, Calendar, Users, ArrowLeft, PlayCircle, Award } from "lucide-react";
+import {
+  Star,
+  Clock,
+  Calendar,
+  Users,
+  ArrowLeft,
+  PlayCircle,
+  Award,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 type TypeItem = {
   id: number;
@@ -66,7 +75,10 @@ export default function Program() {
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {[...Array(3)].map((_, index) => (
-              <div key={index} className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 animate-pulse">
+              <div
+                key={index}
+                className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 animate-pulse"
+              >
                 <Skeleton className="h-48 w-full rounded-xl mb-4" />
                 <Skeleton className="h-6 w-3/4 mb-2" />
                 <Skeleton className="h-4 w-full mb-1" />
@@ -94,10 +106,12 @@ export default function Program() {
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award className="w-8 h-8 text-red-500" />
               </div>
-              <h3 className="text-lg font-semibold text-red-800 mb-2">حدث خطأ</h3>
+              <h3 className="text-lg font-semibold text-red-800 mb-2">
+                حدث خطأ
+              </h3>
               <p className="text-red-600 mb-4">تعذر تحميل البرامج التأهيلية</p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="border-red-300 text-red-700 hover:bg-red-50"
                 onClick={() => window.location.reload()}
               >
@@ -119,7 +133,9 @@ export default function Program() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-[#32A88D]/10 px-6 py-2 rounded-full mb-4">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-            <span className="text-sm font-medium text-[#32A88D]">البرامج الأكثر طلباً</span>
+            <span className="text-sm font-medium text-[#32A88D]">
+              البرامج الأكثر طلباً
+            </span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
             برامجنا التأهيلية الأكثر طلبًا
@@ -141,7 +157,9 @@ export default function Program() {
                 {/* صورة البرنامج */}
                 <div className="relative overflow-hidden">
                   <Image
-                    src={program.image || "/images/home/Sports-rehabilitation.jpg"}
+                    src={
+                      program.image || "/images/home/Sports-rehabilitation.jpg"
+                    }
                     alt={program.title}
                     width={400}
                     height={250}
@@ -167,7 +185,7 @@ export default function Program() {
                   <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
                     {program.title}
                   </h3>
-                  
+
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
                     {program.description}
                   </p>
@@ -179,7 +197,9 @@ export default function Program() {
                         <Clock className="w-4 h-4 text-blue-600" />
                       </div>
                       <div>
-                        <div className="font-medium text-gray-800">30-45 دقيقة</div>
+                        <div className="font-medium text-gray-800">
+                          30-45 دقيقة
+                        </div>
                         <div className="text-xs text-gray-500">مدة الجلسة</div>
                       </div>
                     </div>
@@ -203,10 +223,8 @@ export default function Program() {
                       </div>
                       <div className="text-sm text-gray-500">للبرنامج</div>
                     </div>
-                    
-                    <Button 
-                      className="cursor-pointer bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-6 py-2 transition-all duration-300 shadow-lg hover:shadow-xl"
-                    >
+
+                    <Button className="cursor-pointer bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-6 py-2 transition-all duration-300 shadow-lg hover:shadow-xl">
                       <PlayCircle className="ml-2 w-4 h-4" />
                       طلب البرنامج
                     </Button>
@@ -219,8 +237,12 @@ export default function Program() {
           <div className="text-center py-12">
             <div className="bg-gray-50 rounded-2xl p-12 max-w-md mx-auto">
               <Award className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">لا توجد برامج متاحة</h3>
-              <p className="text-gray-600">سيتم إضافة البرامج التأهيلية قريباً</p>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                لا توجد برامج متاحة
+              </h3>
+              <p className="text-gray-600">
+                سيتم إضافة البرامج التأهيلية قريباً
+              </p>
             </div>
           </div>
         )}
@@ -228,14 +250,16 @@ export default function Program() {
         {/* زر عرض المزيد */}
         {programs.length > 0 && (
           <div className="text-center">
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-8 py-3 transition-all duration-300 group"
-            >
-              عرض جميع البرامج
-              <ArrowLeft className="mr-2 w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" />
-            </Button>
+            <Link href="/programs">
+              <Button
+                variant="outline"
+                size="lg"
+                className="cursor-pointer border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-8 py-3 transition-all duration-300 group"
+              >
+                عرض جميع البرامج
+                <ArrowLeft className="mr-2 w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" />
+              </Button>
+            </Link>
           </div>
         )}
       </div>

@@ -647,7 +647,7 @@ export default function SmartGlovePage() {
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <Mail className="w-4 h-4" />
-                  <span>info@mednova.com</span>
+                  <span>info@mednovacare.com</span>
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <Globe className="w-4 h-4" />

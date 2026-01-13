@@ -9,7 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 // import { ProgramCard, type ProgramCardData } from "@/components/common/ProgramCard";
 import Link from "next/link";
-import { ProgramCard, type ProgramCardData } from "@/shared/ui/components/ProgramCard";
+import { ProgramCard } from "@/shared/ui/components/ProgramCard";
+
+import { Program } from "@/features/programs/types/program";
+
 export default function ProgramsSection() {
   const { data: session, status } = useSession();
 
@@ -45,14 +48,14 @@ export default function ProgramsSection() {
     enabled: status === "authenticated",
   });
 // تحويل البيانات من API إلى التنسيق المشترك
-const programs: ProgramCardData[] = (data?.data || []).map((item: ProgramCardData) => ({
+const programs: Program[] = (data?.data || []).map((item: Program) => ({
   id: item.id,
   title: item.title,
   description: item.description,
   price: item.price,
   cover_image: item.cover_image, // استخدم cover_image بدل image
-  image: item.cover_image, // لتحافظ على التوافق
-  average_rating: item.ratings_avg_rating ? Number(item.ratings_avg_rating) : 0,
+  // image: item.cover_image, // لتحافظ على التوافق
+  // average_rating: item.ratings_avg_rating ? Number(item.ratings_avg_rating) : 0,
   total_reviews: item.ratings_count || 0,
   ratings_avg_rating: item.ratings_avg_rating ? Number(item.ratings_avg_rating) : 0,
   ratings_count: item.ratings_count || 0,
@@ -148,7 +151,7 @@ const programs: ProgramCardData[] = (data?.data || []).map((item: ProgramCardDat
         {/* شبكة البرامج باستخدام المكون المشترك */}
         {programs.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-            {programs.map((program: ProgramCardData) => (
+            {programs.map((program: Program) => (
               <ProgramCard
                 key={program.id}
                 program={program}

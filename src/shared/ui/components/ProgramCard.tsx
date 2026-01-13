@@ -26,9 +26,8 @@ import { Program } from "@/features/programs/types/program";
 //   total_reviews?: number;
 // }
 
-
 interface ProgramCardProps {
-  program: Program;  // ✅ برنامج واحد
+  program: Program; // ✅ برنامج واحد
   variant?: "default" | "top-rated";
   showCreator?: boolean;
   showEnrollments?: boolean;
@@ -42,11 +41,12 @@ export function ProgramCard({
   showEnrollments = true,
   showStatus = true,
 }: ProgramCardProps) {
-  const imageUrl = program.cover_image ||  "/images/home/Sports-rehabilitation.jpg";
-  const rating = (program.ratings_avg_rating || 0) as number;
+  const imageUrl =
+    program.cover_image || "/images/home/Sports-rehabilitation.jpg";
+  const rating = Number(program.ratings_avg_rating) || 0;
   const reviewsCount = program.ratings_count || 0;
   const price = program.price || 0;
-  
+
   return (
     <div className="group bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
       <div className="relative overflow-hidden">
@@ -62,7 +62,7 @@ export function ProgramCard({
         <div className="absolute top-4 right-4">
           <div className="flex items-center gap-1 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-            {/* <span className="font-medium">{rating.toFixed(1)}</span> */}
+            <span className="font-medium">{rating.toFixed(1)}</span>
             {reviewsCount > 0 && (
               <span className="text-xs opacity-80">({reviewsCount})</span>
             )}
@@ -76,12 +76,16 @@ export function ProgramCard({
               الأكثر طلباً
             </Badge>
           </div>
-        ) : showStatus && program.status === "published" && program.is_approved === 1 && (
-          <div className="absolute top-4 left-4">
-            <Badge className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
-              متاح
-            </Badge>
-          </div>
+        ) : (
+          showStatus &&
+          program.status === "published" &&
+          program.is_approved === 1 && (
+            <div className="absolute top-4 left-4">
+              <Badge className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                متاح
+              </Badge>
+            </div>
+          )
         )}
       </div>
 
@@ -110,12 +114,14 @@ export function ProgramCard({
         )}
 
         {/* Enrollments Count - Optional */}
-        {showEnrollments && program.enrollments_count !== null && program.enrollments_count !== undefined && (
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <Clock className="w-4 h-4" />
-            <span>{program.enrollments_count} شخص مسجل</span>
-          </div>
-        )}
+        {showEnrollments &&
+          program.enrollments_count !== null &&
+          program.enrollments_count !== undefined && (
+            <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+              <Clock className="w-4 h-4" />
+              <span>{program.enrollments_count} شخص مسجل</span>
+            </div>
+          )}
 
         {/* Price and Actions */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
@@ -129,7 +135,7 @@ export function ProgramCard({
             <Button className="cursor-pointer bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-6 py-2 transition-all duration-300 shadow-lg hover:shadow-xl">
               <Eye className="ml-2 w-4 h-4" />
               {/* {variant === "top-rated" ? "طلب البرنامج" : "عرض التفاصيل"} */}
-             عرض التفاصيل 
+              عرض التفاصيل
             </Button>
           </Link>
         </div>

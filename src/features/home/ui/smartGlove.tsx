@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function SmartGlove() {
   return (
@@ -14,7 +15,7 @@ export default function SmartGlove() {
             <div className="relative w-full max-w-md mx-auto">
               {/* شكل خلفي */}
               <div className="absolute inset-0 bg-gradient-to-r from-[#32A88D]/20 to-blue-500/20 rounded-2xl blur-xl -z-10 transform scale-110"></div>
-              
+
               {/* الصورة الرئيسية */}
               <div className="relative rounded-2xl shadow-2xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100">
                 <Image
@@ -24,7 +25,7 @@ export default function SmartGlove() {
                   height={300}
                   className="w-100 h-100 object-cover"
                 />
-                
+
                 {/* تأثير زاوية */}
                 <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-[#32A88D] to-transparent rounded-tl-2xl"></div>
               </div>
@@ -37,14 +38,16 @@ export default function SmartGlove() {
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-bold text-gray-800">ذكي</div>
-                    <div className="text-xs text-gray-600">تكنولوجيا متطورة</div>
+                    <div className="text-xs text-gray-600">
+                      تكنولوجيا متطورة
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* بطاقة عائمة ثانية */}
               <div className="absolute -top-6 -left-6 z-20">
-                <div 
+                <div
                   className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 animate-float"
                   style={{ animationDelay: "1.5s" }}
                 >
@@ -82,9 +85,9 @@ export default function SmartGlove() {
             {/* الوصف */}
             <p className="text-lg text-gray-600 leading-8 mb-8 max-w-2xl mx-auto lg:mx-0">
               إذا كنت تبحث عن قفازات طبية يعيد لك القدرة على استخدام يدك بشكل
-              تدريجي، فهذا المنتج يجمع بين الراحة والكفاءة. بدلاً من الاعتماد فقط
-              على العلاج الطبيعي التقليدي، يمكنك الاستفادة من هذا الجهاز الذكي في
-              المنزل مع نتائج ملموسة.
+              تدريجي، فهذا المنتج يجمع بين الراحة والكفاءة. بدلاً من الاعتماد
+              فقط على العلاج الطبيعي التقليدي، يمكنك الاستفادة من هذا الجهاز
+              الذكي في المنزل مع نتائج ملموسة.
             </p>
 
             {/* نقاط مميزة */}
@@ -94,7 +97,9 @@ export default function SmartGlove() {
                   <div className="w-4 h-4 bg-[#32A88D] rounded-full"></div>
                 </div>
                 <div className="text-right">
-                  <h4 className="font-bold text-gray-800 mb-1">استخدام منزلي</h4>
+                  <h4 className="font-bold text-gray-800 mb-1">
+                    استخدام منزلي
+                  </h4>
                   <p className="text-sm text-gray-600">لا حاجة للذهاب للمركز</p>
                 </div>
               </div>
@@ -124,17 +129,23 @@ export default function SmartGlove() {
                   <div className="w-4 h-4 bg-[#32A88D] rounded-full"></div>
                 </div>
                 <div className="text-right">
-                  <h4 className="font-bold text-gray-800 mb-1">تكنولوجيا ذكية</h4>
-                  <p className="text-sm text-gray-600">أحدث ما توصلت إليه التكنولوجيا</p>
+                  <h4 className="font-bold text-gray-800 mb-1">
+                    تكنولوجيا ذكية
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    أحدث ما توصلت إليه التكنولوجيا
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* زر الإجراء */}
             <div className="flex justify-center lg:justify-start mt-8">
-              <button className="bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 font-medium">
-                تعرف أكثر على القفاز الذكي
-              </button>
+              <Link href="/smartgloves">
+                <button className="cursor-pointer bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 font-medium">
+                  تعرف أكثر على القفاز الذكي
+                </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -143,7 +154,8 @@ export default function SmartGlove() {
       {/* أنيميشن للعناصر العائمة */}
       <style jsx>{`
         @keyframes float {
-          0%, 100% {
+          0%,
+          100% {
             transform: translateY(0px);
           }
           50% {

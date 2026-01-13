@@ -1,35 +1,19 @@
+// app/home/components/ProgramsSection.tsx
 "use client";
 
-import Image from "next/image";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import {
-  Star,
-  Clock,
-  Calendar,
-  Users,
-  ArrowLeft,
-  PlayCircle,
-  Award,
-} from "lucide-react";
+import { Award, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+// import { ProgramCard, type ProgramCardData } from "@/components/common/ProgramCard";
 import Link from "next/link";
+import { ProgramCard } from "@/shared/ui/components/ProgramCard";
 
-type TypeItem = {
-  id: number;
-  title: string;
-  image: string;
-  price: number;
-  description: string;
-  ratings_avg_rating: string;
-  total_reviews: number;
-  average_rating: number;
-};
+import { Program } from "@/features/programs/types/program";
 
-export default function Program() {
+export default function ProgramsSection() {
   const { data: session, status } = useSession();
 
   const { data, isLoading, error } = useQuery({
@@ -63,6 +47,26 @@ export default function Program() {
     },
     enabled: status === "authenticated",
   });
+// تحويل البيانات من API إلى التنسيق المشترك
+const programs: Program[] = (data?.data || []).map((item: Program) => ({
+  id: item.id,
+  title: item.title,
+  description: item.description,
+  price: item.price,
+  cover_image: item.cover_image, // استخدم cover_image بدل image
+  // image: item.cover_image, // لتحافظ على التوافق
+  // average_rating: item.ratings_avg_rating ? Number(item.ratings_avg_rating) : 0,
+  total_reviews: item.ratings_count || 0,
+  ratings_avg_rating: item.ratings_avg_rating ? Number(item.ratings_avg_rating) : 0,
+  ratings_count: item.ratings_count || 0,
+  enrollments_count: item.enrollments_count || 0,
+  status: item.status || "draft",
+  is_approved: item.is_approved || 0,
+  // creator غير موجود في API، لذلك نضع قيمة افتراضية
+  // creator: {
+  //   full_name: "مقدم البرنامج" // قيمة افتراضية أو اسم المستخدم من الجلسة
+  // }
+}));
 
   // حالة التحميل
   if (isLoading) {
@@ -124,8 +128,6 @@ export default function Program() {
     );
   }
 
-  const programs = data?.data || [];
-
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50/50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -146,91 +148,18 @@ export default function Program() {
           </p>
         </div>
 
-        {/* شبكة البرامج */}
+        {/* شبكة البرامج باستخدام المكون المشترك */}
         {programs.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-            {programs.map((program: TypeItem) => (
-              <div
+            {programs.map((program: Program) => (
+              <ProgramCard
                 key={program.id}
-                className="group bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
-              >
-                {/* صورة البرنامج */}
-                <div className="relative overflow-hidden">
-                  <Image
-                    src={
-                      program.image || "/images/home/Sports-rehabilitation.jpg"
-                    }
-                    alt={program.title}
-                    width={400}
-                    height={250}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-white/90 backdrop-blur-sm text-[#32A88D] px-3 py-1 rounded-full text-xs font-medium border border-[#32A88D]/20">
-                      الأكثر طلباً
-                    </Badge>
-                  </div>
-                  <div className="absolute top-4 right-4">
-                    <div className="flex items-center gap-1 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      {/* <span className="font-medium">
-                        {Number(program.ratings_avg_rating).toFixed(1) || "0.0"}
-                      </span> */}
-                    </div>
-                  </div>
-                </div>
-
-                {/* محتوى البرنامج */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
-                    {program.title}
-                  </h3>
-
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
-                    {program.description}
-                  </p>
-
-                  {/* معلومات البرنامج */}
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <Clock className="w-4 h-4 text-blue-600" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-800">
-                          30-45 دقيقة
-                        </div>
-                        <div className="text-xs text-gray-500">مدة الجلسة</div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                        <Calendar className="w-4 h-4 text-green-600" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-800">6 جلسات</div>
-                        <div className="text-xs text-gray-500">عدد الجلسات</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* السعر والإجراءات */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <div className="text-2xl font-bold text-[#32A88D]">
-                        ${program.price}
-                      </div>
-                      <div className="text-sm text-gray-500">للبرنامج</div>
-                    </div>
-
-                    <Button className="cursor-pointer bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-6 py-2 transition-all duration-300 shadow-lg hover:shadow-xl">
-                      <PlayCircle className="ml-2 w-4 h-4" />
-                      طلب البرنامج
-                    </Button>
-                  </div>
-                </div>
-              </div>
+                program={program}
+                 variant="top-rated"
+                 showCreator={true}
+                showEnrollments={true}
+                showStatus={true}
+              />
             ))}
           </div>
         ) : (

@@ -168,118 +168,136 @@ export default function SmartGlovePage() {
 
       <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white">
         {/* Hero Section */}
-    {/* Hero Section */}
-<section className="relative overflow-hidden bg-gradient-to-br from-white via-emerald-50/50 to-emerald-100/20 py-12">
-  <div className="absolute inset-0 bg-[url('/images/patterns/grid.svg')] opacity-5"></div>
-  <div className="container mx-auto px-4 relative">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-      {/* النص - يبقى كما هو */}
-      <div className="text-right">
-        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium mb-6 border border-emerald-200">
-          <Sparkles className="w-4 h-4" />
-          <span>تكنولوجيا طبية متطورة</span>
-        </div>
-
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-6 leading-tight">
-          القفاز الطبي الذكي من{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
-            مدنوفا
-          </span>
-        </h1>
-
-        <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-          جهاز تأهيلي متقدم مصمم لإعادة تأهيل حركة اليد بطريقة عملية،
-          ذكية، وقابلة للتخصيص. يستهدف مرضى الجلطات الدماغية، الشلل
-          النصفي، ضمور العضلات، كبار السن، والأطفال، سواء داخل المراكز
-          أو من المنزل.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <Button className="bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white rounded-xl px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300">
-            <Zap className="ml-2 w-5 h-5" />
-            احجز عرض تجريبي
-          </Button>
-          <Button
-            variant="outline"
-            className="border-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 rounded-xl px-8 py-6 text-lg font-medium transition-all duration-300"
-          >
-            <Play className="ml-2 w-5 h-5" />
-            مشاهدة الفيديو
-          </Button>
-        </div>
-
-        <div className="flex flex-wrap gap-6 text-sm text-gray-500">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-emerald-500" />
-            <span>ضمان 12 شهر</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-emerald-500" />
-            <span>تدريب مجاني</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-emerald-500" />
-            <span>دعم فني 24/7</span>
-          </div>
-        </div>
-      </div>
-
-      {/* الصورة - تعديلات هنا */}
-      <div className="relative">
-        <div className="relative w-full max-w-lg mx-auto">
-          {/* شكل خلفي */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#32A88D]/20 to-blue-500/20 rounded-2xl blur-xl -z-10 transform scale-110"></div>
-          
-          {/* الصورة الرئيسية */}
-          <div className="relative rounded-2xl shadow-2xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100">
-            <div className="relative w-full h-[400px] md:h-[450px]">
-              <Image
-                src={"/images/home/smartGloves.png"}
-                alt="القفاز الذكي من مدنوفا"
-                fill
-                className="object-contain"
-                priority
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-            
-            {/* تأثير زاوية */}
-            <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-[#32A88D] to-transparent rounded-tl-2xl"></div>
-          </div>
-
-          {/* بطاقة عائمة */}
-          <div className="absolute -bottom-4 -right-4 z-20">
-            <div className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 animate-float">
-              <div className="w-12 h-12 bg-[#32A88D] rounded-xl flex items-center justify-center">
-                <div className="w-6 h-6 bg-white rounded-md"></div>
-              </div>
+        {/* Hero Section */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-white via-emerald-50/50 to-emerald-100/20 py-12">
+          <div className="absolute inset-0 bg-[url('/images/patterns/grid.svg')] opacity-5"></div>
+          <div className="container mx-auto px-4 relative">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* النص - يبقى كما هو */}
               <div className="text-right">
-                <div className="text-sm font-bold text-gray-800">ذكي</div>
-                <div className="text-xs text-gray-600">تكنولوجيا متطورة</div>
-              </div>
-            </div>
-          </div>
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-800 px-4 py-2 rounded-full text-sm font-medium mb-6 border border-emerald-200">
+                  <Sparkles className="w-4 h-4" />
+                  <span>تكنولوجيا طبية متطورة</span>
+                </div>
 
-          {/* بطاقة عائمة ثانية */}
-          <div className="absolute -top-4 -left-4 z-20">
-            <div 
-              className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 animate-float"
-              style={{ animationDelay: "1.5s" }}
-            >
-              <div className="w-12 h-12 bg-[#2a8a7a] rounded-xl flex items-center justify-center">
-                <div className="w-6 h-6 bg-white rounded-md"></div>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-6 leading-tight">
+                  القفاز الطبي الذكي من{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
+                    مدنوفا
+                  </span>
+                </h1>
+
+                <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                  جهاز تأهيلي متقدم مصمم لإعادة تأهيل حركة اليد بطريقة عملية،
+                  ذكية، وقابلة للتخصيص. يستهدف مرضى الجلطات الدماغية، الشلل
+                  النصفي، ضمور العضلات، كبار السن، والأطفال، سواء داخل المراكز
+                  أو من المنزل.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                  <Button
+                    onClick={() => {
+                      const section = document.getElementById("smart-glove");
+                      section?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className=" cursor-pointer bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white rounded-xl px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <Zap className="ml-2 w-5 h-5" />
+                    تعرف أكثر عن خدماتنا{" "}
+                  </Button>
+                  <a
+                    href="https://www.youtube.com/watch?v=OMwPUOn-yAE"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      variant="outline"
+                      className="cursor-pointer border-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 rounded-xl px-8 py-6 text-lg font-medium transition-all duration-300"
+                    >
+                      <Play className="ml-2 w-5 h-5" />
+                      مشاهدة الفيديو
+                    </Button>
+                  </a>
+                </div>
+
+                <div className="flex flex-wrap gap-6 text-sm text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-emerald-500" />
+                    <span>ضمان 12 شهر</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-emerald-500" />
+                    <span>تدريب مجاني</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-emerald-500" />
+                    <span>دعم فني 24/7</span>
+                  </div>
+                </div>
               </div>
-              <div className="text-right">
-                <div className="text-sm font-bold text-gray-800">منزلي</div>
-                <div className="text-xs text-gray-600">استخدام سهل</div>
+
+              {/* الصورة - تعديلات هنا */}
+              <div className="relative">
+                <div className="relative w-full max-w-lg mx-auto">
+                  {/* شكل خلفي */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#32A88D]/20 to-blue-500/20 rounded-2xl blur-xl -z-10 transform scale-110"></div>
+
+                  {/* الصورة الرئيسية */}
+                  <div className="relative rounded-2xl shadow-2xl overflow-hidden bg-white/50 backdrop-blur-sm border border-gray-100">
+                    <div className="relative w-full h-[400px] md:h-[450px]">
+                      <Image
+                        src={"/images/home/smartGloves.png"}
+                        alt="القفاز الذكي من مدنوفا"
+                        fill
+                        className="object-contain"
+                        priority
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+
+                    {/* تأثير زاوية */}
+                    <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-[#32A88D] to-transparent rounded-tl-2xl"></div>
+                  </div>
+
+                  {/* بطاقة عائمة */}
+                  <div className="absolute -bottom-4 -right-4 z-20">
+                    <div className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 animate-float">
+                      <div className="w-12 h-12 bg-[#32A88D] rounded-xl flex items-center justify-center">
+                        <div className="w-6 h-6 bg-white rounded-md"></div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-bold text-gray-800">
+                          ذكي
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          تكنولوجيا متطورة
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* بطاقة عائمة ثانية */}
+                  <div className="absolute -top-4 -left-4 z-20">
+                    <div
+                      className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 animate-float"
+                      style={{ animationDelay: "1.5s" }}
+                    >
+                      <div className="w-12 h-12 bg-[#2a8a7a] rounded-xl flex items-center justify-center">
+                        <div className="w-6 h-6 bg-white rounded-md"></div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-bold text-gray-800">
+                          منزلي
+                        </div>
+                        <div className="text-xs text-gray-600">استخدام سهل</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+        </section>
         {/* Stats Section */}
         <section className="py-12 bg-white border-y border-gray-100">
           <div className="container mx-auto px-4">
@@ -358,7 +376,10 @@ export default function SmartGlovePage() {
         </section>
 
         {/* المنصة الرقمية */}
-        <section className="py-16 bg-gradient-to-r from-emerald-50/50 to-teal-50/30">
+        <section
+          id="smart-glove"
+          className="py-16 bg-gradient-to-r from-emerald-50/50 to-teal-50/30"
+        >
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="text-right">
@@ -533,10 +554,7 @@ export default function SmartGlovePage() {
                     </div>
                     <ul className="space-y-3 text-right">
                       {benefit.items.map((item, idx) => (
-                        <li
-                          key={idx}
-                          className="flex items-start justify-end gap-2"
-                        >
+                        <li key={idx} className="flex  gap-2 ">
                           <span className="text-gray-700 text-sm">{item}</span>
                           <div className="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
                             <CheckCircle className="w-3 h-3 text-emerald-600" />

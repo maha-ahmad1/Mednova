@@ -1,5 +1,14 @@
 import Link from "next/link";
-import { Activity, MessageCircle, Phone, Mail, MapPin } from "lucide-react";
+import {
+  MessageCircle,
+  Activity,
+  Mail,
+  MapPin,
+  Phone,
+  Twitter,
+  Linkedin,
+  Instagram,
+} from "lucide-react";
 import Image from "next/image";
 
 export function Footer() {
@@ -30,16 +39,16 @@ export function Footer() {
               {/* <span className="text-2xl font-bold text-gray-800">ميدنوفا</span> */}
             </div>
             <p className="text-gray-600 leading-relaxed max-w-md">
-              منصة متكاملة لإدارة الرعاية الصحية والتأهيل الطبي، نقدم خدمات
-              علاجية متطورة تجمع بين الخبرة الطبية والتكنولوجيا الحديثة لرحلة
-              تعافٍ أفضل.
+              ميدنوفا هي شركة تكنولوجيا صحية رائدة، تُحدث ثورة في مجال التأهيل
+              من خلال حلول رقمية ذكية ومصممة حول الإنسان، بهدف تعزيز التعافي
+              وتحسين جودة الحياة.
             </p>
 
             {/* معلومات الاتصال */}
             <div className="space-y-3 mt-6">
               <div className="flex items-center gap-3 text-gray-600">
                 <Phone className="h-4 w-4 text-[#32A88D]" />
-                <span className="text-sm">+966 123 456 789</span>
+                <span className="text-sm">+968 9234 9692</span>
               </div>
               <div className="flex items-center gap-3 text-gray-600">
                 <Mail className="h-4 w-4 text-[#32A88D]" />
@@ -47,7 +56,7 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-3 text-gray-600">
                 <MapPin className="h-4 w-4 text-[#32A88D]" />
-                <span className="text-sm">سلطنة عمان</span>
+                <span className="text-sm"> مسقط-عمان</span>
               </div>
             </div>
           </div>
@@ -68,24 +77,24 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/specialists"
                   className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block"
                 >
-                  من نحن
+                 المعالجين
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/services"
+                  href="/programs"
                   className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block"
                 >
-                  الخدمات
+                  البرامج التأهيلية
                 </Link>
               </li>
               <li>
-                {/* <Link href="/therapists" className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block">
-                  المختصين
-                </Link> */}
+                <Link href="/smartgloves" className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block">
+                  القفاز الذكية
+                </Link>
               </li>
             </ul>
           </div>
@@ -94,38 +103,40 @@ export function Footer() {
           <div className="lg:col-span-1">
             <h3 className="font-bold text-gray-800 mb-4 text-lg">الدعم</h3>
             <ul className="space-y-3">
-              <li>
+              {/* <li>
                 <Link
                   href="/help"
                   className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block"
                 >
                   مركز المساعدة
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
-                  href="/contact"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://wa.me/96892349692"
                   className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block"
                 >
                   اتصل بنا
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   href="/faq"
                   className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block"
                 >
                   الأسئلة الشائعة
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link
                   href="/support"
                   className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block"
                 >
                   الدعم الفني
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 
@@ -135,13 +146,13 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/terms"
+                  href="/termsandconditions"
                   className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block"
                 >
                   الشروط والأحكام
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   href="/privacy"
                   className="text-gray-600 hover:text-[#32A88D] transition-all duration-200 hover:pr-2 block"
@@ -156,7 +167,7 @@ export function Footer() {
                 >
                   سياسة الكوكيز
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 
@@ -164,21 +175,58 @@ export function Footer() {
           <div className="lg:col-span-1">
             <h3 className="font-bold text-gray-800 mb-4 text-lg">تابعنا</h3>
             <div className="flex gap-3 mb-6">
-              <button className="w-10 h-10 bg-[#32A88D] hover:bg-[#2a8a7a] rounded-xl flex items-center justify-center transition-all duration-200 transform hover:-translate-y-1">
-                <MessageCircle className="h-5 w-5 text-white" />
-              </button>
-              <button className="w-10 h-10 bg-[#32A88D] hover:bg-[#2a8a7a] rounded-xl flex items-center justify-center transition-all duration-200 transform hover:-translate-y-1">
-                <Activity className="h-5 w-5 text-white" />
-              </button>
-              <button className="w-10 h-10 bg-[#32A88D] hover:bg-[#2a8a7a] rounded-xl flex items-center justify-center transition-all duration-200 transform hover:-translate-y-1">
+              {/* واتساب */}
+              {/* واتساب */}
+              <a
+                href="https://wa.me/96892349692"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-[#25D366] hover:bg-[#1ebe57] rounded-xl flex items-center justify-center transition-all duration-200 transform hover:-translate-y-1"
+              >
                 <Phone className="h-5 w-5 text-white" />
-              </button>
+              </a>
+
+              {/* X / تويتر */}
+              <a
+                href="https://x.com/mednova_om?s=11"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-[#1DA1F2] hover:bg-[#0d8ddb] rounded-xl flex items-center justify-center transition-all duration-200 transform hover:-translate-y-1"
+              >
+                <Twitter className="h-5 w-5 text-white" />
+              </a>
+
+              {/* لينكدإن */}
+              <a
+                href="https://www.linkedin.com/in/mednova-oman-1242a937b/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-[#0077B5] hover:bg-[#005983] rounded-xl flex items-center justify-center transition-all duration-200 transform hover:-translate-y-1"
+              >
+                <Linkedin className="h-5 w-5 text-white" />
+              </a>
+
+              {/* إنستجرام */}
+              <a
+                href="https://www.instagram.com/mednova.om/?hl=en"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-gradient-to-tr from-[#feda75] via-[#fa7e1e] to-[#d62976] rounded-xl flex items-center justify-center transition-all duration-200 transform hover:-translate-y-1"
+              >
+                <Instagram className="h-5 w-5 text-white" />
+              </a>
             </div>
 
-            {/* زر تواصل */}
-            <button className="w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl py-3 px-4 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              تواصل معنا
-            </button>
+            {/* زر تواصل واتساب */}
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://wa.me/96892349692"
+            >
+              <button className="cursor-pointer w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl py-3 px-4 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                تواصل معنا
+              </button>
+            </Link>
           </div>
         </div>
 

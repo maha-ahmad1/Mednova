@@ -7,7 +7,7 @@ export const reviewsApi = {
     payload: SubmitReviewPayload
   ): Promise<SubmitReviewResponse> => {
     const response = await axios.post<SubmitReviewResponse>(
-      'https://mednovacare.com/api/rating/store',
+      'https://api.mednovacare.com/api/rating/store',
       payload,
       {
         headers: {

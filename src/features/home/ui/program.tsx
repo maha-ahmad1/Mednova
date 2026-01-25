@@ -23,7 +23,7 @@ export default function ProgramsSection() {
         const token = session?.accessToken;
 
         const res = await axios.get(
-          "https://mednovacare.com/api/programs/show/get-top-enrolled-program",
+          "https://api.mednovacare.com/api/programs/show/get-top-enrolled-program",
           {
             headers: {
               Authorization: `Bearer ${token}`,

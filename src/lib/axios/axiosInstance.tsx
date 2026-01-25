@@ -9,7 +9,7 @@
 //   const token = session?.accessToken;
 
 //   return axios.create({
-//     baseURL: 'https://mednovacare.com',
+//     baseURL: 'https://api.mednovacare.com',
 //     headers: {
 //       'Content-Type': 'application/json',
 //       Authorization: token ? `Bearer ${token}` : '',
@@ -27,7 +27,7 @@ export const useAxiosInstance = () => {
   const token = session?.accessToken;
   // console.log("Token in axios instance:", token);
   return axios.create({
-    baseURL: "https://mednovacare.com",
+    baseURL: "https://api.mednovacare.com",
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },

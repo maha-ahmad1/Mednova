@@ -114,41 +114,40 @@ export function ProgramsList() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white">
-      <section className="bg-[#1F6069] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-            <div className="space-y-6">
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge className="bg-white/10 text-white rounded-full px-3 py-1 text-xs">
-                  برامج تأهيلية معتمدة
-                </Badge>
-                <Badge className="bg-emerald-400/90 text-[#0f3d35] rounded-full px-3 py-1 text-xs">
-                  {publishedPrograms} برنامج متاح
-                </Badge>
-              </div>
-              <h1 className="text-3xl font-bold sm:text-4xl">
+    <div className="min-h-screen bg-gradient-to-b from-[#1F6069]/5 via-white to-white">
+      <section className="pt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-[#1F6069]">
+            <Badge className="bg-[#1F6069]/10 text-[#1F6069] rounded-full px-3 py-1 text-xs">
+              برامج تأهيلية معتمدة
+            </Badge>
+            <Badge className="bg-[#32A88D]/10 text-[#1F6069] rounded-full px-3 py-1 text-xs">
+              {publishedPrograms} برنامج متاح
+            </Badge>
+          </div>
+
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+            <div className="space-y-4">
+              <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
                 برامج Mednova التعليمية
               </h1>
-              <p className="text-base text-white/85 leading-relaxed">
-                اكتشف برامج تأهيلية مصممة خصيصاً لتطوير مهاراتك المهنية. جميع البرامج
-                معتمدة ومدعومة بخبرات فريق Mednova.
+              <p className="text-base text-gray-600 leading-relaxed">
+                اكتشف برامج تأهيلية مصممة خصيصاً لتطوير مهاراتك المهنية، مع محتوى
+                عملي وتجارب تدريبية معتمدة من Mednova.
               </p>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur-sm">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between text-sm text-white/80">
-                  <span>إجمالي البرامج</span>
-                  <span className="text-lg font-bold text-white">{totalPrograms}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm text-white/80">
-                  <span>برامج معتمدة</span>
-                  <span className="text-lg font-bold text-white">{publishedPrograms}</span>
-                </div>
-                <div className="h-px bg-white/10" />
-                <p className="text-xs text-white/70">
-                  اعثر على البرنامج المناسب لك باستخدام البحث والفرز أدناه.
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl border border-[#1F6069]/10 bg-white p-5 shadow-sm">
+                <p className="text-sm text-gray-500">إجمالي البرامج</p>
+                <p className="mt-2 text-2xl font-bold text-[#1F6069]">
+                  {totalPrograms}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[#1F6069]/10 bg-white p-5 shadow-sm">
+                <p className="text-sm text-gray-500">برامج معتمدة</p>
+                <p className="mt-2 text-2xl font-bold text-[#1F6069]">
+                  {publishedPrograms}
                 </p>
               </div>
             </div>
@@ -156,9 +155,9 @@ export function ProgramsList() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         {/* Search and Filters */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 -mt-16 relative z-10">
+        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
             {/* Search Bar */}
             <div className="lg:col-span-8">

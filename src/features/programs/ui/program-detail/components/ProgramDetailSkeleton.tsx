@@ -6,28 +6,30 @@ export function ProgramDetailSkeleton() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white animate-pulse">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Skeleton */}
-        <div className="rounded-3xl bg-gray-200/80 border border-gray-100 shadow-lg overflow-hidden mb-8">
-          <div className="grid gap-6 px-6 py-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div className="mb-4">
+          <div className="h-10 w-28 bg-gray-200 rounded-full"></div>
+        </div>
+        <div className="rounded-3xl bg-white border border-gray-100 shadow-lg overflow-hidden mb-8">
+          <div className="grid gap-6 p-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+            <div className="aspect-[4/3] w-full bg-gray-200 rounded-2xl"></div>
             <div className="space-y-4">
-              <div className="h-10 w-32 bg-gray-300 rounded-full"></div>
               <div className="flex gap-2">
-                <div className="h-6 w-20 bg-gray-300 rounded-full"></div>
-                <div className="h-6 w-24 bg-gray-300 rounded-full"></div>
-                <div className="h-6 w-28 bg-gray-300 rounded-full"></div>
+                <div className="h-6 w-20 bg-gray-200 rounded-full"></div>
+                <div className="h-6 w-24 bg-gray-200 rounded-full"></div>
+                <div className="h-6 w-28 bg-gray-200 rounded-full"></div>
               </div>
-              <div className="h-10 w-3/4 bg-gray-300 rounded-lg"></div>
+              <div className="h-10 w-3/4 bg-gray-200 rounded-lg"></div>
               <div className="space-y-2">
-                <div className="h-4 w-full bg-gray-300 rounded"></div>
-                <div className="h-4 w-5/6 bg-gray-300 rounded"></div>
-                <div className="h-4 w-2/3 bg-gray-300 rounded"></div>
+                <div className="h-4 w-full bg-gray-200 rounded"></div>
+                <div className="h-4 w-5/6 bg-gray-200 rounded"></div>
+                <div className="h-4 w-2/3 bg-gray-200 rounded"></div>
               </div>
               <div className="flex gap-4">
-                <div className="h-4 w-24 bg-gray-300 rounded"></div>
-                <div className="h-4 w-20 bg-gray-300 rounded"></div>
-                <div className="h-4 w-16 bg-gray-300 rounded"></div>
+                <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                <div className="h-4 w-16 bg-gray-200 rounded"></div>
               </div>
             </div>
-            <div className="aspect-[4/3] w-full bg-gray-300 rounded-3xl"></div>
           </div>
         </div>
 

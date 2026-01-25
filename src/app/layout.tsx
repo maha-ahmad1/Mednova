@@ -1,7 +1,7 @@
 import type React from "react";
 import type { Metadata } from "next";
-
-// import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
+//  import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
 import { Suspense } from "react";
 import { Cairo } from "next/font/google";
@@ -41,6 +41,7 @@ export default async function RootLayout({
               </EchoProvider>
               <Toaster richColors position="top-center" />
             </Suspense>
+            <SpeedInsights />
             {/* <Analytics /> */}
           </SessionProviderWrapper>
         </Providers>

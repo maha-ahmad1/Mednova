@@ -1,13 +1,19 @@
 "use client"
 
 import { useProgramDetailQuery } from "@/features/programs/hooks"
-import { ProgramDetailHeader , } from "./components/ProgramDetailHeader"
+import { ProgramDetailHeader } from "./components/ProgramDetailHeader"
 import { ProgramDetailContent } from "./components/ProgramDetailContent"
 import { ProgramVideos } from "./components/ProgramVideos"
 import { ProgramEnrollment } from "./components/ProgramEnrollment"
 import { LoadingState } from "@/shared/ui/components/states/LoadingState"
 import { ErrorState } from "@/shared/ui/components/states/ErrorState"
 import { ProgramDetailSkeleton } from "./components/ProgramDetailSkeleton"
+// import { CourseMetadata } from "./components/CourseMetadata"
+// import { CourseReviews } from "./components/CourseReviews"
+// import { RelatedCourses } from "./components/RelatedCourses"
+import { CourseMetadata } from "./components/CourseMetadata"
+import { CourseReviews } from "./components/CourseReviews"
+import { RelatedCourses } from "./components/RelatedCourses"  
 
 interface ProgramDetailViewProps {
   programId: number
@@ -30,16 +36,30 @@ export function ProgramDetailView({ programId }: ProgramDetailViewProps) {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ProgramDetailHeader program={program} />
+        
+        {/* Course Metadata Bar */}
+        <CourseMetadata program={program} />
 
         <div className="grid lg:grid-cols-3 gap-8 mt-8">
           <div className="lg:col-span-2 space-y-8">
             <ProgramDetailContent program={program} />
             <ProgramVideos videos={program.videos} />
+            
+            {/* Reviews Section */}
+            <CourseReviews 
+              rating={program.ratings_avg_rating}
+              reviewCount={program.ratings_count}
+            />
           </div>
 
           <div className="lg:col-span-1">
             <ProgramEnrollment program={program} />
           </div>
+        </div>
+
+        {/* Related Courses Section */}
+        <div className="mt-12">
+          <RelatedCourses programId={programId} category={program.category} />
         </div>
       </div>
     </div>

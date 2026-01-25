@@ -1,12 +1,14 @@
-import { SearchIcon, Award } from "lucide-react";
+import { SearchIcon, Award, Users, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface EmptyStateProps {
-  type: "no-results" | "error" | "empty";
+  type: "no-results" | "error" | "empty" | "no-data";
   title: string;
   description: string;
   onAction?: () => void;
   actionText?: string;
+  className?: string;
 }
 
 export function EmptyState({ 
@@ -14,52 +16,91 @@ export function EmptyState({
   title, 
   description, 
   onAction, 
-  actionText 
+  actionText,
+  className 
 }: EmptyStateProps) {
-  const iconConfig = {
+  const config = {
     "no-results": {
       icon: SearchIcon,
-      iconClass: "w-12 h-12 text-gray-400",
-      bgClass: "bg-gray-100",
+      iconClass: "text-gray-400",
+      iconBgClass: "bg-gray-100",
+      cardBgClass: "bg-gray-50 border-gray-200",
+      titleClass: "text-gray-800",
+      descClass: "text-gray-600",
+      buttonClass: "border-gray-300 text-gray-700 hover:bg-gray-50",
+      buttonVariant: "outline" as const,
     },
     "error": {
       icon: Award,
-      iconClass: "w-8 h-8 text-red-500",
-      bgClass: "bg-red-100",
+      iconClass: "text-red-500",
+      iconBgClass: "bg-red-100",
+      cardBgClass: "bg-red-50 border-red-200",
+      titleClass: "text-red-800",
+      descClass: "text-red-600",
+      buttonClass: "border-red-300 text-red-700 hover:bg-red-50",
+      buttonVariant: "outline" as const,
     },
     "empty": {
-      icon: SearchIcon,
-      iconClass: "w-12 h-12 text-gray-400",
-      bgClass: "bg-gray-100",
+      icon: Users,
+      iconClass: "text-[#32A88D]",
+      iconBgClass: "bg-[#32A88D]/10",
+      cardBgClass: "bg-gray-50 border-gray-200",
+      titleClass: "text-gray-800",
+      descClass: "text-gray-600",
+      buttonClass: "bg-[#32A88D] hover:bg-[#2a8a7a] text-white",
+      buttonVariant: "default" as const,
+    },
+    "no-data": {
+      icon: FileText,
+      iconClass: "text-blue-500",
+      iconBgClass: "bg-blue-100",
+      cardBgClass: "bg-blue-50 border-blue-200",
+      titleClass: "text-blue-800",
+      descClass: "text-blue-600",
+      buttonClass: "border-blue-300 text-blue-700 hover:bg-blue-50",
+      buttonVariant: "outline" as const,
     },
   };
 
-  const config = iconConfig[type];
-  const Icon = config.icon;
+  const currentConfig = config[type];
+  const Icon = currentConfig.icon;
 
   return (
-    <div className="text-center py-20">
-      <div className={`w-24 h-24 mx-auto mb-4 ${config.bgClass} rounded-full flex items-center justify-center`}>
-        <Icon className={config.iconClass} />
+    <section className={cn(
+      "py-20 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-gray-50/50 to-white",
+      className
+    )}>
+      <div className="max-w-7xl mx-auto text-center">
+        <div className={cn(
+          "rounded-2xl p-8 max-w-md mx-auto border border-red-200 ",
+          currentConfig.cardBgClass
+        )}>
+          <div className={cn(
+            "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4",
+            currentConfig.iconBgClass
+          )}>
+            <Icon className={cn("w-8 h-8", currentConfig.iconClass)} />
+          </div>
+          <h3 className={cn(
+            "text-lg font-semibold mb-2",
+            currentConfig.titleClass
+          )}>
+            {title}
+          </h3>
+          <p className={cn("text-sm", currentConfig.descClass)}>
+            {description}
+          </p>
+          {onAction && actionText && (
+            <Button 
+              variant={currentConfig.buttonVariant}
+              className={cn("mt-4 cursor-pointer ", currentConfig.buttonClass)}
+              onClick={onAction}
+            >
+              {actionText}
+            </Button>
+          )}
+        </div>
       </div>
-      <h3 className="text-xl font-semibold text-gray-800 mb-2">
-        {title}
-      </h3>
-      <p className="text-gray-600 mb-6">
-        {description}
-      </p>
-      {onAction && actionText && (
-        <Button
-          onClick={onAction}
-          className={`${
-            type === "error" 
-              ? "border-red-300 text-red-700 hover:bg-red-50"
-              : "bg-[#32A88D] hover:bg-[#2a8a7a] text-white"
-          }`}
-        >
-          {actionText}
-        </Button>
-      )}
-    </div>
+    </section>
   );
 }

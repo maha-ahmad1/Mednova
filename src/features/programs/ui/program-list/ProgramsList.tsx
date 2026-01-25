@@ -3,9 +3,8 @@
 import { useState, useMemo } from "react";
 import { useProgramsQuery } from "../../hooks";
 import type { Program, ProgramFilters } from "../../types/program";
-// import { ProgramCard } from "./components/ProgramCard"
 import { ProgramSkeleton } from "./components/ProgramSkeleton";
-import { Search } from "lucide-react";
+import { Search, Grid, List, Filter, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,6 +16,13 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { ProgramCard } from "@/shared/ui/components/ProgramCard";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export function ProgramsList() {
   const { data, isLoading, error } = useProgramsQuery();
@@ -26,8 +32,19 @@ export function ProgramsList() {
     category: "الكل",
     difficulty: "الكل",
     sortBy: "الأحدث",
+    priceRange: "الكل",
+    rating: "الكل",
   });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  // Extract unique categories
+  const categories = useMemo(() => {
+    if (!data?.data) return ["الكل"];
+    const uniqueCategories = Array.from(
+      new Set(data.data.map(p => p.category).filter(Boolean))
+    );
+    return ["الكل", ...uniqueCategories];
+  }, [data?.data]);
 
   // Filter and sort programs
   const filteredAndSortedPrograms = useMemo(() => {
@@ -38,7 +55,15 @@ export function ProgramsList() {
         program.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         program.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-      return matchesSearch;
+      const matchesCategory = 
+        filters.category === "الكل" || program.category === filters.category;
+
+      const matchesRating = 
+        filters.rating === "الكل" || 
+        (filters.rating === "4+" && program.ratings_avg_rating >= 4) ||
+        (filters.rating === "3+" && program.ratings_avg_rating >= 3);
+
+      return matchesSearch && matchesCategory && matchesRating;
     });
 
     // Sort programs
@@ -72,6 +97,8 @@ export function ProgramsList() {
       category: "الكل",
       difficulty: "الكل",
       sortBy: "الأحدث",
+      priceRange: "الكل",
+      rating: "الكل",
     });
   };
 
@@ -82,6 +109,17 @@ export function ProgramsList() {
     { value: "الأقل سعراً", label: "الأقل سعراً" },
     { value: "الأعلى سعراً", label: "الأعلى سعراً" },
   ];
+
+  const ratingOptions = [
+    { value: "الكل", label: "جميع التقييمات" },
+    { value: "4+", label: "4 نجوم وأعلى" },
+    { value: "3+", label: "3 نجوم وأعلى" },
+  ];
+
+  const hasActiveFilters = 
+    searchQuery || 
+    filters.category !== "الكل" || 
+    filters.rating !== "الكل";
 
   if (isLoading) {
     return (
@@ -111,11 +149,21 @@ export function ProgramsList() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            برامج التأهيل الصحي
+          </h1>
+          <p className="text-gray-600">
+            اكتشف برامجنا التعليمية المميزة لتحسين مهاراتك الصحية والتأهيلية
+          </p>
+        </div>
+
         {/* Search and Filters */}
         <div className="mb-8 bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
             {/* Search Bar */}
-            <div className="lg:col-span-8">
+            <div className="lg:col-span-4">
               <div className="relative">
                 <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
@@ -127,17 +175,61 @@ export function ProgramsList() {
               </div>
             </div>
 
-            {/* Sort */}
-            <div className="lg:col-span-4">
+            {/* Category Filter */}
+            <div className="lg:col-span-3">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                ترتيب حسب
+                التصنيف
+              </label>
+              <Select
+                value={filters.category}
+                onValueChange={(value) => handleFilterChange("category", value)}
+              >
+                <SelectTrigger className="rounded-xl border-gray-200 h-12">
+                  <SelectValue placeholder="اختر التصنيف" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Rating Filter */}
+            <div className="lg:col-span-3">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                التقييم
+              </label>
+              <Select
+                value={filters.rating}
+                onValueChange={(value) => handleFilterChange("rating", value)}
+              >
+                <SelectTrigger className="rounded-xl border-gray-200 h-12">
+                  <SelectValue placeholder="اختر التقييم" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ratingOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Sort */}
+            <div className="lg:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                الترتيب
               </label>
               <Select
                 value={filters.sortBy}
                 onValueChange={(value) => handleFilterChange("sortBy", value)}
               >
                 <SelectTrigger className="rounded-xl border-gray-200 h-12">
-                  <SelectValue placeholder="اختر الترتيب" />
+                  <SelectValue placeholder="ترتيب حسب" />
                 </SelectTrigger>
                 <SelectContent>
                   {sortOptions.map((option) => (
@@ -151,17 +243,42 @@ export function ProgramsList() {
           </div>
 
           {/* Active Filters */}
-          {searchQuery && (
-            <div className="mt-6 flex flex-wrap gap-2">
-              <Badge variant="secondary" className="rounded-lg px-3 py-1">
-                بحث: {searchQuery}
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="mr-2 hover:text-red-500"
-                >
-                  ×
-                </button>
-              </Badge>
+          {hasActiveFilters && (
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <div className="text-sm text-gray-600">الفلاتر النشطة:</div>
+              {searchQuery && (
+                <Badge variant="secondary" className="rounded-lg px-3 py-1.5">
+                  بحث: {searchQuery}
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="mr-2 hover:text-red-500"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              )}
+              {filters.category !== "الكل" && (
+                <Badge variant="secondary" className="rounded-lg px-3 py-1.5">
+                  تصنيف: {filters.category}
+                  <button
+                    onClick={() => handleFilterChange("category", "الكل")}
+                    className="mr-2 hover:text-red-500"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              )}
+              {filters.rating !== "الكل" && (
+                <Badge variant="secondary" className="rounded-lg px-3 py-1.5">
+                  تقييم: {filters.rating === "4+" ? "4 نجوم وأعلى" : "3 نجوم وأعلى"}
+                  <button
+                    onClick={() => handleFilterChange("rating", "الكل")}
+                    className="mr-2 hover:text-red-500"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              )}
               <Button
                 variant="ghost"
                 size="sm"
@@ -174,7 +291,7 @@ export function ProgramsList() {
           )}
         </div>
 
-        {/* Results Header */}
+        {/* View Toggle and Results Header */}
         <div className="flex justify-between items-center mb-6">
           <div className="text-gray-600">
             عرض{" "}
@@ -183,25 +300,64 @@ export function ProgramsList() {
             </span>{" "}
             برنامج
           </div>
-          <div className="text-sm text-gray-500">
-            مرتبة حسب:{" "}
-            <span className="font-medium text-gray-700">{filters.sortBy}</span>
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-gray-500">
+              مرتبة حسب:{" "}
+              <span className="font-medium text-gray-700">{filters.sortBy}</span>
+            </div>
+            <div className="flex border border-gray-200 rounded-xl overflow-hidden">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 ${
+                  viewMode === "grid"
+                    ? "bg-[#32A88D] text-white"
+                    : "bg-white text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <Grid className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-2 ${
+                  viewMode === "list"
+                    ? "bg-[#32A88D] text-white"
+                    : "bg-white text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <List className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Programs Grid */}
+        {/* Programs Grid/List */}
         {filteredAndSortedPrograms.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredAndSortedPrograms.map((program: Program) => (
-              <ProgramCard
-                key={program.id}
-                program={program}
-                showCreator={true}
-                showEnrollments={true}
-                showStatus={true}
-              />
-            ))}
-          </div>
+          viewMode === "grid" ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredAndSortedPrograms.map((program: Program) => (
+                <ProgramCard
+                  key={program.id}
+                  program={program}
+                  showCreator={true}
+                  showEnrollments={true}
+                  showStatus={true}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredAndSortedPrograms.map((program: Program) => (
+                <ProgramCard
+                  key={program.id}
+                  program={program}
+                  showCreator={true}
+                  showEnrollments={true}
+                  showStatus={true}
+                  layout="horizontal"
+                />
+              ))}
+            </div>
+          )
         ) : (
           <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
             <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />

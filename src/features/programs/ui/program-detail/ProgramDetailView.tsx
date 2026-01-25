@@ -5,6 +5,8 @@ import { ProgramDetailHeader } from "./components/ProgramDetailHeader"
 import { ProgramDetailContent } from "./components/ProgramDetailContent"
 import { ProgramVideos } from "./components/ProgramVideos"
 import { ProgramEnrollment } from "./components/ProgramEnrollment"
+import { ProgramReviews } from "./components/ProgramReviews"
+import { ProgramRelatedPrograms } from "./components/ProgramRelatedPrograms"
 import { ErrorState } from "@/shared/ui/components/states/ErrorState"
 import { ProgramDetailSkeleton } from "./components/ProgramDetailSkeleton"
 
@@ -34,12 +36,15 @@ export function ProgramDetailView({ programId }: ProgramDetailViewProps) {
           <div className="lg:col-span-2 space-y-8">
             <ProgramDetailContent program={program} />
             <ProgramVideos videos={program.videos} />
+            <ProgramReviews program={program} />
           </div>
 
           <div className="lg:col-span-1">
             <ProgramEnrollment program={program} />
           </div>
         </div>
+
+        <ProgramRelatedPrograms currentProgramId={program.id} />
       </div>
     </div>
   )

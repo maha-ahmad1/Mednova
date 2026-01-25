@@ -48,15 +48,16 @@ export function ProgramCard({
   const price = program.price || 0;
 
   return (
-    <div className="group bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+    <div className="group flex h-full flex-col bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-500">
       <div className="relative overflow-hidden">
         <Image
           src={imageUrl}
           alt={program.title}
           width={400}
           height={250}
-          className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
 
         {/* Rating */}
         <div className="absolute top-4 right-4">
@@ -81,15 +82,15 @@ export function ProgramCard({
           program.status === "published" &&
           program.is_approved === 1 && (
             <div className="absolute top-4 left-4">
-              <Badge className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
-                متاح
+              <Badge className="bg-emerald-400 text-[#0f3d35] px-3 py-1 rounded-full text-xs font-semibold">
+                متاح الآن
               </Badge>
             </div>
           )
         )}
       </div>
 
-      <div className="p-6">
+      <div className="p-6 flex flex-col flex-1">
         <div className="flex justify-between items-start mb-3">
           <h3 className="text-xl font-bold text-gray-800 line-clamp-2 flex-1 truncate">
             {program.title}
@@ -124,20 +125,21 @@ export function ProgramCard({
           )}
 
         {/* Price and Actions */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-          <div className="flex items-center gap-2">
-            <div className="text-2xl font-bold text-[#32A88D]">
-              {price} ر.ع.
+        <div className="mt-auto pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="text-2xl font-bold text-[#32A88D]">
+                {price} ر.ع.
+              </div>
             </div>
-          </div>
 
-          <Link href={`/programs/${program.id}`}>
-            <Button className="cursor-pointer bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-6 py-2 transition-all duration-300 shadow-lg hover:shadow-xl">
-              <Eye className="ml-2 w-4 h-4" />
-              {/* {variant === "top-rated" ? "طلب البرنامج" : "عرض التفاصيل"} */}
-              عرض التفاصيل
-            </Button>
-          </Link>
+            <Link href={`/programs/${program.id}`}>
+              <Button className="cursor-pointer bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-6 py-2 transition-all duration-300 shadow-lg hover:shadow-xl">
+                <Eye className="ml-2 w-4 h-4" />
+                عرض التفاصيل
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

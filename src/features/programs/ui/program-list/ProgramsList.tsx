@@ -27,7 +27,12 @@ export function ProgramsList() {
     difficulty: "الكل",
     sortBy: "الأحدث",
   });
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const totalPrograms = data?.data?.length || 0;
+  const publishedPrograms =
+    data?.data?.filter(
+      (program: Program) =>
+        program.status === "published" && program.is_approved === 1,
+    ).length || 0;
 
   // Filter and sort programs
   const filteredAndSortedPrograms = useMemo(() => {
@@ -110,12 +115,56 @@ export function ProgramsList() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <section className="bg-[#1F6069] text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+            <div className="space-y-6">
+              <div className="flex flex-wrap items-center gap-3">
+                <Badge className="bg-white/10 text-white rounded-full px-3 py-1 text-xs">
+                  برامج تأهيلية معتمدة
+                </Badge>
+                <Badge className="bg-emerald-400/90 text-[#0f3d35] rounded-full px-3 py-1 text-xs">
+                  {publishedPrograms} برنامج متاح
+                </Badge>
+              </div>
+              <h1 className="text-3xl font-bold sm:text-4xl">
+                برامج Mednova التعليمية
+              </h1>
+              <p className="text-base text-white/85 leading-relaxed">
+                اكتشف برامج تأهيلية مصممة خصيصاً لتطوير مهاراتك المهنية. جميع البرامج
+                معتمدة ومدعومة بخبرات فريق Mednova.
+              </p>
+            </div>
+
+            <div className="rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur-sm">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between text-sm text-white/80">
+                  <span>إجمالي البرامج</span>
+                  <span className="text-lg font-bold text-white">{totalPrograms}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm text-white/80">
+                  <span>برامج معتمدة</span>
+                  <span className="text-lg font-bold text-white">{publishedPrograms}</span>
+                </div>
+                <div className="h-px bg-white/10" />
+                <p className="text-xs text-white/70">
+                  اعثر على البرنامج المناسب لك باستخدام البحث والفرز أدناه.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
         {/* Search and Filters */}
-        <div className="mb-8 bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 -mt-16 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
             {/* Search Bar */}
             <div className="lg:col-span-8">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                ابحث عن البرنامج المناسب لك
+              </label>
               <div className="relative">
                 <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
@@ -175,7 +224,7 @@ export function ProgramsList() {
         </div>
 
         {/* Results Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-wrap justify-between items-center gap-3">
           <div className="text-gray-600">
             عرض{" "}
             <span className="font-bold text-[#32A88D]">

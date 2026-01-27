@@ -1,37 +1,32 @@
 "use client"
 
+import type { ProgramDetail } from "@/features/programs/types/program"
 import { useProgramDetailQuery } from "@/features/programs/hooks"
 import { ProgramDetailHeader } from "./components/ProgramDetailHeader"
 import { ProgramDetailContent } from "./components/ProgramDetailContent"
 import { ProgramVideos } from "./components/ProgramVideos"
 import { ProgramEnrollment } from "./components/ProgramEnrollment"
-import { ProgramReviews } from "./components/ProgramReviews"
-import { ProgramRelatedPrograms } from "./components/ProgramRelatedPrograms"
+import { CourseReviews } from "./components/CourseReviews"
+import { RelatedCourses } from "./components/RelatedCourses"
 import { ErrorState } from "@/shared/ui/components/states/ErrorState"
 import { ProgramDetailSkeleton } from "./components/ProgramDetailSkeleton"
-// import { CourseMetadata } from "./components/CourseMetadata"
-// import { CourseReviews } from "./components/CourseReviews"
-// import { RelatedCourses } from "./components/RelatedCourses"
-import { CourseMetadata } from "./components/CourseMetadata"
-import { CourseReviews } from "./components/CourseReviews"
-import { RelatedCourses } from "./components/RelatedCourses"  
 
 interface ProgramDetailViewProps {
   programId: number
 }
 
-export function ProgramDetailView({ programId }: ProgramDetailViewProps) {
+export function ProgramDetailView({ programId }: ProgramDetailViewProps): React.ReactNode {
   const { data, isLoading, error } = useProgramDetailQuery(programId)
 
   if (isLoading) {
-    return <ProgramDetailSkeleton/>
+    return <ProgramDetailSkeleton />
   }
 
-  if (error || !data?.success) {
+  if (error || !data?.success || !data?.data) {
     return <ErrorState />
   }
 
-  const program = data.data
+  const program: ProgramDetail = data.data
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -42,11 +37,11 @@ export function ProgramDetailView({ programId }: ProgramDetailViewProps) {
           <div className="lg:col-span-2 space-y-8">
             <ProgramDetailContent program={program} />
             <ProgramVideos videos={program.videos} />
-            
+
             {/* Reviews Section */}
-            <CourseReviews 
-              rating={program.ratings_avg_rating}
-              reviewCount={program.ratings_count}
+            <CourseReviews
+              rating={program.ratings_avg_rating ?? 0}
+              reviewCount={program.ratings_count ?? 0}
             />
           </div>
 
@@ -57,7 +52,7 @@ export function ProgramDetailView({ programId }: ProgramDetailViewProps) {
 
         {/* Related Courses Section */}
         <div className="mt-12">
-          <RelatedCourses programId={programId} category={program.category} />
+          <RelatedCourses programId={programId} />
         </div>
       </div>
     </div>

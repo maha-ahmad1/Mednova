@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, BookOpen, Star, Edit, Award } from "lucide-react";
+import { ArrowLeft, BookOpen, Star, Edit } from "lucide-react";
 import { ConsultationDialog } from "@/features/service-provider/ui/ConsultationDialog";
 import { useFetcher } from "@/hooks/useFetcher";
 import ProfileHeader from "./profile/ProfileHeader";
@@ -13,16 +13,17 @@ import ProfileDetails from "./profile/ProfileDetails";
 import ServicesPricing from "./profile/ServicesPricing";
 import ScheduleCard from "./profile/ScheduleCard";
 import CertificationsCard from "./profile/CertificationsCard";
-import { ServiceProvider } from "@/features/service-provider/types/provider";
+import type { ServiceProvider } from "@/features/service-provider/types/provider";
 import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
 import Navbar from "@/shared/ui/components/Navbar/Navbar";
 import { ReviewsSection } from "@/features/service-provider/public-profile/ui/reviews/ReviewsSection";
 import { useSession } from "next-auth/react";
 import { EmptyState } from "@/shared/ui/components/EmptyState";
 
-export default function SpecialistProfile() {
+export default function SpecialistProfile(): React.ReactNode {
   const params = useParams();
   const router = useRouter();
+  const reviewsTabRef = useRef<HTMLDivElement>(null);
 
   const {
     data: therapist,
@@ -33,14 +34,7 @@ export default function SpecialistProfile() {
     params.id ? `/api/customer/${params.id}` : null
   );
   const { data: session } = useSession();
-  const currentUserId = session?.user?.id || 0;
-
-
-
-  const [existingUserReview] = useState(() => {
-   
-    return null;
-  });
+  const currentUserId = typeof session?.user?.id === "number" ? session.user.id : 0;
 
   if (isLoading) {
     return (
@@ -73,15 +67,15 @@ export default function SpecialistProfile() {
 
   if (error || !therapist) {
     return (
-       <section className="py-20 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-gray-50/50 to-white">
-             <EmptyState
-               type="error"
-               title="حدث خطأ"
-               description="لم يتم العثور على المختص"
-               actionText="إعادة المحاولة"
-               onAction={() => window.location.reload()}
-             />
-           </section>
+      <section className="py-20 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-gray-50/50 to-white">
+        <EmptyState
+          type="error"
+          title="حدث خطأ"
+          description="لم يتم العثور على المختص"
+          actionText="إعادة المحاولة"
+          onAction={() => window.location.reload()}
+        />
+      </section>
     );
   }
 
@@ -103,7 +97,6 @@ export default function SpecialistProfile() {
               {/* Profile Header - Reusable Component */}
               <ProfileHeader therapist={therapist} />
 
-              {/* التبويبات */}
               <Tabs
                 defaultValue="bio"
                 className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mt-4"
@@ -163,7 +156,7 @@ export default function SpecialistProfile() {
                 </TabsContent>
 
                 <TabsContent value="reviews" className="mt-0 text-right">
-                  <div className="space-y-6">
+                  <div className="space-y-6" ref={reviewsTabRef}>
                     {/* عرض متوسط التقييمات */}
                     <div className="bg-white p-6 rounded-2xl shadow-sm border">
                       <div className="flex items-center justify-between mb-4">
@@ -198,26 +191,23 @@ export default function SpecialistProfile() {
                       </div>
                     </div>
 
-                    {/* مكون التقييمات الجديد */}
+                    {/* Reviews Section */}
                     <ReviewsSection
                       reviewerId={currentUserId}
                       revieweeId={therapist.id}
                       revieweeType="customer"
                       revieweeName={therapist.full_name}
-                      existingReview={existingUserReview ? {
-                        rating: existingUserReview.rating,
-                        comment: existingUserReview.comment
-                      } : undefined}
+                      showTriggerButton={true}
                       triggerButtonText="اكتب تقييمك"
                       onReviewSubmitted={(data) => {
-                        console.log('تم إرسال التقييم:', data);
+                        console.log("تم إرسال التقييم:", data);
                         // يمكنك هنا:
                         // 1. إعادة تحميل بيانات المختص
                         // 2. تحديث حالة التقييمات
                         // 3. إظهار رسالة نجاح
                       }}
                       onReviewError={(error) => {
-                        console.error('خطأ في إرسال التقييم:', error);
+                        console.error("خطأ في إرسال التقييم:", error);
                         // يمكنك هنا إظهار رسالة خطأ للمستخدم
                       }}
                     />
@@ -272,14 +262,7 @@ export default function SpecialistProfile() {
                       <div className="mt-2">
                         <Button
                           onClick={() => {
-                            // التنقل إلى تبويب التقييمات
-                            const reviewsTab = document.querySelector('[data-value="reviews"]') as HTMLElement;
-                            reviewsTab?.click();
-                            // تمرير التركيز إلى مكون التقييمات
-                            setTimeout(() => {
-                              const reviewButton = document.querySelector('[aria-label*="تقييم"]') as HTMLElement;
-                              reviewButton?.focus();
-                            }, 100);
+                            reviewsTabRef.current?.scrollIntoView({ behavior: "smooth" });
                           }}
                           variant="outline"
                           className="cursor-pointer w-full bg-white/90 backdrop-blur-sm text-[#32A88D] hover:bg-white border border-[#32A88D]/30 hover:border-[#32A88D] rounded-xl py-6 transition-all duration-300"

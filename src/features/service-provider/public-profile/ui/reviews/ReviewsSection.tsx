@@ -1,17 +1,14 @@
-import React, { useState } from 'react';
-import { ReviewDialog } from './ReviewDialog';
-import { Button } from '@/components/ui/button';
-import { Star, MessageSquare } from 'lucide-react';
- //import { useSubmitReviewMutation } from '@/hooks/';
-// import { SubmitReviewPayload } from '@/types/review';
- import { useSubmitReviewMutation } from '../../hooks/useSubmitReviewMutation';
-import { SubmitReviewPayload } from '../../types/review';
-// import useSubmitReviewMutation from '../../hooks/useSubmitReviewMutation';
+import React, { useState } from "react";
+import { ReviewDialog } from "./ReviewDialog";
+import { Button } from "@/components/ui/button";
+import { Star, MessageSquare } from "lucide-react";
+import { useSubmitReviewMutation } from "../../hooks/useSubmitReviewMutation";
+import type { SubmitReviewPayload, SubmitReviewResponse } from "../../types/review";
 
 interface ReviewsSectionProps {
   reviewerId: number;
   revieweeId: number;
-  revieweeType: 'customer' | 'program' | 'platform';
+  revieweeType: "customer" | "program" | "platform";
   revieweeName: string;
   existingReview?: {
     rating: number;
@@ -19,8 +16,8 @@ interface ReviewsSectionProps {
   };
   showTriggerButton?: boolean;
   triggerButtonText?: string;
-  onReviewSubmitted?: (data: any) => void;
-  onReviewError?: (error: any) => void;
+  onReviewSubmitted?: (data: SubmitReviewResponse) => void;
+  onReviewError?: (error: Error) => void;
 }
 
 export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
@@ -30,15 +27,15 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
   revieweeName,
   existingReview,
   showTriggerButton = true,
-  triggerButtonText = 'أضف تقييم',
+  triggerButtonText = "أضف تقييم",
   onReviewSubmitted,
   onReviewError,
-}) => {
+}): React.ReactNode => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  
-  const { mutate: submitReview, isLoading } = useSubmitReviewMutation();
 
-  const handleSubmitReview = (rating: number, comment: string) => {
+  const { mutate: submitReview, isPending } = useSubmitReviewMutation();
+
+  const handleSubmitReview = (rating: number, comment: string): void => {
     const payload: SubmitReviewPayload = {
       reviewer_id: reviewerId,
       reviewee_id: revieweeId,
@@ -53,7 +50,8 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
         onReviewSubmitted?.(data);
       },
       onError: (error) => {
-        onReviewError?.(error);
+        const typedError = error instanceof Error ? error : new Error(String(error));
+        onReviewError?.(typedError);
       },
     });
   };
@@ -64,7 +62,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
         <Button
           onClick={() => setIsDialogOpen(true)}
           className="bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D]"
-          disabled={isLoading}
+          disabled={isPending}
         >
           {existingReview ? (
             <>
@@ -87,10 +85,10 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
         revieweeId={revieweeId}
         revieweeType={revieweeType}
         revieweeName={revieweeName}
-        defaultRating={existingReview?.rating || 0}
-        defaultComment={existingReview?.comment || ''}
+        defaultRating={existingReview?.rating ?? 0}
+        defaultComment={existingReview?.comment ?? ""}
         onSubmit={handleSubmitReview}
-        isSubmitting={isLoading}
+        isSubmitting={isPending}
       />
 
       {/* يمكن إضافة قائمة التقييمات هنا */}

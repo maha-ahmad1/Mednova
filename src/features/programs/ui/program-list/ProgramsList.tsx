@@ -2,9 +2,9 @@
 
 import { useState, useMemo } from "react";
 import { useProgramsQuery } from "../../hooks";
-import type { Program, ProgramFilters } from "../../types/program";
+import type { Program } from "../../types/program";
 import { ProgramSkeleton } from "./components/ProgramSkeleton";
-import { Search, Grid, List, Filter, X } from "lucide-react";
+import { Search, Grid, List, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,18 +16,29 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { ProgramCard } from "@/shared/ui/components/ProgramCard";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
-export function ProgramsList() {
+interface ProgramFilters {
+  category: string;
+  difficulty: string;
+  sortBy: string;
+  priceRange: string;
+  rating: string;
+}
+
+type ViewMode = "grid" | "list";
+
+const CATEGORIES = [
+  "الكل",
+  "إعادة التأهيل",
+  "اللياقة البدنية",
+  "الصحة العامة",
+];
+
+export function ProgramsList(): React.ReactNode {
   const { data, isLoading, error } = useProgramsQuery();
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [filters, setFilters] = useState<ProgramFilters>({
     category: "الكل",
     difficulty: "الكل",
@@ -43,27 +54,26 @@ export function ProgramsList() {
     ).length || 0;
 
   // Filter and sort programs
-  const filteredAndSortedPrograms = useMemo(() => {
+  const filteredAndSortedPrograms = useMemo<Program[]>(() => {
     if (!data?.data) return [];
 
-    let filtered = data.data.filter((program: Program) => {
+    let filtered = data.data.filter((program) => {
       const matchesSearch =
         program.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         program.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesCategory = 
-        filters.category === "الكل" || program.category === filters.category;
+      const matchesCategory = filters.category === "الكل";
 
-      const matchesRating = 
-        filters.rating === "الكل" || 
-        (filters.rating === "4+" && program.ratings_avg_rating >= 4) ||
-        (filters.rating === "3+" && program.ratings_avg_rating >= 3);
+      const matchesRating =
+        filters.rating === "الكل" ||
+        (filters.rating === "4+" && (program.ratings_avg_rating ?? 0) >= 4) ||
+        (filters.rating === "3+" && (program.ratings_avg_rating ?? 0) >= 3);
 
       return matchesSearch && matchesCategory && matchesRating;
     });
 
     // Sort programs
-    filtered = [...filtered].sort((a, b) => {
+    filtered = [...filtered].sort((a: Program, b: Program) => {
       switch (filters.sortBy) {
         case "الأكثر تسجيلاً":
           return (b.enrollments_count || 0) - (a.enrollments_count || 0);
@@ -83,12 +93,13 @@ export function ProgramsList() {
     return filtered;
   }, [data?.data, searchQuery, filters]);
 
-  const handleFilterChange = (key: keyof ProgramFilters, value: string) => {
+  const handleFilterChange = (key: keyof ProgramFilters, value: string): void => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const clearFilters = () => {
+  const clearFilters = (): void => {
     setSearchQuery("");
+    setViewMode("grid");
     setFilters({
       category: "الكل",
       difficulty: "الكل",
@@ -166,7 +177,7 @@ export function ProgramsList() {
               </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            {/* <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-[#1F6069]/10 bg-white p-5 shadow-sm">
                 <p className="text-sm text-gray-500">إجمالي البرامج</p>
                 <p className="mt-2 text-2xl font-bold text-[#1F6069]">
@@ -179,7 +190,7 @@ export function ProgramsList() {
                   {publishedPrograms}
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
@@ -205,7 +216,7 @@ export function ProgramsList() {
             </div>
 
             {/* Category Filter */}
-            <div className="lg:col-span-3">
+            {/* <div className="lg:col-span-3">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 التصنيف
               </label>
@@ -217,17 +228,17 @@ export function ProgramsList() {
                   <SelectValue placeholder="اختر التصنيف" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category) => (
+                  {CATEGORIES.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
             {/* Rating Filter */}
-            <div className="lg:col-span-3">
+            {/* <div className="lg:col-span-3">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 التقييم
               </label>
@@ -246,7 +257,7 @@ export function ProgramsList() {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
             {/* Sort */}
             <div className="lg:col-span-2">
@@ -363,7 +374,7 @@ export function ProgramsList() {
         {filteredAndSortedPrograms.length > 0 ? (
           viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredAndSortedPrograms.map((program: Program) => (
+              {filteredAndSortedPrograms.map((program) => (
                 <ProgramCard
                   key={program.id}
                   program={program}
@@ -375,14 +386,13 @@ export function ProgramsList() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredAndSortedPrograms.map((program: Program) => (
+              {filteredAndSortedPrograms.map((program) => (
                 <ProgramCard
                   key={program.id}
                   program={program}
                   showCreator={true}
                   showEnrollments={true}
                   showStatus={true}
-                  layout="horizontal"
                 />
               ))}
             </div>

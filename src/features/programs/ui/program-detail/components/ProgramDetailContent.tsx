@@ -76,7 +76,7 @@ export function ProgramDetailContent({ program }: ProgramDetailContentProps) {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
           <p className="text-sm text-gray-500">ساعات الفيديو</p>
           <p className="mt-2 text-2xl font-bold text-[#1F6069]">{totalHours} ساعة</p>
@@ -104,7 +104,7 @@ export function ProgramDetailContent({ program }: ProgramDetailContentProps) {
           <p className="text-sm text-gray-500">شهادة الإتمام</p>
           <p className="mt-2 text-sm font-semibold text-gray-700">شهادة رقمية عند الإكمال</p>
         </div>
-      </div>
+      </div> */}
 
       <div className="pt-6 border-t border-gray-200">
         <h3 className="text-xl font-bold text-gray-900 mb-4">عن المدرب</h3>

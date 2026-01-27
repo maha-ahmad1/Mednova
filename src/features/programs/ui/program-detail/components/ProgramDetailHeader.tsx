@@ -18,12 +18,12 @@ export function ProgramDetailHeader({ program }: ProgramDetailHeaderProps) {
 
   return (
     <section className="space-y-4">
-      <Link href="/programs">
+      {/* <Link href="/programs">
         <Button variant="ghost" className="rounded-full border border-gray-200">
           <ArrowRight className="ml-2 w-4 h-4" />
           العودة للبرامج
         </Button>
-      </Link>
+      </Link> */}
 
       <div className="rounded-3xl border border-gray-100 bg-white shadow-lg overflow-hidden">
         <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">

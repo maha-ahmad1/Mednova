@@ -35,16 +35,12 @@ export function ProgramsList() {
     priceRange: "الكل",
     rating: "الكل",
   });
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
-  // Extract unique categories
-  const categories = useMemo(() => {
-    if (!data?.data) return ["الكل"];
-    const uniqueCategories = Array.from(
-      new Set(data.data.map(p => p.category).filter(Boolean))
-    );
-    return ["الكل", ...uniqueCategories];
-  }, [data?.data]);
+  const totalPrograms = data?.data?.length || 0;
+  const publishedPrograms =
+    data?.data?.filter(
+      (program: Program) =>
+        program.status === "published" && program.is_approved === 1,
+    ).length || 0;
 
   // Filter and sort programs
   const filteredAndSortedPrograms = useMemo(() => {
@@ -147,23 +143,56 @@ export function ProgramsList() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            برامج التأهيل الصحي
-          </h1>
-          <p className="text-gray-600">
-            اكتشف برامجنا التعليمية المميزة لتحسين مهاراتك الصحية والتأهيلية
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-[#1F6069]/5 via-white to-white">
+      <section className="pt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-[#1F6069]">
+            <Badge className="bg-[#1F6069]/10 text-[#1F6069] rounded-full px-3 py-1 text-xs">
+              برامج تأهيلية معتمدة
+            </Badge>
+            <Badge className="bg-[#32A88D]/10 text-[#1F6069] rounded-full px-3 py-1 text-xs">
+              {publishedPrograms} برنامج متاح
+            </Badge>
+          </div>
 
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+            <div className="space-y-4">
+              <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+                برامج Mednova التعليمية
+              </h1>
+              <p className="text-base text-gray-600 leading-relaxed">
+                اكتشف برامج تأهيلية مصممة خصيصاً لتطوير مهاراتك المهنية، مع محتوى
+                عملي وتجارب تدريبية معتمدة من Mednova.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl border border-[#1F6069]/10 bg-white p-5 shadow-sm">
+                <p className="text-sm text-gray-500">إجمالي البرامج</p>
+                <p className="mt-2 text-2xl font-bold text-[#1F6069]">
+                  {totalPrograms}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[#1F6069]/10 bg-white p-5 shadow-sm">
+                <p className="text-sm text-gray-500">برامج معتمدة</p>
+                <p className="mt-2 text-2xl font-bold text-[#1F6069]">
+                  {publishedPrograms}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         {/* Search and Filters */}
-        <div className="mb-8 bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
             {/* Search Bar */}
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-8">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                ابحث عن البرنامج المناسب لك
+              </label>
               <div className="relative">
                 <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
@@ -291,7 +320,7 @@ export function ProgramsList() {
           )}
         </div>
 
-        {/* View Toggle and Results Header */}
+        {/* Results Header */}
         <div className="flex justify-between items-center mb-6">
           <div className="text-gray-600">
             عرض{" "}

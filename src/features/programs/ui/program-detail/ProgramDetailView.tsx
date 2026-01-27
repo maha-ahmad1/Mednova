@@ -5,7 +5,8 @@ import { ProgramDetailHeader } from "./components/ProgramDetailHeader"
 import { ProgramDetailContent } from "./components/ProgramDetailContent"
 import { ProgramVideos } from "./components/ProgramVideos"
 import { ProgramEnrollment } from "./components/ProgramEnrollment"
-import { LoadingState } from "@/shared/ui/components/states/LoadingState"
+import { ProgramReviews } from "./components/ProgramReviews"
+import { ProgramRelatedPrograms } from "./components/ProgramRelatedPrograms"
 import { ErrorState } from "@/shared/ui/components/states/ErrorState"
 import { ProgramDetailSkeleton } from "./components/ProgramDetailSkeleton"
 // import { CourseMetadata } from "./components/CourseMetadata"
@@ -34,13 +35,10 @@ export function ProgramDetailView({ programId }: ProgramDetailViewProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <ProgramDetailHeader program={program} />
-        
-        {/* Course Metadata Bar */}
-        <CourseMetadata program={program} />
 
-        <div className="grid lg:grid-cols-3 gap-8 mt-8">
+        <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <ProgramDetailContent program={program} />
             <ProgramVideos videos={program.videos} />

@@ -38,6 +38,7 @@ export interface ProgramVideo {
   title: string
   description: string
   video_path: string
+  is_free: number | null
   duration_minute: number | null
   order: number
   status: string | null

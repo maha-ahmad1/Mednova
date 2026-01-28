@@ -1,11 +1,11 @@
 "use client"
 
 import Image from "next/image"
-import Link from "next/link"
-import { ArrowRight, Star, Users, Clock, PlayCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Users, Clock, PlayCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import type { ProgramDetail } from "@/features/programs/types/program"
+import { RatingBadge } from "@/shared/ui/components/RatingBadge"
+import { MetaInfoItem } from "@/shared/ui/components/MetaInfoItem"
 
 interface ProgramDetailHeaderProps {
   program: ProgramDetail
@@ -44,11 +44,7 @@ export function ProgramDetailHeader({ program }: ProgramDetailHeaderProps) {
                   متاح الآن
                 </Badge>
               )}
-              <div className="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700">
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span className="font-semibold">{rating.toFixed(1) || "0.0"}</span>
-                <span className="text-xs text-gray-500">({program.ratings_count || 0})</span>
-              </div>
+              <RatingBadge rating={rating} count={program.ratings_count} />
               <Badge className="rounded-full bg-[#1F6069]/10 px-3 py-1 text-xs text-[#1F6069]">
                 برامج Mednova المعتمدة
               </Badge>
@@ -64,18 +60,15 @@ export function ProgramDetailHeader({ program }: ProgramDetailHeaderProps) {
             </div>
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-[#32A88D]" />
-                <span>{program.creator?.full_name || "مدرب البرنامج"}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-[#32A88D]" />
-                <span>{enrollments} مسجل</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <PlayCircle className="h-4 w-4 text-[#32A88D]" />
-                <span>{videosCount} فيديو</span>
-              </div>
+              <MetaInfoItem icon={<Users className="h-4 w-4" />}>
+                {program.creator?.full_name || "مدرب البرنامج"}
+              </MetaInfoItem>
+              <MetaInfoItem icon={<Clock className="h-4 w-4" />}>
+                {enrollments} مسجل
+              </MetaInfoItem>
+              <MetaInfoItem icon={<PlayCircle className="h-4 w-4" />}>
+                {videosCount} فيديو
+              </MetaInfoItem>
             </div>
           </div>
         </div>

@@ -176,9 +176,9 @@ console.log("Rendered ConsultationList with requests:", requests);
                               src={
                                 isPatient
                                   ? request.data.consultant.image ||
-                                    "/default-avatar.png"
+                                    "./images/placeholder.svg"
                                   : request.data.patient.image ||
-                                    "/default-avatar.png"
+                                    "./images/placeholder.svg"
                               }
                               alt="صورة المستخدم"
                               className="w-full h-full object-cover rounded-full"

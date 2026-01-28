@@ -6,16 +6,31 @@ export function ProgramDetailSkeleton() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white animate-pulse">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Skeleton */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8">
-          <div className="p-4">
-            <div className="h-10 w-32 bg-gray-200 rounded-xl"></div>
+        <div className="mb-4">
+          <div className="h-10 w-28 bg-gray-200 rounded-full"></div>
+        </div>
+        <div className="rounded-3xl bg-white border border-gray-100 shadow-lg overflow-hidden mb-8">
+          <div className="grid gap-6 p-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+            <div className="aspect-[4/3] w-full bg-gray-200 rounded-2xl"></div>
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <div className="h-6 w-20 bg-gray-200 rounded-full"></div>
+                <div className="h-6 w-24 bg-gray-200 rounded-full"></div>
+                <div className="h-6 w-28 bg-gray-200 rounded-full"></div>
+              </div>
+              <div className="h-10 w-3/4 bg-gray-200 rounded-lg"></div>
+              <div className="space-y-2">
+                <div className="h-4 w-full bg-gray-200 rounded"></div>
+                <div className="h-4 w-5/6 bg-gray-200 rounded"></div>
+                <div className="h-4 w-2/3 bg-gray-200 rounded"></div>
+              </div>
+              <div className="flex gap-4">
+                <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                <div className="h-4 w-20 bg-gray-200 rounded"></div>
+                <div className="h-4 w-16 bg-gray-200 rounded"></div>
+              </div>
+            </div>
           </div>
-          
-          <div className="relative h-96 w-full bg-gray-200">
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-300/60 to-transparent" />
-          </div>
-
- 
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 mt-8">
@@ -82,6 +97,25 @@ export function ProgramDetailSkeleton() {
                 ))}
               </div>
             </div>
+
+            {/* Reviews Skeleton */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+              <div className="h-8 w-56 bg-gray-200 rounded-lg mb-6"></div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {[...Array(2)].map((_, index) => (
+                  <div key={index} className="rounded-2xl border border-gray-100 bg-gray-50 p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                      <div className="h-4 w-16 bg-gray-200 rounded"></div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-4 w-full bg-gray-200 rounded"></div>
+                      <div className="h-4 w-3/4 bg-gray-200 rounded"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Right Column - Enrollment */}
@@ -114,6 +148,21 @@ export function ProgramDetailSkeleton() {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Related Programs Skeleton */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mt-8">
+          <div className="h-8 w-48 bg-gray-200 rounded-lg mb-6"></div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="rounded-3xl border border-gray-100 p-6">
+                <div className="h-52 w-full bg-gray-200 rounded-2xl mb-4"></div>
+                <div className="h-5 w-3/4 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 w-full bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 w-2/3 bg-gray-200 rounded"></div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -47,7 +47,7 @@ const SocialLoginButton = React.forwardRef<
       {...props}
     >
       <Image
-        src={finalIconSrc || "/placeholder.svg"}
+        src={finalIconSrc || "./images/placeholder.svg"}
         alt={`${finalLabel} Icon`}
         width={25}
         height={25}

@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "mednovacare.com",
+        hostname: "api.mednovacare.com",
         pathname: "/**",
       },
       

@@ -104,13 +104,13 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
             id: chatRequest.consultant_id,
             name: chatRequest.consultant_full_name,
             type: chatRequest.consultant_type,
-            image: chatRequest.consultant_image || "/default-avatar.png",
+            image: chatRequest.consultant_image || "./images/placeholder.svg",
           }
         : {
             id: chatRequest.patient_id,
             name: chatRequest.patient_full_name,
             type: "patient",
-            image: chatRequest.patient_image || "/default-avatar.png",
+            image: chatRequest.patient_image || "./images/placeholder.svg",
           },
     [isPatient, chatRequest]
   );

@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 // import { ProgramCard, type ProgramCardData } from "@/components/common/ProgramCard";
 import Link from "next/link";
 import { ProgramCard } from "@/shared/ui/components/ProgramCard";
-
+import { EmptyState } from "@/shared/ui/components/EmptyState";
 import { Program } from "@/features/programs/types/program";
 
 export default function ProgramsSection() {
@@ -23,11 +23,11 @@ export default function ProgramsSection() {
         const token = session?.accessToken;
 
         const res = await axios.get(
-          "https://mednovacare.com/api/programs/show/get-top-enrolled-program",
+          "https://api.mednovacare.com/api/programs/show/get-top-enrolled-program",
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            // headers: {
+            //   Authorization: `Bearer ${token}`,
+            // },
             params: {
               limit: 3,
             },
@@ -45,7 +45,7 @@ export default function ProgramsSection() {
         throw err;
       }
     },
-    enabled: status === "authenticated",
+    // enabled: status === "authenticated",
   });
 // تحويل البيانات من API إلى التنسيق المشترك
 const programs: Program[] = (data?.data || []).map((item: Program) => ({
@@ -100,34 +100,46 @@ const programs: Program[] = (data?.data || []).map((item: Program) => ({
     );
   }
 
-  // حالة الخطأ
+  // // حالة الخطأ
+  // if (error) {
+  //   return (
+  //     <section className="py-20 bg-gradient-to-b from-gray-50/50 to-white">
+  //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  //         <div className="text-center">
+  //           <div className="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-md mx-auto">
+  //             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+  //               <Award className="w-8 h-8 text-red-500" />
+  //             </div>
+  //             <h3 className="text-lg font-semibold text-red-800 mb-2">
+  //               حدث خطأ
+  //             </h3>
+  //             <p className="text-red-600 mb-4">تعذر تحميل البرامج التأهيلية</p>
+  //             <Button
+  //               variant="outline"
+  //               className="border-red-300 text-red-700 hover:bg-red-50"
+  //               onClick={() => window.location.reload()}
+  //             >
+  //               إعادة المحاولة
+  //             </Button>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </section>
+  //   );
+  // }
   if (error) {
     return (
-      <section className="py-20 bg-gradient-to-b from-gray-50/50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-md mx-auto">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="w-8 h-8 text-red-500" />
-              </div>
-              <h3 className="text-lg font-semibold text-red-800 mb-2">
-                حدث خطأ
-              </h3>
-              <p className="text-red-600 mb-4">تعذر تحميل البرامج التأهيلية</p>
-              <Button
-                variant="outline"
-                className="border-red-300 text-red-700 hover:bg-red-50"
-                onClick={() => window.location.reload()}
-              >
-                إعادة المحاولة
-              </Button>
-            </div>
-          </div>
-        </div>
+      <section className="py-20 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-gray-50/50 to-white">
+        <EmptyState
+          type="error"
+          title="حدث خطأ"
+          description="تعذر تحميل البرامج التأهيلية"
+          actionText="إعادة المحاولة"
+          onAction={() => window.location.reload()}
+        />
       </section>
     );
   }
-
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50/50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

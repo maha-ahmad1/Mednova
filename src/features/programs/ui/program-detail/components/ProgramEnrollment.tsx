@@ -10,16 +10,20 @@ interface ProgramEnrollmentProps {
 
 export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
   return (
-    <div className="sticky top-8 space-y-4">
+    <div id="program-enrollment" className="sticky top-8 space-y-4">
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
         <div className="mb-6">
-          <div className="text-4xl font-bold text-[#32A88D] mb-2">{program.price} ر.ع.</div>
+          <div className="text-3xl font-bold text-[#32A88D] mb-2">{program.price} ر.ع.</div>
           <p className="text-sm text-gray-600">سعر البرنامج الكامل</p>
         </div>
 
         <Button className="w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl py-6 text-lg font-bold transition-all duration-300 shadow-lg hover:shadow-xl mb-3">
           اشترك الآن
         </Button>
+
+        <p className="text-xs text-gray-500 text-center mb-4">
+          ضمان استرداد خلال 30 يوماً • دفع آمن عبر Mednova
+        </p>
 
         <div className="flex gap-2">
           <Button variant="outline" className="flex-1 rounded-xl bg-transparent">

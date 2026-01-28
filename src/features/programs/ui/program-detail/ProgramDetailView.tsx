@@ -1,32 +1,34 @@
-"use client"
+"use client";
 
-import type { ProgramDetail } from "@/features/programs/types/program"
-import { useProgramDetailQuery } from "@/features/programs/hooks"
-import { ProgramDetailHeader } from "./components/ProgramDetailHeader"
-import { ProgramDetailContent } from "./components/ProgramDetailContent"
-import { ProgramVideos } from "./components/ProgramVideos"
-import { ProgramEnrollment } from "./components/ProgramEnrollment"
-import { CourseReviews } from "./components/CourseReviews"
-import { RelatedCourses } from "./components/RelatedCourses"
-import { ErrorState } from "@/shared/ui/components/states/ErrorState"
-import { ProgramDetailSkeleton } from "./components/ProgramDetailSkeleton"
+import type { ProgramDetail } from "@/features/programs/types/program";
+import { useProgramDetailQuery } from "@/features/programs/hooks";
+import { ProgramDetailHeader } from "./components/ProgramDetailHeader";
+import { ProgramDetailContent } from "./components/ProgramDetailContent";
+import { ProgramVideos } from "./components/ProgramVideos";
+import { ProgramEnrollment } from "./components/ProgramEnrollment";
+import { CourseReviews } from "./components/CourseReviews";
+import { RelatedCourses } from "./components/RelatedCourses";
+import { ErrorState } from "@/shared/ui/components/states/ErrorState";
+import { ProgramDetailSkeleton } from "./components/ProgramDetailSkeleton";
 
 interface ProgramDetailViewProps {
-  programId: number
+  programId: number;
 }
 
-export function ProgramDetailView({ programId }: ProgramDetailViewProps): React.ReactNode {
-  const { data, isLoading, error } = useProgramDetailQuery(programId)
+export function ProgramDetailView({
+  programId,
+}: ProgramDetailViewProps): React.ReactNode {
+  const { data, isLoading, error } = useProgramDetailQuery(programId);
 
   if (isLoading) {
-    return <ProgramDetailSkeleton />
+    return <ProgramDetailSkeleton />;
   }
 
   if (error || !data?.success || !data?.data) {
-    return <ErrorState />
+    return <ErrorState />;
   }
 
-  const program: ProgramDetail = data.data
+  const program: ProgramDetail = data.data;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -40,8 +42,16 @@ export function ProgramDetailView({ programId }: ProgramDetailViewProps): React.
 
             {/* Reviews Section */}
             <CourseReviews
+              programId={program.id}
               rating={program.ratings_avg_rating ?? 0}
               reviewCount={program.ratings_count ?? 0}
+              starRatings={{
+                "5_stars": program["5_stars"],
+                "4_stars": program["4_stars"],
+                "3_stars": program["3_stars"],
+                "2_stars": program["2_stars"],
+                "1_stars": program["1_stars"],
+              }}
             />
           </div>
 
@@ -56,5 +66,5 @@ export function ProgramDetailView({ programId }: ProgramDetailViewProps): React.
         </div>
       </div>
     </div>
-  )
+  );
 }

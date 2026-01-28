@@ -7,7 +7,7 @@ export const useProgramsQuery = () => {
 
   return useQuery({
     queryKey: ["programs"],
-    queryFn: () => getPrograms(session?.accessToken),
-    enabled: status === "authenticated",
+    queryFn: () => getPrograms(),
+    //  enabled: status === "authenticated",
   })
 }

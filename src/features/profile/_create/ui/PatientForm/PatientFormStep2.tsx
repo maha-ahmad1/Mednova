@@ -395,7 +395,7 @@ export function PatientFormStep2({
                   <Image
                     width={100}
                     height={100}
-                    src={imagePreview || "/placeholder.svg"}
+                    src={imagePreview || "./images/placeholder.svg"}
                     alt="معاينة الصورة"
                     className="w-24 h-24 rounded-full object-cover border"
                   />

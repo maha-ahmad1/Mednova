@@ -25,9 +25,9 @@ export default function ProgramsSection() {
         const res = await axios.get(
           "https://api.mednovacare.com/api/programs/show/get-top-enrolled-program",
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            // headers: {
+            //   Authorization: `Bearer ${token}`,
+            // },
             params: {
               limit: 3,
             },
@@ -45,7 +45,7 @@ export default function ProgramsSection() {
         throw err;
       }
     },
-    enabled: status === "authenticated",
+    // enabled: status === "authenticated",
   });
 // تحويل البيانات من API إلى التنسيق المشترك
 const programs: Program[] = (data?.data || []).map((item: Program) => ({

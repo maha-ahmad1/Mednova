@@ -92,7 +92,7 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({ currentI
       <div className="relative group">
         <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
           {currentImage && currentImage !== "/images/placeholder.svg" ? (
-            <Image  src={currentImage || "/placeholder.svg"} alt="Profile" width={100} height={100} className="object-cover w-full h-full" />
+            <Image  src={currentImage || "./images/placeholder.svg"} alt="Profile" width={100} height={100} className="object-cover w-full h-full" />
           ) : (
             <div className="flex items-center justify-center w-full h-full bg-gray-100 text-gray-400">
               <User className="w-8 h-8" />
@@ -119,7 +119,7 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({ currentI
             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#32A88D]/20">
               {modalPreviewImage && modalPreviewImage !== "/images/placeholder.svg" ? (
                 <Image
-                  src={modalPreviewImage || "/placeholder.svg"}
+                  src={modalPreviewImage || "./images/placeholder.svg"}
                   alt="Preview"
                   className="object-cover w-full h-full"
                   width={100}

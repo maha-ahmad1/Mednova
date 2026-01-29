@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Review } from "@/features/programs/types/reviews";
 
 export function useReviewsPagination(
@@ -6,13 +6,12 @@ export function useReviewsPagination(
   reviewsPerPage: number = 2
 ) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [visibleReviews, setVisibleReviews] = useState<Review[]>([]);
   const totalPages = Math.ceil(reviews.length / reviewsPerPage);
 
-  useEffect(() => {
+  const visibleReviews = useMemo(() => {
     const startIndex = (currentPage - 1) * reviewsPerPage;
     const endIndex = startIndex + reviewsPerPage;
-    setVisibleReviews(reviews.slice(startIndex, endIndex));
+    return reviews.slice(startIndex, endIndex);
   }, [currentPage, reviews, reviewsPerPage]);
 
   const goToNextPage = () => {

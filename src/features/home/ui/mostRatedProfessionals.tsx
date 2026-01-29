@@ -32,7 +32,7 @@ type TypeItem = {
 export default function MostRatedProfessionals() {
   const { data, isLoading, error } = useFetcher<TypeItem[]>(
     ["mostRatedProfessionals"],
-    "/api/rating?typeServiceProvider=therapist"
+    "/api/ratings/top-rated?typeServiceProvider=therapist"
   );
 
   const items = data?.slice(0, 4) || [];

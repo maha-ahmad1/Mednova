@@ -18,11 +18,11 @@ export interface Program {
   enrollments_count: number | null;
   ratings_avg_rating: number | null;
   ratings_count: number | null;
-  "5_stars": number
-  "4_stars": number
-  "3_stars": number
-  "2_stars": number
-  "1_stars": number
+  "5_stars": number;
+  "4_stars": number;
+  "3_stars": number;
+  "2_stars": number;
+  "1_stars": number;
 }
 
 export interface ProgramsResponse {
@@ -39,14 +39,15 @@ export interface ProgramFilters {
 }
 
 export interface ProgramVideo {
-  id: number
-  title: string
-  description: string
-  video_path: string
-  is_free: number | null
-  duration_minute: number | null
-  order: number
-  status: string | null
+  id: number;
+  title: string;
+  description: string;
+  video_path: string;
+  is_free: number | null;
+  duration_minute: number | null;
+  order: number;
+  status: string | null;
+  is_program_intro?: number | null;
 }
 
 export interface ProgramDetail extends Program {

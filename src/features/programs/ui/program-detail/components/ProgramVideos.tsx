@@ -40,7 +40,7 @@ export function ProgramVideos({ videos }: ProgramVideosProps) {
           >
             {selectedAccess.isLocked ? (
               <div className="flex h-full w-full items-center justify-center bg-gray-900">
-                <PlayCircle className="h-12 w-12 text-white/70" />
+                {/* <PlayCircle className="h-12 w-12 text-white/70" /> */}
               </div>
             ) : (
               <video key={selectedVideo.id} controls className="h-full w-full" poster={selectedVideo.video_path}>

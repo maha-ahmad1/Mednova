@@ -37,7 +37,7 @@ export function ProgramDetailHeader({ program }: ProgramDetailHeaderProps) {
             />
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-16">
             <div className="flex flex-wrap items-center gap-3">
               {program.status === "published" && program.is_approved === 1 && (
                 <Badge className="rounded-full bg-[#32A88D]/15 px-3 py-1 text-xs font-semibold text-[#1F6069]">

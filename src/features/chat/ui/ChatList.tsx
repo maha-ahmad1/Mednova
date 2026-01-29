@@ -172,7 +172,7 @@
 //                   <div className="relative">
 //                     <Avatar className="w-12 h-12 border-2 border-[#32A88D]/20 group-hover:border-[#32A88D] transition-colors">
 //                       <AvatarImage 
-//                         src={chat.patient_image || chat.consultant_image || "./images/placeholder.svg"} 
+//                         src={chat.patient_image || chat.consultant_image || "/images/placeholder.svg"} 
 //                       />
 //                       <AvatarFallback className="bg-[#32A88D]/10 text-[#32A88D]">
 //                         {chat.patient_full_name?.charAt(0) || chat.consultant_full_name?.charAt(0)}

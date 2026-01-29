@@ -46,7 +46,7 @@ export default function ProviderInfoCard({
         <div className="flex flex-col items-center text-center mb-4 sm:mb-6">
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#32A88D] to-[#2a8a7a] rounded-full flex items-center justify-center mb-3 sm:mb-4 overflow-hidden">
             <Image
-              src={getProviderImage() || "./images/placeholder.svg"}
+              src={getProviderImage() || "/images/placeholder.svg"}
               alt={provider?.full_name || (consultantType === "therapist" ? "المختص" : "المركز")}
               width={80}
               height={80}

@@ -38,7 +38,10 @@ export function ProgramDetailView({
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <ProgramDetailContent program={program} />
-            <ProgramVideos videos={program.videos} />
+            <ProgramVideos
+              coverImage={program.cover_image}
+              videos={program.videos}
+            />
 
             {/* Reviews Section */}
             <CourseReviews

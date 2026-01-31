@@ -67,7 +67,7 @@
 //         {/* Price and Actions */}
 //         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
 //           <div className="flex items-center gap-2">
-//             <div className="text-2xl font-bold text-[#32A88D]">{program.price} ر.ع.</div>
+//             <div className="text-2xl font-bold text-[#32A88D]">{program.price} <LightIcon className="w-6 h-6" /></div>
 //           </div>
 
 //           <Link href={`/programs/${program.id}`}>

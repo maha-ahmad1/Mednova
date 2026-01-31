@@ -9,7 +9,6 @@ import { Program } from "@/features/programs/types/program";
 import { RatingBadge } from "@/shared/ui/components/RatingBadge";
 import { LockedContentOverlay } from "@/shared/ui/components/LockedContentOverlay";
 import { getProgramAccessState } from "@/features/programs/utils/access";
-
 // export interface ProgramCardData {
 //   id: number;
 //   title: string;
@@ -134,8 +133,15 @@ export function ProgramCard({
         <div className="mt-auto pt-4 border-t border-gray-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="text-2xl font-bold text-[#32A88D]">
-                {price} ر.ع.
+              <div className="flex items-center gap-1 text-2xl font-bold text-[#32A88D]">
+                <span>{price}</span>
+                <Image
+                  width={16}
+                  height={16}
+                  src="/images/Light22.svg"
+                  className="w-6 h-6"
+                  alt="Light icon"
+                />
               </div>
             </div>
 

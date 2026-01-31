@@ -13,6 +13,7 @@ import { TherapistLocationCard } from "./TherapistLocationCard";
 import { TherapistBioCard } from "./TherapistBioCard";
 import { TherapistscheduleCard } from "./TherapistscheduleCard";
 import { TherapistLicensesCard } from "./TherpistLicensesCard";
+import { TherapistPricingCard } from "./TherapistPricingCard";
 
 export default function TherapistInfo() {
   const { data: session } = useSession();
@@ -50,6 +51,8 @@ export default function TherapistInfo() {
           <TherapistscheduleCard details={profile} userId={userId!} refetch={refetch} />
           <TherapistLocationCard details={profile} userId={userId!} refetch={refetch} />
         </div>
+
+        <TherapistPricingCard profile={profile} userId={userId!} refetch={refetch} />
 
         <TherapistBioCard details={profile.therapist_details} userId={userId!} refetch={refetch} />
       </div>

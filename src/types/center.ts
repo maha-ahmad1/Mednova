@@ -6,6 +6,10 @@ export interface CenterProfile {
   birth_date?: string
   gender?: "Male" | "Female"
   image?: string
+  name_center?: string
+  video_consultation_price?: string | number
+  chat_consultation_price?: string | number
+  currency?: string
   timezone:string
 
   center_details?: {

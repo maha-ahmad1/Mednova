@@ -12,12 +12,15 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { ConsultationRequest } from "@/types/consultation";
+// import {
+//   getStatusBadge,
+//   getTypeIcon,
+//   getRemainingTime,
+// } from "@/lib/consultation-helpers";
 import {
   getStatusBadge,
   getTypeIcon,
-  getRemainingTime,
-} from "@/lib/consultation-helpers";
-
+} from "@/features/consultations/utils/consultation-helpers";
 interface ConsultationListProps {
   requests: ConsultationRequest[];
   selectedRequest: ConsultationRequest | null;

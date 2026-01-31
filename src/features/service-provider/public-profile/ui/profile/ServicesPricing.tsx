@@ -1,5 +1,5 @@
 import { ServiceProvider } from "@/features/service-provider/types/provider";
-
+import Image from "next/image";
 interface ServicesPricingProps {
   services?: ServiceProvider["services"];
 }
@@ -11,7 +11,7 @@ export default function ServicesPricing({ services }: ServicesPricingProps) {
       name: "استشارة نصية ",
       description: "دردشة عبر المحادثة ",
       price: 30,
-    //   duration: "30 دقيقة",
+      //   duration: "30 دقيقة",
     },
     {
       id: 2,
@@ -22,11 +22,12 @@ export default function ServicesPricing({ services }: ServicesPricingProps) {
     },
   ];
 
-  const displayServices = services && services.length > 0 ? services : defaultServices;
+  const displayServices =
+    services && services.length > 0 ? services : defaultServices;
 
   return (
     <div className="space-y-6 ">
-      <h3 className="text-gray-500 text-sm mb-4"> :أسعار الجلسات   </h3>
+      <h3 className="text-gray-500 text-sm mb-4"> :أسعار الجلسات </h3>
       <div className="space-y-4">
         {displayServices.map((service) => (
           <div
@@ -38,8 +39,16 @@ export default function ServicesPricing({ services }: ServicesPricingProps) {
               <div className="text-sm text-gray-500">{service.description}</div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-[#32A88D]">
-                ${service.price}
+              <div className="flex items-center text-2xl font-bold text-[#32A88D]">
+                <Image
+                  src="/images/Light22.svg"
+                  width={14}
+                  height={14}
+                  className="w-6 h-6 translate-y-[1px] ml-1"
+                  alt="OMR currency"
+                />
+                                <span>{service.price}</span>
+
               </div>
               <div className="text-sm text-gray-500">{service.duration}</div>
             </div>

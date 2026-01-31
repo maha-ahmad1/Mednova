@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Check, Heart, Share2 } from "lucide-react"
-import type { ProgramDetail } from "@/features/programs/types/program"
-
+import { Button } from "@/components/ui/button";
+import { Check, Heart, Share2 } from "lucide-react";
+import type { ProgramDetail } from "@/features/programs/types/program";
+import Image from "next/image";
 interface ProgramEnrollmentProps {
-  program: ProgramDetail
+  program: ProgramDetail;
 }
 
 export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
@@ -13,7 +13,17 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
     <div id="program-enrollment" className="sticky top-8 space-y-4">
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
         <div className="mb-6">
-          <div className="text-3xl font-bold text-[#32A88D] mb-2">{program.price} ر.ع.</div>
+          <div className="flex items-center gap-1 text-3xl font-bold text-[#32A88D] mb-2">
+            <span>{program.price}</span>
+            <Image
+              width={16}
+              height={16}
+              src="/images/Light22.svg"
+              className="w-6 h-6 "
+              alt="Light icon"
+            />
+          </div>
+
           <p className="text-sm text-gray-600">سعر البرنامج الكامل</p>
         </div>
 
@@ -26,10 +36,16 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
         </p>
 
         <div className="flex gap-2">
-          <Button variant="outline" className="flex-1 rounded-xl bg-transparent">
+          <Button
+            variant="outline"
+            className="flex-1 rounded-xl bg-transparent"
+          >
             <Heart className="w-5 h-5" />
           </Button>
-          <Button variant="outline" className="flex-1 rounded-xl bg-transparent">
+          <Button
+            variant="outline"
+            className="flex-1 rounded-xl bg-transparent"
+          >
             <Share2 className="w-5 h-5" />
           </Button>
         </div>
@@ -42,13 +58,17 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
             <div className="w-5 h-5 rounded-full bg-[#32A88D]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
               <Check className="w-3 h-3 text-[#32A88D]" />
             </div>
-            <span className="text-gray-700">الوصول الكامل لجميع محتويات البرنامج</span>
+            <span className="text-gray-700">
+              الوصول الكامل لجميع محتويات البرنامج
+            </span>
           </li>
           <li className="flex items-start gap-3">
             <div className="w-5 h-5 rounded-full bg-[#32A88D]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
               <Check className="w-3 h-3 text-[#32A88D]" />
             </div>
-            <span className="text-gray-700">{program.videos.length} فيديو تعليمي</span>
+            <span className="text-gray-700">
+              {program.videos.length} فيديو تعليمي
+            </span>
           </li>
           <li className="flex items-start gap-3">
             <div className="w-5 h-5 rounded-full bg-[#32A88D]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -65,5 +85,5 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
         </ul>
       </div>
     </div>
-  )
+  );
 }

@@ -52,7 +52,7 @@ export default function TherapistInfo() {
           <TherapistLocationCard details={profile} userId={userId!} refetch={refetch} />
         </div>
 
-        <TherapistPricingCard profile={profile} userId={userId!} refetch={refetch} />
+        <TherapistPricingCard details={profile.therapist_details} userId={userId!} refetch={refetch} />
 
         <TherapistBioCard details={profile.therapist_details} userId={userId!} refetch={refetch} />
       </div>

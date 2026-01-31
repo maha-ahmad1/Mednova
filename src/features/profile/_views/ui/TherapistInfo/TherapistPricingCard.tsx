@@ -12,7 +12,7 @@ import { Loader2, Edit, Video, MessageSquare, BadgeDollarSign } from "lucide-rea
 import { Badge } from "@/components/ui/badge";
 
 type TherapistPricingCardProps = {
-  profile: TherapistProfile;
+  details: TherapistProfile["therapist_details"];
   userId: string;
   refetch: () => void;
 };
@@ -20,7 +20,7 @@ type TherapistPricingCardProps = {
 const currencyOptions = [{ value: "OMR", label: "ريال عماني (OMR)" }];
 
 export function TherapistPricingCard({
-  profile,
+  details,
   userId,
   refetch,
 }: TherapistPricingCardProps) {
@@ -38,11 +38,13 @@ export function TherapistPricingCard({
 
   useEffect(() => {
     setValues({
-      video_consultation_price: profile.video_consultation_price?.toString() || "",
-      chat_consultation_price: profile.chat_consultation_price?.toString() || "",
-      currency: profile.currency || "",
+      video_consultation_price:
+        details?.video_consultation_price?.toString() || "",
+      chat_consultation_price:
+        details?.chat_consultation_price?.toString() || "",
+      currency: details?.currency || "",
     });
-  }, [profile]);
+  }, [details?.video_consultation_price, details?.chat_consultation_price, details?.currency]);
 
   const startEdit = () => {
     setEditing(true);
@@ -51,9 +53,11 @@ export function TherapistPricingCard({
   const cancelEdit = () => {
     setEditing(false);
     setValues({
-      video_consultation_price: profile.video_consultation_price?.toString() || "",
-      chat_consultation_price: profile.chat_consultation_price?.toString() || "",
-      currency: profile.currency || "",
+      video_consultation_price:
+        details?.video_consultation_price?.toString() || "",
+      chat_consultation_price:
+        details?.chat_consultation_price?.toString() || "",
+      currency: details?.currency || "",
     });
     setServerErrors({});
   };

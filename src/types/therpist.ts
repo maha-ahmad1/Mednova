@@ -33,6 +33,9 @@ export type TherapistProfile = {
     certificate_file?: string | null;
     license_file?: string | null;
     bio?: string | null;
+    video_consultation_price?: string | number | null;
+    chat_consultation_price?: string | number | null;
+    currency?: string | null;
   } | null;
   location_details?: {
     country?: string | null;

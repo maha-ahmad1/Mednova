@@ -60,7 +60,9 @@ export function CenterFormStep1({
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(
-    formData.image && typeof formData.image === "string" ? formData.image : null
+    formData.image && typeof formData.image === "string"
+      ? formData.image
+      : null,
   );
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

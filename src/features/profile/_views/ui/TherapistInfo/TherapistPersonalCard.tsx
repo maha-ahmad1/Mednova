@@ -139,13 +139,16 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
     }
   };
 
-  const Field: React.FC<{ label: string; value?: React.ReactNode }> = ({
+
+
+  const Field: React.FC<{ label: string; value?: React.ReactNode ; className?: string}> = ({
     label,
     value,
+    className = ""  
   }) => (
-    <div className="flex flex-col">
-      <span className="text-sm text-gray-500 mb-2">{label}</span>
-      <span className="text-gray-800 font-medium">{value ?? "-"}</span>
+    <div className={`flex flex-col ${className}`}>
+      <span className="text-sm text-gray-500 mb-2">{label}</span>   
+      <span className={`text-gray-800 font-medium ${className}`}>{value ?? "-"}</span>
     </div>
   );
 

@@ -11,6 +11,7 @@ import { CenterSpecialtiesCard } from "./CenterSpecialtiesCard";
 import { CenterRegistrationCard } from "./CenterRegistrationCard";
 import { CenterScheduleCard } from "./CenterScheduleCard";
 import { CenterLocationCard } from "./CenterLocationCard";
+import { CenterPricingCard } from "./CenterPricingCard";
 
 export default function CenterInfo() {
   const { data: session } = useSession();
@@ -77,6 +78,8 @@ export default function CenterInfo() {
             refetch={refetch}
           />
         </div>
+
+        <CenterPricingCard profile={profile} userId={userId!} refetch={refetch} />
 
         <CenterBioCard
           details={profile.center_details}

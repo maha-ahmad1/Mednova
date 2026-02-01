@@ -15,6 +15,10 @@ export type TherapistProfile = {
   birth_date?: string;
   gender?: string;
   type_account?: string;
+  timezone?: string | null;
+  video_consultation_price?: string | number | null;
+  chat_consultation_price?: string | number | null;
+  currency?: string | null;
   // image can be a URL (string) or a File when editing locally
   image?: string | File;
   therapist_details?: {
@@ -29,6 +33,9 @@ export type TherapistProfile = {
     certificate_file?: string | null;
     license_file?: string | null;
     bio?: string | null;
+    video_consultation_price?: string | number | null;
+    chat_consultation_price?: string | number | null;
+    currency?: string | null;
   } | null;
   location_details?: {
     country?: string | null;

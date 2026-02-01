@@ -8,7 +8,13 @@ export const personalSchema = z.object({
     .string()
     .refine((val) => !isNaN(Date.parse(val)), "تاريخ غير صالح"),
   gender: z.enum(["male", "female"] as const, { message: "الجنس مطلوب" }),
-  // image: z.instanceof(File).optional().refine((file) => !file || file.size < 5 * 1024 * 1024, 'الصورة كبيرة جدًا (أقل من 5MB)'),
+  image: z
+    .instanceof(File)
+    .optional()
+    .or(z.null())
+    .refine((file) => !file || file.size < 5 * 1024 * 1024, {
+      message: "الصورة كبيرة جدًا (أقل من 5MB)",
+    }),
 });
 
 export const bioSchema = z.object({
@@ -69,6 +75,7 @@ export const scheduleSchema = z
       .min(1, "يجب اختيار يوم عمل واحد على الأقل"),
     start_time_morning: z.string().min(1, "بداية الدوام الصباحي مطلوبة"),
     end_time_morning: z.string().min(1, "نهاية الدوام الصباحي مطلوبة"),
+    timezone: z.string().min(1, "حقل المنطقة الزمنية مطلوب."),
     is_have_evening_time: z.union([z.literal(0), z.literal(1)]),
     start_time_evening: z.string().optional(),
     end_time_evening: z.string().optional(),
@@ -108,9 +115,18 @@ export const personal2Schema = z.object({
   country: z.string().min(2, "الدولة مطلوبة"),
   city: z.string().min(2, "المدينة مطلوبة"),
   formatted_address: z.string().min(3, "العنوان يجب أن يكون أكثر من 3 أحرف"),
+  relationship: z.string().optional(),
+  image: z
+    .instanceof(File)
+    .optional()
+    .or(z.null())
+    .refine((file) => !file || file.size < 5 * 1024 * 1024, {
+      message: "الصورة كبيرة جدًا (أقل من 5MB)",
+    }),
 });
 
 export const centerSchema = z.object({
+  name_center: z.string().min(1, "اسم المركز مطلوب"),
   birth_date: z
     .string()
     .nonempty("تاريخ التأسيس مطلوب")
@@ -118,18 +134,24 @@ export const centerSchema = z.object({
 
   gender: z.enum(["Male", "Female"] as const, { message: "النوع مطلوب" }),
 
-  // image: z
-  //   .instanceof(File)
-  //   .optional()
-  //   .refine(
-  //     (file) =>
-  //       !file || ["image/jpeg", "image/png", "image/webp"].includes(file.type),
-  //     "يجب أن تكون الصورة بصيغة PNG, JPEG أو WEBP"
-  //   )
-  //   .refine(
-  //     (file) => !file || file.size <= 5 * 1024 * 1024,
-  //     "حجم الصورة لا يتجاوز 5MB"
-  //   ),
+  image: z
+    .instanceof(File)
+    .optional()
+    .or(z.null())
+    .refine(
+      (file) => !file || file.size <= 5 * 1024 * 1024,
+      "حجم الصورة لا يتجاوز 5MB"
+    ),
+});
+
+export const pricingSchema = z.object({
+  video_consultation_price: z
+    .string()
+    .min(1, "حقل سعر الاستشارة المرئية مطلوب."),
+  chat_consultation_price: z
+    .string()
+    .min(1, "حقل سعر الاستشارة النصية مطلوب."),
+  currency: z.string().min(1, "حقل العملة مطلوب."),
 });
 
 

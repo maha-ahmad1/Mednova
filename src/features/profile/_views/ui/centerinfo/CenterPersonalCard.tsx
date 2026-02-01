@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import * as z from "zod"
-import { FormInput, FormSelect } from "@/shared/ui/forms"
+import { FormFileUpload, FormInput, FormSelect } from "@/shared/ui/forms"
 import { FormPhoneInput } from "@/shared/ui/forms/components/FormPhoneInput"
 import { Button } from "@/components/ui/button"
 import { Loader2, Edit, Phone, Calendar, User } from "lucide-react"
@@ -13,6 +13,7 @@ import type { CenterProfile } from "@/types/center"
 import { useUpdateCenter } from "@/features/profile/_views/hooks/useUpdateCenter"
 import { centerSchema } from "@/lib/validation"
 import type { QueryObserverResult } from "@tanstack/react-query";
+import Image from "next/image"
 
 interface CenterPersonalCardProps {
   profile: CenterProfile
@@ -23,10 +24,11 @@ interface CenterPersonalCardProps {
 
 export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile, userId, refetch }) => {
   const [editing, setEditing] = useState(false)
-  type FormValues = Partial<Record<"phone" | "birth_date" | "gender" | "countryCode" | "image", unknown>>
+  type FormValues = Partial<Record<"phone" | "birth_date" | "gender" | "countryCode" | "image" | "name_center", unknown>>
   const [formValues, setFormValues] = useState<FormValues>({})
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({})
   const [localProfile, setLocalProfile] = useState<Partial<CenterProfile> | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   const { update, isUpdating } = useUpdateCenter({
     onValidationError: (errs) => setServerErrors(errs || {}),
@@ -47,12 +49,14 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
     const phoneNumber = match ? match[2]?.trim() : (source?.phone ?? "")
 
     setFormValues({
+      name_center: source?.name_center ?? "",
       birth_date: source?.birth_date ?? "",
       gender: source?.gender ?? "",
       phone: phoneNumber,
       countryCode: countryCode,
       image: null,
     })
+    setImagePreview(typeof source?.image === "string" ? source.image : null)
     setEditing(true)
   }
 
@@ -60,6 +64,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
     setEditing(false)
     setFormValues({})
     setServerErrors({})
+    setImagePreview(null)
   }
 
   const handleSave = async () => {
@@ -86,6 +91,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
 
       const payload = {
         customer_id: String(userId),
+        name_center: formValues.name_center as string | undefined,
         phone,
         birth_date: formValues.birth_date as string | undefined,
         gender: formValues.gender as string | undefined,
@@ -119,7 +125,9 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
   const getFieldError = (field: string) => {
     const serverError = serverErrors[field]
     const shape = centerSchema.shape as Record<string, z.ZodTypeAny>
-    const clientError = shape[field]?.safeParse((formValues as Record<string, unknown>)[field] ?? "").error?.issues?.[0]?.message
+    const rawValue = (formValues as Record<string, unknown>)[field]
+    const valueForParse = field === "image" ? rawValue ?? null : rawValue ?? ""
+    const clientError = shape[field]?.safeParse(valueForParse).error?.issues?.[0]?.message
     return serverError ?? clientError
   }
 
@@ -191,6 +199,12 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
       {!editing ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FieldDisplay
+            icon={<User className="w-5 h-5" />}
+            label="اسم المركز"
+            value={displayProfile.name_center || "-"}
+          />
+
+          <FieldDisplay
             icon={<Phone className="w-5 h-5" />}
             label="رقم الهاتف"
             value={
@@ -227,6 +241,25 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
               </Badge>
             }
           />
+
+          <FieldDisplay
+            icon={<User className="w-5 h-5" />}
+            label="صورة المركز"
+            value={
+              displayProfile.image ? (
+                <div className="relative h-16 w-16 overflow-hidden rounded-lg border">
+                  <Image
+                    src={displayProfile.image}
+                    alt="Center profile"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                "-"
+              )
+            }
+          />
         </div>
       ) : (
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
@@ -236,6 +269,15 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
           </h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormInput
+              label="اسم المركز"
+              value={formValues.name_center as string | undefined}
+              onChange={(e) => setFormValues((s) => ({ ...s, name_center: e.target.value }))}
+              rtl
+              error={getFieldError("name_center")}
+              className="bg-white"
+            />
+
             <FormPhoneInput
               label="رقم الهاتف"
               countryCodeValue={String((formValues.countryCode as string) ?? "+968")}
@@ -272,6 +314,29 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({ profile,
               className="bg-white"
               placeholder="اختر النوع"
             />
+
+            <div className="md:col-span-2 space-y-3">
+              <FormFileUpload
+                label="صورة المركز"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null
+                  setFormValues((s) => ({ ...s, image: file }))
+                  setImagePreview(file ? URL.createObjectURL(file) : null)
+                }}
+                error={getFieldError("image")}
+                className="bg-white"
+              />
+              {imagePreview && (
+                <div className="relative h-24 w-24 overflow-hidden rounded-lg border">
+                  <Image
+                    src={imagePreview}
+                    alt="Center preview"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* معاينة سريعة للبيانات */}

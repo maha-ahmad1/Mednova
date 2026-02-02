@@ -75,20 +75,13 @@ export function CenterPricingCard({ profile, userId, refetch }: CenterPricingCar
       return
     }
 
-    // إرسال البيانات بما يتناسب مع هيكل الـ API
     const payload: CenterFormValues = {
       customer_id: String(userId),
-      // إذا كان الـ API يتوقع هذه الحقول في المستوى العلوي
       video_consultation_price: values.video_consultation_price,
       chat_consultation_price: values.chat_consultation_price,
       currency: values.currency,
-      // أو إذا كان يتوقعها داخل center_details
-      center_details: {
-        video_consultation_price: values.video_consultation_price,
-        chat_consultation_price: values.chat_consultation_price,
-        currency: values.currency,
-      }
-    } as any // استخدم any مؤقتاً حتى تتأكد من الهيكل
+    
+    } as CenterFormValues
 
     try {
       await update(payload)

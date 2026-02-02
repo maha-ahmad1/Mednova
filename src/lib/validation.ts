@@ -165,25 +165,24 @@ export const centerSpecialtiesSchema = z.object({
 
 
 
-export const registrationSchema = z
-  .object({
-    has_commercial_registration: z.boolean(),
-    commercial_registration_number: z.string().optional(),
-    commercial_registration_authority: z.string().optional(),
-    license_number: z.string().min(1, "رقم الترخيص مطلوب"),
-    license_authority: z.string().min(1, "جهة الترخيص مطلوبة"),
-  })
-  .refine(
-    (data) => {
-      if (data.has_commercial_registration) {
-        return !!data.commercial_registration_number && !!data.commercial_registration_authority
-      }
-      return true
-    },
-    {
-      message: "رقم السجل التجاري وجهة السجل التجاري مطلوبان",
-      path: ["commercial_registration_number"],
-    },
-  )
+export const registrationSchema = z.object({
+  has_commercial_registration: z.boolean(),
+  commercial_registration_number: z.string().optional(),
+  commercial_registration_authority: z.string().optional(),
+  license_number: z.string().min(1, "رقم الترخيص مطلوب"),
+  license_authority: z.string().min(1, "جهة الترخيص مطلوبة"),
+})
+.refine((data) => {
+  return !data.has_commercial_registration || !!data.commercial_registration_number
+}, {
+  message: "رقم السجل التجاري مطلوب",
+  path: ["commercial_registration_number"],
+})
+.refine((data) => {
+  return !data.has_commercial_registration || !!data.commercial_registration_authority
+}, {
+  message: "جهة السجل التجاري مطلوبة",
+  path: ["commercial_registration_authority"],
+});
 
   

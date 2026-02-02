@@ -1,5 +1,5 @@
 "use client";
-import { FormInput, FormSelect } from "@/shared/ui/forms";
+import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { Controller, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,8 +8,6 @@ import { Mail, User, Phone, Home, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -55,24 +53,6 @@ export function TherapistFormStep1({
   const [profileImage, setProfileImage] = useState<File | null>(
     formData.image && typeof formData.image !== "string" ? formData.image : null
   );
-  const [imagePreview, setImagePreview] = useState<string | null>(
-    formData.image && typeof formData.image === "string" ? formData.image : null
-  );
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setProfileImage(file);
-      methods.setValue("image", file, { shouldValidate: true });
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const removeImage = () => {
-    setProfileImage(null);
-    methods.resetField("image");
-    setImagePreview(null);
-  };
 
   const {
     handleSubmit,
@@ -195,32 +175,19 @@ export function TherapistFormStep1({
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <FormInput
+              <ProfileImageUpload
                 label="الصورة الشخصية"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
+                file={profileImage}
+                initialImage={typeof formData.image === "string" ? formData.image : null}
+                onChange={(file) => {
+                  setProfileImage(file);
+                  if (file) {
+                    methods.setValue("image", file, { shouldValidate: true });
+                  } else {
+                    methods.resetField("image");
+                  }
+                }}
               />
-
-              {imagePreview && (
-                <div className="relative w-32 h-32">
-                  <Image
-                    src={imagePreview}
-                    alt="Profile preview"
-                    fill
-                    className="rounded-lg object-cover"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    className="absolute top-1 right-1"
-                    onClick={removeImage}
-                  >
-                    إزالة
-                  </Button>
-                </div>
-              )}
             </div>
             <FormSubmitButton className="px-6 py-5 mt-4">
               التالي

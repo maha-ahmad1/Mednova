@@ -93,9 +93,11 @@ export default function PatientInfo() {
       gender: source.gender?.toLowerCase() ?? "",
       emergency_contact: emergencyNumber,
       emergencyCountryCode,
+      relationship: source.patient_details?.relationship ?? "",
       formatted_address: source.location_details?.formatted_address ?? "",
       country: source.location_details?.country ?? "",
       city: source.location_details?.city ?? "",
+      image: null,
     });
   };
 
@@ -113,7 +115,9 @@ export default function PatientInfo() {
 
     const fieldSchema = (schema.shape as Record<string, ZodTypeAny | undefined>)[field];
     if (fieldSchema) {
-      const result = fieldSchema.safeParse(formValues[field] ?? "");
+      const rawValue = formValues[field];
+      const valueForParse = field === "image" ? rawValue ?? null : rawValue ?? "";
+      const result = fieldSchema.safeParse(valueForParse);
       clientError = result.error?.issues[0]?.message;
     }
 
@@ -165,6 +169,8 @@ export default function PatientInfo() {
               ? "Female"
               : undefined,
           emergency_phone: emergencyPhone,
+          relationship: formValues.relationship as string | undefined,
+          image: formValues.image as File | undefined,
         };
 
         const locationPayload = {

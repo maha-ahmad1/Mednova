@@ -6,6 +6,7 @@ import {
   FormInput,
   FormPhoneInput,
   FormSelect,
+  ProfileImageUpload,
 } from "@/shared/ui/forms";
 import { Button } from "@/components/ui/button";
 import { Loader2, Edit } from "lucide-react";
@@ -16,6 +17,7 @@ import { useUpdateTherapist } from "@/features/profile/_views/hooks/useUpdateThe
 import { TherapistFormValues } from "@/app/api/therapist";
 import { personalSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
+import Image from "next/image";
 
 interface TherapistPersonalCardProps {
   profile: TherapistProfile;
@@ -114,6 +116,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
         birth_date: (formValues.birth_date as string) ?? undefined,
         gender: (formValues.gender as string) ?? undefined,
         phone: phoneWithCode,
+        image: formValues.image as File | undefined,
         customer_id: String(userId),
       } as unknown as TherapistFormValues;
       await update(payload);
@@ -155,8 +158,10 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
     const serverError = serverErrors[String(field)];
     const shape = personalSchema.shape as Record<string, z.ZodTypeAny>;
     const parser = shape[String(field)];
-    const clientError = parser?.safeParse(formValues[field] ?? "").error
-      ?.issues?.[0]?.message;
+    const rawValue = formValues[field];
+    const valueForParse =
+      field === "image" ? rawValue ?? null : rawValue ?? "";
+    const clientError = parser?.safeParse(valueForParse).error?.issues?.[0]?.message;
     return serverError ?? clientError;
   };
 
@@ -240,6 +245,23 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                   </Badge>
                 }
               />
+              <Field
+                label="الصورة الشخصية"
+                value={
+                  typeof displayProfile.image === "string" ? (
+                    <div className="relative h-16 w-16 overflow-hidden rounded-lg border">
+                      <Image
+                        src={displayProfile.image}
+                        alt="Profile"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    "-"
+                  )
+                }
+              />
             </div>
           ) : (
             <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
@@ -306,6 +328,21 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                   error={getFieldError("gender")}
                   className="bg-white"
                 />
+
+                <div className="md:col-span-2">
+                  <ProfileImageUpload
+                    label="الصورة الشخصية"
+                    file={(formValues.image as File | null) ?? null}
+                    initialImage={
+                      typeof displayProfile.image === "string"
+                        ? displayProfile.image
+                        : null
+                    }
+                    onChange={(file) => setFormValues((s) => ({ ...s, image: file }))}
+                    error={getFieldError("image")}
+                    rtl
+                  />
+                </div>
               </div>
             </div>
           )}

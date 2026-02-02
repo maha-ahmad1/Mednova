@@ -4,11 +4,12 @@ import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormPhoneInput } from "@/shared/ui/forms/components/FormPhoneInput";
-import { FormSelect } from "@/shared/ui/forms";
+import { FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { countries } from "@/constants/countries";
 import type { PatientProfile } from "@/types/patient";
 import { Loader2, Edit, User, MapPin, Navigation, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 
 
@@ -70,7 +71,10 @@ export default function PatientPersonal2Card({
         gender: (prev as Record<string, unknown>).gender ?? (patient.gender?.toLowerCase() as string) ?? "",
         emergency_contact: (prev as Record<string, unknown>).emergency_contact ?? emergencyNumber,
         emergencyCountryCode: (prev as Record<string, unknown>).emergencyCountryCode ?? emergencyCountryCode,
+        relationship: (prev as Record<string, unknown>).relationship ?? patient.patient_details?.relationship ?? "",
+        image: (prev as Record<string, unknown>).image ?? null,
       }));
+
     }
   }, [isEditing, patient, setFormValues]);
 
@@ -147,6 +151,18 @@ export default function PatientPersonal2Card({
               ) : "-"
             }
           />
+
+          <FieldDisplay
+            icon={<User className="w-5 h-5" />}
+            label="صلة القرابة"
+            value={
+              patient.patient_details?.relationship ? (
+                <Badge className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm">
+                  {patient.patient_details.relationship}
+                </Badge>
+              ) : "-"
+            }
+          />
           
           <FieldDisplay
             icon={<User className="w-5 h-5" />}
@@ -195,6 +211,25 @@ export default function PatientPersonal2Card({
               value={patient.location_details?.formatted_address || "-"}
             />
           </div>
+
+          <div className="md:col-span-2">
+            <FieldDisplay
+              icon={<User className="w-5 h-5" />}
+              label="الصورة الشخصية"
+              value={
+                patient.image ? (
+                  <div className="relative h-20 w-20 overflow-hidden rounded-lg border">
+                    <Image
+                      src={patient.image}
+                      alt="Patient profile"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : "-"
+              }
+            />
+          </div>
         </div>
       ) : (
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
@@ -226,6 +261,24 @@ export default function PatientPersonal2Card({
                 error={getFieldError("emergency_contact", "personal2")}
                 className="bg-white"
               />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <User className="w-4 h-4 text-[#32A88D]" />
+                صلة القرابة
+              </label>
+              <Input
+                value={(formValues.relationship as string) || ""}
+                onChange={(e) => handleChange("relationship", e.target.value)}
+                className="bg-white border-gray-300 focus:border-[#32A88D]"
+                placeholder="مثال: أب/أم/أخ"
+              />
+              {getFieldError("relationship", "personal2") && (
+                <p className="text-red-500 text-sm mt-1">
+                  {getFieldError("relationship", "personal2")}
+                </p>
+              )}
             </div>
 
             {/* الجنس */}
@@ -269,6 +322,17 @@ export default function PatientPersonal2Card({
                 rtl
                 error={getFieldError("country", "personal2")}
                 className="bg-white"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <ProfileImageUpload
+                label="الصورة الشخصية"
+                file={(formValues.image as File | null) ?? null}
+                initialImage={typeof patient.image === "string" ? patient.image : null}
+                onChange={(file) => setFormValues((s) => ({ ...s, image: file }))}
+                error={getFieldError("image", "personal2")}
+                rtl
               />
             </div>
 

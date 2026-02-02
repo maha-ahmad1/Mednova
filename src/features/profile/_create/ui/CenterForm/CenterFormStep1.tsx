@@ -6,13 +6,11 @@ import { Controller, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Mail, User, Phone, Home, Loader2, Calendar } from "lucide-react";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
 
-import { FormInput, FormSelect } from "@/shared/ui/forms";
+import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
-import { Button } from "@/components/ui/button";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -59,22 +57,9 @@ export function CenterFormStep1({
     } as Partial<Step1Data>,
   });
 
-  const [imagePreview, setImagePreview] = useState<string | null>(
-    formData.image && typeof formData.image === "string" ? formData.image : null
+  const [centerImage, setCenterImage] = useState<File | null>(
+    formData.image && typeof formData.image !== "string" ? formData.image : null
   );
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      methods.setValue("image", file, { shouldValidate: true });
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const removeImage = () => {
-    methods.resetField("image");
-    setImagePreview(null);
-  };
 
   const {
     handleSubmit,
@@ -240,32 +225,20 @@ export function CenterFormStep1({
                 error={errors.year_establishment?.message}
                 {...register("year_establishment")}
               />
-              <FormInput
+              <ProfileImageUpload
                 label="صورة المركز"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
+                file={centerImage}
+                initialImage={typeof formData.image === "string" ? formData.image : null}
+                onChange={(file) => {
+                  setCenterImage(file);
+                  if (file) {
+                    methods.setValue("image", file, { shouldValidate: true });
+                  } else {
+                    methods.resetField("image");
+                  }
+                }}
+                rtl
               />
-
-              {imagePreview && (
-                <div className="relative w-32 h-32">
-                  <Image
-                    src={imagePreview}
-                    alt="Center preview"
-                    fill
-                    className="rounded-lg object-cover"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    className="absolute top-1 right-1"
-                    onClick={removeImage}
-                  >
-                    إزالة
-                  </Button>
-                </div>
-              )}
             </div>
           </div>
           <FormSubmitButton className="px-6 py-5 mt-4">التالي</FormSubmitButton>

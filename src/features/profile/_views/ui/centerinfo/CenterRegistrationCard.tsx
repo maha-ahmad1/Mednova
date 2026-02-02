@@ -1,164 +1,192 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { FormInput, FormFileUpload } from "@/shared/ui/forms"
-import { toast } from "sonner"
-import { useUpdateCenter } from "@/features/profile/_views/hooks/useUpdateCenter"
-import type { CenterProfile } from "@/types/center"
-import { registrationSchema } from "@/lib/validation"
-import { Loader2, Edit, FileText, Shield, Building, Award, Download, CheckCircle, XCircle } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import type React from "react";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { FormInput, FormFileUpload } from "@/shared/ui/forms";
+import { toast } from "sonner";
+import { useUpdateCenter } from "@/features/profile/_views/hooks/useUpdateCenter";
+import type { CenterProfile } from "@/types/center";
+import { registrationSchema } from "@/lib/validation";
+import {
+  Loader2,
+  Edit,
+  FileText,
+  Shield,
+  Building,
+  Award,
+  Download,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 type CenterRegistrationCardProps = {
-  details: CenterProfile["center_details"]
-  userId: string
-  refetch: () => void
-}
+  details: CenterProfile["center_details"];
+  userId: string;
+  refetch: () => void;
+};
 
-export function CenterRegistrationCard({ details, userId, refetch }: CenterRegistrationCardProps) {
-  const [editing, setEditing] = useState(false)
-  const [serverErrors, setServerErrors] = useState<Record<string, string>>({})
-  const [localDetails, setLocalDetails] = useState(details)
+export function CenterRegistrationCard({
+  details,
+  userId,
+  refetch,
+}: CenterRegistrationCardProps) {
+  const [editing, setEditing] = useState(false);
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
+  const [localDetails, setLocalDetails] = useState(details);
   const [formValues, setFormValues] = useState({
     has_commercial_registration: details?.has_commercial_registration || false,
-    commercial_registration_number: details?.commercial_registration_number || "",
-    commercial_registration_authority: details?.commercial_registration_authority || "",
+    commercial_registration_number:
+      details?.commercial_registration_number || "",
+    commercial_registration_authority:
+      details?.commercial_registration_authority || "",
     commercial_registration_file: null as File | null,
     license_number: details?.license_number || "",
     license_authority: details?.license_authority || "",
     license_file: null as File | null,
-    
-  })
+  });
 
-  const { update, isUpdating } = useUpdateCenter()
+  const { update, isUpdating } = useUpdateCenter();
 
   useEffect(() => {
     if (details) {
-      setLocalDetails(details)
+      setLocalDetails(details);
       setFormValues({
-        has_commercial_registration: details.has_commercial_registration || false,
-        commercial_registration_number: details.commercial_registration_number || "",
-        commercial_registration_authority: details.commercial_registration_authority || "",
+        has_commercial_registration:
+          details.has_commercial_registration || false,
+        commercial_registration_number:
+          details.commercial_registration_number || "",
+        commercial_registration_authority:
+          details.commercial_registration_authority || "",
         commercial_registration_file: null,
         license_number: details.license_number || "",
         license_authority: details.license_authority || "",
         license_file: null,
-      })
+      });
     }
-  }, [details])
+  }, [details]);
 
   const startEdit = () => {
-    setEditing(true)
+    setEditing(true);
     setFormValues({
-      has_commercial_registration: localDetails?.has_commercial_registration || false,
-      commercial_registration_number: localDetails?.commercial_registration_number || "",
-      commercial_registration_authority: localDetails?.commercial_registration_authority || "",
+      has_commercial_registration:
+        localDetails?.has_commercial_registration || false,
+      commercial_registration_number:
+        localDetails?.commercial_registration_number || "",
+      commercial_registration_authority:
+        localDetails?.commercial_registration_authority || "",
       commercial_registration_file: null,
       license_number: localDetails?.license_number || "",
       license_authority: localDetails?.license_authority || "",
       license_file: null,
-    })
-  }
+    });
+  };
 
   const cancelEdit = () => {
-    setEditing(false)
-    setServerErrors({})
+    setEditing(false);
+    setServerErrors({});
     setFormValues({
-      has_commercial_registration: localDetails?.has_commercial_registration || false,
-      commercial_registration_number: localDetails?.commercial_registration_number || "",
-      commercial_registration_authority: localDetails?.commercial_registration_authority || "",
+      has_commercial_registration:
+        localDetails?.has_commercial_registration || false,
+      commercial_registration_number:
+        localDetails?.commercial_registration_number || "",
+      commercial_registration_authority:
+        localDetails?.commercial_registration_authority || "",
       commercial_registration_file: null,
       license_number: localDetails?.license_number || "",
       license_authority: localDetails?.license_authority || "",
       license_file: null,
-    })
-  }
+    });
+  };
 
   const getFieldError = (field: keyof typeof formValues) => {
-    const serverError = serverErrors[field]
-    if (serverError) return serverError
+    const serverError = serverErrors[field];
+    if (serverError) return serverError;
 
     if (field === "license_number" && !formValues.license_number) {
-      return "رقم الترخيص مطلوب"
+      return "رقم الترخيص مطلوب";
     }
     if (field === "license_authority" && !formValues.license_authority) {
-      return "جهة الترخيص مطلوبة"
+      return "جهة الترخيص مطلوبة";
     }
     if (
       formValues.has_commercial_registration &&
       field === "commercial_registration_number" &&
       !formValues.commercial_registration_number
     ) {
-      return "رقم السجل التجاري مطلوب"
+      return "رقم السجل التجاري مطلوب";
     }
     if (
       formValues.has_commercial_registration &&
       field === "commercial_registration_authority" &&
       !formValues.commercial_registration_authority
     ) {
-      return "جهة السجل التجاري مطلوبة"
+      return "جهة السجل التجاري مطلوبة";
     }
 
-    return undefined
-  }
+    return undefined;
+  };
 
   const handleSave = async () => {
-    const result = registrationSchema.safeParse(formValues)
+    const result = registrationSchema.safeParse(formValues);
     if (!result.success) {
-      const fieldErrors: Record<string, string> = {}
+      const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
-        const field = issue.path[0] as string
-        fieldErrors[field] = issue.message
-      })
-      setServerErrors(fieldErrors)
-      toast.error("يرجى تصحيح الأخطاء قبل الحفظ")
-      return
+        const field = issue.path[0] as string;
+        fieldErrors[field] = issue.message;
+      });
+      setServerErrors(fieldErrors);
+      toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
+      return;
     }
 
     const payload = {
       ...formValues,
       customer_id: String(userId),
-    }
+    };
     try {
-      await update(payload)
-      toast.success("تم تحديث التراخيص والمستندات بنجاح")
-      setEditing(false)
-      setServerErrors({})
-      refetch()
+      await update(payload);
+      toast.success("تم تحديث التراخيص والمستندات بنجاح");
+      setEditing(false);
+      setServerErrors({});
+      refetch();
     } catch (error: unknown) {
-      const e = error as { response?: { data?: { data?: Record<string, string> } } } | undefined
-      const apiErrors = e?.response?.data?.data ?? {}
+      const e = error as
+        | { response?: { data?: { data?: Record<string, string> } } }
+        | undefined;
+      const apiErrors = e?.response?.data?.data ?? {};
       if (Object.keys(apiErrors).length > 0) {
-        setServerErrors(apiErrors)
-        toast.error("تحقق من الحقول قبل الحفظ")
+        setServerErrors(apiErrors);
+        toast.error("تحقق من الحقول قبل الحفظ");
       } else {
-        toast.error("حدث خطأ أثناء التحديث")
+        toast.error("حدث خطأ أثناء التحديث");
       }
     }
-  }
+  };
 
-  const FieldDisplay: React.FC<{ 
-    icon: React.ReactNode; 
-    label: string; 
+  const FieldDisplay: React.FC<{
+    icon: React.ReactNode;
+    label: string;
     value: React.ReactNode;
     className?: string;
   }> = ({ icon, label, value, className }) => (
-    <div className={`flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-100 ${className}`}>
+    <div
+      className={`flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-100 ${className}`}
+    >
       <div className="text-[#32A88D] mt-1">{icon}</div>
       <div className="flex-1">
         <span className="text-sm text-gray-500 block mb-2">{label}</span>
         <span className="text-gray-800 font-medium block">{value ?? "-"}</span>
       </div>
     </div>
-  )
+  );
 
-  const FileLink: React.FC<{ 
-    url?: string; 
+  const FileLink: React.FC<{
+    url?: string;
     label: string;
     icon: React.ReactNode;
-  }> = ({ url, label, icon }) => (
+  }> = ({ url, label, icon }) =>
     url ? (
       <a
         href={url}
@@ -172,10 +200,9 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
       </a>
     ) : (
       <span className="text-gray-500">-</span>
-    )
-  )
+    );
 
-  const displayDetails = localDetails ?? details
+  const displayDetails = localDetails ?? details;
 
   return (
     <div className="bg-gradient-to-l from-[#32A88D]/10 to-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300">
@@ -184,11 +211,11 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
           <h3 className="text-xl font-bold text-gray-800">التراخيص والسجلات</h3>
         </div>
-        
+
         {!editing ? (
-          <Button 
-            onClick={startEdit} 
-            variant="outline" 
+          <Button
+            onClick={startEdit}
+            variant="outline"
             size="sm"
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
@@ -197,20 +224,18 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
           </Button>
         ) : (
           <div className="flex gap-2">
-            <Button 
-              onClick={handleSave} 
+            <Button
+              onClick={handleSave}
               disabled={isUpdating}
               size="sm"
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
             >
-              {isUpdating && (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              )}
+              {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
               حفظ التغييرات
             </Button>
-            <Button 
-              onClick={cancelEdit} 
-              variant="outline" 
+            <Button
+              onClick={cancelEdit}
+              variant="outline"
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
@@ -248,31 +273,29 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
           />
 
           {/* بيانات السجل التجاري */}
-          {displayDetails?.has_commercial_registration && (
+          {displayDetails?.has_commercial_registration ? (
             <>
               <FieldDisplay
                 icon={<FileText className="w-5 h-5" />}
                 label="رقم السجل التجاري"
                 value={
-                  displayDetails.commercial_registration_number ? (
-                    <Badge className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                      {displayDetails.commercial_registration_number}
-                    </Badge>
-                  ) : "-"
+                  <Badge className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                    {displayDetails.commercial_registration_number}
+                  </Badge>
                 }
               />
-              
+
               <FieldDisplay
                 icon={<Building className="w-5 h-5" />}
                 label="جهة السجل التجاري"
                 value={displayDetails.commercial_registration_authority || "-"}
               />
-              
+
               <FieldDisplay
                 icon={<FileText className="w-5 h-5" />}
                 label="ملف السجل التجاري"
                 value={
-                  <FileLink 
+                  <FileLink
                     url={displayDetails.commercial_registration_file}
                     label="عرض السجل التجاري"
                     icon={<FileText className="w-4 h-4" />}
@@ -280,7 +303,7 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
                 }
               />
             </>
-          )}
+          ) : null}
 
           {/* بيانات الترخيص */}
           <FieldDisplay
@@ -291,21 +314,23 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
                 <Badge className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
                   {displayDetails.license_number}
                 </Badge>
-              ) : "-"
+              ) : (
+                "-"
+              )
             }
           />
-          
+
           <FieldDisplay
             icon={<Award className="w-5 h-5" />}
             label="جهة الترخيص"
             value={displayDetails?.license_authority || "-"}
           />
-          
+
           <FieldDisplay
             icon={<Shield className="w-5 h-5" />}
             label="ملف الترخيص"
             value={
-              <FileLink 
+              <FileLink
                 url={displayDetails?.license_file}
                 label="عرض الترخيص"
                 icon={<Shield className="w-4 h-4" />}
@@ -319,7 +344,7 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
             تعديل التراخيص والسجلات
           </h4>
-          
+
           <div className="space-y-6">
             {/* السجل التجاري */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
@@ -337,7 +362,9 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
                     }
                     className="accent-[#32A88D] w-4 h-4"
                   />
-                  <span className="font-medium text-gray-700">يوجد سجل تجاري</span>
+                  <span className="font-medium text-gray-700">
+                    يوجد سجل تجاري
+                  </span>
                 </div>
               </div>
 
@@ -377,7 +404,8 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
                       onChange={(e) =>
                         setFormValues((s) => ({
                           ...s,
-                          commercial_registration_file: e.target.files?.[0] ?? null,
+                          commercial_registration_file:
+                            e.target.files?.[0] ?? null,
                         }))
                       }
                       className="bg-gray-50"
@@ -397,7 +425,12 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
                 <FormInput
                   label="رقم الترخيص"
                   value={formValues.license_number}
-                  onChange={(e) => setFormValues((s) => ({ ...s, license_number: e.target.value }))}
+                  onChange={(e) =>
+                    setFormValues((s) => ({
+                      ...s,
+                      license_number: e.target.value,
+                    }))
+                  }
                   rtl
                   error={getFieldError("license_number")}
                   className="bg-gray-50"
@@ -433,9 +466,12 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
             </div>
 
             {/* عرض الملفات الحالية إن وجدت */}
-            {(displayDetails?.commercial_registration_file || displayDetails?.license_file) && (
+            {(displayDetails?.commercial_registration_file ||
+              displayDetails?.license_file) && (
               <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <h5 className="font-medium text-gray-700 mb-3">الملفات الحالية:</h5>
+                <h5 className="font-medium text-gray-700 mb-3">
+                  الملفات الحالية:
+                </h5>
                 <div className="flex flex-wrap gap-4">
                   {displayDetails.commercial_registration_file && (
                     <div className="flex items-center gap-2">
@@ -475,5 +511,5 @@ export function CenterRegistrationCard({ details, userId, refetch }: CenterRegis
         </div>
       )}
     </div>
-  )
+  );
 }

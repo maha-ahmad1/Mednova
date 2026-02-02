@@ -91,7 +91,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
       phone: local ?? "",
       birth_date: source?.birth_date ?? "",
       gender: source?.gender ?? "",
-      status: source?.status ?? "",
+      // status: source?.status ?? "",
       name_center: source?.center_details?.name_center ?? "",
       year_establishment:
         source?.center_details?.year_establishment?.toString() ?? "",
@@ -194,32 +194,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
     return new Date(dateString).toLocaleDateString("ar-EG");
   };
 
-  const formatStatus = (status?: string) => {
-    switch (status) {
-      case "pending":
-        return "قيد المراجعة";
-      case "approved":
-        return "مفعل";
-      case "rejected":
-        return "مرفوض";
-      default:
-        return status || "-";
-    }
-  };
-
-  const getStatusBadgeClass = (status?: string) => {
-    switch (status) {
-      case "pending":
-        return "bg-amber-100 text-amber-800";
-      case "approved":
-        return "bg-green-100 text-green-800";
-      case "rejected":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
+ 
   return (
     <div className="bg-gradient-to-b from-[#32A88D]/10 to-white rounded-2xl shadow-sm border border-gray-100 p-6 pl-8 hover:shadow-xl transition-all duration-300">
       <div className="flex flex-col lg:flex-row gap-6">

@@ -243,15 +243,15 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                   </Badge>
                 }
               />
-              <Field
+              {/* <Field
                 label="حالة الحساب"
                 value={
                   <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
                     نشط
                   </Badge>
                 }
-              />
-              <Field
+              /> */}
+              {/* <Field
                 label="الصورة الشخصية"
                 value={
                   typeof displayProfile.image === "string" ? (
@@ -267,7 +267,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                     "-"
                   )
                 }
-              />
+              /> */}
             </div>
           ) : (
             <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
@@ -336,7 +336,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                 />
 
                 <div className="md:col-span-2 space-y-3">
-                  <FormFileUpload
+                  {/* <FormFileUpload
                     label="الصورة الشخصية"
                     onChange={(e) => {
                       const file = e.target.files?.[0] ?? null;
@@ -345,7 +345,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                     }}
                     error={getFieldError("image")}
                     className="bg-white"
-                  />
+                  /> */}
                   {imagePreview && (
                     <div className="relative h-24 w-24 overflow-hidden rounded-lg border">
                       <Image

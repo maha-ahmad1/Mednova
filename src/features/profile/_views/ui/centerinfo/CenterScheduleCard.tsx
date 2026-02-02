@@ -48,7 +48,7 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
     day_of_week: Array.isArray(schedule?.day_of_week) ? (schedule.day_of_week as string[]) : [],
     start_time_morning: schedule?.start_time_morning || "",
     end_time_morning: schedule?.end_time_morning || "",
-    timezone: details?.timezone || "",
+    timezone: details?.timezone || "", // هنا الوصول المباشر لـ timezone
     is_have_evening_time: schedule?.is_have_evening_time ? 1 : 0,
     start_time_evening: schedule?.start_time_evening || "",
     end_time_evening: schedule?.end_time_evening || "",
@@ -62,13 +62,13 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
         day_of_week: Array.isArray(schedule.day_of_week) ? schedule.day_of_week : [],
         start_time_morning: schedule.start_time_morning || "",
         end_time_morning: schedule.end_time_morning || "",
-        timezone: details?.timezone || "",
+        timezone: details?.timezone || "", // هنا أيضاً
         is_have_evening_time: schedule.is_have_evening_time ? 1 : 0,
         start_time_evening: schedule.start_time_evening || "",
         end_time_evening: schedule.end_time_evening || "",
       })
     }
-  }, [schedule, details?.timezone])
+  }, [schedule, details?.timezone]) // التبعية على details.timezone
 
   const startEdit = () => {
     setEditing(true)
@@ -81,7 +81,7 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
       day_of_week: Array.isArray(schedule?.day_of_week) ? schedule.day_of_week : [],
       start_time_morning: schedule?.start_time_morning || "",
       end_time_morning: schedule?.end_time_morning || "",
-      timezone: details?.timezone || "",
+      timezone: details?.timezone || "", // هنا أيضاً
       is_have_evening_time: schedule?.is_have_evening_time ? 1 : 0,
       start_time_evening: schedule?.start_time_evening || "",
       end_time_evening: schedule?.end_time_evening || "",
@@ -125,7 +125,6 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
     }
 
     try {
-      // use the therapist-shaped update fn by casting payload to the expected type
       await update(payload as unknown as TherapistFormValues)
       toast.success("تم تحديث الجدول بنجاح")
       setEditing(false)
@@ -414,42 +413,6 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
                 </div>
               )}
             </div>
-
-            {/* معاينة سريعة */}
-            {/* {(values.day_of_week.length > 0 || values.start_time_morning) && (
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <h5 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#32A88D]" />
-                  معاينة الجدول:
-                </h5>
-                <div className="text-sm text-gray-600 space-y-2">
-                  {values.day_of_week.length > 0 && (
-                    <div>
-                      <span className="text-gray-500">أيام العمل: </span>
-                      <span className="text-gray-800 font-medium">
-                        {values.day_of_week.map(getDayLabel).join("، ")}
-                      </span>
-                    </div>
-                  )}
-                  {values.start_time_morning && values.end_time_morning && (
-                    <div>
-                      <span className="text-gray-500">دوام الصباح: </span>
-                      <span className="text-gray-800 font-medium">
-                        {formatTime(values.start_time_morning)} - {formatTime(values.end_time_morning)}
-                      </span>
-                    </div>
-                  )}
-                  {values.is_have_evening_time === 1 && values.start_time_evening && values.end_time_evening && (
-                    <div>
-                      <span className="text-gray-500">دوام المساء: </span>
-                      <span className="text-gray-800 font-medium">
-                        {formatTime(values.start_time_evening)} - {formatTime(values.end_time_evening)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )} */}
           </div>
         </div>
       )}

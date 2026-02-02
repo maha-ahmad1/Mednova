@@ -2,16 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FormPhoneInput } from "@/shared/ui/forms/components/FormPhoneInput";
-import { FormFileUpload, FormSelect } from "@/shared/ui/forms";
+import { FormPhoneInput, FormFileUpload, FormSelect, FormInput } from "@/shared/ui/forms";
 import { countries } from "@/constants/countries";
 import type { PatientProfile } from "@/types/patient";
 import { Loader2, Edit, User, MapPin, Navigation, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-
-
 
 interface Props {
   patient: PatientProfile;
@@ -85,9 +81,9 @@ export default function PatientPersonal2Card({
 
   const selectedCountry = countries.find((c) => c.name === formValues.country);
 
-  const FieldDisplay: React.FC<{ 
-    icon: React.ReactNode; 
-    label: string; 
+  const FieldDisplay: React.FC<{
+    icon: React.ReactNode;
+    label: string;
     value: React.ReactNode;
     className?: string;
   }> = ({ icon, label, value, className }) => (
@@ -102,16 +98,17 @@ export default function PatientPersonal2Card({
 
   return (
     <div className="bg-gradient-to-l from-[#32A88D]/10 to-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300">
+      {/* Header Section */}
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
           <h2 className="text-xl font-bold text-gray-800">معلومات إضافية</h2>
         </div>
-        
+
         {!isEditing ? (
-          <Button 
-            onClick={() => startEdit("personal2")} 
-            variant="outline" 
+          <Button
+            onClick={() => startEdit("personal2")}
+            variant="outline"
             size="sm"
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
@@ -120,20 +117,18 @@ export default function PatientPersonal2Card({
           </Button>
         ) : (
           <div className="flex gap-2">
-            <Button 
-              onClick={() => onSave("personal2")} 
+            <Button
+              onClick={() => onSave("personal2")}
               disabled={isUpdating}
               size="sm"
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
             >
-              {isUpdating && (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              )}
+              {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
               حفظ التغييرات
             </Button>
-            <Button 
-              onClick={cancelEdit} 
-              variant="outline" 
+            <Button
+              onClick={cancelEdit}
+              variant="outline"
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
@@ -143,6 +138,7 @@ export default function PatientPersonal2Card({
         )}
       </div>
 
+      {/* Display Mode */}
       {!isEditing ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FieldDisplay
@@ -168,23 +164,25 @@ export default function PatientPersonal2Card({
               ) : "-"
             }
           />
-          
+
           <FieldDisplay
             icon={<User className="w-5 h-5" />}
             label="الجنس"
             value={
               patient.gender ? (
-                <Badge className={`px-3 py-1 rounded-full text-sm ${
-                  patient.gender === "Male" 
-                    ? "bg-blue-100 text-blue-800" 
-                    : "bg-pink-100 text-pink-800"
-                }`}>
+                <Badge
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    patient.gender === "Male"
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-pink-100 text-pink-800"
+                  }`}
+                >
                   {patient.gender === "Male" ? "ذكر" : "أنثى"}
                 </Badge>
               ) : "-"
             }
           />
-          
+
           <FieldDisplay
             icon={<MapPin className="w-5 h-5" />}
             label="الدولة"
@@ -196,7 +194,7 @@ export default function PatientPersonal2Card({
               ) : "-"
             }
           />
-          
+
           <FieldDisplay
             icon={<Navigation className="w-5 h-5" />}
             label="المدينة"
@@ -208,43 +206,25 @@ export default function PatientPersonal2Card({
               ) : "-"
             }
           />
-          
-          <div className="md:col-span-2">
+
+          <div className="">
             <FieldDisplay
               icon={<MapPin className="w-5 h-5" />}
               label="العنوان التفصيلي"
               value={patient.location_details?.formatted_address || "-"}
             />
           </div>
-
-          <div className="md:col-span-2">
-            <FieldDisplay
-              icon={<User className="w-5 h-5" />}
-              label="الصورة الشخصية"
-              value={
-                patient.image ? (
-                  <div className="relative h-20 w-20 overflow-hidden rounded-lg border">
-                    <Image
-                      src={patient.image}
-                      alt="Patient profile"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ) : "-"
-              }
-            />
-          </div>
         </div>
       ) : (
+        /* Edit Mode */
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
           <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
             تعديل المعلومات الإضافية
           </h4>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* جهة الاتصال للطوارئ */}
+            {/* Emergency Contact */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-red-500" />
@@ -253,150 +233,88 @@ export default function PatientPersonal2Card({
               <FormPhoneInput
                 label=""
                 countryCodeValue={(formValues.emergencyCountryCode as string) || "+968"}
-                onCountryCodeChange={(code) =>
-                  handleChange("emergencyCountryCode", code)
-                }
+                onCountryCodeChange={(code) => handleChange("emergencyCountryCode", code)}
                 value={(formValues.emergency_contact as string) || ""}
-                onChange={(e) =>
-                  handleChange("emergency_contact", e.target.value)
-                }
+                onChange={(e) => handleChange("emergency_contact", e.target.value)}
                 rtl
-                iconPosition="right"
                 placeholder="0000 0000"
                 error={getFieldError("emergency_contact", "personal2")}
                 className="bg-white"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <User className="w-4 h-4 text-[#32A88D]" />
-                صلة القرابة
-              </label>
-              <Input
-                value={(formValues.relationship as string) || ""}
-                onChange={(e) => handleChange("relationship", e.target.value)}
-                className="bg-white border-gray-300 focus:border-[#32A88D]"
-                placeholder="مثال: أب/أم/أخ"
-              />
-              {getFieldError("relationship", "personal2") && (
-                <p className="text-red-500 text-sm mt-1">
-                  {getFieldError("relationship", "personal2")}
-                </p>
-              )}
-            </div>
+            {/* Relationship */}
+            <FormInput
+              label="صلة القرابة"
+              type="text"
+              value={(formValues.relationship as string) || ""}
+              onChange={(e) => handleChange("relationship", e.target.value)}
+              className="bg-white border-gray-300 focus:border-[#32A88D]"
+              placeholder="مثال: أب/أم/أخ"
+              error={getFieldError("relationship", "personal2")}
+            />
 
-            {/* الجنس */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <User className="w-4 h-4 text-[#32A88D]" />
-                الجنس
-              </label>
-              <FormSelect
-                options={[
-                  { value: "male", label: "ذكر" },
-                  { value: "female", label: "أنثى" },
-                ]}
-                value={(formValues.gender as string) ?? ""}
-                onValueChange={(val) =>
-                  setFormValues((s) => ({ ...s, gender: val }))
-                }
-                rtl
-                error={getFieldError("gender", "personal2")}
-                className="bg-white"
-                placeholder="اختر الجنس"
-              />
-            </div>
+            {/* Gender */}
+            <FormSelect
+              label="الجنس"
+              options={[
+                { value: "male", label: "ذكر" },
+                { value: "female", label: "أنثى" },
+              ]}
+              value={(formValues.gender as string) ?? ""}
+              onValueChange={(val) => setFormValues((s) => ({ ...s, gender: val }))}
+              rtl
+              error={getFieldError("gender", "personal2")}
+              className="bg-white"
+              placeholder="اختر الجنس"
+             
+            />
 
-            {/* الدولة */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[#32A88D]" />
-                الدولة
-              </label>
-              <FormSelect
-                placeholder="اختر الدولة"
-                value={(formValues.country as string) || ""}
-                onValueChange={(val) =>
-                  setFormValues((v) => ({ ...v, country: val, city: "" }))
-                }
-                options={countries.map((c) => ({
-                  value: c.name,
-                  label: c.name,
-                }))}
-                rtl
-                error={getFieldError("country", "personal2")}
-                className="bg-white"
-              />
-            </div>
+            {/* Country */}
+            <FormSelect
+              label="الدولة"
+              placeholder="اختر الدولة"
+              value={(formValues.country as string) || ""}
+              onValueChange={(val) => setFormValues((v) => ({ ...v, country: val, city: "" }))}
+              options={countries.map((c) => ({
+                value: c.name,
+                label: c.name,
+              }))}
+              rtl
+              error={getFieldError("country", "personal2")}
+              className="bg-white"
+            
+            />
 
-            <div className="md:col-span-2 space-y-3">
-              <FormFileUpload
-                label="الصورة الشخصية"
-                onChange={(e) => {
-                  const file = e.target.files?.[0] ?? null;
-                  setFormValues((s) => ({ ...s, image: file }));
-                  setImagePreview(file ? URL.createObjectURL(file) : null);
-                }}
-                error={getFieldError("image", "personal2")}
-                className="bg-white"
-              />
-              {imagePreview && (
-                <div className="relative h-24 w-24 overflow-hidden rounded-lg border">
-                  <Image
-                    src={imagePreview}
-                    alt="Patient preview"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
-            </div>
+            {/* City */}
+            <FormSelect
+              label="المدينة"
+              placeholder={(formValues.country as string) ? "اختر المدينة" : "اختر الدولة أولاً"}
+              value={(formValues.city as string) || ""}
+              onValueChange={(val) => handleChange("city", val)}
+              options={(selectedCountry?.cities || []).map((c) => ({
+                value: c,
+                label: c,
+              }))}
+              rtl
+              error={getFieldError("city", "personal2")}
+              className="bg-white"
+              disabled={!formValues.country}
+            />
 
-            {/* المدينة */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Navigation className="w-4 h-4 text-[#32A88D]" />
-                المدينة
-              </label>
-              <FormSelect
-                placeholder={(formValues.country as string) ? "اختر المدينة" : "اختر الدولة أولاً"}
-                value={(formValues.city as string) || ""}
-                onValueChange={(val) => handleChange("city", val)}
-                options={(selectedCountry?.cities || []).map((c) => ({
-                  value: c,
-                  label: c,
-                }))}
-                rtl
-                error={getFieldError("city", "personal2")}
-                className="bg-white"
-                disabled={!formValues.country}
-              />
-            </div>
-
-            {/* العنوان */}
-            <div className="md:col-span-2 space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[#32A88D]" />
-                العنوان التفصيلي
-              </label>
-              <Input
-                value={(formValues.formatted_address as string) || ""}
-                onChange={(e) =>
-                  handleChange("formatted_address", e.target.value)
-                }
-                className="bg-white border-gray-300 focus:border-[#32A88D]"
-                placeholder="أدخل العنوان الكامل"
-              />
-              {getFieldError("formatted_address", "personal2") && (
-                <p className="text-red-500 text-sm mt-1">
-                  {getFieldError("formatted_address", "personal2")}
-                </p>
-              )}
-            </div>
+            {/* Detailed Address */}
+            <FormInput
+              label="العنوان التفصيلي"
+              type="text"
+              value={(formValues.formatted_address as string) || ""}
+              onChange={(e) => handleChange("formatted_address", e.target.value)}
+              className="bg-white border-gray-300 focus:border-[#32A88D]"
+              placeholder="أدخل العنوان الكامل"
+              error={getFieldError("formatted_address", "personal2")}
+            />
           </div>
 
-          {/* معاينة سريعة للموقع */}
+          {/* Location Preview */}
           {(typeof formValues.country === "string" || typeof formValues.city === "string") && (
             <div className="bg-white p-4 rounded-lg border border-gray-200 mt-6">
               <h5 className="font-medium text-gray-700 mb-3 flex items-center gap-2">

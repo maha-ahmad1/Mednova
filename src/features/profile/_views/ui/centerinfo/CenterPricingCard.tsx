@@ -33,12 +33,13 @@ export function CenterPricingCard({ profile, userId, refetch }: CenterPricingCar
   })
 
   useEffect(() => {
+    // هنا الوصول للحقول من داخل center_details
     setValues({
-      video_consultation_price: profile.video_consultation_price?.toString() || "",
-      chat_consultation_price: profile.chat_consultation_price?.toString() || "",
-      currency: profile.currency || "",
+      video_consultation_price: profile.center_details?.video_consultation_price?.toString() || "",
+      chat_consultation_price: profile.center_details?.chat_consultation_price?.toString() || "",
+      currency: profile.center_details?.currency || "",
     })
-  }, [profile])
+  }, [profile.center_details]) // التبعية على center_details
 
   const startEdit = () => {
     setEditing(true)
@@ -46,10 +47,11 @@ export function CenterPricingCard({ profile, userId, refetch }: CenterPricingCar
 
   const cancelEdit = () => {
     setEditing(false)
+    // إعادة تعيين القيم من center_details
     setValues({
-      video_consultation_price: profile.video_consultation_price?.toString() || "",
-      chat_consultation_price: profile.chat_consultation_price?.toString() || "",
-      currency: profile.currency || "",
+      video_consultation_price: profile.center_details?.video_consultation_price?.toString() || "",
+      chat_consultation_price: profile.center_details?.chat_consultation_price?.toString() || "",
+      currency: profile.center_details?.currency || "",
     })
     setServerErrors({})
   }
@@ -73,10 +75,20 @@ export function CenterPricingCard({ profile, userId, refetch }: CenterPricingCar
       return
     }
 
+    // إرسال البيانات بما يتناسب مع هيكل الـ API
     const payload: CenterFormValues = {
-      ...values,
       customer_id: String(userId),
-    }
+      // إذا كان الـ API يتوقع هذه الحقول في المستوى العلوي
+      video_consultation_price: values.video_consultation_price,
+      chat_consultation_price: values.chat_consultation_price,
+      currency: values.currency,
+      // أو إذا كان يتوقعها داخل center_details
+      center_details: {
+        video_consultation_price: values.video_consultation_price,
+        chat_consultation_price: values.chat_consultation_price,
+        currency: values.currency,
+      }
+    } as any // استخدم any مؤقتاً حتى تتأكد من الهيكل
 
     try {
       await update(payload)
@@ -89,7 +101,11 @@ export function CenterPricingCard({ profile, userId, refetch }: CenterPricingCar
     }
   }
 
-  const FieldDisplay: React.FC<{ icon: React.ReactNode; label: string; value: React.ReactNode }> = ({
+  const FieldDisplay: React.FC<{ 
+    icon: React.ReactNode; 
+    label: string; 
+    value: React.ReactNode 
+  }> = ({
     icon,
     label,
     value,
@@ -205,6 +221,7 @@ export function CenterPricingCard({ profile, userId, refetch }: CenterPricingCar
               rtl
               className="no-spinner bg-white"
               error={getFieldError("video_consultation_price")}
+              placeholder="مثال: 33.000"
             />
 
             <FormInput
@@ -215,6 +232,7 @@ export function CenterPricingCard({ profile, userId, refetch }: CenterPricingCar
               rtl
               className="no-spinner bg-white"
               error={getFieldError("chat_consultation_price")}
+              placeholder="مثال: 22.000"
             />
 
             <FormSelect

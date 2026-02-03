@@ -89,6 +89,15 @@ export function CenterFormStep3({
     formState: { errors },
   } = methods
 
+  const commercialRegistrationFileError =
+    typeof errors.commercial_registration_file?.message === "string"
+      ? errors.commercial_registration_file.message
+      : undefined
+  const licenseFileError =
+    typeof errors.license_file?.message === "string"
+      ? errors.license_file.message
+      : undefined
+
   const stepFields = [
     "has_commercial_registration",
     "commercial_registration_number",
@@ -151,7 +160,7 @@ export function CenterFormStep3({
                 icon={FileText}
                 iconPosition="right"
                 rtl
-                error={errors.commercial_registration_file?.message}
+                error={errors.commercial_registration_number?.message}
                 {...register("commercial_registration_number")}
               />
 
@@ -172,7 +181,7 @@ export function CenterFormStep3({
                 icon={Copyright}
                 iconPosition="right"
                 rtl
-                error={errors.commercial_registration_number?.message}
+                error={commercialRegistrationFileError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
                   if (file) setCommercialRegFile(file)
@@ -213,7 +222,7 @@ export function CenterFormStep3({
                 icon={ShieldCheck}
                 iconPosition="right"
                 rtl
-                error={errors.license_file?.message}
+                error={licenseFileError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
                   if (file) setLicenseFile(file)

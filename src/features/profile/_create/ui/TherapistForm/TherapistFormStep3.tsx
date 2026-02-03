@@ -50,6 +50,15 @@ export function TherapistFormStep3({
     formState: { errors },
   } = methods;
 
+  const certificateFileError =
+    typeof errors.certificate_file?.message === "string"
+      ? errors.certificate_file.message
+      : undefined
+  const licenseFileError =
+    typeof errors.license_file?.message === "string"
+      ? errors.license_file.message
+      : undefined
+
   const stepFields = [
     "license_number",
     "license_authority",
@@ -108,7 +117,7 @@ export function TherapistFormStep3({
                 icon={ShieldCheck}
                 iconPosition="right"
                 rtl
-                error={errors.certificate_file?.message}
+                error={certificateFileError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
                   if (file) setCertificateFile(file)
@@ -123,7 +132,7 @@ export function TherapistFormStep3({
                 icon={Copyright}
                 iconPosition="right"
                 rtl
-                error={errors.license_file?.message}
+                error={licenseFileError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
                   if (file) setLicenseFile(file)

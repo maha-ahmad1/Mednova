@@ -8,6 +8,7 @@ import * as z from "zod";
 import { countries } from "@/constants/countries";
 import { FormSelect } from "@/shared/ui/forms";
 import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
 
 const step4Schema = z
   .object({
@@ -69,6 +70,7 @@ export function CenterFormStep4({
   onNext,
   formData,
   updateFormData,
+  globalErrors,
 }: Step4Props) {
   const methods = useForm<Step4Data>({
     resolver: zodResolver(step4Schema),
@@ -111,6 +113,24 @@ export function CenterFormStep4({
     updateFormData(data);
     onNext();
   };
+
+  const stepFields = [
+    "country",
+    "city",
+    "timezone",
+    "day_of_week",
+    "start_time_morning",
+    "end_time_morning",
+    "is_have_evening_time",
+    "start_time_evening",
+    "end_time_evening",
+  ] as const;
+
+  useApplyServerErrors<Step4Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
 
   return (
     <FormStepCard

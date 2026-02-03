@@ -10,6 +10,7 @@ import { Video, MessageSquare, Check } from "lucide-react";
 import { FormSelect } from "@/shared/ui/forms/components/FormSelect";
 import { cn } from "@/lib/utils";
 import { CustomCheckbox } from "@/shared/ui/forms/components/CustomCheckbox";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
 
 const step2Schema = z.object({
   specialty_id: z.array(z.string()).min(1, "يرجى اختيار تخصص واحد على الأقل"),
@@ -28,6 +29,7 @@ interface CenterStep2Props {
   onBack: () => void;
   formData: Partial<Step2Data>;
   updateFormData: (data: Partial<Step2Data>) => void;
+  globalErrors?: Record<string, string>;
   setGlobalErrors?: (errors: Record<string, string>) => void;
 }
 
@@ -86,6 +88,7 @@ export function CenterFormStep2({
   onBack,
   formData,
   updateFormData,
+  globalErrors,
 }: CenterStep2Props) {
   const methods = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
@@ -107,6 +110,19 @@ export function CenterFormStep2({
     setValue,
     formState: { errors },
   } = methods;
+
+  const stepFields = [
+    "specialty_id",
+    "video_consultation_price",
+    "chat_consultation_price",
+    "currency",
+  ] as const;
+
+  useApplyServerErrors<Step2Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
 
   const selectedSpecialties = watch("specialty_id");
 

@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import type { CenterFormValues } from "@/app/api/center";
 import { Loader2 } from "lucide-react";
 import type { SubmitHandler } from "react-hook-form";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
 
 const step5Schema = z.object({
   bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
@@ -26,6 +27,7 @@ interface CenterStep5Props {
   onBack: () => void;
   formData: Record<string, unknown>;
   updateFormData: (data: Partial<Record<string, unknown>>) => void;
+  globalErrors?: Record<string, string>;
   setGlobalErrors?: (errors: Record<string, string>) => void;
 }
 
@@ -33,6 +35,7 @@ export function CenterFormStep5({
   onBack,
   formData,
   updateFormData,
+  globalErrors,
   setGlobalErrors,
 }: CenterStep5Props) {
   const methods = useForm<Step5Data>({
@@ -48,6 +51,14 @@ export function CenterFormStep5({
     control,
     formState: { errors },
   } = methods;
+
+  const stepFields = ["bio"] as const;
+
+  useApplyServerErrors<Step5Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
 
   const { data: session, update } = useSession();
   const router = useRouter();

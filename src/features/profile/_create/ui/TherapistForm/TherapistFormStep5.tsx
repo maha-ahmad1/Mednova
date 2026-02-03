@@ -14,11 +14,13 @@ import { toast } from "sonner";
 import type { TherapistFormValues } from "@/app/api/therapist";
 import { Loader2 } from "lucide-react";
 import { SubmitHandler } from "react-hook-form";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
 
 interface TherapistStep4Props {
   onBack: () => void;
   formData: Record<string, unknown>;
   updateFormData: (data: Partial<Record<string, unknown>>) => void;
+  globalErrors?: Record<string, string>;
   setGlobalErrors?: (errors: Record<string, string>) => void;
 }
 const step4Schema = z.object({
@@ -32,6 +34,7 @@ export function TherapistFormStep5({
   onBack,
   formData,
   updateFormData,
+  globalErrors,
   setGlobalErrors,
 }: TherapistStep4Props) {
   const methods = useForm<Step4Data>({
@@ -47,6 +50,14 @@ export function TherapistFormStep5({
     control,
     formState: { errors },
   } = methods;
+
+  const stepFields = ["bio"] as const;
+
+  useApplyServerErrors<Step4Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
 
   const { data: session, update } = useSession();
   const router = useRouter();

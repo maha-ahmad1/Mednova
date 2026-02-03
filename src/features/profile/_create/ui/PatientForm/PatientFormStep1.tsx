@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { FormPhoneInput } from "@/shared/ui/forms"
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors"
 
 
 // ✅ Zod Schema
@@ -78,15 +79,20 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
   }, [session?.user, methods, formData])
 
   
-  const { setError } = methods
+  const stepFields = [
+    "full_name",
+    "email",
+    "phone",
+    "birth_date",
+    "emergency_phone",
+    "relationship",
+  ] as const
 
-    useEffect(() => {
-    if (globalErrors) {
-      Object.entries(globalErrors).forEach(([field, message]) => {
-        setError(field as keyof PatientFormData, { type: "server", message })
-      })
-    }
-  }, [globalErrors, setError])
+  useApplyServerErrors<PatientFormData>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  })
 
   if (status === "loading") {
     return (

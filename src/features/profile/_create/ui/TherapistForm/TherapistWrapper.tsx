@@ -110,6 +110,7 @@ export default function TherapistWrapper() {
             onBack={prevStep}
             formData={formData}
             updateFormData={updateFormData}
+            globalErrors={globalErrors}
             setGlobalErrors={setGlobalErrors}
           />
         )}
@@ -120,6 +121,7 @@ export default function TherapistWrapper() {
             onBack={prevStep}
             formData={formData}
             updateFormData={updateFormData}
+            globalErrors={globalErrors}
             setGlobalErrors={setGlobalErrors}
           />
         )}
@@ -130,6 +132,7 @@ export default function TherapistWrapper() {
             onBack={prevStep}
             formData={formData}
             updateFormData={updateFormData}
+            globalErrors={globalErrors}
             setGlobalErrors={setGlobalErrors}
           />
         )}
@@ -139,6 +142,7 @@ export default function TherapistWrapper() {
             onBack={prevStep}
             formData={formData}
             updateFormData={updateFormData}
+            globalErrors={globalErrors}
             setGlobalErrors={setGlobalErrors}
           />
         )}

@@ -109,6 +109,7 @@ export default function CenterWrapper() {
             onBack={prevStep}
             formData={formData}
             updateFormData={updateFormData}
+            globalErrors={globalErrors}
             setGlobalErrors={setGlobalErrors}
           />
         )}
@@ -119,6 +120,7 @@ export default function CenterWrapper() {
             onBack={prevStep}
             formData={formData}
             updateFormData={updateFormData}
+            globalErrors={globalErrors}
             setGlobalErrors={setGlobalErrors}
           />
         )}
@@ -129,6 +131,7 @@ export default function CenterWrapper() {
             onBack={prevStep}
             formData={formData}
             updateFormData={updateFormData}
+            globalErrors={globalErrors}
             setGlobalErrors={setGlobalErrors}
           />
         )}
@@ -138,6 +141,7 @@ export default function CenterWrapper() {
             onBack={prevStep}
             formData={formData}
             updateFormData={updateFormData}
+            globalErrors={globalErrors}
             setGlobalErrors={setGlobalErrors}
           />
         )}

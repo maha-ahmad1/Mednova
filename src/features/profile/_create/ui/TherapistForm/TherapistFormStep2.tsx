@@ -219,6 +219,7 @@ import { GraduationCap, Globe, Building2, Baseline as ChartLine, Video, MessageS
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { medicalSpecialties } from "@/constants/medicalSpecialties"
 import { FormSelect } from "@/shared/ui/forms"
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors"
 
 const step2Schema = z.object({
   medical_specialties_id: z.string().min(1, "يرجى اختيار التخصص"),
@@ -238,6 +239,7 @@ interface TherapistStep2Props {
   onBack: () => void
   formData: Partial<z.infer<typeof step2Schema>>
   updateFormData: (data: Partial<Record<string, string | File | undefined>>) => void
+  globalErrors?: Record<string, string>
   setGlobalErrors?: (errors: Record<string, string>) => void
 }
 
@@ -246,7 +248,13 @@ const currencyOptions = [
 
 ]
 
-export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }: TherapistStep2Props) {
+export function TherapistFormStep2({
+  onNext,
+  onBack,
+  formData,
+  updateFormData,
+  globalErrors,
+}: TherapistStep2Props) {
   const methods = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
     mode: "onChange",
@@ -267,6 +275,23 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
     register,
     formState: { errors },
   } = methods
+
+  const stepFields = [
+    "medical_specialties_id",
+    "university_name",
+    "graduation_year",
+    "countries_certified",
+    "experience_years",
+    "video_consultation_price",
+    "chat_consultation_price",
+    "currency",
+  ] as const
+
+  useApplyServerErrors<Step2Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  })
 
   const onSubmit = (data: Step2Data) => {
     updateFormData(data)

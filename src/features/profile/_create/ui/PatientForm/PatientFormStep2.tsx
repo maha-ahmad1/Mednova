@@ -22,6 +22,7 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { countries } from "@/constants/countries";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
 
 const patientStep2Schema = z.object({
   gender: z.enum(["male", "female"]).refine((val) => !!val, {
@@ -52,7 +53,7 @@ interface PatientFormStep2Props {
   onBack: () => void;
   formData: PatientFormData;
   updateFormData: (data: PatientFormData) => void;
-  handleGlobalErrors: Record<string, string>;
+  globalErrors?: Record<string, string>;
   setGlobalErrors?: (errors: Record<string, string>) => void;
 }
 
@@ -61,6 +62,7 @@ export function PatientFormStep2({
   onBack,
   formData,
   updateFormData,
+  globalErrors,
   setGlobalErrors,
 }: PatientFormStep2Props) {
   const { storePatient } = usePatient({
@@ -94,6 +96,19 @@ export function PatientFormStep2({
     setValue,
   } = methods;
   const country = methods.watch("country");
+
+  const stepFields = [
+    "gender",
+    "formatted_address",
+    "country",
+    "city",
+  ] as const;
+
+  useApplyServerErrors<PatientStep2FormData>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
 
   useEffect(() => {
     if (status === "unauthenticated" && !navigator.onLine) {

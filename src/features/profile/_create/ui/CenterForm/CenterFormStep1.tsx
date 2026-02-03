@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -92,16 +93,23 @@ export function CenterFormStep1({
     }
   }, [session?.user, methods, formData]);
 
-  useEffect(() => {
-    if (globalErrors) {
-      Object.entries(globalErrors).forEach(([field, message]) => {
-        setError(field as keyof Step1Data, {
-          type: "server",
-          message,
-        });
-      });
-    }
-  }, [globalErrors, setError]);
+  const stepFields = [
+    "name_center",
+    "full_name",
+    "email",
+    "phone",
+    "gender",
+    "formatted_address",
+    "year_establishment",
+    "image",
+    "birth_date",
+  ] as const;
+
+  useApplyServerErrors<Step1Data>({
+    errors: globalErrors,
+    setError,
+    fields: stepFields,
+  });
 
   if (status === "loading") {
     return (

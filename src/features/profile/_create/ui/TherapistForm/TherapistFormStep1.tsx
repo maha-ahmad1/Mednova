@@ -8,6 +8,7 @@ import { Mail, User, Phone, Home, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useSession } from "next-auth/react";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -78,16 +79,21 @@ export function TherapistFormStep1({
       });
     }
   }, [session?.user, methods, formData]);
-  const { setError } = methods;
+  const stepFields = [
+    "full_name",
+    "email",
+    "phone",
+    "gender",
+    "formatted_address",
+    "birth_date",
+    "image",
+  ] as const;
 
-  useEffect(() => {
-    if (globalErrors) {
-      Object.entries(globalErrors).forEach(([field, message]) => {
-        setError(field as keyof Step1Data, { type: "server", message });
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globalErrors]);
+  useApplyServerErrors<Step1Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
 
   if (status === "loading") {
     return (

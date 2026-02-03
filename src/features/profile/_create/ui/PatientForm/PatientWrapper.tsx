@@ -70,7 +70,7 @@ export default function PatientWrapper() {
             onBack={prevStep}
             formData={formData}
             updateFormData={updateFormData}
-            handleGlobalErrors={globalErrors}
+            globalErrors={globalErrors}
             setGlobalErrors={setGlobalErrors}
           />
         )}

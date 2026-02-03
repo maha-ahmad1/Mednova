@@ -10,14 +10,17 @@ import * as z from "zod"
 import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react"
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { FormFileUpload } from "@/shared/ui/forms"
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors"
 
 const step3Schema = z
   .object({
     has_commercial_registration: z.boolean(),
     commercial_registration_number: z.string().optional(),
     commercial_registration_authority: z.string().optional(),
+    commercial_registration_file: z.any().optional(),
     license_number: z.string().min(1, "رقم الترخيص مطلوب"),
     license_authority: z.string().min(1, "الجهة المصدرة مطلوبة"),
+    license_file: z.any().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.has_commercial_registration) {
@@ -55,10 +58,17 @@ interface CenterStep3Props {
       }
     >,
   ) => void
+  globalErrors?: Record<string, string>
   setGlobalErrors?: (errors: Record<string, string>) => void
 }
 
-export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: CenterStep3Props) {
+export function CenterFormStep3({
+  onNext,
+  onBack,
+  formData,
+  updateFormData,
+  globalErrors,
+}: CenterStep3Props) {
   const methods = useForm<Step3Data>({
     resolver: zodResolver(step3Schema),
     mode: "onChange",
@@ -78,6 +88,22 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
     control,
     formState: { errors },
   } = methods
+
+  const stepFields = [
+    "has_commercial_registration",
+    "commercial_registration_number",
+    "commercial_registration_authority",
+    "commercial_registration_file",
+    "license_number",
+    "license_authority",
+    "license_file",
+  ] as const
+
+  useApplyServerErrors<Step3Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  })
 
   const hasCommercialReg = watch("has_commercial_registration")
 
@@ -125,7 +151,7 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
                 icon={FileText}
                 iconPosition="right"
                 rtl
-                error={errors.commercial_registration_number?.message}
+                error={errors.commercial_registration_file?.message}
                 {...register("commercial_registration_number")}
               />
 
@@ -140,17 +166,18 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
               />
 
               <div>
-                <FormFileUpload
-                  type="file"
-                  label="ملف السجل التجاري"
-                  icon={Copyright}
-                  iconPosition="right"
-                  rtl
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const file = e.target.files?.[0]
-                    if (file) setCommercialRegFile(file)
-                  }}
-                />
+              <FormFileUpload
+                type="file"
+                label="ملف السجل التجاري"
+                icon={Copyright}
+                iconPosition="right"
+                rtl
+                error={errors.commercial_registration_number?.message}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const file = e.target.files?.[0]
+                  if (file) setCommercialRegFile(file)
+                }}
+              />
               </div>
             </div>
           )}
@@ -186,6 +213,7 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
                 icon={ShieldCheck}
                 iconPosition="right"
                 rtl
+                error={errors.license_file?.message}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
                   if (file) setLicenseFile(file)

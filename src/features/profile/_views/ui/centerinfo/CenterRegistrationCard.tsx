@@ -101,32 +101,33 @@ export function CenterRegistrationCard({
   };
 
   const getFieldError = (field: keyof typeof formValues) => {
-    const serverError = serverErrors[field];
-    if (serverError) return serverError;
+  const serverError = serverErrors[field];
+  if (serverError) return serverError;
 
-    if (field === "license_number" && !formValues.license_number) {
-      return "رقم الترخيص مطلوب";
-    }
-    if (field === "license_authority" && !formValues.license_authority) {
-      return "جهة الترخيص مطلوبة";
-    }
-    if (
-      formValues.has_commercial_registration &&
-      field === "commercial_registration_number" &&
-      !formValues.commercial_registration_number
-    ) {
-      return "رقم السجل التجاري مطلوب";
-    }
-    if (
-      formValues.has_commercial_registration &&
-      field === "commercial_registration_authority" &&
-      !formValues.commercial_registration_authority
-    ) {
-      return "جهة السجل التجاري مطلوبة";
-    }
+  switch (field) {
+    case "license_number":
+      if (!formValues.license_number) return "رقم الترخيص مطلوب";
+      break;
+    case "license_authority":
+      if (!formValues.license_authority) return "جهة الترخيص مطلوبة";
+      break;
+    case "commercial_registration_number":
+      if (formValues.has_commercial_registration && !formValues.commercial_registration_number)
+        return "رقم السجل التجاري مطلوب";
+      break;
+    case "commercial_registration_authority":
+      if (formValues.has_commercial_registration && !formValues.commercial_registration_authority)
+        return "جهة السجل التجاري مطلوبة";
+      break;
+    case "commercial_registration_file":
+      if (formValues.has_commercial_registration && !formValues.commercial_registration_file)
+        return "ملف السجل التجاري مطلوب";
+      break;
+  }
 
-    return undefined;
-  };
+  return undefined;
+};
+
 
   const handleSave = async () => {
     const result = registrationSchema.safeParse(formValues);
@@ -371,6 +372,7 @@ export function CenterRegistrationCard({
               {formValues.has_commercial_registration && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <FormInput
+                    type="number"
                     label="رقم السجل التجاري"
                     value={formValues.commercial_registration_number}
                     onChange={(e) =>
@@ -408,6 +410,7 @@ export function CenterRegistrationCard({
                             e.target.files?.[0] ?? null,
                         }))
                       }
+                      error={getFieldError("commercial_registration_file")}
                       className="bg-gray-50"
                     />
                   </div>
@@ -423,6 +426,7 @@ export function CenterRegistrationCard({
               </h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormInput
+                  type="number"
                   label="رقم الترخيص"
                   value={formValues.license_number}
                   onChange={(e) =>
@@ -452,6 +456,7 @@ export function CenterRegistrationCard({
                 />
                 <div className="md:col-span-2">
                   <FormFileUpload
+                    error={getFieldError("license_file")}
                     label="ملف الترخيص"
                     onChange={(e) =>
                       setFormValues((s) => ({

@@ -69,7 +69,7 @@ export const useUpdateSchedule = (opts?: useUpdateScheduleOptions) => {
         formData.append(key, String(val));
       });
 
-      return axios.post("/api/schedule/update", formData);
+      return axios.post("/api/center/update", formData);
     },
     onError: (err: AxiosError) => {
       const respData = err.response?.data as unknown as

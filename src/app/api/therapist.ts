@@ -1,7 +1,7 @@
 import { AxiosInstance } from "axios";
 
 export interface TherapistFormValues {
-  schedule_id?: string;
+  schedule_id?: number | string;
   customer_id: string;
   full_name?: string;
   email?: string;

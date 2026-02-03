@@ -9,7 +9,7 @@ import type { CenterProfile } from "@/types/center"
 import { useUpdateSchedule } from "@/features/profile/_views/hooks/useUpdateSchedule"
 import { scheduleSchema } from "@/lib/validation"
 import type { CenterFormValues } from "@/app/api/center"
-import type { TherapistFormValues } from "@/app/api/therapist"
+// import type { TherapistFormValues } from "@/app/api/therapist"
 import { Loader2, Edit, Calendar, Sun, Moon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector"
@@ -48,7 +48,7 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
     day_of_week: Array.isArray(schedule?.day_of_week) ? (schedule.day_of_week as string[]) : [],
     start_time_morning: schedule?.start_time_morning || "",
     end_time_morning: schedule?.end_time_morning || "",
-    timezone: details?.timezone || "", // هنا الوصول المباشر لـ timezone
+    timezone: details?.timezone || "", 
     is_have_evening_time: schedule?.is_have_evening_time ? 1 : 0,
     start_time_evening: schedule?.start_time_evening || "",
     end_time_evening: schedule?.end_time_evening || "",
@@ -81,7 +81,7 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
       day_of_week: Array.isArray(schedule?.day_of_week) ? schedule.day_of_week : [],
       start_time_morning: schedule?.start_time_morning || "",
       end_time_morning: schedule?.end_time_morning || "",
-      timezone: details?.timezone || "", // هنا أيضاً
+      timezone: details?.timezone || "", 
       is_have_evening_time: schedule?.is_have_evening_time ? 1 : 0,
       start_time_evening: schedule?.start_time_evening || "",
       end_time_evening: schedule?.end_time_evening || "",
@@ -122,10 +122,11 @@ export function CenterScheduleCard({ details, userId, refetch }: CenterScheduleC
       is_have_evening_time: values.is_have_evening_time === 1,
       customer_id: String(userId),
       schedule_id: schedule?.id,
+
     }
 
     try {
-      await update(payload as unknown as TherapistFormValues)
+      await update(payload as unknown as CenterFormValues)
       toast.success("تم تحديث الجدول بنجاح")
       setEditing(false)
       setServerErrors({})

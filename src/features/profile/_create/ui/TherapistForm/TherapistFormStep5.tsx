@@ -25,7 +25,6 @@ interface TherapistStep4Props {
 }
 const step4Schema = z.object({
   bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
-  status: z.string().optional(),
 });
 
 type Step4Data = z.infer<typeof step4Schema>;
@@ -202,7 +201,6 @@ export function TherapistFormStep5({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status,
         },
       });
       showSuccessToast("تم إرسال بياناتك بنجاح!");
@@ -237,7 +235,10 @@ export function TherapistFormStep5({
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={() => {
+                updateFormData({ bio: methods.getValues("bio") })
+                onBack()
+              }}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] !hovetr:bg-[#32A88D] hover:text-white"
             >
               رجوع

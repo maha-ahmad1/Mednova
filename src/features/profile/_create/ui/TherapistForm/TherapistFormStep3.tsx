@@ -13,8 +13,8 @@ import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyS
 const step3Schema = z.object({
   license_number: z.string().min(1, "رقم الترخيص مطلوب"),
   license_authority: z.string().min(1, "الجهة المصدرة مطلوبة"),
-  certificate_file: z.any().optional(),
-  license_file: z.any().optional(),
+  certificate_file: z.instanceof(File, { message: "ملف الشهادة مطلوب" }),
+  license_file: z.instanceof(File, { message: "ملف الترخيص مطلوب" }),
 });
 
 type Step3Data = z.infer<typeof step3Schema>;
@@ -41,6 +41,8 @@ export function TherapistFormStep3({
     defaultValues: {
       license_number: formData.license_number || "",
       license_authority: formData.license_authority || "",
+      certificate_file: formData.certificate_file instanceof File ? formData.certificate_file : undefined,
+      license_file: formData.license_file instanceof File ? formData.license_file : undefined,
     },
   });
 
@@ -78,6 +80,15 @@ export function TherapistFormStep3({
   const onSubmit = (data: Step3Data) => {
     updateFormData({ ...data, certificate_file: certificateFile, license_file: licenseFile })
     onNext()
+  }
+
+  const handleBack = () => {
+    updateFormData({
+      ...methods.getValues(),
+      certificate_file: certificateFile,
+      license_file: licenseFile,
+    })
+    onBack()
   }
 
   return (
@@ -120,7 +131,10 @@ export function TherapistFormStep3({
                 error={certificateFileError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
-                  if (file) setCertificateFile(file)
+                  if (file) {
+                    setCertificateFile(file)
+                    methods.setValue("certificate_file", file, { shouldValidate: true })
+                  }
                 }}
               />
             </div>
@@ -135,7 +149,10 @@ export function TherapistFormStep3({
                 error={licenseFileError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
-                  if (file) setLicenseFile(file)
+                  if (file) {
+                    setLicenseFile(file)
+                    methods.setValue("license_file", file, { shouldValidate: true })
+                  }
                 }}
               />
             </div>
@@ -145,7 +162,7 @@ export function TherapistFormStep3({
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={handleBack}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] !hovetr:bg-[#32A88D] hover:text-white"
             >
               رجوع

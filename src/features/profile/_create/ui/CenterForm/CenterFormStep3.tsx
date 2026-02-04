@@ -17,10 +17,12 @@ const step3Schema = z
     has_commercial_registration: z.boolean(),
     commercial_registration_number: z.string().optional(),
     commercial_registration_authority: z.string().optional(),
-    commercial_registration_file: z.any().optional(),
+    commercial_registration_file: z
+      .instanceof(File, { message: "ملف السجل التجاري مطلوب" })
+      .optional(),
     license_number: z.string().min(1, "رقم الترخيص مطلوب"),
     license_authority: z.string().min(1, "الجهة المصدرة مطلوبة"),
-    license_file: z.any().optional(),
+    license_file: z.instanceof(File, { message: "ملف الترخيص مطلوب" }),
   })
   .superRefine((data, ctx) => {
     if (data.has_commercial_registration) {
@@ -36,6 +38,13 @@ const step3Schema = z
           code: z.ZodIssueCode.custom,
           path: ["commercial_registration_authority"],
           message: "جهة السجل التجاري مطلوبة",
+        })
+      }
+      if (!data.commercial_registration_file) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["commercial_registration_file"],
+          message: "ملف السجل التجاري مطلوب",
         })
       }
     }
@@ -78,6 +87,12 @@ export function CenterFormStep3({
       commercial_registration_authority: formData.commercial_registration_authority || "",
       license_number: formData.license_number || "",
       license_authority: formData.license_authority || "",
+      commercial_registration_file:
+        formData.commercial_registration_file instanceof File
+          ? formData.commercial_registration_file
+          : undefined,
+      license_file:
+        formData.license_file instanceof File ? formData.license_file : undefined,
     },
   })
 
@@ -126,6 +141,15 @@ export function CenterFormStep3({
       license_file: licenseFile,
     })
     onNext()
+  }
+
+  const handleBack = () => {
+    updateFormData({
+      ...methods.getValues(),
+      commercial_registration_file: commercialRegFile,
+      license_file: licenseFile,
+    })
+    onBack()
   }
 
   return (
@@ -184,7 +208,10 @@ export function CenterFormStep3({
                 error={commercialRegistrationFileError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
-                  if (file) setCommercialRegFile(file)
+                  if (file) {
+                    setCommercialRegFile(file)
+                    methods.setValue("commercial_registration_file", file, { shouldValidate: true })
+                  }
                 }}
               />
               </div>
@@ -225,7 +252,10 @@ export function CenterFormStep3({
                 error={licenseFileError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
-                  if (file) setLicenseFile(file)
+                  if (file) {
+                    setLicenseFile(file)
+                    methods.setValue("license_file", file, { shouldValidate: true })
+                  }
                 }}
               />
             </div>
@@ -235,7 +265,7 @@ export function CenterFormStep3({
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={handleBack}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] hover:text-white"
             >
               رجوع

@@ -450,6 +450,11 @@ export function TherapistFormStep4({
     onNext();
   };
 
+  const handleBack = () => {
+    updateFormData(methods.getValues());
+    onBack();
+  };
+
   const stepFields = [
     "day_of_week",
     "start_time_morning",
@@ -702,7 +707,7 @@ export function TherapistFormStep4({
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={handleBack}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] hover:text-white"
             >
               رجوع

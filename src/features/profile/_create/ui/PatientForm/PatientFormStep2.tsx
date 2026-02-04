@@ -31,7 +31,6 @@ const patientStep2Schema = z.object({
   formatted_address: z.string().min(1, "العنوان مطلوب"),
   country: z.string().min(1, "حقل البلد مطلوب."),
   city: z.string().min(1, "حقل المدينة مطلوب."),
-  status: z.string().optional(),
 });
 
 export interface PatientFormData {
@@ -248,7 +247,6 @@ export function PatientFormStep2({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status, 
         },
       });
               console.log("status .sss"+status)

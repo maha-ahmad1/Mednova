@@ -18,7 +18,6 @@ import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyS
 
 const step5Schema = z.object({
   bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
-  status: z.string().optional(),
 });
 
 type Step5Data = z.infer<typeof step5Schema>;
@@ -193,7 +192,6 @@ export function CenterFormStep5({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status,
         },
       });
       showSuccessToast("تم إرسال بيانات المركز بنجاح!");
@@ -228,7 +226,10 @@ export function CenterFormStep5({
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={() => {
+                updateFormData({ bio: methods.getValues("bio") })
+                onBack()
+              }}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] hover:text-white"
             >
               رجوع

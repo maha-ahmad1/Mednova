@@ -20,9 +20,9 @@ import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyS
 const patientSchema = z.object({
   full_name: z.string().min(1, "الاسم الكامل مطلوب"),
   email: z.string().email("بريد إلكتروني غير صالح"),
-  emergency_phone: z.string().optional(),
+  emergency_phone: z.string().min(1, "رقم الطوارئ مطلوب"),
   phone: z.string().min(1, "رقم الهاتف مطلوب"),
-  relationship: z.string().optional(),
+  relationship: z.string().min(1, "صلة القرابة مطلوبة"),
   birth_date: z.string().min(1, "التاريخ الميلاد مطلوب"),
   
 })

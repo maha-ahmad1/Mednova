@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { FormPhoneInput } from "@/shared/ui/forms"
+import { usePhoneNumber } from "@/hooks/usePhoneNumber"
 
 
 // ✅ Zod Schema
@@ -42,6 +43,7 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
   const { data: session, status } = useSession()
   const [networkError, setNetworkError] = useState(false)
   const [countryCode, setCountryCode] = useState("+968")
+  const { splitPhoneNumber, normalizePhoneInput, buildFullPhoneNumber } = usePhoneNumber()
 
   const methods = useForm<PatientFormData>({
     resolver: zodResolver(patientSchema),
@@ -69,13 +71,15 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
 
   useEffect(() => {
     if (session?.user && !formData.full_name) {
+      const { countryCode: nextCountryCode, localNumber } = splitPhoneNumber(session.user.phone)
+      setCountryCode(nextCountryCode)
       methods.reset({
         full_name: session.user.full_name || "",
         email: session.user.email || "",
-        phone: session.user.phone || "",
+        phone: localNumber,
       })
     }
-  }, [session?.user, methods, formData])
+  }, [session?.user, methods, formData, splitPhoneNumber])
 
   
   const { setError } = methods
@@ -152,12 +156,16 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
   } = methods
 
   const onSubmit = async (data: PatientFormData) => {
+    const phoneWithCode = buildFullPhoneNumber(countryCode, data.phone)
+    const emergencyPhoneWithCode = data.emergency_phone
+      ? buildFullPhoneNumber(countryCode, data.emergency_phone)
+      : ""
     updateFormData({
       full_name: data.full_name,
       email: data.email,
-      phone: data.phone,
+      phone: phoneWithCode,
       birth_date: data.birth_date,
-      emergency_phone: data.emergency_phone, 
+      emergency_phone: emergencyPhoneWithCode,
       relationship: data.relationship,
       countryCode: countryCode, 
     })
@@ -208,7 +216,12 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
                   iconPosition="right"
                   rtl
                   error={errors.phone?.message}
-                  {...methods.register("phone")}
+                  {...methods.register("phone", {
+                    onChange: (event) => {
+                      const value = normalizePhoneInput(event.target.value)
+                      methods.setValue("phone", value, { shouldValidate: true })
+                    },
+                  })}
                   readOnly
                 />
                 <FormInput
@@ -237,6 +250,7 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
                       onCountryCodeChange={setCountryCode}
                       error={errors.emergency_phone?.message}
                       className="no-spinner"
+                      onChange={(event) => field.onChange(normalizePhoneInput(event.target.value))}
                     />
                   )}
                 />

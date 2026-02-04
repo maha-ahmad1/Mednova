@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useSession } from "next-auth/react";
 import type { PatientProfile } from "@/types/patient";
 import { FormInput } from "@/shared/ui/forms";
+import { usePhoneNumber } from "@/hooks/usePhoneNumber";
 
 interface Props {
   patient: PatientProfile;
@@ -36,6 +37,7 @@ export default function PatientPersonal1Card({
 }: Props) {
   const isEditing = editingCard === "personal1";
   const { data: session } = useSession();
+  const { normalizePhoneInput } = usePhoneNumber();
 
   const handleChange = (field: string, value: string | File) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
@@ -194,7 +196,7 @@ export default function PatientPersonal1Card({
                   setFormValues((prev) => ({ ...prev, countryCode: code }))
                 }
                 value={(formValues.phone as string) || ""}
-                onChange={(e) => handleChange("phone", e.target.value)}
+                onChange={(e) => handleChange("phone", normalizePhoneInput(e.target.value))}
                 rtl
                 // iconPosition="right"
                 placeholder="0000 0000"

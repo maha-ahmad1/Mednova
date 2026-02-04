@@ -22,6 +22,7 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { countries } from "@/constants/countries";
+import { usePhoneNumber } from "@/hooks/usePhoneNumber";
 
 const patientStep2Schema = z.object({
   gender: z.enum(["male", "female"]).refine((val) => !!val, {
@@ -76,6 +77,7 @@ export function PatientFormStep2({
   const [networkError, setNetworkError] = useState(false);
   const router = useRouter();
   const [countryCode] = useState(formData.countryCode || "+968");
+  const { buildFullPhoneNumber } = usePhoneNumber();
 
   const methods = useForm<PatientStep2FormData>({
     resolver: zodResolver(patientStep2Schema),
@@ -193,7 +195,7 @@ export function PatientFormStep2({
       setIsLoading(true);
 
       const emergencyPhoneWithCode = formData.emergency_phone
-        ? `${countryCode}${formData.emergency_phone}`
+        ? buildFullPhoneNumber(countryCode, formData.emergency_phone)
         : "";
 
       const payload: PatientFormValues = {

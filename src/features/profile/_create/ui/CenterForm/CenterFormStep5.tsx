@@ -14,10 +14,10 @@ import { toast } from "sonner";
 import type { CenterFormValues } from "@/app/api/center";
 import { Loader2 } from "lucide-react";
 import type { SubmitHandler } from "react-hook-form";
+import { centerFormSchema } from "@/features/profile/_create/validation/formSchemas";
 
-const step5Schema = z.object({
-  bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
-  status: z.string().optional(),
+const step5Schema = centerFormSchema.pick({
+  bio: true,
 });
 
 type Step5Data = z.infer<typeof step5Schema>;
@@ -182,7 +182,7 @@ export function CenterFormStep5({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status,
+          status: session.user.status,
         },
       });
       showSuccessToast("تم إرسال بيانات المركز بنجاح!");

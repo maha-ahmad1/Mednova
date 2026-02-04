@@ -219,16 +219,17 @@ import { GraduationCap, Globe, Building2, Baseline as ChartLine, Video, MessageS
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { medicalSpecialties } from "@/constants/medicalSpecialties"
 import { FormSelect } from "@/shared/ui/forms"
+import { therapistFormSchema } from "@/features/profile/_create/validation/formSchemas"
 
-const step2Schema = z.object({
-  medical_specialties_id: z.string().min(1, "يرجى اختيار التخصص"),
-  university_name: z.string().min(1, "اسم الجامعة مطلوب"),
-  graduation_year: z.string().min(1, "سنة التخرج مطلوبة"),
-  countries_certified: z.string().min(1, "يرجى إدخال الدول المعتمد فيها"),
-  experience_years: z.string().min(1, "عدد سنوات الخبرة مطلوب"),
-  video_consultation_price: z.string().min(1, "حقل سعر الاستشارة المرئية مطلوب."),
-  chat_consultation_price: z.string().min(1, "حقل سعر الاستشارة النصية مطلوب."),
-  currency: z.string().min(1, "حقل العملة مطلوب."),
+const step2Schema = therapistFormSchema.pick({
+  medical_specialties_id: true,
+  university_name: true,
+  graduation_year: true,
+  countries_certified: true,
+  experience_years: true,
+  video_consultation_price: true,
+  chat_consultation_price: true,
+  currency: true,
 })
 
 type Step2Data = z.infer<typeof step2Schema>

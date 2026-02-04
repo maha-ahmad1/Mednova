@@ -350,39 +350,19 @@ import * as z from "zod";
 import { countries } from "@/constants/countries";
 import { FormSelect } from "@/shared/ui/forms";
 import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector";
+import { therapistFormSchema } from "@/features/profile/_create/validation/formSchemas";
 
-const step4Schema = z
-  .object({
-    country: z.string().min(1, "حقل البلد مطلوب."),
-    city: z.string().min(1, "حقل المدينة مطلوب."),
-    day_of_week: z.array(z.string()).min(1, "حقل أيام الدوام مطلوب."),
-    start_time_morning: z.string().min(1, "حقل بداية الدوام الصباحي مطلوب."),
-    end_time_morning: z.string().min(1, "حقل نهاية الدوام الصباحي مطلوب."),
-    is_have_evening_time: z.union([z.literal(0), z.literal(1)]),
-    start_time_evening: z.string().optional(),
-    end_time_evening: z.string().optional(),
-    timezone: z.string().min(1, "حقل المنطقة الزمنية مطلوب."),
-  })
-  .superRefine((data, ctx) => {
-    const hasEvening = data.is_have_evening_time === 1;
-
-    if (hasEvening) {
-      if (!data.start_time_evening) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["start_time_evening"],
-          message: "حقل بداية الدوام المسائي مطلوب.",
-        });
-      }
-      if (!data.end_time_evening) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["end_time_evening"],
-          message: "حقل نهاية الدوام المسائي مطلوب.",
-        });
-      }
-    }
-  });
+const step4Schema = therapistFormSchema.pick({
+  country: true,
+  city: true,
+  day_of_week: true,
+  start_time_morning: true,
+  end_time_morning: true,
+  is_have_evening_time: true,
+  start_time_evening: true,
+  end_time_evening: true,
+  timezone: true,
+});
 
 type Step4Data = z.infer<typeof step4Schema>;
 

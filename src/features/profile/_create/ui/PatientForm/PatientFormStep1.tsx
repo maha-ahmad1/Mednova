@@ -13,17 +13,17 @@ import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { FormPhoneInput } from "@/shared/ui/forms"
+import { patientFormSchema } from "@/features/profile/_create/validation/formSchemas"
 
 
-// ✅ Zod Schema
-const patientSchema = z.object({
-  full_name: z.string().min(1, "الاسم الكامل مطلوب"),
-  email: z.string().email("بريد إلكتروني غير صالح"),
-  emergency_phone: z.string().optional(),
-  phone: z.string().min(1, "رقم الهاتف مطلوب"),
-  relationship: z.string().optional(),
-  birth_date: z.string().min(1, "التاريخ الميلاد مطلوب"),
-  
+const patientSchema = patientFormSchema.pick({
+  full_name: true,
+  email: true,
+  emergency_phone: true,
+  phone: true,
+  relationship: true,
+  birth_date: true,
+  countryCode: true,
 })
 
 type PatientFormData = z.infer<typeof patientSchema>& {
@@ -53,6 +53,7 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
       birth_date: formData.birth_date || "",
       emergency_phone: formData.emergency_phone || "",
       relationship: formData.relationship || "",
+      countryCode: formData.countryCode || countryCode,
     },
   })
 
@@ -77,6 +78,9 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
     }
   }, [session?.user, methods, formData])
 
+  useEffect(() => {
+    methods.setValue("countryCode", countryCode, { shouldValidate: true })
+  }, [countryCode, methods])
   
   const { setError } = methods
 

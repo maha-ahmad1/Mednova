@@ -1,6 +1,6 @@
 "use client";
 import { FormInput } from "@/shared/ui/forms";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,12 +8,13 @@ import * as z from "zod";
 import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { FormFileUpload } from "@/shared/ui/forms";
+import { therapistFormSchema } from "@/features/profile/_create/validation/formSchemas";
 
-const step3Schema = z.object({
-  license_number: z.string().min(1, "رقم الترخيص مطلوب"),
-  license_authority: z.string().min(1, "الجهة المصدرة مطلوبة"),
-  certificate_file: z.any().optional(),
-  license_file: z.any().optional(),
+const step3Schema = therapistFormSchema.pick({
+  license_number: true,
+  license_authority: true,
+  certificate_file: true,
+  license_file: true,
 });
 
 type Step3Data = z.infer<typeof step3Schema>;
@@ -39,11 +40,20 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
   const {
     handleSubmit,
     register,
+    setValue,
     formState: { errors },
   } = methods;
 
   const [certificateFile, setCertificateFile] = useState<File | null>(formData.certificate_file || null)
   const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)
+
+  useEffect(() => {
+    setValue("certificate_file", certificateFile, { shouldValidate: true })
+  }, [certificateFile, setValue])
+
+  useEffect(() => {
+    setValue("license_file", licenseFile, { shouldValidate: true })
+  }, [licenseFile, setValue])
 
   const onSubmit = (data: Step3Data) => {
     updateFormData({ ...data, certificate_file: certificateFile, license_file: licenseFile })
@@ -87,7 +97,7 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
                 icon={ShieldCheck}
                 iconPosition="right"
                 rtl
-                error={errors.license_authority?.message}
+                error={errors.certificate_file?.message}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
                   if (file) setCertificateFile(file)
@@ -102,7 +112,7 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
                 icon={Copyright}
                 iconPosition="right"
                 rtl
-                error={errors.license_authority?.message}
+                error={errors.license_file?.message}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
                   if (file) setLicenseFile(file)

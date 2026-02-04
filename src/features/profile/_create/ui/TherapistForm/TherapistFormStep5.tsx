@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import type { TherapistFormValues } from "@/app/api/therapist";
 import { Loader2 } from "lucide-react";
 import { SubmitHandler } from "react-hook-form";
+import { therapistFormSchema } from "@/features/profile/_create/validation/formSchemas";
 
 interface TherapistStep4Props {
   onBack: () => void;
@@ -21,9 +22,8 @@ interface TherapistStep4Props {
   updateFormData: (data: Partial<Record<string, unknown>>) => void;
   setGlobalErrors?: (errors: Record<string, string>) => void;
 }
-const step4Schema = z.object({
-  bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
-  status: z.string().optional(),
+const step4Schema = therapistFormSchema.pick({
+  bio: true,
 });
 
 type Step4Data = z.infer<typeof step4Schema>;
@@ -191,7 +191,7 @@ export function TherapistFormStep5({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status,
+          status: session.user.status,
         },
       });
       showSuccessToast("تم إرسال بياناتك بنجاح!");

@@ -10,15 +10,13 @@ import { Video, MessageSquare, Check } from "lucide-react";
 import { FormSelect } from "@/shared/ui/forms/components/FormSelect";
 import { cn } from "@/lib/utils";
 import { CustomCheckbox } from "@/shared/ui/forms/components/CustomCheckbox";
+import { centerFormSchema } from "@/features/profile/_create/validation/formSchemas";
 
-const step2Schema = z.object({
-  specialty_id: z.array(z.string()).min(1, "يرجى اختيار تخصص واحد على الأقل"),
-  // year_establishment: z.string().min(1, "سنة التأسيس مطلوبة"),
-  video_consultation_price: z
-    .string()
-    .min(1, "حقل سعر الاستشارة المرئية مطلوب."),
-  chat_consultation_price: z.string().min(1, "حقل سعر الاستشارة النصية مطلوب."),
-  currency: z.string().min(1, "حقل العملة مطلوب."),
+const step2Schema = centerFormSchema.pick({
+  specialty_id: true,
+  video_consultation_price: true,
+  chat_consultation_price: true,
+  currency: true,
 });
 
 type Step2Data = z.infer<typeof step2Schema>;

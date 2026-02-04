@@ -22,15 +22,14 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { countries } from "@/constants/countries";
+import { patientFormSchema } from "@/features/profile/_create/validation/formSchemas";
 
-const patientStep2Schema = z.object({
-  gender: z.enum(["male", "female"]).refine((val) => !!val, {
-    message: "يرجى تحديد الجنس",
-  }),
-  formatted_address: z.string().min(1, "العنوان مطلوب"),
-  country: z.string().min(1, "حقل البلد مطلوب."),
-  city: z.string().min(1, "حقل المدينة مطلوب."),
-  status: z.string().optional(),
+const patientStep2Schema = patientFormSchema.pick({
+  gender: true,
+  formatted_address: true,
+  country: true,
+  city: true,
+  image: true,
 });
 
 export interface PatientFormData {
@@ -85,6 +84,7 @@ export function PatientFormStep2({
       formatted_address: formData.formatted_address || "",
       country: formData.country || "",
       city: formData.city || "",
+      image: formData.image ?? null,
     },
   });
 
@@ -94,6 +94,10 @@ export function PatientFormStep2({
     setValue,
   } = methods;
   const country = methods.watch("country");
+
+  useEffect(() => {
+    setValue("image", imageFile, { shouldValidate: true });
+  }, [imageFile, setValue]);
 
   useEffect(() => {
     if (status === "unauthenticated" && !navigator.onLine) {
@@ -233,7 +237,7 @@ export function PatientFormStep2({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status, 
+          status: session.user.status,
         },
       });
               console.log("status .sss"+status)
@@ -362,6 +366,9 @@ export function PatientFormStep2({
               value={imageFile}
               onChange={setImageFile}
             />
+            {errors.image?.message && (
+              <p className="text-sm text-destructive">{errors.image.message}</p>
+            )}
 
             <div className="flex justify-between mt-4">
               <FormSubmitButton

@@ -78,15 +78,19 @@ export function TherapistFormStep3({
   const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)
 
   const onSubmit = (data: Step3Data) => {
-    updateFormData({ ...data, certificate_file: certificateFile, license_file: licenseFile })
+    updateFormData({
+      ...data,
+      certificate_file: certificateFile ?? undefined,
+      license_file: licenseFile ?? undefined,
+    })
     onNext()
   }
 
   const handleBack = () => {
     updateFormData({
       ...methods.getValues(),
-      certificate_file: certificateFile,
-      license_file: licenseFile,
+      certificate_file: certificateFile ?? undefined,
+      license_file: licenseFile ?? undefined,
     })
     onBack()
   }

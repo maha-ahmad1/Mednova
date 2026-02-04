@@ -20,10 +20,10 @@ export default function CenterWrapper() {
     year_establishment?: string;
     has_commercial_registration?: boolean;
     commercial_registration_number?: string;
-    commercial_registration_file?: File | null;
+    commercial_registration_file?: File;
     commercial_registration_authority?: string;
     license_authority?: string;
-    license_file?: File | null;
+    license_file?: File;
     license_number?: string;
     bio?: string;
     day_of_week?: string[];
@@ -51,10 +51,10 @@ export default function CenterWrapper() {
     year_establishment: "",
     has_commercial_registration: false,
     commercial_registration_number: "",
-    commercial_registration_file: null,
+    commercial_registration_file: undefined,
     commercial_registration_authority: "",
     license_authority: "",
-    license_file: null,
+    license_file: undefined,
     license_number: "",
     bio: "",
     day_of_week: [],

@@ -3,27 +3,16 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { z } from "zod";
 import { Mail, User, Phone, Home, Loader2, Calendar } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { centerStep1Schema } from "@/features/profile/_create/validation/registrationSchemas";
 
-const step1Schema = z.object({
-  full_name: z.string().min(1, "الاسم مطلوب"),
-  email: z.string().email("بريد غير صالح"),
-  phone: z.string().min(1, "رقم الهاتف مطلوب"),
-  gender: z.enum(["male", "female"]),
-  formatted_address: z.string().min(1, "العنوان مطلوب"),
-  year_establishment: z.string().min(4, "سنة التأسيس مطلوبة"),
-  image: z.instanceof(File, { message: "يرجى رفع صورة المركز" }),
-  name_center: z.string().min(1, "اسم المركز مطلوب"),
-  birth_date: z.string().min(1, "تاريخ الميلاد مطلوب"),
-});
-
-type Step1Data = z.infer<typeof step1Schema>;
+type Step1Data = z.infer<typeof centerStep1Schema>;
 
 interface CenterStep1Props {
   onNext: () => void;
@@ -41,7 +30,7 @@ export function CenterFormStep1({
   const { data: session, status } = useSession();
 
   const methods = useForm<Step1Data>({
-    resolver: zodResolver(step1Schema),
+    resolver: zodResolver(centerStep1Schema),
     mode: "onChange",
     defaultValues: {
       name_center: formData.name_center || "",
@@ -50,7 +39,7 @@ export function CenterFormStep1({
       phone: formData.phone || "",
       gender: formData.gender || undefined,
       formatted_address: formData.formatted_address || "",
-      year_establishment: formData.year_establishment || "",
+      year_establishment: formData.year_establishment ?? "",
       image: formData?.image instanceof File ? formData.image : undefined,
       birth_date: formData.birth_date || "",
     } as Partial<Step1Data>,
@@ -237,6 +226,7 @@ export function CenterFormStep1({
               label="صورة المركز"
               value={centerImage}
               onChange={setCenterImage}
+              error={errors.image?.message}
             />
           </div>
           <FormSubmitButton className="px-6 py-5 mt-4">التالي</FormSubmitButton>

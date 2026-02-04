@@ -3,23 +3,14 @@ import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { Controller, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Mail, User, Phone, Home, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useSession } from "next-auth/react";
+import { therapistStep1Schema } from "@/features/profile/_create/validation/registrationSchemas";
+import { z } from "zod";
 
-const step1Schema = z.object({
-  full_name: z.string().min(1, "الاسم مطلوب"),
-  email: z.string().email("بريد غير صالح"),
-  phone: z.string().min(1, "رقم الهاتف مطلوب"),
-  gender: z.enum(["male", "female"]),
-  formatted_address: z.string().min(1, "العنوان مطلوب"),
-  birth_date: z.string().min(1, "تاريخ الميلاد مطلوب"),
-  image: z.instanceof(File, { message: "يرجى رفع صورة شخصية" }),
-});
-
-type Step1Data = z.infer<typeof step1Schema>;
+type Step1Data = z.infer<typeof therapistStep1Schema>;
 
 interface TherapistStep1Props {
   onNext: () => void;
@@ -37,7 +28,7 @@ export function TherapistFormStep1({
   const { data: session, status } = useSession();
 
   const methods = useForm<Step1Data>({
-    resolver: zodResolver(step1Schema),
+    resolver: zodResolver(therapistStep1Schema),
     mode: "onChange",
     defaultValues: {
       full_name: formData.full_name || "",
@@ -186,6 +177,7 @@ export function TherapistFormStep1({
               label="الصورة الشخصية"
               value={profileImage}
               onChange={setProfileImage}
+              error={errors.image?.message}
             />
             <FormSubmitButton className="px-6 py-5 mt-4">
               التالي

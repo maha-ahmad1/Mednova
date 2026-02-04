@@ -214,24 +214,14 @@ import { FormInput } from "@/shared/ui/forms"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
 import { useForm, FormProvider, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { GraduationCap, Globe, Building2, Baseline as ChartLine, Video, MessageSquare } from "lucide-react"
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { medicalSpecialties } from "@/constants/medicalSpecialties"
 import { FormSelect } from "@/shared/ui/forms"
+import { therapistStep2Schema } from "@/features/profile/_create/validation/registrationSchemas"
+import { z } from "zod"
 
-const step2Schema = z.object({
-  medical_specialties_id: z.string().min(1, "يرجى اختيار التخصص"),
-  university_name: z.string().min(1, "اسم الجامعة مطلوب"),
-  graduation_year: z.string().min(1, "سنة التخرج مطلوبة"),
-  countries_certified: z.string().min(1, "يرجى إدخال الدول المعتمد فيها"),
-  experience_years: z.string().min(1, "عدد سنوات الخبرة مطلوب"),
-  video_consultation_price: z.string().min(1, "حقل سعر الاستشارة المرئية مطلوب."),
-  chat_consultation_price: z.string().min(1, "حقل سعر الاستشارة النصية مطلوب."),
-  currency: z.string().min(1, "حقل العملة مطلوب."),
-})
-
-type Step2Data = z.infer<typeof step2Schema>
+type Step2Data = z.infer<typeof therapistStep2Schema>
 
 interface TherapistStep2Props {
   onNext: () => void
@@ -248,16 +238,16 @@ const currencyOptions = [
 
 export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }: TherapistStep2Props) {
   const methods = useForm<Step2Data>({
-    resolver: zodResolver(step2Schema),
+    resolver: zodResolver(therapistStep2Schema),
     mode: "onChange",
     defaultValues: {
       medical_specialties_id: formData.medical_specialties_id || "",
       university_name: formData.university_name || "",
-      graduation_year: formData.graduation_year || "",
+      graduation_year: formData.graduation_year ?? "",
       countries_certified: formData.countries_certified || "",
-      experience_years: formData.experience_years || "",
-      video_consultation_price: formData.video_consultation_price || "",
-      chat_consultation_price: formData.chat_consultation_price || "",
+      experience_years: formData.experience_years ?? "",
+      video_consultation_price: formData.video_consultation_price ?? "",
+      chat_consultation_price: formData.chat_consultation_price ?? "",
       currency: formData.currency || "",
     },
   })

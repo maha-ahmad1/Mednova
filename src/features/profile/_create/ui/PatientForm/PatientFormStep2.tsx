@@ -2,7 +2,6 @@
 
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { useState, useEffect } from "react";
 import {
@@ -22,16 +21,8 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { countries } from "@/constants/countries";
-
-const patientStep2Schema = z.object({
-  gender: z.enum(["male", "female"]).refine((val) => !!val, {
-    message: "يرجى تحديد الجنس",
-  }),
-  formatted_address: z.string().min(1, "العنوان مطلوب"),
-  country: z.string().min(1, "حقل البلد مطلوب."),
-  city: z.string().min(1, "حقل المدينة مطلوب."),
-  status: z.string().optional(),
-});
+import { patientStep2Schema } from "@/features/profile/_create/validation/registrationSchemas";
+import { z } from "zod";
 
 export interface PatientFormData {
   birth_date?: string;
@@ -40,7 +31,6 @@ export interface PatientFormData {
   emergency_phone?: string;
   relationship?: string;
   formatted_address?: string;
-  countryCode?: string;
   city?: string;
   country?: string;
 }
@@ -75,7 +65,6 @@ export function PatientFormStep2({
   );
   const [networkError, setNetworkError] = useState(false);
   const router = useRouter();
-  const [countryCode] = useState(formData.countryCode || "+968");
 
   const methods = useForm<PatientStep2FormData>({
     resolver: zodResolver(patientStep2Schema),
@@ -85,6 +74,7 @@ export function PatientFormStep2({
       formatted_address: formData.formatted_address || "",
       country: formData.country || "",
       city: formData.city || "",
+      image: formData.image ?? undefined,
     },
   });
 
@@ -94,6 +84,14 @@ export function PatientFormStep2({
     setValue,
   } = methods;
   const country = methods.watch("country");
+
+  useEffect(() => {
+    if (imageFile) {
+      methods.setValue("image", imageFile, { shouldValidate: true });
+    } else {
+      methods.resetField("image");
+    }
+  }, [imageFile, methods]);
 
   useEffect(() => {
     if (status === "unauthenticated" && !navigator.onLine) {
@@ -192,16 +190,12 @@ export function PatientFormStep2({
     try {
       setIsLoading(true);
 
-      const emergencyPhoneWithCode = formData.emergency_phone
-        ? `${countryCode}${formData.emergency_phone}`
-        : "";
-
       const payload: PatientFormValues = {
         customer_id: session.user.id,
         gender: data.gender === "male" ? "Male" : "Female",
         birth_date: formData.birth_date,
         image: imageFile,
-        emergency_phone: emergencyPhoneWithCode,
+        emergency_phone: formData.emergency_phone,
         relationship: formData.relationship,
         formatted_address: data.formatted_address,
         country: data.country,
@@ -361,6 +355,7 @@ export function PatientFormStep2({
               label="رفع الصورة الشخصية"
               value={imageFile}
               onChange={setImageFile}
+              error={errors.image?.message}
             />
 
             <div className="flex justify-between mt-4">

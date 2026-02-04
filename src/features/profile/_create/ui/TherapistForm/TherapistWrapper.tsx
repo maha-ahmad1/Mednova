@@ -21,9 +21,9 @@ export default function TherapistWrapper() {
     formatted_address?: string;
     medical_specialties_id?: string;
     university_name?: string;
-    graduation_year?: string;
+    graduation_year?: number | string;
     countries_certified?: string;
-    experience_years?: string;
+    experience_years?: number | string;
     license_number?: string;
     license_authority?: string;
     certificate_file?: File | null;
@@ -38,9 +38,10 @@ export default function TherapistWrapper() {
     is_have_evening_time?: 0 | 1;
     start_time_evening?: string;
     end_time_evening?: string;
-    video_consultation_price?: string;
-    chat_consultation_price?: string;
+    video_consultation_price?: number | string;
+    chat_consultation_price?: number | string;
     currency?: string;
+    timezone?: string;
   };
 
   const [formData, setFormData] = useState<TherapistState>({
@@ -72,6 +73,7 @@ export default function TherapistWrapper() {
     video_consultation_price: "",
     chat_consultation_price: "",
     currency: "",
+    timezone: "",
   });
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 5));

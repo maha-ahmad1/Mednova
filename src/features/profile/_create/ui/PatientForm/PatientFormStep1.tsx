@@ -2,7 +2,6 @@
 
 import { useForm, FormProvider, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { FormInput } from "@/shared/ui/forms"
 import { Mail, User, Phone, Heart, WifiOff, RefreshCw } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -13,22 +12,10 @@ import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { FormPhoneInput } from "@/shared/ui/forms"
+import { patientStep1Schema } from "@/features/profile/_create/validation/registrationSchemas"
 
 
-// ✅ Zod Schema
-const patientSchema = z.object({
-  full_name: z.string().min(1, "الاسم الكامل مطلوب"),
-  email: z.string().email("بريد إلكتروني غير صالح"),
-  emergency_phone: z.string().optional(),
-  phone: z.string().min(1, "رقم الهاتف مطلوب"),
-  relationship: z.string().optional(),
-  birth_date: z.string().min(1, "التاريخ الميلاد مطلوب"),
-  
-})
-
-type PatientFormData = z.infer<typeof patientSchema>& {
-  countryCode?: string
-}
+type PatientFormData = z.infer<typeof patientStep1Schema>
 
 interface PatientFormStep1Props {
   onNext: () => void
@@ -44,7 +31,7 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
   const [countryCode, setCountryCode] = useState("+968")
 
   const methods = useForm<PatientFormData>({
-    resolver: zodResolver(patientSchema),
+    resolver: zodResolver(patientStep1Schema),
     mode: "onChange",
     defaultValues: {
       full_name: formData.full_name || "",
@@ -73,9 +60,22 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
         full_name: session.user.full_name || "",
         email: session.user.email || "",
         phone: session.user.phone || "",
+        emergency_phone: formData.emergency_phone || "",
+        birth_date: formData.birth_date || "",
+        relationship: formData.relationship || "",
       })
     }
   }, [session?.user, methods, formData])
+
+  useEffect(() => {
+    const currentEmergency = methods.getValues("emergency_phone")
+    if (currentEmergency && currentEmergency.startsWith("+")) {
+      const match = currentEmergency.match(/^\+\d{3}/)
+      if (match) {
+        setCountryCode(match[0])
+      }
+    }
+  }, [methods])
 
   
   const { setError } = methods
@@ -157,9 +157,8 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
       email: data.email,
       phone: data.phone,
       birth_date: data.birth_date,
-      emergency_phone: data.emergency_phone, 
+      emergency_phone: data.emergency_phone,
       relationship: data.relationship,
-      countryCode: countryCode, 
     })
 
     onNext()
@@ -233,8 +232,27 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
                       icon={Phone}
                       iconPosition="right"
                       rtl
+                      value={
+                        field.value?.startsWith("+")
+                          ? field.value.replace(/^\+\d{3}/, "")
+                          : field.value || ""
+                      }
                       countryCodeValue={countryCode}
-                      onCountryCodeChange={setCountryCode}
+                      onCountryCodeChange={(code) => {
+                        setCountryCode(code)
+                        const currentValue = methods.getValues("emergency_phone")
+                        if (currentValue) {
+                          const digits = currentValue.replace(/^\+\d{3}/, "")
+                          methods.setValue("emergency_phone", `${code}${digits}`, {
+                            shouldValidate: true,
+                          })
+                        }
+                      }}
+                      onChange={(event) => {
+                        const rawValue = event.target.value
+                        const nextValue = rawValue ? `${countryCode}${rawValue}` : ""
+                        field.onChange(nextValue)
+                      }}
                       error={errors.emergency_phone?.message}
                       className="no-spinner"
                     />

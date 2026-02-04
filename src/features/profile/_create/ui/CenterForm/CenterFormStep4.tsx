@@ -4,45 +4,13 @@ import { useForm, FormProvider, Controller } from "react-hook-form";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { countries } from "@/constants/countries";
 import { FormSelect } from "@/shared/ui/forms";
 import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector";
+import { centerStep4Schema } from "@/features/profile/_create/validation/registrationSchemas";
+import { z } from "zod";
 
-const step4Schema = z
-  .object({
-    country: z.string().min(1, "حقل البلد مطلوب."),
-    city: z.string().min(1, "حقل المدينة مطلوب."),
-    timezone: z.string().min(1, "حقل المنطقة الزمنية مطلوب."),
-    day_of_week: z.array(z.string()).min(1, "حقل أيام الدوام مطلوب."),
-    start_time_morning: z.string().min(1, "حقل بداية الدوام الصباحي مطلوب."),
-    end_time_morning: z.string().min(1, "حقل نهاية الدوام الصباحي مطلوب."),
-    is_have_evening_time: z.union([z.literal(0), z.literal(1)]),
-    start_time_evening: z.string().optional(),
-    end_time_evening: z.string().optional(),
-  })
-  .superRefine((data, ctx) => {
-    const hasEvening = data.is_have_evening_time === 1;
-
-    if (hasEvening) {
-      if (!data.start_time_evening) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["start_time_evening"],
-          message: "حقل بداية الدوام المسائي مطلوب.",
-        });
-      }
-      if (!data.end_time_evening) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["end_time_evening"],
-          message: "حقل نهاية الدوام المسائي مطلوب.",
-        });
-      }
-    }
-  });
-
-type Step4Data = z.infer<typeof step4Schema>;
+type Step4Data = z.infer<typeof centerStep4Schema>;
 
 const days = [
   { key: "Sunday", label: "الأحد" },
@@ -71,7 +39,7 @@ export function CenterFormStep4({
   updateFormData,
 }: Step4Props) {
   const methods = useForm<Step4Data>({
-    resolver: zodResolver(step4Schema),
+    resolver: zodResolver(centerStep4Schema),
     mode: "onChange",
     defaultValues: {
       day_of_week: (formData.day_of_week as string[]) || [],
@@ -91,7 +59,13 @@ export function CenterFormStep4({
     },
   });
 
-  const { handleSubmit, control, watch, setValue } = methods;
+  const {
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = methods;
   const selectedDays = watch("day_of_week");
   const isEvening = watch("is_have_evening_time") === 1;
   const country = watch("country");
@@ -227,6 +201,11 @@ export function CenterFormStep4({
                   </label>
                 ))}
               </div>
+              {errors.day_of_week && (
+                <p className="text-red-500 text-sm mt-2">
+                  {errors.day_of_week.message}
+                </p>
+              )}
             </div>
 
             {/* Morning Time */}

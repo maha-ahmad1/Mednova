@@ -6,39 +6,13 @@ import { useState } from "react"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
 import { useForm, FormProvider, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react"
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { FormFileUpload } from "@/shared/ui/forms"
+import { centerStep3Schema } from "@/features/profile/_create/validation/registrationSchemas"
+import { z } from "zod"
 
-const step3Schema = z
-  .object({
-    has_commercial_registration: z.boolean(),
-    commercial_registration_number: z.string().optional(),
-    commercial_registration_authority: z.string().optional(),
-    license_number: z.string().min(1, "رقم الترخيص مطلوب"),
-    license_authority: z.string().min(1, "الجهة المصدرة مطلوبة"),
-  })
-  .superRefine((data, ctx) => {
-    if (data.has_commercial_registration) {
-      if (!data.commercial_registration_number) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["commercial_registration_number"],
-          message: "رقم السجل التجاري مطلوب",
-        })
-      }
-      if (!data.commercial_registration_authority) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["commercial_registration_authority"],
-          message: "جهة السجل التجاري مطلوبة",
-        })
-      }
-    }
-  })
-
-type Step3Data = z.infer<typeof step3Schema>
+type Step3Data = z.infer<typeof centerStep3Schema>
 
 interface CenterStep3Props {
   onNext: () => void
@@ -60,7 +34,7 @@ interface CenterStep3Props {
 
 export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: CenterStep3Props) {
   const methods = useForm<Step3Data>({
-    resolver: zodResolver(step3Schema),
+    resolver: zodResolver(centerStep3Schema),
     mode: "onChange",
     defaultValues: {
       has_commercial_registration: formData.has_commercial_registration || false,
@@ -68,6 +42,9 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
       commercial_registration_authority: formData.commercial_registration_authority || "",
       license_number: formData.license_number || "",
       license_authority: formData.license_authority || "",
+      commercial_registration_file:
+        formData.commercial_registration_file ?? undefined,
+      license_file: formData.license_file ?? undefined,
     },
   })
 
@@ -77,6 +54,7 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
     watch,
     control,
     formState: { errors },
+    setValue,
   } = methods
 
   const hasCommercialReg = watch("has_commercial_registration")
@@ -146,9 +124,15 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
                   icon={Copyright}
                   iconPosition="right"
                   rtl
+                  error={errors.commercial_registration_file?.message}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const file = e.target.files?.[0]
-                    if (file) setCommercialRegFile(file)
+                    if (file) {
+                      setCommercialRegFile(file)
+                      setValue("commercial_registration_file", file, {
+                        shouldValidate: true,
+                      })
+                    }
                   }}
                 />
               </div>
@@ -186,9 +170,13 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
                 icon={ShieldCheck}
                 iconPosition="right"
                 rtl
+                error={errors.license_file?.message}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
-                  if (file) setLicenseFile(file)
+                  if (file) {
+                    setLicenseFile(file)
+                    setValue("license_file", file, { shouldValidate: true })
+                  }
                 }}
               />
             </div>

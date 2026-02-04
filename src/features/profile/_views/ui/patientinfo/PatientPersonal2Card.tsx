@@ -8,6 +8,7 @@ import type { PatientProfile } from "@/types/patient";
 import { Loader2, Edit, User, MapPin, Navigation, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import { usePhoneNumber } from "@/hooks/usePhoneNumber";
 
 interface Props {
   patient: PatientProfile;
@@ -36,6 +37,7 @@ export default function PatientPersonal2Card({
 }: Props) {
   const isEditing = editingCard === "personal2";
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const { splitPhoneNumber, normalizePhoneInput } = usePhoneNumber();
 
   const handleChange = (field: string, value: string) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
@@ -43,19 +45,9 @@ export default function PatientPersonal2Card({
 
   useEffect(() => {
     if (isEditing) {
-      const emergencyFull = patient.patient_details?.emergency_phone ?? "";
-      let emergencyCountryCode = "+968";
-      let emergencyNumber = "";
-
-      if (emergencyFull.startsWith("+")) {
-        const match = emergencyFull.match(/^(\+\d{1,3})(.*)$/);
-        if (match) {
-          emergencyCountryCode = match[1];
-          emergencyNumber = match[2]?.trim() || "";
-        }
-      } else {
-        emergencyNumber = emergencyFull;
-      }
+      const { countryCode: emergencyCountryCode, localNumber: emergencyNumber } = splitPhoneNumber(
+        patient.patient_details?.emergency_phone,
+      );
 
       setFormValues((prev) => ({
         ...prev,
@@ -235,7 +227,7 @@ export default function PatientPersonal2Card({
                 countryCodeValue={(formValues.emergencyCountryCode as string) || "+968"}
                 onCountryCodeChange={(code) => handleChange("emergencyCountryCode", code)}
                 value={(formValues.emergency_contact as string) || ""}
-                onChange={(e) => handleChange("emergency_contact", e.target.value)}
+                onChange={(e) => handleChange("emergency_contact", normalizePhoneInput(e.target.value))}
                 rtl
                 placeholder="0000 0000"
                 error={getFieldError("emergency_contact", "personal2")}

@@ -22,6 +22,7 @@ import type { CenterProfile } from "@/types/center";
 import { useUpdateCenter } from "@/features/profile/_views/hooks/useUpdateCenter";
 import { centerSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
+import { usePhoneNumber } from "@/hooks/usePhoneNumber";
 
 interface CenterPersonalCardProps {
   profile: CenterProfile;
@@ -56,6 +57,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
   const [localProfile, setLocalProfile] =
     useState<Partial<CenterProfile> | null>(null);
   const [countryCode, setCountryCode] = useState("+968");
+  const { splitPhoneNumber, normalizePhoneInput, buildFullPhoneNumber } = usePhoneNumber();
 
   const { update, isUpdating } = useUpdateCenter({
     onValidationError: (errs) => setServerErrors(errs || {}),
@@ -69,26 +71,15 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
     }
   }, [profile, editing]);
 
-  const splitPhone = (p?: string | null) => {
-    if (!p) return { country: "+968", local: "" };
-
-    if (p.startsWith("+968")) return { country: "+968", local: p.slice(4) };
-
-    const m = p.match(/^\+(\d{1,4})(.*)$/);
-    return m
-      ? { country: `+${m[1]}`, local: m[2].trim() }
-      : { country: "+968", local: p };
-  };
-
   const startEdit = () => {
     const source = localProfile ?? profile;
-    const { country, local } = splitPhone(source?.phone);
-    setCountryCode(country);
+    const { countryCode: nextCountryCode, localNumber } = splitPhoneNumber(source?.phone);
+    setCountryCode(nextCountryCode);
 
     setFormValues({
       full_name: source?.full_name ?? "",
       email: source?.email ?? "",
-      phone: local ?? "",
+      phone: localNumber,
       birth_date: source?.birth_date ?? "",
       gender: source?.gender ?? "",
       // status: source?.status ?? "",
@@ -121,12 +112,10 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
     }
 
     try {
-      const phoneWithCode =
-        countryCode && typeof formValues.phone === "string" && formValues.phone
-          ? `${countryCode}${formValues.phone}`
-          : typeof formValues.phone === "string"
-            ? formValues.phone
-            : undefined;
+      const phoneWithCode = buildFullPhoneNumber(
+        countryCode,
+        typeof formValues.phone === "string" ? formValues.phone : undefined,
+      );
 
       const payload = {
         customer_id: String(userId),
@@ -432,7 +421,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                     onCountryCodeChange={setCountryCode}
                     value={formValues.phone as string | undefined}
                     onChange={(e) =>
-                      setFormValues((s) => ({ ...s, phone: e.target.value }))
+                      setFormValues((s) => ({ ...s, phone: normalizePhoneInput(e.target.value) }))
                     }
                     rtl
                     error={getFieldError("phone")}

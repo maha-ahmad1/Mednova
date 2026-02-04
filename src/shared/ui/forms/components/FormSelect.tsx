@@ -42,6 +42,7 @@ export const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
     ref
   ) => {
     const selectId = React.useId();
+    const normalizedValue = value ?? "";
 
     return (
       <div className={cn("flex flex-col gap-1", rtl && "text-right")}>
@@ -54,7 +55,7 @@ export const FormSelect = forwardRef<HTMLButtonElement, FormSelectProps>(
           </Label>
         )}
 
-        <Select value={value} onValueChange={onValueChange}>
+        <Select value={normalizedValue} onValueChange={onValueChange}>
           <SelectTrigger
             ref={ref}
             id={selectId}

@@ -85,7 +85,10 @@ export function CenterFormStep1({
         phone: session.user.phone || "",
         gender: formData.gender || undefined,
         formatted_address: formData.formatted_address || "",
-        year_establishment: formData.year_establishment || "",
+        year_establishment:
+          typeof formData.year_establishment === "number"
+            ? formData.year_establishment
+            : undefined,
         birth_date: formData.birth_date || "",
         image: formData?.image instanceof File ? formData.image : undefined,
         name_center: formData.name_center || "",

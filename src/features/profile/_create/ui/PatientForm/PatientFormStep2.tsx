@@ -112,7 +112,6 @@ export function PatientFormStep2({
 
   useClearServerErrorsOnChange<PatientStep2FormData>({
     methods,
-    errors: globalErrors,
     setErrors: setGlobalErrors,
     fields: stepFields,
   });

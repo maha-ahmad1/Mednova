@@ -109,14 +109,12 @@ export function CenterFormStep1({
   ] as const;
 
   useApplyServerErrors<Step1Data>({
-    errors: globalErrors,
     setError,
     fields: stepFields,
   });
 
   useClearServerErrorsOnChange<Step1Data>({
     methods,
-    errors: globalErrors,
     setErrors: setGlobalErrors,
     fields: stepFields,
   });

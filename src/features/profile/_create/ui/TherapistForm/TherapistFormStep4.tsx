@@ -477,7 +477,6 @@ export function TherapistFormStep4({
 
   useClearServerErrorsOnChange<Step4Data>({
     methods,
-    errors: globalErrors,
     setErrors: setGlobalErrors,
     fields: stepFields,
   });

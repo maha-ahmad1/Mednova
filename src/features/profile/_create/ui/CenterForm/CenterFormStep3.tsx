@@ -133,7 +133,6 @@ export function CenterFormStep3({
 
   useClearServerErrorsOnChange<Step3Data>({
     methods,
-    errors: globalErrors,
     setErrors: setGlobalErrors,
     fields: stepFields,
   })

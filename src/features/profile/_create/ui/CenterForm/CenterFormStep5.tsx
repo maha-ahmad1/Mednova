@@ -62,7 +62,6 @@ export function CenterFormStep5({
 
   useClearServerErrorsOnChange<Step5Data>({
     methods,
-    errors: globalErrors,
     setErrors: setGlobalErrors,
     fields: stepFields,
   });

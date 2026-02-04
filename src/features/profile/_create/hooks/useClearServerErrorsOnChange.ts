@@ -31,6 +31,7 @@ export const useClearServerErrorsOnChange = <TFieldValues extends FieldValues>({
       if (!errors[name]) {
         return
       }
+      methods.clearErrors(name as Path<TFieldValues>)
       setErrors(
         Object.fromEntries(
           Object.entries(errors).filter(([field]) => field !== name)

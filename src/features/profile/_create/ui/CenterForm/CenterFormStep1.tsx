@@ -57,8 +57,8 @@ export function CenterFormStep1({
     } as Partial<Step1Data>,
   });
 
-  const [centerImage, setCenterImage] = useState<File | null>(
-    formData?.image instanceof File ? formData.image : null
+  const [centerImage, setCenterImage] = useState<File | undefined>(
+    formData?.image instanceof File ? formData.image : undefined
   );
 
   const {
@@ -239,8 +239,8 @@ export function CenterFormStep1({
             </div>
             <ProfileImageUpload
               label="صورة المركز"
-              value={centerImage}
-              onChange={setCenterImage}
+              value={centerImage ?? null}
+              onChange={(file) => setCenterImage(file ?? undefined)}
             />
             {errors.image?.message && (
               <p className="text-sm text-destructive">{errors.image.message}</p>

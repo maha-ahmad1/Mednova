@@ -51,8 +51,8 @@ export function TherapistFormStep1({
     } as Partial<Step1Data>,
   });
 
-  const [profileImage, setProfileImage] = useState<File | null>(
-    formData?.image instanceof File ? formData.image : null
+  const [profileImage, setProfileImage] = useState<File | undefined>(
+    formData?.image instanceof File ? formData.image : undefined
   );
 
   const {
@@ -185,8 +185,8 @@ export function TherapistFormStep1({
             </div>
             <ProfileImageUpload
               label="الصورة الشخصية"
-              value={profileImage}
-              onChange={setProfileImage}
+              value={profileImage ?? null}
+              onChange={(file) => setProfileImage(file ?? undefined)}
             />
             {errors.image?.message && (
               <p className="text-sm text-destructive">{errors.image.message}</p>

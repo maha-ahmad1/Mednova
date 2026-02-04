@@ -237,8 +237,8 @@ type Step2Data = z.infer<typeof step2Schema>
 interface TherapistStep2Props {
   onNext: () => void
   onBack: () => void
-  formData: Partial<z.infer<typeof step2Schema>>
-  updateFormData: (data: Partial<Record<string, string | File | undefined>>) => void
+  formData: Partial<Step2Data>
+  updateFormData: (data: Partial<Step2Data>) => void
   setGlobalErrors?: (errors: Record<string, string>) => void
 }
 

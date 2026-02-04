@@ -26,13 +26,11 @@ const patientSchema = patientFormSchema.pick({
   countryCode: true,
 })
 
-type PatientFormData = z.infer<typeof patientSchema>& {
-  countryCode?: string
-}
+type PatientFormData = z.infer<typeof patientSchema>
 
 interface PatientFormStep1Props {
   onNext: () => void
-  formData: PatientFormData
+  formData: Partial<PatientFormData>
   updateFormData: (data: Partial<PatientFormData>) => void
   globalErrors?: Record<string, string>
 

@@ -22,7 +22,7 @@ export default function PatientWrapper() {
     gender: undefined,
     emergency_phone: "",
     relationship: "",
-    image: null,
+    image: undefined,
     formatted_address: "",
     country: "",
     city: "",

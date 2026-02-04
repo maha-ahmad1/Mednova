@@ -32,17 +32,7 @@ const patientStep2Schema = patientFormSchema.pick({
   image: true,
 });
 
-export interface PatientFormData {
-  birth_date?: string;
-  gender?: "male" | "female";
-  image?: File | null;
-  emergency_phone?: string;
-  relationship?: string;
-  formatted_address?: string;
-  countryCode?: string;
-  city?: string;
-  country?: string;
-}
+export type PatientFormData = Partial<z.infer<typeof patientFormSchema>>;
 
 type PatientStep2FormData = z.infer<typeof patientStep2Schema>;
 
@@ -69,8 +59,8 @@ export function PatientFormStep2({
   });
   const { data: session, status, update } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(
-    formData?.image ?? null
+  const [imageFile, setImageFile] = useState<File | undefined>(
+    formData?.image instanceof File ? formData.image : undefined
   );
   const [networkError, setNetworkError] = useState(false);
   const router = useRouter();
@@ -84,7 +74,7 @@ export function PatientFormStep2({
       formatted_address: formData.formatted_address || "",
       country: formData.country || "",
       city: formData.city || "",
-      image: formData.image ?? undefined,
+      image: formData.image instanceof File ? formData.image : undefined,
     },
   });
 
@@ -363,8 +353,8 @@ export function PatientFormStep2({
 
             <ProfileImageUpload
               label="رفع الصورة الشخصية"
-              value={imageFile}
-              onChange={setImageFile}
+              value={imageFile ?? null}
+              onChange={(file) => setImageFile(file ?? undefined)}
             />
             {errors.image?.message && (
               <p className="text-sm text-destructive">{errors.image.message}</p>

@@ -44,8 +44,8 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
     formState: { errors },
   } = methods;
 
-  const [certificateFile, setCertificateFile] = useState<File | null>(formData.certificate_file || null)
-  const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)
+  const [certificateFile, setCertificateFile] = useState<File | undefined>(formData.certificate_file)
+  const [licenseFile, setLicenseFile] = useState<File | undefined>(formData.license_file)
 
   useEffect(() => {
     setValue("certificate_file", certificateFile ?? undefined, { shouldValidate: true })

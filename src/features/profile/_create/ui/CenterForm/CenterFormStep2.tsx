@@ -10,15 +10,13 @@ import { Video, MessageSquare, Check } from "lucide-react";
 import { FormSelect } from "@/shared/ui/forms/components/FormSelect";
 import { cn } from "@/lib/utils";
 import { CustomCheckbox } from "@/shared/ui/forms/components/CustomCheckbox";
+import { centerFormSchema } from "@/features/profile/_create/validation/formSchemas";
 
-const step2Schema = z.object({
-  specialty_id: z.array(z.string()).min(1, "يرجى اختيار تخصص واحد على الأقل"),
-  // year_establishment: z.string().min(1, "سنة التأسيس مطلوبة"),
-  video_consultation_price: z
-    .string()
-    .min(1, "حقل سعر الاستشارة المرئية مطلوب."),
-  chat_consultation_price: z.string().min(1, "حقل سعر الاستشارة النصية مطلوب."),
-  currency: z.string().min(1, "حقل العملة مطلوب."),
+const step2Schema = centerFormSchema.pick({
+  specialty_id: true,
+  video_consultation_price: true,
+  chat_consultation_price: true,
+  currency: true,
 });
 
 type Step2Data = z.infer<typeof step2Schema>;
@@ -93,8 +91,8 @@ export function CenterFormStep2({
     defaultValues: {
       specialty_id: formData.specialty_id || [],
       // year_establishment: formData.year_establishment || "",
-      video_consultation_price: formData.video_consultation_price || "",
-      chat_consultation_price: formData.chat_consultation_price || "",
+      video_consultation_price: formData.video_consultation_price ?? undefined,
+      chat_consultation_price: formData.chat_consultation_price ?? undefined,
       currency: formData.currency || "",
     },
   });
@@ -201,7 +199,9 @@ export function CenterFormStep2({
                 rtl
                 className="no-spinner"
                 error={errors.video_consultation_price?.message}
-                {...register("video_consultation_price")}
+                {...register("video_consultation_price", {
+                  valueAsNumber: true,
+                })}
               />
 
               <FormInput
@@ -213,7 +213,9 @@ export function CenterFormStep2({
                 rtl
                 className="no-spinner"
                 error={errors.chat_consultation_price?.message}
-                {...register("chat_consultation_price")}
+                {...register("chat_consultation_price", {
+                  valueAsNumber: true,
+                })}
               />
 
               <Controller

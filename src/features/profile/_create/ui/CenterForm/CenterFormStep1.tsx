@@ -10,17 +10,18 @@ import { useSession } from "next-auth/react";
 import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { centerFormSchema } from "@/features/profile/_create/validation/formSchemas";
 
-const step1Schema = z.object({
-  full_name: z.string().min(1, "الاسم مطلوب"),
-  email: z.string().email("بريد غير صالح"),
-  phone: z.string().min(1, "رقم الهاتف مطلوب"),
-  gender: z.enum(["male", "female"]),
-  formatted_address: z.string().min(1, "العنوان مطلوب"),
-  year_establishment: z.string().min(4, "سنة التأسيس مطلوبة"),
-  image: z.instanceof(File, { message: "يرجى رفع صورة المركز" }),
-  name_center: z.string().min(1, "اسم المركز مطلوب"),
-  birth_date: z.string().min(1, "تاريخ الميلاد مطلوب"),
+const step1Schema = centerFormSchema.pick({
+  full_name: true,
+  email: true,
+  phone: true,
+  gender: true,
+  formatted_address: true,
+  year_establishment: true,
+  image: true,
+  name_center: true,
+  birth_date: true,
 });
 
 type Step1Data = z.infer<typeof step1Schema>;
@@ -50,14 +51,14 @@ export function CenterFormStep1({
       phone: formData.phone || "",
       gender: formData.gender || undefined,
       formatted_address: formData.formatted_address || "",
-      year_establishment: formData.year_establishment || "",
+      year_establishment: formData.year_establishment ?? undefined,
       image: formData?.image instanceof File ? formData.image : undefined,
       birth_date: formData.birth_date || "",
     } as Partial<Step1Data>,
   });
 
-  const [centerImage, setCenterImage] = useState<File | null>(
-    formData?.image instanceof File ? formData.image : null
+  const [centerImage, setCenterImage] = useState<File | undefined>(
+    formData?.image instanceof File ? formData.image : undefined
   );
 
   const {
@@ -84,7 +85,10 @@ export function CenterFormStep1({
         phone: session.user.phone || "",
         gender: formData.gender || undefined,
         formatted_address: formData.formatted_address || "",
-        year_establishment: formData.year_establishment || "",
+        year_establishment:
+          typeof formData.year_establishment === "number"
+            ? formData.year_establishment
+            : undefined,
         birth_date: formData.birth_date || "",
         image: formData?.image instanceof File ? formData.image : undefined,
         name_center: formData.name_center || "",
@@ -230,14 +234,17 @@ export function CenterFormStep1({
                 rtl
                 className="no-spinner"
                 error={errors.year_establishment?.message}
-                {...register("year_establishment")}
+                {...register("year_establishment", { valueAsNumber: true })}
               />
             </div>
             <ProfileImageUpload
               label="صورة المركز"
-              value={centerImage}
-              onChange={setCenterImage}
+              value={centerImage ?? null}
+              onChange={(file) => setCenterImage(file ?? undefined)}
             />
+            {errors.image?.message && (
+              <p className="text-sm text-destructive">{errors.image.message}</p>
+            )}
           </div>
           <FormSubmitButton className="px-6 py-5 mt-4">التالي</FormSubmitButton>
         </form>

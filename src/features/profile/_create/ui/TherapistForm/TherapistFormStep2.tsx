@@ -219,16 +219,17 @@ import { GraduationCap, Globe, Building2, Baseline as ChartLine, Video, MessageS
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { medicalSpecialties } from "@/constants/medicalSpecialties"
 import { FormSelect } from "@/shared/ui/forms"
+import { therapistFormSchema } from "@/features/profile/_create/validation/formSchemas"
 
-const step2Schema = z.object({
-  medical_specialties_id: z.string().min(1, "يرجى اختيار التخصص"),
-  university_name: z.string().min(1, "اسم الجامعة مطلوب"),
-  graduation_year: z.string().min(1, "سنة التخرج مطلوبة"),
-  countries_certified: z.string().min(1, "يرجى إدخال الدول المعتمد فيها"),
-  experience_years: z.string().min(1, "عدد سنوات الخبرة مطلوب"),
-  video_consultation_price: z.string().min(1, "حقل سعر الاستشارة المرئية مطلوب."),
-  chat_consultation_price: z.string().min(1, "حقل سعر الاستشارة النصية مطلوب."),
-  currency: z.string().min(1, "حقل العملة مطلوب."),
+const step2Schema = therapistFormSchema.pick({
+  medical_specialties_id: true,
+  university_name: true,
+  graduation_year: true,
+  countries_certified: true,
+  experience_years: true,
+  video_consultation_price: true,
+  chat_consultation_price: true,
+  currency: true,
 })
 
 type Step2Data = z.infer<typeof step2Schema>
@@ -236,8 +237,8 @@ type Step2Data = z.infer<typeof step2Schema>
 interface TherapistStep2Props {
   onNext: () => void
   onBack: () => void
-  formData: Partial<z.infer<typeof step2Schema>>
-  updateFormData: (data: Partial<Record<string, string | File | undefined>>) => void
+  formData: Partial<Step2Data>
+  updateFormData: (data: Partial<Step2Data>) => void
   setGlobalErrors?: (errors: Record<string, string>) => void
 }
 
@@ -253,11 +254,11 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
     defaultValues: {
       medical_specialties_id: formData.medical_specialties_id || "",
       university_name: formData.university_name || "",
-      graduation_year: formData.graduation_year || "",
+      graduation_year: formData.graduation_year ?? undefined,
       countries_certified: formData.countries_certified || "",
-      experience_years: formData.experience_years || "",
-      video_consultation_price: formData.video_consultation_price || "",
-      chat_consultation_price: formData.chat_consultation_price || "",
+      experience_years: formData.experience_years ?? undefined,
+      video_consultation_price: formData.video_consultation_price ?? undefined,
+      chat_consultation_price: formData.chat_consultation_price ?? undefined,
       currency: formData.currency || "",
     },
   })
@@ -319,7 +320,7 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
               rtl
               className="no-spinner"
               error={errors.graduation_year?.message}
-              {...register("graduation_year")}
+              {...register("graduation_year", { valueAsNumber: true })}
             />
 
             <FormInput
@@ -331,7 +332,7 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
               rtl
               className="no-spinner"
               error={errors.experience_years?.message}
-              {...register("experience_years")}
+              {...register("experience_years", { valueAsNumber: true })}
             />
 
             <FormInput
@@ -358,7 +359,9 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
                 rtl
                 className="no-spinner"
                 error={errors.video_consultation_price?.message}
-                {...register("video_consultation_price")}
+                {...register("video_consultation_price", {
+                  valueAsNumber: true,
+                })}
               />
 
               <FormInput
@@ -370,7 +373,9 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
                 rtl
                 className="no-spinner"
                 error={errors.chat_consultation_price?.message}
-                {...register("chat_consultation_price")}
+                {...register("chat_consultation_price", {
+                  valueAsNumber: true,
+                })}
               />
 
               <Controller

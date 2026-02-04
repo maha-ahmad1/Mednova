@@ -2,7 +2,7 @@
 import { FormInput } from "@/shared/ui/forms"
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
 import { useForm, FormProvider, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,33 +10,17 @@ import * as z from "zod"
 import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react"
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { FormFileUpload } from "@/shared/ui/forms"
+import { centerFormSchema } from "@/features/profile/_create/validation/formSchemas"
 
-const step3Schema = z
-  .object({
-    has_commercial_registration: z.boolean(),
-    commercial_registration_number: z.string().optional(),
-    commercial_registration_authority: z.string().optional(),
-    license_number: z.string().min(1, "رقم الترخيص مطلوب"),
-    license_authority: z.string().min(1, "الجهة المصدرة مطلوبة"),
-  })
-  .superRefine((data, ctx) => {
-    if (data.has_commercial_registration) {
-      if (!data.commercial_registration_number) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["commercial_registration_number"],
-          message: "رقم السجل التجاري مطلوب",
-        })
-      }
-      if (!data.commercial_registration_authority) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["commercial_registration_authority"],
-          message: "جهة السجل التجاري مطلوبة",
-        })
-      }
-    }
-  })
+const step3Schema = centerFormSchema.pick({
+  has_commercial_registration: true,
+  commercial_registration_number: true,
+  commercial_registration_authority: true,
+  commercial_registration_file: true,
+  license_number: true,
+  license_authority: true,
+  license_file: true,
+})
 
 type Step3Data = z.infer<typeof step3Schema>
 
@@ -44,14 +28,14 @@ interface CenterStep3Props {
   onNext: () => void
   onBack: () => void
   formData: Partial<Step3Data> & {
-    commercial_registration_file?: File | null
-    license_file?: File | null
+    commercial_registration_file?: File
+    license_file?: File
   }
   updateFormData: (
     data: Partial<
       Step3Data & {
-        commercial_registration_file?: File | null
-        license_file?: File | null
+        commercial_registration_file?: File
+        license_file?: File
       }
     >,
   ) => void
@@ -76,13 +60,22 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
     register,
     watch,
     control,
+    setValue,
     formState: { errors },
   } = methods
 
   const hasCommercialReg = watch("has_commercial_registration")
 
-  const [commercialRegFile, setCommercialRegFile] = useState<File | null>(formData.commercial_registration_file || null)
-  const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)
+  const [commercialRegFile, setCommercialRegFile] = useState<File | undefined>(formData.commercial_registration_file)
+  const [licenseFile, setLicenseFile] = useState<File | undefined>(formData.license_file)
+
+  useEffect(() => {
+    setValue("commercial_registration_file", commercialRegFile ?? undefined, { shouldValidate: true })
+  }, [commercialRegFile, setValue])
+
+  useEffect(() => {
+    setValue("license_file", licenseFile ?? undefined, { shouldValidate: true })
+  }, [licenseFile, setValue])
 
   const onSubmit = (data: Step3Data) => {
     updateFormData({
@@ -146,6 +139,7 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
                   icon={Copyright}
                   iconPosition="right"
                   rtl
+                  error={errors.commercial_registration_file?.message}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const file = e.target.files?.[0]
                     if (file) setCommercialRegFile(file)
@@ -186,6 +180,7 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
                 icon={ShieldCheck}
                 iconPosition="right"
                 rtl
+                error={errors.license_file?.message}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
                   if (file) setLicenseFile(file)

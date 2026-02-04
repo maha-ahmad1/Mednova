@@ -8,15 +8,16 @@ import { Mail, User, Phone, Home, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useSession } from "next-auth/react";
+import { therapistFormSchema } from "@/features/profile/_create/validation/formSchemas";
 
-const step1Schema = z.object({
-  full_name: z.string().min(1, "الاسم مطلوب"),
-  email: z.string().email("بريد غير صالح"),
-  phone: z.string().min(1, "رقم الهاتف مطلوب"),
-  gender: z.enum(["male", "female"]),
-  formatted_address: z.string().min(1, "العنوان مطلوب"),
-  birth_date: z.string().min(1, "تاريخ الميلاد مطلوب"),
-  image: z.instanceof(File, { message: "يرجى رفع صورة شخصية" }),
+const step1Schema = therapistFormSchema.pick({
+  full_name: true,
+  email: true,
+  phone: true,
+  gender: true,
+  formatted_address: true,
+  birth_date: true,
+  image: true,
 });
 
 type Step1Data = z.infer<typeof step1Schema>;
@@ -50,8 +51,8 @@ export function TherapistFormStep1({
     } as Partial<Step1Data>,
   });
 
-  const [profileImage, setProfileImage] = useState<File | null>(
-    formData?.image instanceof File ? formData.image : null
+  const [profileImage, setProfileImage] = useState<File | undefined>(
+    formData?.image instanceof File ? formData.image : undefined
   );
 
   const {
@@ -184,9 +185,12 @@ export function TherapistFormStep1({
             </div>
             <ProfileImageUpload
               label="الصورة الشخصية"
-              value={profileImage}
-              onChange={setProfileImage}
+              value={profileImage ?? null}
+              onChange={(file) => setProfileImage(file ?? undefined)}
             />
+            {errors.image?.message && (
+              <p className="text-sm text-destructive">{errors.image.message}</p>
+            )}
             <FormSubmitButton className="px-6 py-5 mt-4">
               التالي
             </FormSubmitButton>

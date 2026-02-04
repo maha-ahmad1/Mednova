@@ -22,28 +22,17 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { countries } from "@/constants/countries";
+import { patientFormSchema } from "@/features/profile/_create/validation/formSchemas";
 
-const patientStep2Schema = z.object({
-  gender: z.enum(["male", "female"]).refine((val) => !!val, {
-    message: "يرجى تحديد الجنس",
-  }),
-  formatted_address: z.string().min(1, "العنوان مطلوب"),
-  country: z.string().min(1, "حقل البلد مطلوب."),
-  city: z.string().min(1, "حقل المدينة مطلوب."),
-  status: z.string().optional(),
+const patientStep2Schema = patientFormSchema.pick({
+  gender: true,
+  formatted_address: true,
+  country: true,
+  city: true,
+  image: true,
 });
 
-export interface PatientFormData {
-  birth_date?: string;
-  gender?: "male" | "female";
-  image?: File | null;
-  emergency_phone?: string;
-  relationship?: string;
-  formatted_address?: string;
-  countryCode?: string;
-  city?: string;
-  country?: string;
-}
+export type PatientFormData = Partial<z.infer<typeof patientFormSchema>>;
 
 type PatientStep2FormData = z.infer<typeof patientStep2Schema>;
 
@@ -70,8 +59,8 @@ export function PatientFormStep2({
   });
   const { data: session, status, update } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(
-    formData?.image ?? null
+  const [imageFile, setImageFile] = useState<File | undefined>(
+    formData?.image instanceof File ? formData.image : undefined
   );
   const [networkError, setNetworkError] = useState(false);
   const router = useRouter();
@@ -85,6 +74,7 @@ export function PatientFormStep2({
       formatted_address: formData.formatted_address || "",
       country: formData.country || "",
       city: formData.city || "",
+      image: formData.image instanceof File ? formData.image : undefined,
     },
   });
 
@@ -94,6 +84,10 @@ export function PatientFormStep2({
     setValue,
   } = methods;
   const country = methods.watch("country");
+
+  useEffect(() => {
+    setValue("image", imageFile ?? undefined, { shouldValidate: true });
+  }, [imageFile, setValue]);
 
   useEffect(() => {
     if (status === "unauthenticated" && !navigator.onLine) {
@@ -233,7 +227,7 @@ export function PatientFormStep2({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status, 
+          status: session.user.status,
         },
       });
               console.log("status .sss"+status)
@@ -359,9 +353,12 @@ export function PatientFormStep2({
 
             <ProfileImageUpload
               label="رفع الصورة الشخصية"
-              value={imageFile}
-              onChange={setImageFile}
+              value={imageFile ?? null}
+              onChange={(file) => setImageFile(file ?? undefined)}
             />
+            {errors.image?.message && (
+              <p className="text-sm text-destructive">{errors.image.message}</p>
+            )}
 
             <div className="flex justify-between mt-4">
               <FormSubmitButton

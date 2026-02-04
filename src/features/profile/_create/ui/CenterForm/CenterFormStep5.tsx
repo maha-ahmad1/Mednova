@@ -14,10 +14,10 @@ import { toast } from "sonner";
 import type { CenterFormValues } from "@/app/api/center";
 import { Loader2 } from "lucide-react";
 import type { SubmitHandler } from "react-hook-form";
+import { centerFormSchema } from "@/features/profile/_create/validation/formSchemas";
 
-const step5Schema = z.object({
-  bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
-  status: z.string().optional(),
+const step5Schema = centerFormSchema.pick({
+  bio: true,
 });
 
 type Step5Data = z.infer<typeof step5Schema>;
@@ -101,7 +101,7 @@ export function CenterFormStep5({
           ? formData.specialty_id.map(String)
           : [],
         year_establishment:
-          typeof formData.year_establishment === "string"
+          typeof formData.year_establishment === "number"
             ? formData.year_establishment
             : undefined,
 
@@ -139,13 +139,11 @@ export function CenterFormStep5({
         bio: data.bio,
         day_of_week: (formData.day_of_week as string[]) || [],
         video_consultation_price:
-          typeof formData.video_consultation_price === "string" ||
           typeof formData.video_consultation_price === "number"
             ? formData.video_consultation_price
             : undefined,
 
         chat_consultation_price:
-          typeof formData.chat_consultation_price === "string" ||
           typeof formData.chat_consultation_price === "number"
             ? formData.chat_consultation_price
             : undefined,
@@ -182,7 +180,7 @@ export function CenterFormStep5({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status,
+          status: session.user.status,
         },
       });
       showSuccessToast("تم إرسال بيانات المركز بنجاح!");

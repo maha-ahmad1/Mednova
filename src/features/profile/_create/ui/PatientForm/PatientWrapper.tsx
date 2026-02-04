@@ -16,11 +16,12 @@ export default function PatientWrapper() {
     phone: string
     birth_date: string
     gender?: "male" | "female" | undefined
-    address: string
     emergency_phone?: string
     relationship?: string
     image?: File | null
-    countryCode?: string
+    formatted_address?: string
+    country?: string
+    city?: string
   }
 
   const [formData, setFormData] = useState<PatientFormState>({
@@ -29,10 +30,12 @@ export default function PatientWrapper() {
     phone: "",
     birth_date: "",
     gender: undefined,
-    address: "",
     emergency_phone: "",
     relationship: "",
     image: null,
+    formatted_address: "",
+    country: "",
+    city: "",
   })
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 4))

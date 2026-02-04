@@ -2,7 +2,6 @@
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
-import * as z from "zod";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { Controller } from "react-hook-form";
 import { TextArea } from "@/shared/ui/components/TextArea";
@@ -14,6 +13,8 @@ import { toast } from "sonner";
 import type { TherapistFormValues } from "@/app/api/therapist";
 import { Loader2 } from "lucide-react";
 import { SubmitHandler } from "react-hook-form";
+import { therapistStep5Schema } from "@/features/profile/_create/validation/registrationSchemas";
+import { z } from "zod";
 
 interface TherapistStep4Props {
   onBack: () => void;
@@ -21,12 +22,7 @@ interface TherapistStep4Props {
   updateFormData: (data: Partial<Record<string, unknown>>) => void;
   setGlobalErrors?: (errors: Record<string, string>) => void;
 }
-const step4Schema = z.object({
-  bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
-  status: z.string().optional(),
-});
-
-type Step4Data = z.infer<typeof step4Schema>;
+type Step4Data = z.infer<typeof therapistStep5Schema>;
 
 export function TherapistFormStep5({
   onBack,
@@ -35,7 +31,7 @@ export function TherapistFormStep5({
   setGlobalErrors,
 }: TherapistStep4Props) {
   const methods = useForm<Step4Data>({
-    resolver: zodResolver(step4Schema),
+    resolver: zodResolver(therapistStep5Schema),
     mode: "onChange",
     defaultValues: {
       bio: String((formData as Record<string, unknown>).bio ?? ""),
@@ -127,7 +123,8 @@ export function TherapistFormStep5({
             ? formData.university_name
             : undefined,
         graduation_year:
-          typeof formData.graduation_year === "string"
+          typeof formData.graduation_year === "string" ||
+          typeof formData.graduation_year === "number"
             ? formData.graduation_year
             : undefined,
         countries_certified:
@@ -135,7 +132,8 @@ export function TherapistFormStep5({
             ? formData.countries_certified
             : undefined,
         experience_years:
-          typeof formData.experience_years === "string"
+          typeof formData.experience_years === "string" ||
+          typeof formData.experience_years === "number"
             ? formData.experience_years
             : undefined,
         license_number:

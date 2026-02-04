@@ -3,25 +3,16 @@ import { FormInput } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { medicalSpecialties } from "@/constants/medicalSpecialties";
 import { Video, MessageSquare, Check } from "lucide-react";
 import { FormSelect } from "@/shared/ui/forms/components/FormSelect";
 import { cn } from "@/lib/utils";
 import { CustomCheckbox } from "@/shared/ui/forms/components/CustomCheckbox";
+import { centerStep2Schema } from "@/features/profile/_create/validation/registrationSchemas";
+import { z } from "zod";
 
-const step2Schema = z.object({
-  specialty_id: z.array(z.string()).min(1, "يرجى اختيار تخصص واحد على الأقل"),
-  // year_establishment: z.string().min(1, "سنة التأسيس مطلوبة"),
-  video_consultation_price: z
-    .string()
-    .min(1, "حقل سعر الاستشارة المرئية مطلوب."),
-  chat_consultation_price: z.string().min(1, "حقل سعر الاستشارة النصية مطلوب."),
-  currency: z.string().min(1, "حقل العملة مطلوب."),
-});
-
-type Step2Data = z.infer<typeof step2Schema>;
+type Step2Data = z.infer<typeof centerStep2Schema>;
 
 interface CenterStep2Props {
   onNext: () => void;
@@ -88,13 +79,13 @@ export function CenterFormStep2({
   updateFormData,
 }: CenterStep2Props) {
   const methods = useForm<Step2Data>({
-    resolver: zodResolver(step2Schema),
+    resolver: zodResolver(centerStep2Schema),
     mode: "onChange",
     defaultValues: {
       specialty_id: formData.specialty_id || [],
       // year_establishment: formData.year_establishment || "",
-      video_consultation_price: formData.video_consultation_price || "",
-      chat_consultation_price: formData.chat_consultation_price || "",
+      video_consultation_price: formData.video_consultation_price ?? "",
+      chat_consultation_price: formData.chat_consultation_price ?? "",
       currency: formData.currency || "",
     },
   });

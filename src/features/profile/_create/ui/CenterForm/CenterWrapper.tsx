@@ -13,11 +13,14 @@ export default function CenterWrapper() {
   const [globalErrors, setGlobalErrors] = useState<Record<string, string>>({});
 
   type CenterState = {
+    full_name?: string;
+    email?: string;
+    phone?: string;
     gender?: "male" | "female";
     birth_date?: string;
     image?: File;
     specialty_id?: string[];
-    year_establishment?: string;
+    year_establishment?: number | string;
     has_commercial_registration?: boolean;
     commercial_registration_number?: string;
     commercial_registration_file?: File | null;
@@ -27,7 +30,7 @@ export default function CenterWrapper() {
     license_number?: string;
     bio?: string;
     day_of_week?: string[];
-    is_have_evening_time?: boolean;
+    is_have_evening_time?: boolean | 0 | 1;
     status?: string;
     start_time_morning?: string;
     end_time_morning?: string;
@@ -37,13 +40,16 @@ export default function CenterWrapper() {
     country?: string;
     formatted_address?: string;
     timezone?: string;
-    video_consultation_price?: string;
-    chat_consultation_price?: string;
+    video_consultation_price?: number | string;
+    chat_consultation_price?: number | string;
     currency?: string;
     name_center?: string;
   };
 
   const [formData, setFormData] = useState<CenterState>({
+    full_name: "",
+    email: "",
+    phone: "",
     gender: undefined,
     birth_date: "",
     image: undefined,

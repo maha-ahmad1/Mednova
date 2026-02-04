@@ -2,7 +2,6 @@
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
-import * as z from "zod";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { Controller } from "react-hook-form";
 import { TextArea } from "@/shared/ui/components/TextArea";
@@ -14,13 +13,10 @@ import { toast } from "sonner";
 import type { CenterFormValues } from "@/app/api/center";
 import { Loader2 } from "lucide-react";
 import type { SubmitHandler } from "react-hook-form";
+import { centerStep5Schema } from "@/features/profile/_create/validation/registrationSchemas";
+import { z } from "zod";
 
-const step5Schema = z.object({
-  bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
-  status: z.string().optional(),
-});
-
-type Step5Data = z.infer<typeof step5Schema>;
+type Step5Data = z.infer<typeof centerStep5Schema>;
 
 interface CenterStep5Props {
   onBack: () => void;
@@ -36,7 +32,7 @@ export function CenterFormStep5({
   setGlobalErrors,
 }: CenterStep5Props) {
   const methods = useForm<Step5Data>({
-    resolver: zodResolver(step5Schema),
+    resolver: zodResolver(centerStep5Schema),
     mode: "onChange",
     defaultValues: {
       bio: String((formData as Record<string, unknown>).bio ?? ""),
@@ -101,7 +97,8 @@ export function CenterFormStep5({
           ? formData.specialty_id.map(String)
           : [],
         year_establishment:
-          typeof formData.year_establishment === "string"
+          typeof formData.year_establishment === "string" ||
+          typeof formData.year_establishment === "number"
             ? formData.year_establishment
             : undefined,
 

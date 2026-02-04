@@ -10,6 +10,7 @@ interface ProfileImageUploadProps {
   onChange: (file: File | null) => void;
   accept?: string;
   rtl?: boolean;
+  error?: string;
 }
 
 export function ProfileImageUpload({
@@ -18,6 +19,7 @@ export function ProfileImageUpload({
   onChange,
   accept = "image/*",
   rtl = true,
+  error,
 }: ProfileImageUploadProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -71,6 +73,7 @@ export function ProfileImageUpload({
         type="file"
         accept={accept}
         rtl={rtl}
+        error={error}
         onChange={handleFileChange}
         ref={inputRef}
       />

@@ -11,6 +11,7 @@ import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -31,6 +32,7 @@ interface CenterStep1Props {
   formData: Partial<Step1Data>;
   updateFormData: (data: Partial<Step1Data>) => void;
   globalErrors?: Record<string, string>;
+  setGlobalErrors?: (errors: Record<string, string>) => void;
 }
 
 export function CenterFormStep1({
@@ -38,6 +40,7 @@ export function CenterFormStep1({
   formData,
   updateFormData,
   globalErrors,
+  setGlobalErrors,
 }: CenterStep1Props) {
   const { data: session, status } = useSession();
 
@@ -108,6 +111,13 @@ export function CenterFormStep1({
   useApplyServerErrors<Step1Data>({
     errors: globalErrors,
     setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step1Data>({
+    methods,
+    errors: globalErrors,
+    setErrors: setGlobalErrors,
     fields: stepFields,
   });
 

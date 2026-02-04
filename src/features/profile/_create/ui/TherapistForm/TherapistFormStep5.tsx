@@ -15,6 +15,7 @@ import type { TherapistFormValues } from "@/app/api/therapist";
 import { Loader2 } from "lucide-react";
 import { SubmitHandler } from "react-hook-form";
 import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 interface TherapistStep4Props {
   onBack: () => void;
@@ -55,6 +56,13 @@ export function TherapistFormStep5({
   useApplyServerErrors<Step4Data>({
     errors: globalErrors,
     setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step4Data>({
+    methods,
+    errors: globalErrors,
+    setErrors: setGlobalErrors,
     fields: stepFields,
   });
 

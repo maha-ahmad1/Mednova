@@ -101,6 +101,7 @@ export default function TherapistWrapper() {
             formData={formData}
             updateFormData={updateFormData}
             globalErrors={globalErrors}
+            setGlobalErrors={setGlobalErrors}
           />
         )}
 

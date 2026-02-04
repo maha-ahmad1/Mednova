@@ -9,6 +9,7 @@ import { countries } from "@/constants/countries";
 import { FormSelect } from "@/shared/ui/forms";
 import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector";
 import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const step4Schema = z
   .object({
@@ -71,6 +72,7 @@ export function CenterFormStep4({
   formData,
   updateFormData,
   globalErrors,
+  setGlobalErrors,
 }: Step4Props) {
   const methods = useForm<Step4Data>({
     resolver: zodResolver(step4Schema),
@@ -134,6 +136,13 @@ export function CenterFormStep4({
   useApplyServerErrors<Step4Data>({
     errors: globalErrors,
     setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step4Data>({
+    methods,
+    errors: globalErrors,
+    setErrors: setGlobalErrors,
     fields: stepFields,
   });
 

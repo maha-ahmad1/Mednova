@@ -220,6 +220,7 @@ import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { medicalSpecialties } from "@/constants/medicalSpecialties"
 import { FormSelect } from "@/shared/ui/forms"
 import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors"
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange"
 
 const step2Schema = z.object({
   medical_specialties_id: z.string().min(1, "يرجى اختيار التخصص"),
@@ -254,6 +255,7 @@ export function TherapistFormStep2({
   formData,
   updateFormData,
   globalErrors,
+  setGlobalErrors,
 }: TherapistStep2Props) {
   const methods = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
@@ -290,6 +292,13 @@ export function TherapistFormStep2({
   useApplyServerErrors<Step2Data>({
     errors: globalErrors,
     setError: methods.setError,
+    fields: stepFields,
+  })
+
+  useClearServerErrorsOnChange<Step2Data>({
+    methods,
+    errors: globalErrors,
+    setErrors: setGlobalErrors,
     fields: stepFields,
   })
 

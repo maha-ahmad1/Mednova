@@ -9,6 +9,7 @@ import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { FormFileUpload } from "@/shared/ui/forms";
 import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const step3Schema = z.object({
   license_number: z.string().min(1, "رقم الترخيص مطلوب"),
@@ -34,6 +35,7 @@ export function TherapistFormStep3({
   formData,
   updateFormData,
   globalErrors,
+  setGlobalErrors,
 }: TherapistStep3Props) {
   const methods = useForm<Step3Data>({
     resolver: zodResolver(step3Schema),
@@ -71,6 +73,13 @@ export function TherapistFormStep3({
   useApplyServerErrors<Step3Data>({
     errors: globalErrors,
     setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step3Data>({
+    methods,
+    errors: globalErrors,
+    setErrors: setGlobalErrors,
     fields: stepFields,
   });
 

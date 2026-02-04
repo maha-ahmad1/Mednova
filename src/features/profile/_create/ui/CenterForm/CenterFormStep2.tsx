@@ -11,6 +11,7 @@ import { FormSelect } from "@/shared/ui/forms/components/FormSelect";
 import { cn } from "@/lib/utils";
 import { CustomCheckbox } from "@/shared/ui/forms/components/CustomCheckbox";
 import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const step2Schema = z.object({
   specialty_id: z.array(z.string()).min(1, "يرجى اختيار تخصص واحد على الأقل"),
@@ -89,6 +90,7 @@ export function CenterFormStep2({
   formData,
   updateFormData,
   globalErrors,
+  setGlobalErrors,
 }: CenterStep2Props) {
   const methods = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
@@ -121,6 +123,13 @@ export function CenterFormStep2({
   useApplyServerErrors<Step2Data>({
     errors: globalErrors,
     setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step2Data>({
+    methods,
+    errors: globalErrors,
+    setErrors: setGlobalErrors,
     fields: stepFields,
   });
 

@@ -11,6 +11,7 @@ import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react"
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { FormFileUpload } from "@/shared/ui/forms"
 import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors"
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange"
 
 const step3Schema = z
   .object({
@@ -77,6 +78,7 @@ export function CenterFormStep3({
   formData,
   updateFormData,
   globalErrors,
+  setGlobalErrors,
 }: CenterStep3Props) {
   const methods = useForm<Step3Data>({
     resolver: zodResolver(step3Schema),
@@ -126,6 +128,13 @@ export function CenterFormStep3({
   useApplyServerErrors<Step3Data>({
     errors: globalErrors,
     setError: methods.setError,
+    fields: stepFields,
+  })
+
+  useClearServerErrorsOnChange<Step3Data>({
+    methods,
+    errors: globalErrors,
+    setErrors: setGlobalErrors,
     fields: stepFields,
   })
 

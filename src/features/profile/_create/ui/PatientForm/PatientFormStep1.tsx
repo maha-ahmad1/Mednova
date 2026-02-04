@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { FormPhoneInput } from "@/shared/ui/forms"
 import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors"
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange"
 
 
 // ✅ Zod Schema
@@ -36,10 +37,17 @@ interface PatientFormStep1Props {
   formData: PatientFormData
   updateFormData: (data: Partial<PatientFormData>) => void
   globalErrors?: Record<string, string>
+  setGlobalErrors?: (errors: Record<string, string>) => void
 
 }
 
-export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors  }: PatientFormStep1Props) {
+export function PatientFormStep1({
+  onNext,
+  formData,
+  updateFormData,
+  globalErrors,
+  setGlobalErrors,
+}: PatientFormStep1Props) {
   const { data: session, status } = useSession()
   const [networkError, setNetworkError] = useState(false)
   const [countryCode, setCountryCode] = useState("+968")
@@ -91,6 +99,13 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
   useApplyServerErrors<PatientFormData>({
     errors: globalErrors,
     setError: methods.setError,
+    fields: stepFields,
+  })
+
+  useClearServerErrorsOnChange<PatientFormData>({
+    methods,
+    errors: globalErrors,
+    setErrors: setGlobalErrors,
     fields: stepFields,
   })
 

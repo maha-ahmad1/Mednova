@@ -100,6 +100,7 @@ export default function CenterWrapper() {
             formData={formData}
             updateFormData={updateFormData}
             globalErrors={globalErrors}
+            setGlobalErrors={setGlobalErrors}
           />
         )}
 

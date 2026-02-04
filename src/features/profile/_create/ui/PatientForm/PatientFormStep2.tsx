@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { countries } from "@/constants/countries";
 import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const patientStep2Schema = z.object({
   gender: z.enum(["male", "female"]).refine((val) => !!val, {
@@ -106,6 +107,13 @@ export function PatientFormStep2({
   useApplyServerErrors<PatientStep2FormData>({
     errors: globalErrors,
     setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<PatientStep2FormData>({
+    methods,
+    errors: globalErrors,
+    setErrors: setGlobalErrors,
     fields: stepFields,
   });
 

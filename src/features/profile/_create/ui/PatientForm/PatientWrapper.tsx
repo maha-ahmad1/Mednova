@@ -61,6 +61,7 @@ export default function PatientWrapper() {
             formData={formData}
             updateFormData={updateFormData}
             globalErrors={globalErrors}
+            setGlobalErrors={setGlobalErrors}
           />
         )}
 

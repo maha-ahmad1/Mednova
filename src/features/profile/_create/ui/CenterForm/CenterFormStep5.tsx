@@ -15,6 +15,7 @@ import type { CenterFormValues } from "@/app/api/center";
 import { Loader2 } from "lucide-react";
 import type { SubmitHandler } from "react-hook-form";
 import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const step5Schema = z.object({
   bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
@@ -56,6 +57,13 @@ export function CenterFormStep5({
   useApplyServerErrors<Step5Data>({
     errors: globalErrors,
     setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step5Data>({
+    methods,
+    errors: globalErrors,
+    setErrors: setGlobalErrors,
     fields: stepFields,
   });
 

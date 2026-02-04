@@ -1,3 +1,4 @@
+import type React from "react"
 import { useEffect } from "react"
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form"
 
@@ -5,7 +6,7 @@ import type { ServerFieldErrors } from "../utils/serverValidation"
 
 type UseClearServerErrorsOptions<TFieldValues extends FieldValues> = {
   methods: UseFormReturn<TFieldValues>
-  setErrors?: (errors: ServerFieldErrors) => void
+  setErrors?: React.Dispatch<React.SetStateAction<ServerFieldErrors>>
   fields?: readonly Path<TFieldValues>[]
 }
 

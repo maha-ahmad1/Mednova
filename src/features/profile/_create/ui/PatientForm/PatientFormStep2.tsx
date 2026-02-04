@@ -1,4 +1,5 @@
 "use client";
+import type React from "react";
 
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,7 +55,9 @@ interface PatientFormStep2Props {
   formData: PatientFormData;
   updateFormData: (data: PatientFormData) => void;
   globalErrors?: Record<string, string>;
-  setGlobalErrors?: (errors: Record<string, string>) => void;
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
 }
 
 export function PatientFormStep2({

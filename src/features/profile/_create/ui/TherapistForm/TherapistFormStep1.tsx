@@ -1,4 +1,5 @@
 "use client";
+import type React from "react";
 import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { Controller, useForm, FormProvider } from "react-hook-form";
@@ -28,7 +29,9 @@ interface TherapistStep1Props {
   formData: Partial<Step1Data>;
   updateFormData: (data: Partial<Step1Data>) => void;
   globalErrors?: Record<string, string>;
-  setGlobalErrors?: (errors: Record<string, string>) => void;
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
 }
 
 export function TherapistFormStep1({

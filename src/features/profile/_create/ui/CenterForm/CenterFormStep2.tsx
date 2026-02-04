@@ -1,4 +1,5 @@
 "use client";
+import type React from "react";
 import { FormInput } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { useForm, FormProvider, Controller } from "react-hook-form";
@@ -31,7 +32,9 @@ interface CenterStep2Props {
   formData: Partial<Step2Data>;
   updateFormData: (data: Partial<Step2Data>) => void;
   globalErrors?: Record<string, string>;
-  setGlobalErrors?: (errors: Record<string, string>) => void;
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
 }
 
 // مكون Checkbox مخصص للموقع

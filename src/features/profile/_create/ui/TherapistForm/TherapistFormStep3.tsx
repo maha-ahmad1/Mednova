@@ -1,4 +1,5 @@
 "use client";
+import type React from "react";
 import { FormInput } from "@/shared/ui/forms";
 import { useState } from "react"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
@@ -26,7 +27,9 @@ interface TherapistStep3Props {
   formData: Partial<Step3Data>
   updateFormData: (data: Partial<Step3Data>) => void
   globalErrors?: Record<string, string>
-  setGlobalErrors?: (errors: Record<string, string>) => void
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >
 }
 
 export function TherapistFormStep3({

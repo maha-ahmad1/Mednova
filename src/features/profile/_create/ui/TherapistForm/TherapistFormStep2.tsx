@@ -210,6 +210,7 @@
 
 
 "use client"
+import type React from "react"
 import { FormInput } from "@/shared/ui/forms"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
 import { useForm, FormProvider, Controller } from "react-hook-form"
@@ -241,7 +242,9 @@ interface TherapistStep2Props {
   formData: Partial<z.infer<typeof step2Schema>>
   updateFormData: (data: Partial<Record<string, string | File | undefined>>) => void
   globalErrors?: Record<string, string>
-  setGlobalErrors?: (errors: Record<string, string>) => void
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >
 }
 
 const currencyOptions = [

@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
@@ -63,7 +64,9 @@ interface Step4Props {
   formData: Partial<Record<string, unknown>>;
   updateFormData: (data: Partial<Record<string, unknown>>) => void;
   globalErrors?: Record<string, string>;
-  setGlobalErrors?: (errors: Record<string, string>) => void;
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
 }
 
 export function CenterFormStep4({

@@ -74,8 +74,12 @@ export function TherapistFormStep3({
     fields: stepFields,
   });
 
-  const [certificateFile, setCertificateFile] = useState<File | null>(formData.certificate_file || null)
-  const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)
+  const [certificateFile, setCertificateFile] = useState<File | undefined>(
+    formData.certificate_file
+  )
+  const [licenseFile, setLicenseFile] = useState<File | undefined>(
+    formData.license_file
+  )
 
   const onSubmit = (data: Step3Data) => {
     updateFormData({

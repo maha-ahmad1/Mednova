@@ -51,8 +51,8 @@ export function TherapistFormStep1({
     } as Partial<Step1Data>,
   });
 
-  const [profileImage, setProfileImage] = useState<File | null>(
-    formData?.image instanceof File ? formData.image : null
+  const [profileImage, setProfileImage] = useState<File | undefined>(
+    formData?.image instanceof File ? formData.image : undefined
   );
 
   const {
@@ -190,8 +190,8 @@ export function TherapistFormStep1({
             </div>
             <ProfileImageUpload
               label="الصورة الشخصية"
-              value={profileImage}
-              onChange={setProfileImage}
+              value={profileImage ?? null}
+              onChange={(file) => setProfileImage(file ?? undefined)}
             />
             <FormSubmitButton className="px-6 py-5 mt-4">
               التالي

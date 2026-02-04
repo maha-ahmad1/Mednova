@@ -26,8 +26,8 @@ export default function TherapistWrapper() {
     experience_years?: string;
     license_number?: string;
     license_authority?: string;
-    certificate_file?: File | null;
-    license_file?: File | null;
+    certificate_file?: File;
+    license_file?: File;
     bio?: string;
     image?: File;
     country?: string;
@@ -57,8 +57,8 @@ export default function TherapistWrapper() {
     experience_years: "",
     license_number: "",
     license_authority: "",
-    certificate_file: null,
-    license_file: null,
+    certificate_file: undefined,
+    license_file: undefined,
     bio: "",
     image: undefined,
     country: "",

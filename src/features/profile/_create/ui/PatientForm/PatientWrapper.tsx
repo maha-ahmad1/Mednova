@@ -19,7 +19,7 @@ export default function PatientWrapper() {
     address: string
     emergency_phone: string
     relationship: string
-    image?: File | null
+    image?: File
     countryCode?: string
   }
 
@@ -32,7 +32,7 @@ export default function PatientWrapper() {
     address: "",
     emergency_phone: "",
     relationship: "",
-    image: null,
+    image: undefined,
   })
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 4))

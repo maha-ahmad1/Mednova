@@ -56,14 +56,14 @@ interface CenterStep3Props {
   onNext: () => void
   onBack: () => void
   formData: Partial<Step3Data> & {
-    commercial_registration_file?: File | null
-    license_file?: File | null
+    commercial_registration_file?: File
+    license_file?: File
   }
   updateFormData: (
     data: Partial<
       Step3Data & {
-        commercial_registration_file?: File | null
-        license_file?: File | null
+        commercial_registration_file?: File
+        license_file?: File
       }
     >,
   ) => void
@@ -131,8 +131,12 @@ export function CenterFormStep3({
 
   const hasCommercialReg = watch("has_commercial_registration")
 
-  const [commercialRegFile, setCommercialRegFile] = useState<File | null>(formData.commercial_registration_file || null)
-  const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)
+  const [commercialRegFile, setCommercialRegFile] = useState<File | undefined>(
+    formData.commercial_registration_file
+  )
+  const [licenseFile, setLicenseFile] = useState<File | undefined>(
+    formData.license_file
+  )
 
   const onSubmit = (data: Step3Data) => {
     updateFormData({

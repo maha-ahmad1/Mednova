@@ -57,8 +57,8 @@ export function CenterFormStep1({
     } as Partial<Step1Data>,
   });
 
-  const [centerImage, setCenterImage] = useState<File | null>(
-    formData?.image instanceof File ? formData.image : null
+  const [centerImage, setCenterImage] = useState<File | undefined>(
+    formData?.image instanceof File ? formData.image : undefined
   );
 
   const {
@@ -243,8 +243,8 @@ export function CenterFormStep1({
             </div>
             <ProfileImageUpload
               label="صورة المركز"
-              value={centerImage}
-              onChange={setCenterImage}
+              value={centerImage ?? null}
+              onChange={(file) => setCenterImage(file ?? undefined)}
             />
           </div>
           <FormSubmitButton className="px-6 py-5 mt-4">التالي</FormSubmitButton>

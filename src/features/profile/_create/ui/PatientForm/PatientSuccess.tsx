@@ -15,7 +15,7 @@ interface PatientSuccessProps {
     address: string
     emergency_phone?: string
     relationship?: string
-    image: File | null
+    image?: File
   }
 }
 

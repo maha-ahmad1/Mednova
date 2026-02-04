@@ -36,7 +36,7 @@ const patientStep2Schema = z.object({
 export interface PatientFormData {
   birth_date?: string;
   gender?: "male" | "female";
-  image?: File | null;
+  image?: File;
   emergency_phone?: string;
   relationship?: string;
   formatted_address?: string;
@@ -71,8 +71,8 @@ export function PatientFormStep2({
   });
   const { data: session, status, update } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(
-    formData?.image ?? null
+  const [imageFile, setImageFile] = useState<File | undefined>(
+    formData?.image
   );
   const [networkError, setNetworkError] = useState(false);
   const router = useRouter();
@@ -372,8 +372,8 @@ export function PatientFormStep2({
 
             <ProfileImageUpload
               label="رفع الصورة الشخصية"
-              value={imageFile}
-              onChange={setImageFile}
+              value={imageFile ?? null}
+              onChange={(file) => setImageFile(file ?? undefined)}
             />
 
             <div className="flex justify-between mt-4">

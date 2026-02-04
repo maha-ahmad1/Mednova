@@ -137,8 +137,8 @@ export function CenterFormStep3({
   const onSubmit = (data: Step3Data) => {
     updateFormData({
       ...data,
-      commercial_registration_file: commercialRegFile,
-      license_file: licenseFile,
+      commercial_registration_file: commercialRegFile ?? undefined,
+      license_file: licenseFile ?? undefined,
     })
     onNext()
   }
@@ -146,8 +146,8 @@ export function CenterFormStep3({
   const handleBack = () => {
     updateFormData({
       ...methods.getValues(),
-      commercial_registration_file: commercialRegFile,
-      license_file: licenseFile,
+      commercial_registration_file: commercialRegFile ?? undefined,
+      license_file: licenseFile ?? undefined,
     })
     onBack()
   }

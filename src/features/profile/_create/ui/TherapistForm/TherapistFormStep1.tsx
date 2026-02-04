@@ -1,4 +1,5 @@
 "use client";
+import type React from "react";
 import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { Controller, useForm, FormProvider } from "react-hook-form";
@@ -8,6 +9,8 @@ import { Mail, User, Phone, Home, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useSession } from "next-auth/react";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -26,6 +29,9 @@ interface TherapistStep1Props {
   formData: Partial<Step1Data>;
   updateFormData: (data: Partial<Step1Data>) => void;
   globalErrors?: Record<string, string>;
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
 }
 
 export function TherapistFormStep1({
@@ -33,6 +39,7 @@ export function TherapistFormStep1({
   formData,
   updateFormData,
   globalErrors,
+  setGlobalErrors,
 }: TherapistStep1Props) {
   const { data: session, status } = useSession();
 
@@ -50,8 +57,8 @@ export function TherapistFormStep1({
     } as Partial<Step1Data>,
   });
 
-  const [profileImage, setProfileImage] = useState<File | null>(
-    formData?.image instanceof File ? formData.image : null
+  const [profileImage, setProfileImage] = useState<File | undefined>(
+    formData?.image instanceof File ? formData.image : undefined
   );
 
   const {
@@ -78,16 +85,27 @@ export function TherapistFormStep1({
       });
     }
   }, [session?.user, methods, formData]);
-  const { setError } = methods;
+  const stepFields = [
+    "full_name",
+    "email",
+    "phone",
+    "gender",
+    "formatted_address",
+    "birth_date",
+    "image",
+  ] as const;
 
-  useEffect(() => {
-    if (globalErrors) {
-      Object.entries(globalErrors).forEach(([field, message]) => {
-        setError(field as keyof Step1Data, { type: "server", message });
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globalErrors]);
+  useApplyServerErrors<Step1Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step1Data>({
+    methods,
+    setErrors: setGlobalErrors,
+    fields: stepFields,
+  });
 
   if (status === "loading") {
     return (
@@ -184,8 +202,8 @@ export function TherapistFormStep1({
             </div>
             <ProfileImageUpload
               label="الصورة الشخصية"
-              value={profileImage}
-              onChange={setProfileImage}
+              value={profileImage ?? null}
+              onChange={(file) => setProfileImage(file ?? undefined)}
             />
             <FormSubmitButton className="px-6 py-5 mt-4">
               التالي

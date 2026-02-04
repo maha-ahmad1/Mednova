@@ -1,4 +1,5 @@
 "use client";
+import type React from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
@@ -14,10 +15,11 @@ import { toast } from "sonner";
 import type { CenterFormValues } from "@/app/api/center";
 import { Loader2 } from "lucide-react";
 import type { SubmitHandler } from "react-hook-form";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const step5Schema = z.object({
   bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
-  status: z.string().optional(),
 });
 
 type Step5Data = z.infer<typeof step5Schema>;
@@ -26,13 +28,17 @@ interface CenterStep5Props {
   onBack: () => void;
   formData: Record<string, unknown>;
   updateFormData: (data: Partial<Record<string, unknown>>) => void;
-  setGlobalErrors?: (errors: Record<string, string>) => void;
+  globalErrors?: Record<string, string>;
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
 }
 
 export function CenterFormStep5({
   onBack,
   formData,
   updateFormData,
+  globalErrors,
   setGlobalErrors,
 }: CenterStep5Props) {
   const methods = useForm<Step5Data>({
@@ -48,6 +54,20 @@ export function CenterFormStep5({
     control,
     formState: { errors },
   } = methods;
+
+  const stepFields = ["bio"] as const;
+
+  useApplyServerErrors<Step5Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step5Data>({
+    methods,
+    setErrors: setGlobalErrors,
+    fields: stepFields,
+  });
 
   const { data: session, update } = useSession();
   const router = useRouter();
@@ -182,7 +202,6 @@ export function CenterFormStep5({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status,
         },
       });
       showSuccessToast("تم إرسال بيانات المركز بنجاح!");
@@ -217,7 +236,10 @@ export function CenterFormStep5({
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={() => {
+                updateFormData({ bio: methods.getValues("bio") })
+                onBack()
+              }}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] hover:text-white"
             >
               رجوع

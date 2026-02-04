@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -10,6 +10,8 @@ import { useSession } from "next-auth/react";
 import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -30,6 +32,9 @@ interface CenterStep1Props {
   formData: Partial<Step1Data>;
   updateFormData: (data: Partial<Step1Data>) => void;
   globalErrors?: Record<string, string>;
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
 }
 
 export function CenterFormStep1({
@@ -37,6 +42,7 @@ export function CenterFormStep1({
   formData,
   updateFormData,
   globalErrors,
+  setGlobalErrors,
 }: CenterStep1Props) {
   const { data: session, status } = useSession();
 
@@ -56,8 +62,8 @@ export function CenterFormStep1({
     } as Partial<Step1Data>,
   });
 
-  const [centerImage, setCenterImage] = useState<File | null>(
-    formData?.image instanceof File ? formData.image : null
+  const [centerImage, setCenterImage] = useState<File | undefined>(
+    formData?.image instanceof File ? formData.image : undefined
   );
 
   const {
@@ -92,16 +98,28 @@ export function CenterFormStep1({
     }
   }, [session?.user, methods, formData]);
 
-  useEffect(() => {
-    if (globalErrors) {
-      Object.entries(globalErrors).forEach(([field, message]) => {
-        setError(field as keyof Step1Data, {
-          type: "server",
-          message,
-        });
-      });
-    }
-  }, [globalErrors, setError]);
+  const stepFields = [
+    "name_center",
+    "full_name",
+    "email",
+    "phone",
+    "gender",
+    "formatted_address",
+    "year_establishment",
+    "image",
+    "birth_date",
+  ] as const;
+
+  useApplyServerErrors<Step1Data>({
+    setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step1Data>({
+    methods,
+    setErrors: setGlobalErrors,
+    fields: stepFields,
+  });
 
   if (status === "loading") {
     return (
@@ -235,8 +253,8 @@ export function CenterFormStep1({
             </div>
             <ProfileImageUpload
               label="صورة المركز"
-              value={centerImage}
-              onChange={setCenterImage}
+              value={centerImage ?? null}
+              onChange={(file) => setCenterImage(file ?? undefined)}
             />
           </div>
           <FormSubmitButton className="px-6 py-5 mt-4">التالي</FormSubmitButton>

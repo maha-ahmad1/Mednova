@@ -1,4 +1,5 @@
 "use client";
+import type React from "react";
 import { FormInput } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { useForm, FormProvider, Controller } from "react-hook-form";
@@ -10,6 +11,8 @@ import { Video, MessageSquare, Check } from "lucide-react";
 import { FormSelect } from "@/shared/ui/forms/components/FormSelect";
 import { cn } from "@/lib/utils";
 import { CustomCheckbox } from "@/shared/ui/forms/components/CustomCheckbox";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const step2Schema = z.object({
   specialty_id: z.array(z.string()).min(1, "يرجى اختيار تخصص واحد على الأقل"),
@@ -28,7 +31,10 @@ interface CenterStep2Props {
   onBack: () => void;
   formData: Partial<Step2Data>;
   updateFormData: (data: Partial<Step2Data>) => void;
-  setGlobalErrors?: (errors: Record<string, string>) => void;
+  globalErrors?: Record<string, string>;
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
 }
 
 // مكون Checkbox مخصص للموقع
@@ -86,6 +92,8 @@ export function CenterFormStep2({
   onBack,
   formData,
   updateFormData,
+  globalErrors,
+  setGlobalErrors,
 }: CenterStep2Props) {
   const methods = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
@@ -108,6 +116,25 @@ export function CenterFormStep2({
     formState: { errors },
   } = methods;
 
+  const stepFields = [
+    "specialty_id",
+    "video_consultation_price",
+    "chat_consultation_price",
+    "currency",
+  ] as const;
+
+  useApplyServerErrors<Step2Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step2Data>({
+    methods,
+    setErrors: setGlobalErrors,
+    fields: stepFields,
+  });
+
   const selectedSpecialties = watch("specialty_id");
 
   const toggleSpecialty = (specialtyId: string) => {
@@ -124,6 +151,11 @@ export function CenterFormStep2({
   const onSubmit = (data: Step2Data) => {
     updateFormData(data);
     onNext();
+  };
+
+  const handleBack = () => {
+    updateFormData(methods.getValues());
+    onBack();
   };
 
   return (
@@ -238,7 +270,7 @@ export function CenterFormStep2({
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={handleBack}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] hover:text-white"
             >
               رجوع

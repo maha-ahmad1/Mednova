@@ -17,9 +17,9 @@ export default function PatientWrapper() {
     birth_date: string
     gender?: "male" | "female" | undefined
     address: string
-    emergency_phone?: string
-    relationship?: string
-    image?: File | null
+    emergency_phone: string
+    relationship: string
+    image?: File
     countryCode?: string
   }
 
@@ -32,7 +32,7 @@ export default function PatientWrapper() {
     address: "",
     emergency_phone: "",
     relationship: "",
-    image: null,
+    image: undefined,
   })
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 4))
@@ -61,6 +61,7 @@ export default function PatientWrapper() {
             formData={formData}
             updateFormData={updateFormData}
             globalErrors={globalErrors}
+            setGlobalErrors={setGlobalErrors}
           />
         )}
 
@@ -70,7 +71,7 @@ export default function PatientWrapper() {
             onBack={prevStep}
             formData={formData}
             updateFormData={updateFormData}
-            handleGlobalErrors={globalErrors}
+            globalErrors={globalErrors}
             setGlobalErrors={setGlobalErrors}
           />
         )}

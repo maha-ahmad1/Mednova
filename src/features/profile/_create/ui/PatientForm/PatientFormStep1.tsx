@@ -1,5 +1,6 @@
 "use client"
 
+import type React from "react"
 import { useForm, FormProvider, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -13,15 +14,17 @@ import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { FormPhoneInput } from "@/shared/ui/forms"
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors"
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange"
 
 
 // ✅ Zod Schema
 const patientSchema = z.object({
   full_name: z.string().min(1, "الاسم الكامل مطلوب"),
   email: z.string().email("بريد إلكتروني غير صالح"),
-  emergency_phone: z.string().optional(),
+  emergency_phone: z.string().min(1, "رقم الطوارئ مطلوب"),
   phone: z.string().min(1, "رقم الهاتف مطلوب"),
-  relationship: z.string().optional(),
+  relationship: z.string().min(1, "صلة القرابة مطلوبة"),
   birth_date: z.string().min(1, "التاريخ الميلاد مطلوب"),
   
 })
@@ -35,10 +38,19 @@ interface PatientFormStep1Props {
   formData: PatientFormData
   updateFormData: (data: Partial<PatientFormData>) => void
   globalErrors?: Record<string, string>
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >
 
 }
 
-export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors  }: PatientFormStep1Props) {
+export function PatientFormStep1({
+  onNext,
+  formData,
+  updateFormData,
+  globalErrors,
+  setGlobalErrors,
+}: PatientFormStep1Props) {
   const { data: session, status } = useSession()
   const [networkError, setNetworkError] = useState(false)
   const [countryCode, setCountryCode] = useState("+968")
@@ -78,15 +90,26 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
   }, [session?.user, methods, formData])
 
   
-  const { setError } = methods
+  const stepFields = [
+    "full_name",
+    "email",
+    "phone",
+    "birth_date",
+    "emergency_phone",
+    "relationship",
+  ] as const
 
-    useEffect(() => {
-    if (globalErrors) {
-      Object.entries(globalErrors).forEach(([field, message]) => {
-        setError(field as keyof PatientFormData, { type: "server", message })
-      })
-    }
-  }, [globalErrors, setError])
+  useApplyServerErrors<PatientFormData>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  })
+
+  useClearServerErrorsOnChange<PatientFormData>({
+    methods,
+    setErrors: setGlobalErrors,
+    fields: stepFields,
+  })
 
   if (status === "loading") {
     return (

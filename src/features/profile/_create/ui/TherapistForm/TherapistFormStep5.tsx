@@ -1,4 +1,5 @@
 "use client";
+import type React from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
@@ -14,16 +15,20 @@ import { toast } from "sonner";
 import type { TherapistFormValues } from "@/app/api/therapist";
 import { Loader2 } from "lucide-react";
 import { SubmitHandler } from "react-hook-form";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 interface TherapistStep4Props {
   onBack: () => void;
   formData: Record<string, unknown>;
   updateFormData: (data: Partial<Record<string, unknown>>) => void;
-  setGlobalErrors?: (errors: Record<string, string>) => void;
+  globalErrors?: Record<string, string>;
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
 }
 const step4Schema = z.object({
   bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
-  status: z.string().optional(),
 });
 
 type Step4Data = z.infer<typeof step4Schema>;
@@ -32,6 +37,7 @@ export function TherapistFormStep5({
   onBack,
   formData,
   updateFormData,
+  globalErrors,
   setGlobalErrors,
 }: TherapistStep4Props) {
   const methods = useForm<Step4Data>({
@@ -47,6 +53,20 @@ export function TherapistFormStep5({
     control,
     formState: { errors },
   } = methods;
+
+  const stepFields = ["bio"] as const;
+
+  useApplyServerErrors<Step4Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step4Data>({
+    methods,
+    setErrors: setGlobalErrors,
+    fields: stepFields,
+  });
 
   const { data: session, update } = useSession();
   const router = useRouter();
@@ -191,7 +211,6 @@ export function TherapistFormStep5({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status,
         },
       });
       showSuccessToast("تم إرسال بياناتك بنجاح!");
@@ -226,7 +245,10 @@ export function TherapistFormStep5({
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={() => {
+                updateFormData({ bio: methods.getValues("bio") })
+                onBack()
+              }}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] !hovetr:bg-[#32A88D] hover:text-white"
             >
               رجوع

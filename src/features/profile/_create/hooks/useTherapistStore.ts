@@ -4,6 +4,7 @@ import { useAxiosInstance } from "@/lib/axios/axiosInstance"
 import { storeTherapistDetails ,TherapistFormValues} from "@/app/api/therapist"
 import type { AxiosErrorResponse } from "@/types/patient"
 import { toast } from "sonner"
+import { parseServerValidationErrors } from "../utils/serverValidation"
 
 
 
@@ -21,23 +22,12 @@ export const useTherapist = (options?: UseTherapistOptions) => {
       const errorData = error.response?.data
 
       if (status === 422 && errorData?.data) {
-        const errorFields: Record<string, string> = {}
-        const summaryParts: string[] = []
+        const { fieldErrors, summary } = parseServerValidationErrors(
+          errorData.data as Record<string, unknown>
+        )
 
-        Object.entries(errorData.data).forEach(([field, value]) => {
-          let message = ""
-          if (Array.isArray(value) && value.length > 0) message = String(value[0])
-          else if (typeof value === "string") message = value
-
-          if (message) {
-            errorFields[field] = message
-            summaryParts.push(message)
-          }
-        })
-
-        const summary = summaryParts.length ? `تحقق من البيانات التالية: ${summaryParts.join(" — ")}` : errorData.message || "يرجى مراجعة الحقول المدخلة."
-        toast.error(summary)
-        options?.onValidationError?.(errorFields)
+        toast.error(summary || errorData.message || "يرجى مراجعة الحقول المدخلة.")
+        options?.onValidationError?.(fieldErrors)
         return
       }
 

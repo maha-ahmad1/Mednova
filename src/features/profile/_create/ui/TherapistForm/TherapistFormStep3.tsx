@@ -1,4 +1,5 @@
 "use client";
+import type React from "react";
 import { FormInput } from "@/shared/ui/forms";
 import { useState } from "react"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
@@ -8,12 +9,14 @@ import * as z from "zod";
 import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { FormFileUpload } from "@/shared/ui/forms";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const step3Schema = z.object({
   license_number: z.string().min(1, "رقم الترخيص مطلوب"),
   license_authority: z.string().min(1, "الجهة المصدرة مطلوبة"),
-  certificate_file: z.any().optional(),
-  license_file: z.any().optional(),
+  certificate_file: z.instanceof(File, { message: "ملف الشهادة مطلوب" }),
+  license_file: z.instanceof(File, { message: "ملف الترخيص مطلوب" }),
 });
 
 type Step3Data = z.infer<typeof step3Schema>;
@@ -23,16 +26,28 @@ interface TherapistStep3Props {
   onBack: () => void
   formData: Partial<Step3Data>
   updateFormData: (data: Partial<Step3Data>) => void
-  setGlobalErrors?: (errors: Record<string, string>) => void
+  globalErrors?: Record<string, string>
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >
 }
 
-export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }: TherapistStep3Props) {
+export function TherapistFormStep3({
+  onNext,
+  onBack,
+  formData,
+  updateFormData,
+  globalErrors,
+  setGlobalErrors,
+}: TherapistStep3Props) {
   const methods = useForm<Step3Data>({
     resolver: zodResolver(step3Schema),
     mode: "onChange",
     defaultValues: {
       license_number: formData.license_number || "",
       license_authority: formData.license_authority || "",
+      certificate_file: formData.certificate_file instanceof File ? formData.certificate_file : undefined,
+      license_file: formData.license_file instanceof File ? formData.license_file : undefined,
     },
   });
 
@@ -42,12 +57,57 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
     formState: { errors },
   } = methods;
 
-  const [certificateFile, setCertificateFile] = useState<File | null>(formData.certificate_file || null)
-  const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)
+  const certificateFileError =
+    typeof errors.certificate_file?.message === "string"
+      ? errors.certificate_file.message
+      : undefined
+  const licenseFileError =
+    typeof errors.license_file?.message === "string"
+      ? errors.license_file.message
+      : undefined
+
+  const stepFields = [
+    "license_number",
+    "license_authority",
+    "certificate_file",
+    "license_file",
+  ] as const;
+
+  useApplyServerErrors<Step3Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step3Data>({
+    methods,
+    setErrors: setGlobalErrors,
+    fields: stepFields,
+  });
+
+  const [certificateFile, setCertificateFile] = useState<File | undefined>(
+    formData.certificate_file
+  )
+  const [licenseFile, setLicenseFile] = useState<File | undefined>(
+    formData.license_file
+  )
 
   const onSubmit = (data: Step3Data) => {
-    updateFormData({ ...data, certificate_file: certificateFile, license_file: licenseFile })
+    updateFormData({
+      ...data,
+      certificate_file: certificateFile ?? undefined,
+      license_file: licenseFile ?? undefined,
+    })
     onNext()
+  }
+
+  const handleBack = () => {
+    updateFormData({
+      ...methods.getValues(),
+      certificate_file: certificateFile ?? undefined,
+      license_file: licenseFile ?? undefined,
+    })
+    onBack()
   }
 
   return (
@@ -87,10 +147,13 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
                 icon={ShieldCheck}
                 iconPosition="right"
                 rtl
-                error={errors.license_authority?.message}
+                error={certificateFileError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
-                  if (file) setCertificateFile(file)
+                  if (file) {
+                    setCertificateFile(file)
+                    methods.setValue("certificate_file", file, { shouldValidate: true })
+                  }
                 }}
               />
             </div>
@@ -102,10 +165,13 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
                 icon={Copyright}
                 iconPosition="right"
                 rtl
-                error={errors.license_authority?.message}
+                error={licenseFileError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
-                  if (file) setLicenseFile(file)
+                  if (file) {
+                    setLicenseFile(file)
+                    methods.setValue("license_file", file, { shouldValidate: true })
+                  }
                 }}
               />
             </div>
@@ -115,7 +181,7 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={handleBack}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] !hovetr:bg-[#32A88D] hover:text-white"
             >
               رجوع

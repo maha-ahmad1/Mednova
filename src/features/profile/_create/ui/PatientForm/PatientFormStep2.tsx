@@ -1,4 +1,5 @@
 "use client";
+import type React from "react";
 
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +23,8 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { countries } from "@/constants/countries";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const patientStep2Schema = z.object({
   gender: z.enum(["male", "female"]).refine((val) => !!val, {
@@ -30,13 +33,12 @@ const patientStep2Schema = z.object({
   formatted_address: z.string().min(1, "العنوان مطلوب"),
   country: z.string().min(1, "حقل البلد مطلوب."),
   city: z.string().min(1, "حقل المدينة مطلوب."),
-  status: z.string().optional(),
 });
 
 export interface PatientFormData {
   birth_date?: string;
   gender?: "male" | "female";
-  image?: File | null;
+  image?: File;
   emergency_phone?: string;
   relationship?: string;
   formatted_address?: string;
@@ -52,8 +54,10 @@ interface PatientFormStep2Props {
   onBack: () => void;
   formData: PatientFormData;
   updateFormData: (data: PatientFormData) => void;
-  handleGlobalErrors: Record<string, string>;
-  setGlobalErrors?: (errors: Record<string, string>) => void;
+  globalErrors?: Record<string, string>;
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
 }
 
 export function PatientFormStep2({
@@ -61,6 +65,7 @@ export function PatientFormStep2({
   onBack,
   formData,
   updateFormData,
+  globalErrors,
   setGlobalErrors,
 }: PatientFormStep2Props) {
   const { storePatient } = usePatient({
@@ -70,8 +75,8 @@ export function PatientFormStep2({
   });
   const { data: session, status, update } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(
-    formData?.image ?? null
+  const [imageFile, setImageFile] = useState<File | undefined>(
+    formData?.image
   );
   const [networkError, setNetworkError] = useState(false);
   const router = useRouter();
@@ -94,6 +99,25 @@ export function PatientFormStep2({
     setValue,
   } = methods;
   const country = methods.watch("country");
+
+  const stepFields = [
+    "gender",
+    "formatted_address",
+    "country",
+    "city",
+  ] as const;
+
+  useApplyServerErrors<PatientStep2FormData>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<PatientStep2FormData>({
+    methods,
+    setErrors: setGlobalErrors,
+    fields: stepFields,
+  });
 
   useEffect(() => {
     if (status === "unauthenticated" && !navigator.onLine) {
@@ -233,7 +257,6 @@ export function PatientFormStep2({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status, 
         },
       });
               console.log("status .sss"+status)
@@ -359,8 +382,8 @@ export function PatientFormStep2({
 
             <ProfileImageUpload
               label="رفع الصورة الشخصية"
-              value={imageFile}
-              onChange={setImageFile}
+              value={imageFile ?? null}
+              onChange={(file) => setImageFile(file ?? undefined)}
             />
 
             <div className="flex justify-between mt-4">

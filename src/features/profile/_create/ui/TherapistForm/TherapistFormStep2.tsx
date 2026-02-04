@@ -210,6 +210,7 @@
 
 
 "use client"
+import type React from "react"
 import { FormInput } from "@/shared/ui/forms"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
 import { useForm, FormProvider, Controller } from "react-hook-form"
@@ -219,6 +220,8 @@ import { GraduationCap, Globe, Building2, Baseline as ChartLine, Video, MessageS
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { medicalSpecialties } from "@/constants/medicalSpecialties"
 import { FormSelect } from "@/shared/ui/forms"
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors"
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange"
 
 const step2Schema = z.object({
   medical_specialties_id: z.string().min(1, "يرجى اختيار التخصص"),
@@ -238,7 +241,10 @@ interface TherapistStep2Props {
   onBack: () => void
   formData: Partial<z.infer<typeof step2Schema>>
   updateFormData: (data: Partial<Record<string, string | File | undefined>>) => void
-  setGlobalErrors?: (errors: Record<string, string>) => void
+  globalErrors?: Record<string, string>
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >
 }
 
 const currencyOptions = [
@@ -246,7 +252,14 @@ const currencyOptions = [
 
 ]
 
-export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }: TherapistStep2Props) {
+export function TherapistFormStep2({
+  onNext,
+  onBack,
+  formData,
+  updateFormData,
+  globalErrors,
+  setGlobalErrors,
+}: TherapistStep2Props) {
   const methods = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
     mode: "onChange",
@@ -268,9 +281,37 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
     formState: { errors },
   } = methods
 
+  const stepFields = [
+    "medical_specialties_id",
+    "university_name",
+    "graduation_year",
+    "countries_certified",
+    "experience_years",
+    "video_consultation_price",
+    "chat_consultation_price",
+    "currency",
+  ] as const
+
+  useApplyServerErrors<Step2Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  })
+
+  useClearServerErrorsOnChange<Step2Data>({
+    methods,
+    setErrors: setGlobalErrors,
+    fields: stepFields,
+  })
+
   const onSubmit = (data: Step2Data) => {
     updateFormData(data)
     onNext()
+  }
+
+  const handleBack = () => {
+    updateFormData(methods.getValues())
+    onBack()
   }
 
   return (
@@ -395,7 +436,7 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={handleBack}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] !hovetr:bg-[#32A88D] hover:text-white"
             >
               رجوع

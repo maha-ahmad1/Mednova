@@ -1,6 +1,6 @@
 "use client"
-import { FormInput } from "@/shared/ui/forms"
 import type React from "react"
+import { FormInput } from "@/shared/ui/forms"
 
 import { useState } from "react"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
@@ -10,14 +10,20 @@ import * as z from "zod"
 import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react"
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { FormFileUpload } from "@/shared/ui/forms"
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors"
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange"
 
 const step3Schema = z
   .object({
     has_commercial_registration: z.boolean(),
     commercial_registration_number: z.string().optional(),
     commercial_registration_authority: z.string().optional(),
+    commercial_registration_file: z
+      .instanceof(File, { message: "ملف السجل التجاري مطلوب" })
+      .optional(),
     license_number: z.string().min(1, "رقم الترخيص مطلوب"),
     license_authority: z.string().min(1, "الجهة المصدرة مطلوبة"),
+    license_file: z.instanceof(File, { message: "ملف الترخيص مطلوب" }),
   })
   .superRefine((data, ctx) => {
     if (data.has_commercial_registration) {
@@ -35,6 +41,13 @@ const step3Schema = z
           message: "جهة السجل التجاري مطلوبة",
         })
       }
+      if (!data.commercial_registration_file) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["commercial_registration_file"],
+          message: "ملف السجل التجاري مطلوب",
+        })
+      }
     }
   })
 
@@ -44,21 +57,31 @@ interface CenterStep3Props {
   onNext: () => void
   onBack: () => void
   formData: Partial<Step3Data> & {
-    commercial_registration_file?: File | null
-    license_file?: File | null
+    commercial_registration_file?: File
+    license_file?: File
   }
   updateFormData: (
     data: Partial<
       Step3Data & {
-        commercial_registration_file?: File | null
-        license_file?: File | null
+        commercial_registration_file?: File
+        license_file?: File
       }
     >,
   ) => void
-  setGlobalErrors?: (errors: Record<string, string>) => void
+  globalErrors?: Record<string, string>
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >
 }
 
-export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: CenterStep3Props) {
+export function CenterFormStep3({
+  onNext,
+  onBack,
+  formData,
+  updateFormData,
+  globalErrors,
+  setGlobalErrors,
+}: CenterStep3Props) {
   const methods = useForm<Step3Data>({
     resolver: zodResolver(step3Schema),
     mode: "onChange",
@@ -68,6 +91,12 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
       commercial_registration_authority: formData.commercial_registration_authority || "",
       license_number: formData.license_number || "",
       license_authority: formData.license_authority || "",
+      commercial_registration_file:
+        formData.commercial_registration_file instanceof File
+          ? formData.commercial_registration_file
+          : undefined,
+      license_file:
+        formData.license_file instanceof File ? formData.license_file : undefined,
     },
   })
 
@@ -79,18 +108,62 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
     formState: { errors },
   } = methods
 
+  const commercialRegistrationFileError =
+    typeof errors.commercial_registration_file?.message === "string"
+      ? errors.commercial_registration_file.message
+      : undefined
+  const licenseFileError =
+    typeof errors.license_file?.message === "string"
+      ? errors.license_file.message
+      : undefined
+
+  const stepFields = [
+    "has_commercial_registration",
+    "commercial_registration_number",
+    "commercial_registration_authority",
+    "commercial_registration_file",
+    "license_number",
+    "license_authority",
+    "license_file",
+  ] as const
+
+  useApplyServerErrors<Step3Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  })
+
+  useClearServerErrorsOnChange<Step3Data>({
+    methods,
+    setErrors: setGlobalErrors,
+    fields: stepFields,
+  })
+
   const hasCommercialReg = watch("has_commercial_registration")
 
-  const [commercialRegFile, setCommercialRegFile] = useState<File | null>(formData.commercial_registration_file || null)
-  const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)
+  const [commercialRegFile, setCommercialRegFile] = useState<File | undefined>(
+    formData.commercial_registration_file
+  )
+  const [licenseFile, setLicenseFile] = useState<File | undefined>(
+    formData.license_file
+  )
 
   const onSubmit = (data: Step3Data) => {
     updateFormData({
       ...data,
-      commercial_registration_file: commercialRegFile,
-      license_file: licenseFile,
+      commercial_registration_file: commercialRegFile ?? undefined,
+      license_file: licenseFile ?? undefined,
     })
     onNext()
+  }
+
+  const handleBack = () => {
+    updateFormData({
+      ...methods.getValues(),
+      commercial_registration_file: commercialRegFile ?? undefined,
+      license_file: licenseFile ?? undefined,
+    })
+    onBack()
   }
 
   return (
@@ -140,17 +213,21 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
               />
 
               <div>
-                <FormFileUpload
-                  type="file"
-                  label="ملف السجل التجاري"
-                  icon={Copyright}
-                  iconPosition="right"
-                  rtl
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const file = e.target.files?.[0]
-                    if (file) setCommercialRegFile(file)
-                  }}
-                />
+              <FormFileUpload
+                type="file"
+                label="ملف السجل التجاري"
+                icon={Copyright}
+                iconPosition="right"
+                rtl
+                error={commercialRegistrationFileError}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const file = e.target.files?.[0]
+                  if (file) {
+                    setCommercialRegFile(file)
+                    methods.setValue("commercial_registration_file", file, { shouldValidate: true })
+                  }
+                }}
+              />
               </div>
             </div>
           )}
@@ -186,9 +263,13 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
                 icon={ShieldCheck}
                 iconPosition="right"
                 rtl
+                error={licenseFileError}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const file = e.target.files?.[0]
-                  if (file) setLicenseFile(file)
+                  if (file) {
+                    setLicenseFile(file)
+                    methods.setValue("license_file", file, { shouldValidate: true })
+                  }
                 }}
               />
             </div>
@@ -198,7 +279,7 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={handleBack}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] hover:text-white"
             >
               رجوع

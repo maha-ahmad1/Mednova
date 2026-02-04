@@ -342,6 +342,7 @@
 
 "use client";
 
+import type React from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
@@ -350,6 +351,8 @@ import * as z from "zod";
 import { countries } from "@/constants/countries";
 import { FormSelect } from "@/shared/ui/forms";
 import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector";
+import { useApplyServerErrors } from "@/features/profile/_create/hooks/useApplyServerErrors";
+import { useClearServerErrorsOnChange } from "@/features/profile/_create/hooks/useClearServerErrorsOnChange";
 
 const step4Schema = z
   .object({
@@ -402,7 +405,9 @@ interface Step4Props {
   formData: Partial<Step4Data>;
   updateFormData: (data: Partial<Step4Data>) => void;
   globalErrors?: Record<string, string>;
-  setGlobalErrors?: (errors: Record<string, string>) => void;
+  setGlobalErrors?: React.Dispatch<
+    React.SetStateAction<Record<string, string>>
+  >;
 }
 
 export function TherapistFormStep4({
@@ -410,6 +415,8 @@ export function TherapistFormStep4({
   onNext,
   formData,
   updateFormData,
+  globalErrors,
+  setGlobalErrors,
 }: Step4Props) {
   const methods = useForm<Step4Data>({
     resolver: zodResolver(step4Schema),
@@ -447,6 +454,35 @@ export function TherapistFormStep4({
     updateFormData(data);
     onNext();
   };
+
+  const handleBack = () => {
+    updateFormData(methods.getValues());
+    onBack();
+  };
+
+  const stepFields = [
+    "day_of_week",
+    "start_time_morning",
+    "end_time_morning",
+    "is_have_evening_time",
+    "start_time_evening",
+    "end_time_evening",
+    "country",
+    "city",
+    "timezone",
+  ] as const;
+
+  useApplyServerErrors<Step4Data>({
+    errors: globalErrors,
+    setError: methods.setError,
+    fields: stepFields,
+  });
+
+  useClearServerErrorsOnChange<Step4Data>({
+    methods,
+    setErrors: setGlobalErrors,
+    fields: stepFields,
+  });
 
   return (
     <FormStepCard
@@ -682,7 +718,7 @@ export function TherapistFormStep4({
             <FormSubmitButton
               align="left"
               type="button"
-              onClick={onBack}
+              onClick={handleBack}
               className="px-6 py-5 bg-[#32A88D]/20 text-[#32A88D] hover:text-white"
             >
               رجوع

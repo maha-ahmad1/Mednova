@@ -84,7 +84,7 @@ export function PatientFormStep2({
       formatted_address: formData.formatted_address || "",
       country: formData.country || "",
       city: formData.city || "",
-      image: formData.image ?? null,
+      image: formData.image ?? undefined,
     },
   });
 
@@ -96,7 +96,7 @@ export function PatientFormStep2({
   const country = methods.watch("country");
 
   useEffect(() => {
-    setValue("image", imageFile, { shouldValidate: true });
+    setValue("image", imageFile ?? undefined, { shouldValidate: true });
   }, [imageFile, setValue]);
 
   useEffect(() => {

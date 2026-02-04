@@ -51,7 +51,7 @@ export function CenterFormStep1({
       phone: formData.phone || "",
       gender: formData.gender || undefined,
       formatted_address: formData.formatted_address || "",
-      year_establishment: formData.year_establishment || "",
+      year_establishment: formData.year_establishment ?? undefined,
       image: formData?.image instanceof File ? formData.image : undefined,
       birth_date: formData.birth_date || "",
     } as Partial<Step1Data>,
@@ -231,7 +231,7 @@ export function CenterFormStep1({
                 rtl
                 className="no-spinner"
                 error={errors.year_establishment?.message}
-                {...register("year_establishment")}
+                {...register("year_establishment", { valueAsNumber: true })}
               />
             </div>
             <ProfileImageUpload

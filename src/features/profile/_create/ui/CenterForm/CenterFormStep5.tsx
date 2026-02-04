@@ -101,7 +101,7 @@ export function CenterFormStep5({
           ? formData.specialty_id.map(String)
           : [],
         year_establishment:
-          typeof formData.year_establishment === "string"
+          typeof formData.year_establishment === "number"
             ? formData.year_establishment
             : undefined,
 
@@ -139,13 +139,11 @@ export function CenterFormStep5({
         bio: data.bio,
         day_of_week: (formData.day_of_week as string[]) || [],
         video_consultation_price:
-          typeof formData.video_consultation_price === "string" ||
           typeof formData.video_consultation_price === "number"
             ? formData.video_consultation_price
             : undefined,
 
         chat_consultation_price:
-          typeof formData.chat_consultation_price === "string" ||
           typeof formData.chat_consultation_price === "number"
             ? formData.chat_consultation_price
             : undefined,

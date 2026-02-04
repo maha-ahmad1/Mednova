@@ -7,41 +7,14 @@ import { TherapistFormStep2 } from "./TherapistFormStep2";
 import { TherapistFormStep3 } from "./TherapistFormStep3";
 import { TherapistFormStep4 } from "./TherapistFormStep4";
 import { TherapistFormStep5 } from "./TherapistFormStep5";
+import { therapistFormSchema } from "@/features/profile/_create/validation/formSchemas";
+import type { z } from "zod";
 
 export default function TherapistWrapper() {
   const [currentStep, setCurrentStep] = useState(1);
   const [globalErrors, setGlobalErrors] = useState<Record<string, string>>({});
 
-  type TherapistState = {
-    full_name: string;
-    email: string;
-    phone: string;
-    birth_date?: string;
-    gender?: "male" | "female";
-    formatted_address?: string;
-    medical_specialties_id?: string;
-    university_name?: string;
-    graduation_year?: string;
-    countries_certified?: string;
-    experience_years?: string;
-    license_number?: string;
-    license_authority?: string;
-    certificate_file?: File | null;
-    license_file?: File | null;
-    bio?: string;
-    image?: File;
-    country?: string;
-    city?: string;
-    day_of_week?: string[];
-    start_time_morning?: string;
-    end_time_morning?: string;
-    is_have_evening_time?: 0 | 1;
-    start_time_evening?: string;
-    end_time_evening?: string;
-    video_consultation_price?: string;
-    chat_consultation_price?: string;
-    currency?: string;
-  };
+  type TherapistState = Partial<z.infer<typeof therapistFormSchema>>;
 
   const [formData, setFormData] = useState<TherapistState>({
     full_name: "",
@@ -52,9 +25,9 @@ export default function TherapistWrapper() {
     formatted_address: "",
     medical_specialties_id: "",
     university_name: "",
-    graduation_year: "",
+    graduation_year: undefined,
     countries_certified: "",
-    experience_years: "",
+    experience_years: undefined,
     license_number: "",
     license_authority: "",
     certificate_file: null,
@@ -69,8 +42,8 @@ export default function TherapistWrapper() {
     is_have_evening_time: 0,
     start_time_evening: "",
     end_time_evening: "",
-    video_consultation_price: "",
-    chat_consultation_price: "",
+    video_consultation_price: undefined,
+    chat_consultation_price: undefined,
     currency: "",
   });
 

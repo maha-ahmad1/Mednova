@@ -59,7 +59,6 @@ export const centerFormSchema = z
     }),
     formatted_address: z.string().min(1, "العنوان مطلوب"),
     year_establishment: z
-      .coerce
       .number({
         required_error: "سنة التأسيس مطلوبة",
         invalid_type_error: "سنة التأسيس مطلوبة",
@@ -73,14 +72,12 @@ export const centerFormSchema = z
       .array(z.string())
       .min(1, "يرجى اختيار تخصص واحد على الأقل"),
     video_consultation_price: z
-      .coerce
       .number({
         required_error: "حقل سعر الاستشارة المرئية مطلوب.",
         invalid_type_error: "حقل سعر الاستشارة المرئية مطلوب.",
       })
       .min(1, "حقل سعر الاستشارة المرئية مطلوب."),
     chat_consultation_price: z
-      .coerce
       .number({
         required_error: "حقل سعر الاستشارة النصية مطلوب.",
         invalid_type_error: "حقل سعر الاستشارة النصية مطلوب.",
@@ -175,7 +172,6 @@ export const therapistFormSchema = z
     medical_specialties_id: z.string().min(1, "يرجى اختيار التخصص"),
     university_name: z.string().min(1, "اسم الجامعة مطلوب"),
     graduation_year: z
-      .coerce
       .number({
         required_error: "سنة التخرج مطلوبة",
         invalid_type_error: "سنة التخرج مطلوبة",
@@ -184,7 +180,6 @@ export const therapistFormSchema = z
       .min(1, "سنة التخرج مطلوبة"),
     countries_certified: z.string().min(1, "يرجى إدخال الدول المعتمد فيها"),
     experience_years: z
-      .coerce
       .number({
         required_error: "عدد سنوات الخبرة مطلوب",
         invalid_type_error: "عدد سنوات الخبرة مطلوب",
@@ -192,14 +187,12 @@ export const therapistFormSchema = z
       .int("عدد سنوات الخبرة مطلوب")
       .min(1, "عدد سنوات الخبرة مطلوب"),
     video_consultation_price: z
-      .coerce
       .number({
         required_error: "حقل سعر الاستشارة المرئية مطلوب.",
         invalid_type_error: "حقل سعر الاستشارة المرئية مطلوب.",
       })
       .min(1, "حقل سعر الاستشارة المرئية مطلوب."),
     chat_consultation_price: z
-      .coerce
       .number({
         required_error: "حقل سعر الاستشارة النصية مطلوب.",
         invalid_type_error: "حقل سعر الاستشارة النصية مطلوب.",

@@ -88,13 +88,11 @@ export function TherapistFormStep5({
 
       const rawPayload = {
         video_consultation_price:
-          typeof formData.video_consultation_price === "string" ||
           typeof formData.video_consultation_price === "number"
             ? formData.video_consultation_price
             : undefined,
 
         chat_consultation_price:
-          typeof formData.chat_consultation_price === "string" ||
           typeof formData.chat_consultation_price === "number"
             ? formData.chat_consultation_price
             : undefined,
@@ -127,7 +125,7 @@ export function TherapistFormStep5({
             ? formData.university_name
             : undefined,
         graduation_year:
-          typeof formData.graduation_year === "string"
+          typeof formData.graduation_year === "number"
             ? formData.graduation_year
             : undefined,
         countries_certified:
@@ -135,7 +133,7 @@ export function TherapistFormStep5({
             ? formData.countries_certified
             : undefined,
         experience_years:
-          typeof formData.experience_years === "string"
+          typeof formData.experience_years === "number"
             ? formData.experience_years
             : undefined,
         license_number:

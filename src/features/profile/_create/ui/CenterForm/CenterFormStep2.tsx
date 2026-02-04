@@ -91,8 +91,8 @@ export function CenterFormStep2({
     defaultValues: {
       specialty_id: formData.specialty_id || [],
       // year_establishment: formData.year_establishment || "",
-      video_consultation_price: formData.video_consultation_price || "",
-      chat_consultation_price: formData.chat_consultation_price || "",
+      video_consultation_price: formData.video_consultation_price ?? undefined,
+      chat_consultation_price: formData.chat_consultation_price ?? undefined,
       currency: formData.currency || "",
     },
   });
@@ -199,7 +199,9 @@ export function CenterFormStep2({
                 rtl
                 className="no-spinner"
                 error={errors.video_consultation_price?.message}
-                {...register("video_consultation_price")}
+                {...register("video_consultation_price", {
+                  valueAsNumber: true,
+                })}
               />
 
               <FormInput
@@ -211,7 +213,9 @@ export function CenterFormStep2({
                 rtl
                 className="no-spinner"
                 error={errors.chat_consultation_price?.message}
-                {...register("chat_consultation_price")}
+                {...register("chat_consultation_price", {
+                  valueAsNumber: true,
+                })}
               />
 
               <Controller

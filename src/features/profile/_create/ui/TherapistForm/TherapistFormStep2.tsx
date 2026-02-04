@@ -254,11 +254,11 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
     defaultValues: {
       medical_specialties_id: formData.medical_specialties_id || "",
       university_name: formData.university_name || "",
-      graduation_year: formData.graduation_year || "",
+      graduation_year: formData.graduation_year ?? undefined,
       countries_certified: formData.countries_certified || "",
-      experience_years: formData.experience_years || "",
-      video_consultation_price: formData.video_consultation_price || "",
-      chat_consultation_price: formData.chat_consultation_price || "",
+      experience_years: formData.experience_years ?? undefined,
+      video_consultation_price: formData.video_consultation_price ?? undefined,
+      chat_consultation_price: formData.chat_consultation_price ?? undefined,
       currency: formData.currency || "",
     },
   })
@@ -320,7 +320,7 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
               rtl
               className="no-spinner"
               error={errors.graduation_year?.message}
-              {...register("graduation_year")}
+              {...register("graduation_year", { valueAsNumber: true })}
             />
 
             <FormInput
@@ -332,7 +332,7 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
               rtl
               className="no-spinner"
               error={errors.experience_years?.message}
-              {...register("experience_years")}
+              {...register("experience_years", { valueAsNumber: true })}
             />
 
             <FormInput
@@ -359,7 +359,9 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
                 rtl
                 className="no-spinner"
                 error={errors.video_consultation_price?.message}
-                {...register("video_consultation_price")}
+                {...register("video_consultation_price", {
+                  valueAsNumber: true,
+                })}
               />
 
               <FormInput
@@ -371,7 +373,9 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
                 rtl
                 className="no-spinner"
                 error={errors.chat_consultation_price?.message}
-                {...register("chat_consultation_price")}
+                {...register("chat_consultation_price", {
+                  valueAsNumber: true,
+                })}
               />
 
               <Controller

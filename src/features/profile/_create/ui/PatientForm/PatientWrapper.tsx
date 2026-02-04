@@ -4,24 +4,15 @@ import { StepperHeader } from "@/features/profile/_create/ui/StepperHeader"
 import { PatientFormStep1 } from "./PatientFormStep1"
 import { PatientFormStep2 } from "./PatientFormStep2"
 import { useState } from "react"
+import type { z } from "zod"
+import { patientFormSchema } from "@/features/profile/_create/validation/formSchemas"
 // import { PatientSuccess } from "./PatientSuccess";
 
 export default function PatientWrapper() {
   const [currentStep, setCurrentStep] = useState(1)
   const [globalErrors, setGlobalErrors] = useState<Record<string, string>>({})
 
-  type PatientFormState = {
-    full_name: string
-    email: string
-    phone: string
-    birth_date: string
-    gender?: "male" | "female" | undefined
-    address: string
-    emergency_phone?: string
-    relationship?: string
-    image?: File | null
-    countryCode?: string
-  }
+  type PatientFormState = Partial<z.infer<typeof patientFormSchema>>
 
   const [formData, setFormData] = useState<PatientFormState>({
     full_name: "",
@@ -29,10 +20,13 @@ export default function PatientWrapper() {
     phone: "",
     birth_date: "",
     gender: undefined,
-    address: "",
     emergency_phone: "",
     relationship: "",
     image: null,
+    formatted_address: "",
+    country: "",
+    city: "",
+    countryCode: "+968",
   })
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 4))

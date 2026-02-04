@@ -70,11 +70,11 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
   const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)
 
   useEffect(() => {
-    setValue("commercial_registration_file", commercialRegFile, { shouldValidate: true })
+    setValue("commercial_registration_file", commercialRegFile ?? undefined, { shouldValidate: true })
   }, [commercialRegFile, setValue])
 
   useEffect(() => {
-    setValue("license_file", licenseFile, { shouldValidate: true })
+    setValue("license_file", licenseFile ?? undefined, { shouldValidate: true })
   }, [licenseFile, setValue])
 
   const onSubmit = (data: Step3Data) => {

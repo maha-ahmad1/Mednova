@@ -31,6 +31,9 @@ const patientStep2Schema = z.object({
   country: z.string().min(1, "حقل البلد مطلوب."),
   city: z.string().min(1, "حقل المدينة مطلوب."),
   status: z.string().optional(),
+  image: z
+    .instanceof(File)
+    .refine((file) => file instanceof File, "الصورة مطلوبة"),
 });
 
 export interface PatientFormData {
@@ -71,7 +74,7 @@ export function PatientFormStep2({
   const { data: session, status, update } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(
-    formData?.image ?? null
+    formData?.image ?? null,
   );
   const [networkError, setNetworkError] = useState(false);
   const router = useRouter();
@@ -233,10 +236,10 @@ export function PatientFormStep2({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status, 
+          status: data.status,
         },
       });
-              console.log("status .sss"+status)
+      console.log("status .sss" + status);
 
       showSuccessToast("تم حفظ البيانات بنجاح!");
 
@@ -336,7 +339,7 @@ export function PatientFormStep2({
                 control={methods.control}
                 render={({ field, fieldState }) => {
                   const selectedCountry = countries.find(
-                    (c) => c.name === country
+                    (c) => c.name === country,
                   );
                   return (
                     <FormSelect

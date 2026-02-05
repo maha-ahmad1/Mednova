@@ -16,15 +16,33 @@ import { FormPhoneInput } from "@/shared/ui/forms"
 
 
 // ✅ Zod Schema
+// const patientSchema = z.object({
+//   full_name: z.string().min(1, "الاسم الكامل مطلوب"),
+//   email: z.string().email("بريد إلكتروني غير صالح"),
+//   emergency_phone: z.string().optional(),
+//   phone: z.string().min(1, "رقم الهاتف مطلوب"),
+//   relationship: z.string().optional(),
+//   birth_date: z.string().min(1, "التاريخ الميلاد مطلوب"),
+  
+// })
+
 const patientSchema = z.object({
   full_name: z.string().min(1, "الاسم الكامل مطلوب"),
   email: z.string().email("بريد إلكتروني غير صالح"),
-  emergency_phone: z.string().optional(),
+  emergency_phone: z
+    .string()
+    .min(1, "رقم الطوارئ مطلوب")
+    .regex(/^\d{8,9}$/, "رقم الطوارئ يجب أن يحتوي على 8 أو 9 أرقام"),
+  // phone: z
+  //   .string()
+  //   .min(1, "رقم الهاتف مطلوب")
+  //   .regex(/^\d{8,9}$/, "رقم الهاتف يجب أن يحتوي على 8 أو 9 أرقام"),
   phone: z.string().min(1, "رقم الهاتف مطلوب"),
-  relationship: z.string().optional(),
-  birth_date: z.string().min(1, "التاريخ الميلاد مطلوب"),
-  
+  relationship: z.string().min(1, "العلاقة مطلوبة"),
+  birth_date: z.string().min(1, "تاريخ الميلاد مطلوب"),
 })
+
+
 
 type PatientFormData = z.infer<typeof patientSchema>& {
   countryCode?: string

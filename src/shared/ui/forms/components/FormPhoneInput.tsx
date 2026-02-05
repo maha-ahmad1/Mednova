@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { FormInput, type FormInputProps } from "./FormInput"
+import { DEFAULT_COUNTRY_CODES } from "@/lib/phone"
 
 export interface CountryCode {
   code: string
@@ -18,14 +19,7 @@ export interface FormPhoneInputProps extends Omit<FormInputProps, "type"> {
   countryCodeValue?: string
 }
 
-const defaultCountryCodes: CountryCode[] = [
-  { code: "+968" },
-  { code: "+966" },
-  { code: "+971" },
-  { code: "+965" },
-  { code: "+974" },
-  { code: "+973" },
-]
+const defaultCountryCodes: CountryCode[] = DEFAULT_COUNTRY_CODES.map((code) => ({ code }))
 
 const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
   (
@@ -76,7 +70,15 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
               ))}
             </SelectContent>
           </Select>
-          <FormInput ref={ref} type="number" className="no-spinner" containerClassName="flex-1" rtl={rtl} {...inputProps} />
+          <FormInput
+            ref={ref}
+            type="tel"
+            inputMode="tel"
+            className="no-spinner"
+            containerClassName="flex-1"
+            rtl={rtl}
+            {...inputProps}
+          />
         </div>
       </div>
     )

@@ -47,6 +47,8 @@ const patientSchema = z.object({
 
 type PatientFormData = z.infer<typeof patientSchema>& {
   countryCode?: string
+      emergency_phone: string
+
 }
 
 interface PatientFormStep1Props {
@@ -73,7 +75,7 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
       email: formData.email || "",
       phone: initialPhone.localNumber,
       birth_date: formData.birth_date || "",
-      emergency_phone: initialEmergencyPhone.localNumber,
+      emergency_phone: initialEmergencyPhone.localNumber || "",
       relationship: formData.relationship || "",
     },
   })
@@ -182,7 +184,7 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
       email: data.email,
       phone: data.phone,
       birth_date: data.birth_date,
-      emergency_phone: data.emergency_phone, 
+      emergency_phone: data.emergency_phone ?? "" , 
       relationship: data.relationship,
       countryCode: emergencyCountryCode, 
     })

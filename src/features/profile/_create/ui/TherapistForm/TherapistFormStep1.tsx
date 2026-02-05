@@ -1,5 +1,10 @@
 "use client";
-import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
+import {
+  FormInput,
+  FormPhoneInput,
+  FormSelect,
+  ProfileImageUpload,
+} from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { Controller, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +13,7 @@ import { Mail, User, Phone, Home, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useSession } from "next-auth/react";
+import { parsePhoneNumber } from "@/lib/phone";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -35,6 +41,10 @@ export function TherapistFormStep1({
   globalErrors,
 }: TherapistStep1Props) {
   const { data: session, status } = useSession();
+  const initialPhone = parsePhoneNumber(formData.phone);
+  const [phoneCountryCode, setPhoneCountryCode] = useState(
+    initialPhone.countryCode
+  );
 
   const methods = useForm<Step1Data>({
     resolver: zodResolver(step1Schema),
@@ -42,7 +52,7 @@ export function TherapistFormStep1({
     defaultValues: {
       full_name: formData.full_name || "",
       email: formData.email || "",
-      phone: formData.phone || "",
+      phone: initialPhone.localNumber,
       gender: formData.gender || undefined,
       formatted_address: formData.formatted_address || "",
       birth_date: formData.birth_date || "",
@@ -71,10 +81,12 @@ export function TherapistFormStep1({
 
   useEffect(() => {
     if (session?.user && !formData.full_name) {
+      const parsedSessionPhone = parsePhoneNumber(session.user.phone);
+      setPhoneCountryCode(parsedSessionPhone.countryCode);
       methods.reset({
         full_name: session.user.full_name || "",
         email: session.user.email || "",
-        phone: session.user.phone || "",
+        phone: parsedSessionPhone.localNumber,
       });
     }
   }, [session?.user, methods, formData]);
@@ -136,15 +148,24 @@ export function TherapistFormStep1({
                 {...register("email")}
                 readOnly
               />
-              <FormInput
-                label="رقم الهاتف"
-                placeholder="05938934"
-                icon={Phone}
-                iconPosition="right"
-                rtl
-                error={errors.phone?.message}
-                {...register("phone")}
-                readOnly
+              <Controller
+                name="phone"
+                control={control}
+                render={({ field }) => (
+                  <FormPhoneInput
+                    {...field}
+                    label="رقم الهاتف"
+                    placeholder="05938934"
+                    icon={Phone}
+                    iconPosition="right"
+                    rtl
+                    countryCodeValue={phoneCountryCode}
+                    onCountryCodeChange={setPhoneCountryCode}
+                    error={errors.phone?.message}
+                    className="no-spinner"
+                    readOnly
+                  />
+                )}
               />
               <Controller
                 name="gender"

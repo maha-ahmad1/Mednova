@@ -18,6 +18,7 @@ import { TherapistFormValues } from "@/app/api/therapist";
 import { personalSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
 import Image from "next/image";
+import { buildFullPhoneNumber, parsePhoneNumber } from "@/lib/phone";
 
 interface TherapistPersonalCardProps {
   profile: TherapistProfile;
@@ -53,25 +54,16 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
     }
   }, [profile, editing]);
 
-  const splitPhone = (p?: string | null) => {
-    if (!p) return { country: "+968", local: "" };
-
-    if (p.startsWith("+968")) return { country: "+968", local: p.slice(4) };
-
-    const m = p.match(/^\+(\d{1,4})(.*)$/);
-    return m
-      ? { country: `+${m[1]}`, local: m[2].trim() }
-      : { country: "+968", local: p };
-  };
-
   const startEdit = () => {
     const source = localProfile ?? profile;
-    const { country, local } = splitPhone(source?.phone);
-    setCountryCode(country);
+    const { countryCode: parsedCountryCode, localNumber } = parsePhoneNumber(
+      source?.phone
+    );
+    setCountryCode(parsedCountryCode);
     setFormValues({
       full_name: source?.full_name ?? "",
       email: source?.email ?? "",
-      phone: local ?? "",
+      phone: localNumber,
       birth_date: source?.birth_date ? String(source.birth_date) : "",
       gender:
         source?.gender === "Male"
@@ -108,12 +100,10 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
     }
 
     try {
-      const phoneWithCode =
-        countryCode && typeof formValues.phone === "string" && formValues.phone
-          ? `${countryCode}${formValues.phone}`
-          : typeof formValues.phone === "string"
-            ? formValues.phone
-            : undefined;
+      const phoneWithCode = buildFullPhoneNumber(
+        countryCode,
+        typeof formValues.phone === "string" ? formValues.phone : undefined
+      );
       const payload: TherapistFormValues = {
         full_name: (formValues.full_name as string) ?? undefined,
         email: (formValues.email as string) ?? undefined,

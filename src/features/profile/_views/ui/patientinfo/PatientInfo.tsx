@@ -13,6 +13,7 @@ import PatientPersonal2Card from "./PatientPersonal2Card";
 import type { PatientProfile } from "@/types/patient";
 import type { ZodTypeAny } from "zod";
 import { signIn } from "next-auth/react";
+import { buildFullPhoneNumber, parsePhoneNumber } from "@/lib/phone";
 
 export default function PatientInfo() {
   const { data: session } = useSession();
@@ -66,33 +67,20 @@ export default function PatientInfo() {
     setEditingCard(card);
     const source = localProfile ?? d;
 
-    const match = source.phone?.match(/^(\+\d{1,4})(.*)$/);
-    const countryCode = match ? match[1] : "+968";
-    const phoneNumber = match ? match[2]?.trim() : source.phone ?? "";
-
-    const emergencyFull = source.patient_details?.emergency_phone ?? "";
-    let emergencyCountryCode = "+968";
-    let emergencyNumber = "";
-
-    if (emergencyFull.startsWith("+")) {
-      const match = emergencyFull.match(/^(\+\d{1,3})(.*)$/);
-      if (match) {
-        emergencyCountryCode = match[1];
-        emergencyNumber = match[2]?.trim() || "";
-      }
-    } else {
-      emergencyNumber = emergencyFull;
-    }
+    const { countryCode, localNumber } = parsePhoneNumber(source.phone);
+    const emergencyParsed = parsePhoneNumber(
+      source.patient_details?.emergency_phone ?? ""
+    );
 
     setFormValues({
       full_name: source.full_name ?? "",
       email: source.email ?? "",
-      phone: phoneNumber,
+      phone: localNumber,
       countryCode,
       birth_date: source.birth_date ?? "",
       gender: source.gender?.toLowerCase() ?? "",
-      emergency_contact: emergencyNumber,
-      emergencyCountryCode,
+      emergency_contact: emergencyParsed.localNumber,
+      emergencyCountryCode: emergencyParsed.countryCode,
       relationship: source.patient_details?.relationship ?? "",
       formatted_address: source.location_details?.formatted_address ?? "",
       country: source.location_details?.country ?? "",
@@ -148,17 +136,19 @@ export default function PatientInfo() {
         const payload: Partial<PatientProfile> = {
           full_name: formValues.full_name as string | undefined,
           email: formValues.email as string | undefined,
-          phone: formValues.countryCode
-            ? `${formValues.countryCode}${(formValues.phone as string | undefined) ?? ""}`
-            : (formValues.phone as string | undefined),
+          phone: buildFullPhoneNumber(
+            formValues.countryCode as string | undefined,
+            formValues.phone as string | undefined
+          ),
           birth_date: formValues.birth_date as string | undefined,
           customer_id: String(userId),
         };
         await update(payload);
       } else if (card === "personal2") {
-        const emergencyPhone = formValues.emergencyCountryCode
-          ? `${formValues.emergencyCountryCode}${formValues.emergency_contact}`
-          : formValues.emergency_contact;
+        const emergencyPhone = buildFullPhoneNumber(
+          formValues.emergencyCountryCode as string | undefined,
+          formValues.emergency_contact as string | undefined
+        );
 
         const patientPayload = {
           customer_id: String(userId),

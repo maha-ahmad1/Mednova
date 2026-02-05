@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { FormPhoneInput } from "@/shared/ui/forms"
+import { parsePhoneNumber } from "@/lib/phone"
 
 
 // ✅ Zod Schema
@@ -59,7 +60,10 @@ interface PatientFormStep1Props {
 export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors  }: PatientFormStep1Props) {
   const { data: session, status } = useSession()
   const [networkError, setNetworkError] = useState(false)
-  const [countryCode, setCountryCode] = useState("+968")
+  const initialPhone = parsePhoneNumber(formData.phone)
+  const initialEmergencyPhone = parsePhoneNumber(formData.emergency_phone)
+  const [phoneCountryCode, setPhoneCountryCode] = useState(initialPhone.countryCode)
+  const [emergencyCountryCode, setEmergencyCountryCode] = useState(initialEmergencyPhone.countryCode)
 
   const methods = useForm<PatientFormData>({
     resolver: zodResolver(patientSchema),
@@ -67,9 +71,9 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
     defaultValues: {
       full_name: formData.full_name || "",
       email: formData.email || "",
-      phone: formData.phone || "",
+      phone: initialPhone.localNumber,
       birth_date: formData.birth_date || "",
-      emergency_phone: formData.emergency_phone || "",
+      emergency_phone: initialEmergencyPhone.localNumber,
       relationship: formData.relationship || "",
     },
   })
@@ -87,10 +91,12 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
 
   useEffect(() => {
     if (session?.user && !formData.full_name) {
+      const parsedSessionPhone = parsePhoneNumber(session.user.phone)
+      setPhoneCountryCode(parsedSessionPhone.countryCode)
       methods.reset({
         full_name: session.user.full_name || "",
         email: session.user.email || "",
-        phone: session.user.phone || "",
+        phone: parsedSessionPhone.localNumber,
       })
     }
   }, [session?.user, methods, formData])
@@ -167,6 +173,7 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
   const {
     handleSubmit,
     formState: { errors },
+    control,
   } = methods
 
   const onSubmit = async (data: PatientFormData) => {
@@ -177,7 +184,7 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
       birth_date: data.birth_date,
       emergency_phone: data.emergency_phone, 
       relationship: data.relationship,
-      countryCode: countryCode, 
+      countryCode: emergencyCountryCode, 
     })
 
     onNext()
@@ -219,15 +226,24 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <FormInput
-                  label="رقم الهاتف"
-                  placeholder="0000 0000"
-                  icon={Phone}
-                  iconPosition="right"
-                  rtl
-                  error={errors.phone?.message}
-                  {...methods.register("phone")}
-                  readOnly
+                <Controller
+                  name="phone"
+                  control={control}
+                  render={({ field }) => (
+                    <FormPhoneInput
+                      {...field}
+                      label="رقم الهاتف"
+                      placeholder="0000 0000"
+                      icon={Phone}
+                      iconPosition="right"
+                      rtl
+                      countryCodeValue={phoneCountryCode}
+                      onCountryCodeChange={setPhoneCountryCode}
+                      error={errors.phone?.message}
+                      className="no-spinner"
+                      readOnly
+                    />
+                  )}
                 />
                 <FormInput
                   label="تاريخ الميلاد"
@@ -251,8 +267,8 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
                       icon={Phone}
                       iconPosition="right"
                       rtl
-                      countryCodeValue={countryCode}
-                      onCountryCodeChange={setCountryCode}
+                      countryCodeValue={emergencyCountryCode}
+                      onCountryCodeChange={setEmergencyCountryCode}
                       error={errors.emergency_phone?.message}
                       className="no-spinner"
                     />

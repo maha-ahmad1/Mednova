@@ -6,6 +6,7 @@ import {
   FormInput,
   FormPhoneInput,
   FormSelect,
+  FormFileUpload,
 } from "@/shared/ui/forms";
 import { Button } from "@/components/ui/button";
 import { Loader2, Edit } from "lucide-react";
@@ -16,6 +17,8 @@ import { useUpdateTherapist } from "@/features/profile/_views/hooks/useUpdateThe
 import { TherapistFormValues } from "@/app/api/therapist";
 import { personalSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
+import Image from "next/image";
+import { buildFullPhoneNumber, parsePhoneNumber } from "@/lib/phone";
 
 interface TherapistPersonalCardProps {
   profile: TherapistProfile;
@@ -23,8 +26,7 @@ interface TherapistPersonalCardProps {
   // refetch may return either the fresh profile or an object with a `data` field
   // refetch: () => Promise<TherapistProfile | { data?: TherapistProfile } | void>;
   serverErrors?: Record<string, string>;
-    refetch: () => Promise<QueryObserverResult<TherapistProfile | null, Error>>
-
+  refetch: () => Promise<QueryObserverResult<TherapistProfile | null, Error>>;
 }
 
 export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
@@ -34,12 +36,15 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
 }) => {
   const [editing, setEditing] = useState(false);
   type PersonalSchemaType = z.infer<typeof personalSchema>;
-  type FormValues = Partial<Record<keyof PersonalSchemaType | "image", unknown>>;
+  type FormValues = Partial<
+    Record<keyof PersonalSchemaType | "image", unknown>
+  >;
   const [formValues, setFormValues] = useState<FormValues>({});
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [localProfile, setLocalProfile] =
     useState<Partial<TherapistProfile> | null>(null);
   const [countryCode, setCountryCode] = useState("+968");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const { update, isUpdating } = useUpdateTherapist();
 
@@ -49,34 +54,26 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
     }
   }, [profile, editing]);
 
-  const splitPhone = (p?: string | null) => {
-    if (!p) return { country: "+968", local: "" };
-
-    if (p.startsWith("+968")) return { country: "+968", local: p.slice(4) };
-
-    const m = p.match(/^\+(\d{1,4})(.*)$/);
-    return m
-      ? { country: `+${m[1]}`, local: m[2].trim() }
-      : { country: "+968", local: p };
-  };
-
   const startEdit = () => {
     const source = localProfile ?? profile;
-    const { country, local } = splitPhone(source?.phone);
-    setCountryCode(country);
+    const { countryCode: parsedCountryCode, localNumber } = parsePhoneNumber(
+      source?.phone
+    );
+    setCountryCode(parsedCountryCode);
     setFormValues({
       full_name: source?.full_name ?? "",
       email: source?.email ?? "",
-      phone: local ?? "",
+      phone: localNumber,
       birth_date: source?.birth_date ? String(source.birth_date) : "",
       gender:
         source?.gender === "Male"
           ? "male"
           : source?.gender === "Female"
-          ? "female"
-          : "",
+            ? "female"
+            : "",
       image: null,
     });
+    setImagePreview(typeof source?.image === "string" ? source.image : null);
     setEditing(true);
   };
 
@@ -84,13 +81,14 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
     setEditing(false);
     setFormValues({});
     setServerErrors({});
+    setImagePreview(null);
   };
 
   const handleSave = async () => {
     const result = personalSchema.safeParse(formValues);
 
     if (!result.success) {
-        console.log("Validation errors:", result.error.issues);
+      console.log("Validation errors:", result.error.issues);
       const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
         const field = issue.path[0] as string;
@@ -102,18 +100,22 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
     }
 
     try {
-      const phoneWithCode =
-        countryCode && typeof formValues.phone === "string" && formValues.phone
-          ? `${countryCode}${formValues.phone}`
-          : typeof formValues.phone === "string"
-          ? formValues.phone
-          : undefined;
+      const phoneWithCode = buildFullPhoneNumber(
+        countryCode,
+        typeof formValues.phone === "string" ? formValues.phone : undefined
+      );
       const payload: TherapistFormValues = {
         full_name: (formValues.full_name as string) ?? undefined,
         email: (formValues.email as string) ?? undefined,
         birth_date: (formValues.birth_date as string) ?? undefined,
-        gender: (formValues.gender as string) ?? undefined,
+        gender:
+          formValues.gender === "male"
+            ? "Male"
+            : formValues.gender === "female"
+              ? "Female"
+              : undefined,
         phone: phoneWithCode,
+        image: formValues.image as File | undefined,
         customer_id: String(userId),
       } as unknown as TherapistFormValues;
       await update(payload);
@@ -131,7 +133,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
       if (fresh) setLocalProfile(fresh);
       setEditing(false);
       setServerErrors({});
-      
+
       toast.success("تم حفظ التغييرات بنجاح");
     } catch (err) {
       console.error(err);
@@ -139,13 +141,16 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
     }
   };
 
-  const Field: React.FC<{ label: string; value?: React.ReactNode }> = ({
-    label,
-    value,
-  }) => (
-    <div className="flex flex-col">
+  const Field: React.FC<{
+    label: string;
+    value?: React.ReactNode;
+    className?: string;
+  }> = ({ label, value, className = "" }) => (
+    <div className={`flex flex-col ${className}`}>
       <span className="text-sm text-gray-500 mb-2">{label}</span>
-      <span className="text-gray-800 font-medium">{value ?? "-"}</span>
+      <span className={`text-gray-800 font-medium ${className}`}>
+        {value ?? "-"}
+      </span>
     </div>
   );
 
@@ -155,21 +160,25 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
     const serverError = serverErrors[String(field)];
     const shape = personalSchema.shape as Record<string, z.ZodTypeAny>;
     const parser = shape[String(field)];
-    const clientError = parser?.safeParse(formValues[field] ?? "").error
-      ?.issues?.[0]?.message;
+    const rawValue = formValues[field];
+    const valueForParse =
+      field === "image" ? (rawValue ?? null) : (rawValue ?? "");
+    const clientError =
+      parser?.safeParse(valueForParse).error?.issues?.[0]?.message;
     return serverError ?? clientError;
   };
 
   return (
     <div className="bg-gradient-to-b from-[#32A88D]/10 to-white rounded-2xl shadow-sm border border-gray-100 p-6 pl-8 hover:shadow-xl transition-all duration-300">
       <div className="flex flex-col lg:flex-row gap-6">
-    
         <div className="flex-1">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <p className="text-2xl font-bold text-gray-800">البيانات الشخصية</p>
+              <p className="text-2xl font-bold text-gray-800">
+                البيانات الشخصية
+              </p>
             </div>
-            
+
             {editing ? (
               <div className="flex gap-2">
                 <Button
@@ -178,14 +187,12 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                   size="sm"
                   className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
                 >
-                  {isUpdating && (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  )}
+                  {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
                   حفظ التغييرات
                 </Button>
-                <Button 
-                  onClick={cancelEdit} 
-                  variant="outline" 
+                <Button
+                  onClick={cancelEdit}
+                  variant="outline"
                   size="sm"
                   className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
                 >
@@ -193,9 +200,9 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                 </Button>
               </div>
             ) : (
-              <Button 
-                onClick={startEdit} 
-                variant="outline" 
+              <Button
+                onClick={startEdit}
+                variant="outline"
                 size="sm"
                 className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
               >
@@ -223,23 +230,42 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
               <Field
                 label="الجنس"
                 value={
-                  <Badge className={`px-3 py-1 rounded-full ${
-                    displayProfile.gender === "Male" 
-                      ? "bg-blue-100 text-blue-800" 
-                      : "bg-pink-100 text-pink-800"
-                  }`}>
+                  <Badge
+                    className={`px-3 py-1 rounded-full ${
+                      displayProfile.gender === "Male"
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-pink-100 text-pink-800"
+                    }`}
+                  >
                     {displayProfile.gender === "Male" ? "ذكر" : "أنثى"}
                   </Badge>
                 }
               />
-              <Field
+              {/* <Field
                 label="حالة الحساب"
                 value={
                   <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
                     نشط
                   </Badge>
                 }
-              />
+              /> */}
+              {/* <Field
+                label="الصورة الشخصية"
+                value={
+                  typeof displayProfile.image === "string" ? (
+                    <div className="relative h-16 w-16 overflow-hidden rounded-lg border">
+                      <Image
+                        src={displayProfile.image}
+                        alt="Profile"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    "-"
+                  )
+                }
+              /> */}
             </div>
           ) : (
             <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
@@ -306,6 +332,29 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                   error={getFieldError("gender")}
                   className="bg-white"
                 />
+
+                <div className="md:col-span-2 space-y-3">
+                  {/* <FormFileUpload
+                    label="الصورة الشخصية"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] ?? null;
+                      setFormValues((s) => ({ ...s, image: file }));
+                      setImagePreview(file ? URL.createObjectURL(file) : null);
+                    }}
+                    error={getFieldError("image")}
+                    className="bg-white"
+                  /> */}
+                  {imagePreview && (
+                    <div className="relative h-24 w-24 overflow-hidden rounded-lg border">
+                      <Image
+                        src={imagePreview}
+                        alt="Profile preview"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}

@@ -1,10 +1,9 @@
 "use client";
 
-import type React from "react";
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { FormInput, FormSelect } from "@/shared/ui/forms";
+import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { useState, useEffect } from "react";
 import {
   Card,
@@ -17,7 +16,6 @@ import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
 import { useSession } from "next-auth/react";
 import { usePatient } from "../../hooks/usePatientStore";
 import type { PatientFormValues } from "@/types/patient";
-import Image from "next/image";
 import { WifiOff, RefreshCw, Home, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { showSuccessToast } from "@/lib/toastUtils";
@@ -33,6 +31,9 @@ const patientStep2Schema = z.object({
   country: z.string().min(1, "حقل البلد مطلوب."),
   city: z.string().min(1, "حقل المدينة مطلوب."),
   status: z.string().optional(),
+  image: z
+    .instanceof(File)
+    .refine((file) => file instanceof File, "الصورة مطلوبة"),
 });
 
 export interface PatientFormData {
@@ -73,9 +74,8 @@ export function PatientFormStep2({
   const { data: session, status, update } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(
-    formData.image || null
+    formData?.image ?? null,
   );
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [networkError, setNetworkError] = useState(false);
   const router = useRouter();
   const [countryCode] = useState(formData.countryCode || "+968");
@@ -97,17 +97,6 @@ export function PatientFormStep2({
     setValue,
   } = methods;
   const country = methods.watch("country");
-
-  useEffect(() => {
-    if (formData.image) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(formData.image);
-      return () => reader.abort();
-    }
-  }, [formData.image]);
 
   useEffect(() => {
     if (status === "unauthenticated" && !navigator.onLine) {
@@ -247,10 +236,10 @@ export function PatientFormStep2({
         user: {
           ...session.user,
           is_completed: true,
-          status: data.status, 
+          status: data.status,
         },
       });
-              console.log("status .sss"+status)
+      console.log("status .sss" + status);
 
       showSuccessToast("تم حفظ البيانات بنجاح!");
 
@@ -350,7 +339,7 @@ export function PatientFormStep2({
                 control={methods.control}
                 render={({ field, fieldState }) => {
                   const selectedCountry = countries.find(
-                    (c) => c.name === country
+                    (c) => c.name === country,
                   );
                   return (
                     <FormSelect
@@ -371,47 +360,11 @@ export function PatientFormStep2({
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <FormInput
-                label="رفع الصورة الشخصية"
-                type="file"
-                accept="image/*"
-                rtl
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    setImageFile(file);
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                      setImagePreview(reader.result as string);
-                    };
-                    reader.readAsDataURL(file);
-                  }
-                }}
-              />
-
-              {imagePreview && (
-                <div>
-                  <Image
-                    width={100}
-                    height={100}
-                    src={imagePreview || "/images/placeholder.svg"}
-                    alt="معاينة الصورة"
-                    className="w-24 h-24 rounded-full object-cover border"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setImageFile(null);
-                      setImagePreview(null);
-                    }}
-                    className="text-sm text-red-500 hover:underline"
-                  >
-                    إزالة الصورة
-                  </button>
-                </div>
-              )}
-            </div>
+            <ProfileImageUpload
+              label="رفع الصورة الشخصية"
+              value={imageFile}
+              onChange={setImageFile}
+            />
 
             <div className="flex justify-between mt-4">
               <FormSubmitButton

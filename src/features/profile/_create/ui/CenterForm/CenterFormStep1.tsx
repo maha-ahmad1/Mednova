@@ -1,18 +1,21 @@
 "use client";
 
-import type React from "react";
 import { useEffect, useState } from "react";
 import { Controller, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Mail, User, Phone, Home, Loader2, Calendar } from "lucide-react";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
 
-import { FormInput, FormSelect } from "@/shared/ui/forms";
+import {
+  FormInput,
+  FormPhoneInput,
+  FormSelect,
+  ProfileImageUpload,
+} from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
-import { Button } from "@/components/ui/button";
+import { parsePhoneNumber } from "@/lib/phone";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -42,6 +45,10 @@ export function CenterFormStep1({
   globalErrors,
 }: CenterStep1Props) {
   const { data: session, status } = useSession();
+  const initialPhone = parsePhoneNumber(formData.phone);
+  const [phoneCountryCode, setPhoneCountryCode] = useState(
+    initialPhone.countryCode
+  );
 
   const methods = useForm<Step1Data>({
     resolver: zodResolver(step1Schema),
@@ -50,31 +57,18 @@ export function CenterFormStep1({
       name_center: formData.name_center || "",
       full_name: formData.full_name || "",
       email: formData.email || "",
-      phone: formData.phone || "",
+      phone: initialPhone.localNumber,
       gender: formData.gender || undefined,
       formatted_address: formData.formatted_address || "",
       year_establishment: formData.year_establishment || "",
-      image: formData.image instanceof File ? formData.image : undefined,
+      image: formData?.image instanceof File ? formData.image : undefined,
       birth_date: formData.birth_date || "",
     } as Partial<Step1Data>,
   });
 
-  const [imagePreview, setImagePreview] = useState<string | null>(
-    formData.image && typeof formData.image === "string" ? formData.image : null
+  const [centerImage, setCenterImage] = useState<File | null>(
+    formData?.image instanceof File ? formData.image : null
   );
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      methods.setValue("image", file, { shouldValidate: true });
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const removeImage = () => {
-    methods.resetField("image");
-    setImagePreview(null);
-  };
 
   const {
     handleSubmit,
@@ -85,16 +79,26 @@ export function CenterFormStep1({
   } = methods;
 
   useEffect(() => {
+    if (centerImage) {
+      methods.setValue("image", centerImage, { shouldValidate: true });
+    } else {
+      methods.resetField("image");
+    }
+  }, [centerImage, methods]);
+
+  useEffect(() => {
     if (session?.user && !formData.full_name) {
+      const parsedSessionPhone = parsePhoneNumber(session.user.phone);
+      setPhoneCountryCode(parsedSessionPhone.countryCode);
       methods.reset({
         full_name: session.user.full_name || "",
         email: session.user.email || "",
-        phone: session.user.phone || "",
+        phone: parsedSessionPhone.localNumber,
         gender: formData.gender || undefined,
         formatted_address: formData.formatted_address || "",
         year_establishment: formData.year_establishment || "",
         birth_date: formData.birth_date || "",
-        image: formData.image instanceof File ? formData.image : undefined,
+        image: formData?.image instanceof File ? formData.image : undefined,
         name_center: formData.name_center || "",
       });
     }
@@ -120,7 +124,7 @@ export function CenterFormStep1({
   }
 
   const onSubmit = (data: Step1Data) => {
-    updateFormData(data);
+    updateFormData({ ...data, image: centerImage ?? data.image });
     onNext();
   };
 
@@ -159,14 +163,23 @@ export function CenterFormStep1({
               readOnly
             />
 
-            <FormInput
-              label="رقم الهاتف"
-              icon={Phone}
-              iconPosition="right"
-              rtl
-              error={errors.phone?.message}
-              {...register("phone")}
-              readOnly
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field }) => (
+                <FormPhoneInput
+                  {...field}
+                  label="رقم الهاتف"
+                  icon={Phone}
+                  iconPosition="right"
+                  rtl
+                  countryCodeValue={phoneCountryCode}
+                  onCountryCodeChange={setPhoneCountryCode}
+                  error={errors.phone?.message}
+                  className="no-spinner"
+                  readOnly
+                />
+              )}
             />
 
             <Controller
@@ -240,33 +253,12 @@ export function CenterFormStep1({
                 error={errors.year_establishment?.message}
                 {...register("year_establishment")}
               />
-              <FormInput
-                label="صورة المركز"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-
-              {imagePreview && (
-                <div className="relative w-32 h-32">
-                  <Image
-                    src={imagePreview}
-                    alt="Center preview"
-                    fill
-                    className="rounded-lg object-cover"
-                  />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    className="absolute top-1 right-1"
-                    onClick={removeImage}
-                  >
-                    إزالة
-                  </Button>
-                </div>
-              )}
             </div>
+            <ProfileImageUpload
+              label="صورة المركز"
+              value={centerImage}
+              onChange={setCenterImage}
+            />
           </div>
           <FormSubmitButton className="px-6 py-5 mt-4">التالي</FormSubmitButton>
         </form>

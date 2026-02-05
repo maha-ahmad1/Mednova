@@ -17,8 +17,8 @@ export default function PatientWrapper() {
     birth_date: string
     gender?: "male" | "female" | undefined
     address: string
-    emergency_phone?: string
-    relationship?: string
+    emergency_phone: string
+    relationship: string
     image?: File | null
     countryCode?: string
   }

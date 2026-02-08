@@ -2,10 +2,22 @@
 
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FormPhoneInput, FormFileUpload, FormSelect, FormInput } from "@/shared/ui/forms";
+import {
+  FormPhoneInput,
+  FormFileUpload,
+  FormSelect,
+  FormInput,
+} from "@/shared/ui/forms";
 import { countries } from "@/constants/countries";
 import type { PatientProfile } from "@/types/patient";
-import { Loader2, Edit, User, MapPin, Navigation, AlertCircle } from "lucide-react";
+import {
+  Loader2,
+  Edit,
+  User,
+  MapPin,
+  Navigation,
+  AlertCircle,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
@@ -59,16 +71,32 @@ export default function PatientPersonal2Card({
 
       setFormValues((prev) => ({
         ...prev,
-        country: (prev as Record<string, unknown>).country ?? patient.location_details?.country ?? "",
-        city: (prev as Record<string, unknown>).city ?? patient.location_details?.city ?? "",
+        country:
+          (prev as Record<string, unknown>).country ??
+          patient.location_details?.country ??
+          "",
+        city:
+          (prev as Record<string, unknown>).city ??
+          patient.location_details?.city ??
+          "",
         formatted_address:
           (prev as Record<string, unknown>).formatted_address ??
           patient.location_details?.formatted_address ??
           "",
-        gender: (prev as Record<string, unknown>).gender ?? (patient.gender?.toLowerCase() as string) ?? "",
-        emergency_contact: (prev as Record<string, unknown>).emergency_contact ?? emergencyNumber,
-        emergencyCountryCode: (prev as Record<string, unknown>).emergencyCountryCode ?? emergencyCountryCode,
-        relationship: (prev as Record<string, unknown>).relationship ?? patient.patient_details?.relationship ?? "",
+        gender:
+          (prev as Record<string, unknown>).gender ??
+          (patient.gender?.toLowerCase() as string) ??
+          "",
+        emergency_contact:
+          (prev as Record<string, unknown>).emergency_contact ??
+          emergencyNumber,
+        emergencyCountryCode:
+          (prev as Record<string, unknown>).emergencyCountryCode ??
+          emergencyCountryCode,
+        relationship:
+          (prev as Record<string, unknown>).relationship ??
+          patient.patient_details?.relationship ??
+          "",
         image: (prev as Record<string, unknown>).image ?? null,
       }));
 
@@ -87,7 +115,9 @@ export default function PatientPersonal2Card({
     value: React.ReactNode;
     className?: string;
   }> = ({ icon, label, value, className }) => (
-    <div className={`flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-100 ${className}`}>
+    <div
+      className={`flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-100 ${className}`}
+    >
       <div className="text-[#32A88D] mt-1">{icon}</div>
       <div className="flex-1">
         <span className="text-sm text-gray-500 block mb-2">{label}</span>
@@ -147,9 +177,13 @@ export default function PatientPersonal2Card({
             value={
               patient.patient_details?.emergency_phone ? (
                 <Badge className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
-                  {patient.patient_details.emergency_phone}
+                  <span dir="ltr" className="inline-block text-left">
+                    {patient.patient_details.emergency_phone}
+                  </span>
                 </Badge>
-              ) : "-"
+              ) : (
+                "-"
+              )
             }
           />
 
@@ -161,7 +195,9 @@ export default function PatientPersonal2Card({
                 <Badge className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm">
                   {patient.patient_details.relationship}
                 </Badge>
-              ) : "-"
+              ) : (
+                "-"
+              )
             }
           />
 
@@ -179,7 +215,9 @@ export default function PatientPersonal2Card({
                 >
                   {patient.gender === "Male" ? "ذكر" : "أنثى"}
                 </Badge>
-              ) : "-"
+              ) : (
+                "-"
+              )
             }
           />
 
@@ -191,7 +229,9 @@ export default function PatientPersonal2Card({
                 <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
                   {patient.location_details.country}
                 </Badge>
-              ) : "-"
+              ) : (
+                "-"
+              )
             }
           />
 
@@ -203,7 +243,9 @@ export default function PatientPersonal2Card({
                 <Badge className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
                   {patient.location_details.city}
                 </Badge>
-              ) : "-"
+              ) : (
+                "-"
+              )
             }
           />
 
@@ -232,14 +274,20 @@ export default function PatientPersonal2Card({
               </label>
               <FormPhoneInput
                 label=""
-                countryCodeValue={(formValues.emergencyCountryCode as string) || "+968"}
-                onCountryCodeChange={(code) => handleChange("emergencyCountryCode", code)}
+                countryCodeValue={
+                  (formValues.emergencyCountryCode as string) || "+968"
+                }
+                onCountryCodeChange={(code) =>
+                  handleChange("emergencyCountryCode", code)
+                }
                 value={(formValues.emergency_contact as string) || ""}
-                onChange={(e) => handleChange("emergency_contact", e.target.value)}
-                rtl
+                onChange={(e) =>
+                  handleChange("emergency_contact", e.target.value)
+                }
+                // rtl
                 placeholder="0000 0000"
                 error={getFieldError("emergency_contact", "personal2")}
-                className="bg-white"
+                className="bg-white no-spinner"
               />
             </div>
 
@@ -262,12 +310,13 @@ export default function PatientPersonal2Card({
                 { value: "female", label: "أنثى" },
               ]}
               value={(formValues.gender as string) ?? ""}
-              onValueChange={(val) => setFormValues((s) => ({ ...s, gender: val }))}
+              onValueChange={(val) =>
+                setFormValues((s) => ({ ...s, gender: val }))
+              }
               rtl
               error={getFieldError("gender", "personal2")}
               className="bg-white"
               placeholder="اختر الجنس"
-             
             />
 
             {/* Country */}
@@ -275,7 +324,9 @@ export default function PatientPersonal2Card({
               label="الدولة"
               placeholder="اختر الدولة"
               value={(formValues.country as string) || ""}
-              onValueChange={(val) => setFormValues((v) => ({ ...v, country: val, city: "" }))}
+              onValueChange={(val) =>
+                setFormValues((v) => ({ ...v, country: val, city: "" }))
+              }
               options={countries.map((c) => ({
                 value: c.name,
                 label: c.name,
@@ -283,13 +334,16 @@ export default function PatientPersonal2Card({
               rtl
               error={getFieldError("country", "personal2")}
               className="bg-white"
-            
             />
 
             {/* City */}
             <FormSelect
               label="المدينة"
-              placeholder={(formValues.country as string) ? "اختر المدينة" : "اختر الدولة أولاً"}
+              placeholder={
+                (formValues.country as string)
+                  ? "اختر المدينة"
+                  : "اختر الدولة أولاً"
+              }
               value={(formValues.city as string) || ""}
               onValueChange={(val) => handleChange("city", val)}
               options={(selectedCountry?.cities || []).map((c) => ({
@@ -307,7 +361,9 @@ export default function PatientPersonal2Card({
               label="العنوان التفصيلي"
               type="text"
               value={(formValues.formatted_address as string) || ""}
-              onChange={(e) => handleChange("formatted_address", e.target.value)}
+              onChange={(e) =>
+                handleChange("formatted_address", e.target.value)
+              }
               className="bg-white border-gray-300 focus:border-[#32A88D]"
               placeholder="أدخل العنوان الكامل"
               error={getFieldError("formatted_address", "personal2")}
@@ -315,7 +371,8 @@ export default function PatientPersonal2Card({
           </div>
 
           {/* Location Preview */}
-          {(typeof formValues.country === "string" || typeof formValues.city === "string") && (
+          {(typeof formValues.country === "string" ||
+            typeof formValues.city === "string") && (
             <div className="bg-white p-4 rounded-lg border border-gray-200 mt-6">
               <h5 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#32A88D]" />

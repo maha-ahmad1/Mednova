@@ -124,7 +124,9 @@ export default function PatientPersonal1Card({
             value={
               patient.phone ? (
                 <Badge className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                  {patient.phone}
+                  <span dir="ltr" className="inline-block text-left">
+                    {patient.phone}
+                  </span>
                 </Badge>
               ) : (
                 "-"
@@ -195,11 +197,11 @@ export default function PatientPersonal1Card({
                 }
                 value={(formValues.phone as string) || ""}
                 onChange={(e) => handleChange("phone", e.target.value)}
-                rtl
+                // rtl
                 // iconPosition="right"
                 placeholder="0000 0000"
                 error={getFieldError("phone", "personal1")}
-                className="bg-white"
+                className="bg-white no-spinner "
               />
             </div>
 

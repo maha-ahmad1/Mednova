@@ -53,7 +53,7 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
     return (
       <div className={cn("space-y-2", containerClassName)} dir={rtl ? "rtl" : "ltr"}>
         {label && (
-          <Label htmlFor={inputProps.id} className={cn("block", rtl && "text-right")}>
+          <Label dir="rtl" htmlFor={inputProps.id} className={cn("block", rtl && "text-right")}>
             {label}
           </Label>
         )}
@@ -72,9 +72,8 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
           </Select>
           <FormInput
             ref={ref}
-            type="tel"
-            inputMode="tel"
-            className="no-spinner"
+            type="number"
+            className="no-spinner "
             containerClassName="flex-1"
             rtl={rtl}
             {...inputProps}

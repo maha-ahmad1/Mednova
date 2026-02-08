@@ -73,7 +73,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
   const startEdit = () => {
     const source = localProfile ?? profile;
     const { countryCode: parsedCountryCode, localNumber } = parsePhoneNumber(
-      source?.phone
+      source?.phone,
     );
     setCountryCode(parsedCountryCode);
 
@@ -115,7 +115,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
     try {
       const phoneWithCode = buildFullPhoneNumber(
         countryCode,
-        typeof formValues.phone === "string" ? formValues.phone : undefined
+        typeof formValues.phone === "string" ? formValues.phone : undefined,
       );
 
       const payload = {
@@ -184,7 +184,6 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
     return new Date(dateString).toLocaleDateString("ar-EG");
   };
 
- 
   return (
     <div className="bg-gradient-to-b from-[#32A88D]/10 to-white rounded-2xl shadow-sm border border-gray-100 p-6 pl-8 hover:shadow-xl transition-all duration-300">
       <div className="flex flex-col lg:flex-row gap-6">
@@ -255,7 +254,9 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                     value={
                       displayProfile.phone ? (
                         <Badge className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                          {displayProfile.phone}
+                          <span dir="ltr" className="inline-block text-left">
+                            {displayProfile.phone}
+                          </span>
                         </Badge>
                       ) : (
                         "-"
@@ -424,9 +425,8 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                     onChange={(e) =>
                       setFormValues((s) => ({ ...s, phone: e.target.value }))
                     }
-                    rtl
                     error={getFieldError("phone")}
-                    className="bg-white"
+                    className="bg-white no-spinner"
                     placeholder="0000 0000"
                   />
 
@@ -460,7 +460,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                     className="bg-white"
                     placeholder="اختر الجنس"
                   />
-{/* 
+                  {/* 
                   <FormSelect
                     label="حالة الحساب"
                     options={[

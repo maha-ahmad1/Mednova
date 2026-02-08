@@ -32,8 +32,13 @@ const patientStep2Schema = z.object({
   city: z.string().min(1, "حقل المدينة مطلوب."),
   status: z.string().optional(),
   image: z
-    .instanceof(File)
-    .refine((file) => file instanceof File, "الصورة مطلوبة"),
+    .any()
+    .refine((file) => file instanceof File, {
+      message: "يرجى رفع الصورة ",
+    })
+    .refine((file) => file, {
+      message: "يرجى رفع الصورة ",
+    }),
 });
 
 export interface PatientFormData {
@@ -73,9 +78,13 @@ export function PatientFormStep2({
   });
   const { data: session, status, update } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(
-    formData?.image ?? null,
+  // const [imageFile, setImageFile] = useState<File | null>(
+  //   formData?.image ?? null,
+  // );
+  const [profileImage, setProfileImage] = useState<File | null>(
+    formData?.image instanceof File ? formData.image : null,
   );
+
   const [networkError, setNetworkError] = useState(false);
   const router = useRouter();
   const [countryCode] = useState(formData.countryCode || "+968");
@@ -88,6 +97,7 @@ export function PatientFormStep2({
       formatted_address: formData.formatted_address || "",
       country: formData.country || "",
       city: formData.city || "",
+      image: formData?.image instanceof File ? formData.image : undefined,
     },
   });
 
@@ -97,6 +107,25 @@ export function PatientFormStep2({
     setValue,
   } = methods;
   const country = methods.watch("country");
+
+  // useEffect(() => {
+  //   if (profileImage) {
+  //     methods.setValue("image", profileImage, { shouldValidate: true });
+  //   } else {
+  //     methods.resetField("image");
+  //   }
+  // }, [methods, profileImage]);
+
+
+  useEffect(() => {
+  if (profileImage) {
+    methods.setValue("image", profileImage, { shouldValidate: true });
+  } else {
+    // عند إزالة الصورة، اضبط القيمة على null وافرض التحقق
+    methods.setValue("image", null);
+  }
+}, [profileImage, methods]);
+
 
   useEffect(() => {
     if (status === "unauthenticated" && !navigator.onLine) {
@@ -203,7 +232,7 @@ export function PatientFormStep2({
         customer_id: session.user.id,
         gender: data.gender === "male" ? "Male" : "Female",
         birth_date: formData.birth_date,
-        image: imageFile,
+        image: profileImage,
         emergency_phone: emergencyPhoneWithCode,
         relationship: formData.relationship,
         formatted_address: data.formatted_address,
@@ -216,7 +245,7 @@ export function PatientFormStep2({
         ...formData,
         gender: data.gender,
         formatted_address: data.formatted_address,
-        image: imageFile,
+        image: profileImage,
         country: data.country,
         city: data.city,
       });
@@ -257,7 +286,7 @@ export function PatientFormStep2({
     updateFormData({
       gender: currentData.gender,
       formatted_address: currentData.formatted_address,
-      image: imageFile,
+      image: profileImage,
       country: currentData.country,
       city: currentData.city,
     });
@@ -362,8 +391,9 @@ export function PatientFormStep2({
 
             <ProfileImageUpload
               label="رفع الصورة الشخصية"
-              value={imageFile}
-              onChange={setImageFile}
+              value={profileImage}
+              onChange={setProfileImage}
+              error={errors.image?.message as string | undefined}
             />
 
             <div className="flex justify-between mt-4">

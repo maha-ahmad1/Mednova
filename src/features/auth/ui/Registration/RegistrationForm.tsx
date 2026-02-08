@@ -159,7 +159,7 @@ export function RegistrationForm() {
                   placeholder="0000 0000"
                   icon={Phone}
                   iconPosition="right"
-                  rtl
+                  // rtl
                   countryCodeValue={countryCode}
                   onCountryCodeChange={setCountryCode}
                   error={errors.phone?.message}

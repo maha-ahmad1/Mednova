@@ -1,20 +1,25 @@
-"use client"
+"use client";
 
-import { useForm, FormProvider, Controller } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { FormInput } from "@/shared/ui/forms"
-import { Mail, User, Phone, Heart, WifiOff, RefreshCw } from "lucide-react"
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
-import { useSession } from "next-auth/react"
-import { Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
-import { FormPhoneInput } from "@/shared/ui/forms"
-import { parsePhoneNumber } from "@/lib/phone"
-
+import { useForm, FormProvider, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { FormInput } from "@/shared/ui/forms";
+import { Mail, User, Phone, Heart, WifiOff, RefreshCw } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
+import { useSession } from "next-auth/react";
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { FormPhoneInput } from "@/shared/ui/forms";
+import { parsePhoneNumber } from "@/lib/phone";
 
 // ✅ Zod Schema
 // const patientSchema = z.object({
@@ -24,7 +29,7 @@ import { parsePhoneNumber } from "@/lib/phone"
 //   phone: z.string().min(1, "رقم الهاتف مطلوب"),
 //   relationship: z.string().optional(),
 //   birth_date: z.string().min(1, "التاريخ الميلاد مطلوب"),
-  
+
 // })
 
 const patientSchema = z.object({
@@ -41,31 +46,36 @@ const patientSchema = z.object({
   phone: z.string().min(1, "رقم الهاتف مطلوب"),
   relationship: z.string().min(1, "العلاقة مطلوبة"),
   birth_date: z.string().min(1, "تاريخ الميلاد مطلوب"),
-})
+});
 
-
-
-type PatientFormData = z.infer<typeof patientSchema>& {
-  countryCode?: string
-      emergency_phone: string
-
-}
+type PatientFormData = z.infer<typeof patientSchema> & {
+  countryCode?: string;
+  emergency_phone: string;
+};
 
 interface PatientFormStep1Props {
-  onNext: () => void
-  formData: PatientFormData
-  updateFormData: (data: Partial<PatientFormData>) => void
-  globalErrors?: Record<string, string>
-
+  onNext: () => void;
+  formData: PatientFormData;
+  updateFormData: (data: Partial<PatientFormData>) => void;
+  globalErrors?: Record<string, string>;
 }
 
-export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors  }: PatientFormStep1Props) {
-  const { data: session, status } = useSession()
-  const [networkError, setNetworkError] = useState(false)
-  const initialPhone = parsePhoneNumber(formData.phone)
-  const initialEmergencyPhone = parsePhoneNumber(formData.emergency_phone)
-  const [phoneCountryCode, setPhoneCountryCode] = useState(initialPhone.countryCode)
-  const [emergencyCountryCode, setEmergencyCountryCode] = useState(initialEmergencyPhone.countryCode)
+export function PatientFormStep1({
+  onNext,
+  formData,
+  updateFormData,
+  globalErrors,
+}: PatientFormStep1Props) {
+  const { data: session, status } = useSession();
+  const [networkError, setNetworkError] = useState(false);
+  const initialPhone = parsePhoneNumber(formData.phone);
+  const initialEmergencyPhone = parsePhoneNumber(formData.emergency_phone);
+  const [phoneCountryCode, setPhoneCountryCode] = useState(
+    initialPhone.countryCode,
+  );
+  const [emergencyCountryCode, setEmergencyCountryCode] = useState(
+    initialEmergencyPhone.countryCode,
+  );
 
   const methods = useForm<PatientFormData>({
     resolver: zodResolver(patientSchema),
@@ -78,48 +88,47 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
       emergency_phone: initialEmergencyPhone.localNumber || "",
       relationship: formData.relationship || "",
     },
-  })
+  });
 
   useEffect(() => {
     if (status === "unauthenticated" && !navigator.onLine) {
-      setNetworkError(true)
-      toast.error("لا يوجد اتصال بالإنترنت. يرجى التحقق من اتصالك بالشبكة.")
+      setNetworkError(true);
+      toast.error("لا يوجد اتصال بالإنترنت. يرجى التحقق من اتصالك بالشبكة.");
     } else if (status === "unauthenticated") {
-      toast.error("لا يمكن الاتصال بالخادم. يرجى التأكد من أن الخادم يعمل.")
+      toast.error("لا يمكن الاتصال بالخادم. يرجى التأكد من أن الخادم يعمل.");
     } else {
-      setNetworkError(false)
+      setNetworkError(false);
     }
-  }, [status])
+  }, [status]);
 
   useEffect(() => {
     if (session?.user && !formData.full_name) {
-      const parsedSessionPhone = parsePhoneNumber(session.user.phone)
-      setPhoneCountryCode(parsedSessionPhone.countryCode)
+      const parsedSessionPhone = parsePhoneNumber(session.user.phone);
+      setPhoneCountryCode(parsedSessionPhone.countryCode);
       methods.reset({
         full_name: session.user.full_name || "",
         email: session.user.email || "",
         phone: parsedSessionPhone.localNumber,
-      })
+      });
     }
-  }, [session?.user, methods, formData])
+  }, [session?.user, methods, formData]);
 
-  
-  const { setError } = methods
+  const { setError } = methods;
 
-    useEffect(() => {
+  useEffect(() => {
     if (globalErrors) {
       Object.entries(globalErrors).forEach(([field, message]) => {
-        setError(field as keyof PatientFormData, { type: "server", message })
-      })
+        setError(field as keyof PatientFormData, { type: "server", message });
+      });
     }
-  }, [globalErrors, setError])
+  }, [globalErrors, setError]);
 
   if (status === "loading") {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <Loader2 className="w-10 h-10 animate-spin text-[#32A88D]" />
       </div>
-    )
+    );
   }
 
   if (networkError || (!session && status === "unauthenticated")) {
@@ -138,7 +147,10 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
                   <br />• صحة عنوان الـ API
                 </p>
               </div>
-              <Button onClick={() => window.location.reload()} className="w-full bg-[#32A88D] hover:bg-[#2a9178]">
+              <Button
+                onClick={() => window.location.reload()}
+                className="w-full bg-[#32A88D] hover:bg-[#2a9178]"
+              >
                 <RefreshCw className="w-4 h-4 ml-2" />
                 إعادة المحاولة
               </Button>
@@ -146,7 +158,7 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (!session) {
@@ -157,7 +169,9 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
             <div className="flex flex-col items-center space-y-4">
               <div className="text-center space-y-2">
                 <h3 className="text-lg font-semibold">غير مسجل دخول</h3>
-                <p className="text-sm text-muted-foreground">يرجى تسجيل الدخول للمتابعة</p>
+                <p className="text-sm text-muted-foreground">
+                  يرجى تسجيل الدخول للمتابعة
+                </p>
               </div>
               <Button
                 onClick={() => (window.location.href = "/login")}
@@ -169,14 +183,14 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   const {
     handleSubmit,
     formState: { errors },
     control,
-  } = methods
+  } = methods;
 
   const onSubmit = async (data: PatientFormData) => {
     updateFormData({
@@ -184,24 +198,32 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
       email: data.email,
       phone: data.phone,
       birth_date: data.birth_date,
-      emergency_phone: data.emergency_phone ?? "" , 
+      emergency_phone: data.emergency_phone ?? "",
       relationship: data.relationship,
-      countryCode: emergencyCountryCode, 
-    })
+      countryCode: emergencyCountryCode,
+    });
 
-    onNext()
-  }
+    onNext();
+  };
 
   return (
     <>
       <Card className="max-w-5xl mx-auto shadow-lg border-0">
         <CardHeader className="space-y-2" dir="rtl">
-          <CardTitle className="text-2xl font-bold text-foreground">إدخال بيانات المريض </CardTitle>
-          <CardDescription className="text-md">قم بإدخال بياناتك للانضمام الى منصة ميدنوفا</CardDescription>
+          <CardTitle className="text-2xl font-bold text-foreground">
+            إدخال بيانات المريض{" "}
+          </CardTitle>
+          <CardDescription className="text-md">
+            قم بإدخال بياناتك للانضمام الى منصة ميدنوفا
+          </CardDescription>
         </CardHeader>
         <CardContent className="px-14">
           <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" dir="rtl">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-6"
+              dir="rtl"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <FormInput
                   label="الاسم الكامل"
@@ -228,7 +250,7 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <Controller
+                {/* <Controller
                   name="phone"
                   control={control}
                   render={({ field }) => (
@@ -246,6 +268,17 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
                       readOnly
                     />
                   )}
+                /> */}
+
+                <FormInput
+                  label="رقم الهاتف"
+                  placeholder="0000 0000"
+                  icon={Phone}
+                  iconPosition="right"
+                  rtl
+                  error={errors.phone?.message}
+                  {...methods.register("phone")}
+                  readOnly
                 />
                 <FormInput
                   label="تاريخ الميلاد"
@@ -268,7 +301,7 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
                       placeholder="0000 0000"
                       icon={Phone}
                       iconPosition="right"
-                      rtl
+                      // rtl
                       countryCodeValue={emergencyCountryCode}
                       onCountryCodeChange={setEmergencyCountryCode}
                       error={errors.emergency_phone?.message}
@@ -288,7 +321,11 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
                 />
               </div>
 
-              <FormSubmitButton className="py-5 px-6" size="sm" variant="default">
+              <FormSubmitButton
+                className="py-5 px-6"
+                size="sm"
+                variant="default"
+              >
                 التالي
               </FormSubmitButton>
             </form>
@@ -296,5 +333,5 @@ export function PatientFormStep1({ onNext, formData, updateFormData,globalErrors
         </CardContent>
       </Card>
     </>
-  )
+  );
 }

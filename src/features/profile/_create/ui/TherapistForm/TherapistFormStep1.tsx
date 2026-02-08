@@ -22,8 +22,14 @@ const step1Schema = z.object({
   gender: z.enum(["male", "female"]),
   formatted_address: z.string().min(1, "العنوان مطلوب"),
   birth_date: z.string().min(1, "تاريخ الميلاد مطلوب"),
-  image: z.instanceof(File, { message: "يرجى رفع صورة شخصية" }),
-});
+ image: z
+    .any()
+    .refine((file) => file instanceof File, {
+      message: "يرجى رفع صورة المختص",
+    })
+    .refine((file) => file, {
+      message: "يرجى رفع صورة المختص",
+    }),});
 
 type Step1Data = z.infer<typeof step1Schema>;
 
@@ -43,7 +49,7 @@ export function TherapistFormStep1({
   const { data: session, status } = useSession();
   const initialPhone = parsePhoneNumber(formData.phone);
   const [phoneCountryCode, setPhoneCountryCode] = useState(
-    initialPhone.countryCode
+    initialPhone.countryCode,
   );
 
   const methods = useForm<Step1Data>({
@@ -61,7 +67,7 @@ export function TherapistFormStep1({
   });
 
   const [profileImage, setProfileImage] = useState<File | null>(
-    formData?.image instanceof File ? formData.image : null
+    formData?.image instanceof File ? formData.image : null,
   );
 
   const {
@@ -71,13 +77,25 @@ export function TherapistFormStep1({
     formState: { errors },
   } = methods;
 
-  useEffect(() => {
-    if (profileImage) {
-      methods.setValue("image", profileImage, { shouldValidate: true });
-    } else {
-      methods.resetField("image");
-    }
-  }, [methods, profileImage]);
+  // useEffect(() => {
+  //   if (profileImage) {
+  //     methods.setValue("image", profileImage, { shouldValidate: true });
+  //   } else {
+  //     methods.resetField("image");
+  //   }
+  // }, [methods, profileImage]);
+
+
+     useEffect(() => {
+  if (profileImage) {
+    methods.setValue("image", profileImage, { shouldValidate: true });
+  } else {
+    // عند إزالة الصورة، اضبط القيمة على null وافرض التحقق
+    methods.setValue("image", null);
+  }
+}, [profileImage, methods]);
+
+
 
   useEffect(() => {
     if (session?.user && !formData.full_name) {
@@ -148,7 +166,7 @@ export function TherapistFormStep1({
                 {...register("email")}
                 readOnly
               />
-              <Controller
+              {/* <Controller
                 name="phone"
                 control={control}
                 render={({ field }) => (
@@ -166,6 +184,17 @@ export function TherapistFormStep1({
                     readOnly
                   />
                 )}
+              /> */}
+
+              <FormInput
+                label="رقم الهاتف"
+                placeholder="0000 0000"
+                icon={Phone}
+                iconPosition="right"
+                rtl
+                error={errors.phone?.message}
+                {...methods.register("phone")}
+                readOnly
               />
               <Controller
                 name="gender"
@@ -194,6 +223,7 @@ export function TherapistFormStep1({
                 error={errors.formatted_address?.message}
                 {...register("formatted_address")}
               />
+
               <FormInput
                 label="تاريخ الميلاد"
                 placeholder="YYYY-MM-DD"
@@ -203,10 +233,12 @@ export function TherapistFormStep1({
                 {...register("birth_date")}
               />
             </div>
+            
             <ProfileImageUpload
               label="الصورة الشخصية"
               value={profileImage}
               onChange={setProfileImage}
+              error={errors.image?.message  as string | undefined}
             />
             <FormSubmitButton className="px-6 py-5 mt-4">
               التالي

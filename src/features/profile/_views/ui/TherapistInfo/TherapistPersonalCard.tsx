@@ -57,7 +57,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
   const startEdit = () => {
     const source = localProfile ?? profile;
     const { countryCode: parsedCountryCode, localNumber } = parsePhoneNumber(
-      source?.phone
+      source?.phone,
     );
     setCountryCode(parsedCountryCode);
     setFormValues({
@@ -102,7 +102,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
     try {
       const phoneWithCode = buildFullPhoneNumber(
         countryCode,
-        typeof formValues.phone === "string" ? formValues.phone : undefined
+        typeof formValues.phone === "string" ? formValues.phone : undefined,
       );
       const payload: TherapistFormValues = {
         full_name: (formValues.full_name as string) ?? undefined,
@@ -222,7 +222,18 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                 label="البريد الإلكتروني"
                 value={displayProfile.email ?? "-"}
               />
-              <Field label="رقم الهاتف" value={displayProfile.phone ?? "-"} />
+              <Field
+                label="رقم الهاتف"
+                value={
+                  displayProfile.phone ? (
+                    <span dir="ltr" className="inline-block text-left">
+                      {displayProfile.phone}
+                    </span>
+                  ) : (
+                    "-"
+                  )
+                }
+              />
               <Field
                 label="تاريخ الميلاد"
                 value={displayProfile.birth_date ?? "-"}
@@ -303,9 +314,9 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                   onChange={(e) =>
                     setFormValues((s) => ({ ...s, phone: e.target.value }))
                   }
-                  rtl
+                  // rtl
                   error={getFieldError("phone")}
-                  className="bg-white"
+                  className="bg-white no-spinner "
                 />
                 <FormInput
                   label="تاريخ الميلاد"
@@ -344,7 +355,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                     error={getFieldError("image")}
                     className="bg-white"
                   /> */}
-                  {imagePreview && (
+                  {/* {imagePreview && (
                     <div className="relative h-24 w-24 overflow-hidden rounded-lg border">
                       <Image
                         src={imagePreview}
@@ -353,7 +364,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                         className="object-cover"
                       />
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>

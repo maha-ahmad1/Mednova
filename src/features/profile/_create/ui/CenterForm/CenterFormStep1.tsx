@@ -24,7 +24,14 @@ const step1Schema = z.object({
   gender: z.enum(["male", "female"]),
   formatted_address: z.string().min(1, "العنوان مطلوب"),
   year_establishment: z.string().min(4, "سنة التأسيس مطلوبة"),
-  image: z.instanceof(File, { message: "يرجى رفع صورة المركز" }),
+  image: z
+    .any()
+    .refine((file) => file instanceof File, {
+      message: "يرجى رفع صورة المركز",
+    })
+    .refine((file) => file, {
+      message: "يرجى رفع صورة المركز",
+    }),
   name_center: z.string().min(1, "اسم المركز مطلوب"),
   birth_date: z.string().min(1, "تاريخ الميلاد مطلوب"),
 });
@@ -47,7 +54,7 @@ export function CenterFormStep1({
   const { data: session, status } = useSession();
   const initialPhone = parsePhoneNumber(formData.phone);
   const [phoneCountryCode, setPhoneCountryCode] = useState(
-    initialPhone.countryCode
+    initialPhone.countryCode,
   );
 
   const methods = useForm<Step1Data>({
@@ -67,7 +74,7 @@ export function CenterFormStep1({
   });
 
   const [centerImage, setCenterImage] = useState<File | null>(
-    formData?.image instanceof File ? formData.image : null
+    formData?.image instanceof File ? formData.image : null,
   );
 
   const {
@@ -78,13 +85,28 @@ export function CenterFormStep1({
     setError,
   } = methods;
 
-  useEffect(() => {
-    if (centerImage) {
-      methods.setValue("image", centerImage, { shouldValidate: true });
-    } else {
-      methods.resetField("image");
-    }
-  }, [centerImage, methods]);
+  // useEffect(() => {
+  //   if (centerImage) {
+  //     methods.setValue("image", centerImage, {
+  //       shouldValidate: true,
+  //       shouldDirty: true,
+  //     });
+  //   } else {
+  //     methods.setValue("image", undefined, {
+  //       shouldValidate: true,
+  //       shouldDirty: true,
+  //     });
+  //   }
+  // }, [centerImage, methods]);
+
+   useEffect(() => {
+  if (centerImage) {
+    methods.setValue("image", centerImage, { shouldValidate: true });
+  } else {
+    // عند إزالة الصورة، اضبط القيمة على null وافرض التحقق
+    methods.setValue("image", null);
+  }
+}, [centerImage, methods]);
 
   useEffect(() => {
     if (session?.user && !formData.full_name) {
@@ -163,7 +185,7 @@ export function CenterFormStep1({
               readOnly
             />
 
-            <Controller
+            {/* <Controller
               name="phone"
               control={control}
               render={({ field }) => (
@@ -180,8 +202,17 @@ export function CenterFormStep1({
                   readOnly
                 />
               )}
+            /> */}
+            <FormInput
+              label="رقم الهاتف"
+              placeholder="0000 0000"
+              icon={Phone}
+              iconPosition="right"
+              rtl
+              error={errors.phone?.message}
+              {...methods.register("phone")}
+              readOnly
             />
-
             <Controller
               name="gender"
               control={control}
@@ -258,6 +289,7 @@ export function CenterFormStep1({
               label="صورة المركز"
               value={centerImage}
               onChange={setCenterImage}
+              error={errors.image?.message as string | undefined}
             />
           </div>
           <FormSubmitButton className="px-6 py-5 mt-4">التالي</FormSubmitButton>

@@ -27,7 +27,7 @@ interface TherapistStep3Props {
   formData: Partial<Step3Data>
   updateFormData: (data: Partial<Step3Data>) => void
   globalErrors?: Record<string, string>
-//  setGlobalErrors?: (errors: Record<string, string>) => void
+  setGlobalErrors?: (errors: Record<string, string>) => void
 }
 
 export function TherapistFormStep3({ onNext, onBack, formData, updateFormData, globalErrors }: TherapistStep3Props) {
@@ -177,7 +177,7 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData, g
 //   formData: Partial<Step3Data>
 //   updateFormData: (data: Partial<Step3Data>) => void
 //   globalErrors?: Record<string, string>
-//  setGlobalErrors?: (errors: Record<string, string>) => void
+//   setGlobalErrors?: (errors: Record<string, string>) => void
 // }
 
 // export function TherapistFormStep3({ onNext, onBack, formData, updateFormData, globalErrors }: TherapistStep3Props) {

@@ -6,6 +6,7 @@ import * as z from "zod";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useCallback } from "react";
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
+import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 import { Controller } from "react-hook-form";
 import { TextArea } from "@/shared/ui/components/TextArea";
 import { useSession } from "next-auth/react";
@@ -22,7 +23,8 @@ interface TherapistStep4Props {
   onBack: () => void;
   formData: Record<string, unknown>;
   updateFormData: (data: Partial<Record<string, unknown>>) => void;
-  setGlobalErrors?: (errors: Record<string, string>) => void;
+  globalErrors?: Record<string, string>;
+setGlobalErrors?: (errors: Record<string, string>) => void;
 }
 const step4Schema = z.object({
   bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
@@ -35,6 +37,7 @@ export function TherapistFormStep5({
   onBack,
   formData,
   updateFormData,
+  globalErrors,
   setGlobalErrors,
 }: TherapistStep4Props) {
   const methods = useForm<Step4Data>({
@@ -56,6 +59,8 @@ export function TherapistFormStep5({
   }, [updateFormData]);
 
   useStepFormAutosave(methods, persistDraft);
+
+  useApplyGlobalFormErrors(globalErrors, methods.setError);
 
   const { data: session, update } = useSession();
   const router = useRouter();

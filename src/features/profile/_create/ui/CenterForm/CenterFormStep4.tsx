@@ -10,6 +10,7 @@ import { countries } from "@/constants/countries";
 import { FormSelect } from "@/shared/ui/forms";
 import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector";
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
+import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 
 const step4Schema = z
   .object({
@@ -71,6 +72,7 @@ export function CenterFormStep4({
   onNext,
   formData,
   updateFormData,
+  globalErrors,
 }: Step4Props) {
   const methods = useForm<Step4Data>({
     resolver: zodResolver(step4Schema),
@@ -99,6 +101,8 @@ export function CenterFormStep4({
   }, [updateFormData]);
 
   useStepFormAutosave(methods, persistDraft);
+
+  useApplyGlobalFormErrors(globalErrors, methods.setError);
 
   const selectedDays = watch("day_of_week");
   const isEvening = watch("is_have_evening_time") === 1;

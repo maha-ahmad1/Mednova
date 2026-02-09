@@ -1,6 +1,6 @@
 "use client";
 import { FormInput } from "@/shared/ui/forms";
-import { useState } from "react"
+import type React from "react";
 import { useCallback } from "react"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { useForm, FormProvider } from "react-hook-form";
@@ -9,6 +9,7 @@ import * as z from "zod";
 import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
+import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 import { FormFileUpload } from "@/shared/ui/forms";
 
 const step3Schema = z.object({
@@ -25,22 +26,26 @@ interface TherapistStep3Props {
   onBack: () => void
   formData: Partial<Step3Data>
   updateFormData: (data: Partial<Step3Data>) => void
+  globalErrors?: Record<string, string>
   setGlobalErrors?: (errors: Record<string, string>) => void
 }
 
-export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }: TherapistStep3Props) {
+export function TherapistFormStep3({ onNext, onBack, formData, updateFormData, globalErrors }: TherapistStep3Props) {
   const methods = useForm<Step3Data>({
     resolver: zodResolver(step3Schema),
     mode: "onChange",
     defaultValues: {
       license_number: formData.license_number || "",
       license_authority: formData.license_authority || "",
+      certificate_file: formData.certificate_file || null,
+      license_file: formData.license_file || null,
     },
   });
 
   const {
     handleSubmit,
     register,
+    setValue,
     formState: { errors },
   } = methods;
 
@@ -50,11 +55,10 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
 
   useStepFormAutosave(methods, persistDraft);
 
-  const [certificateFile, setCertificateFile] = useState<File | null>(formData.certificate_file || null)
-  const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)
+  useApplyGlobalFormErrors(globalErrors, methods.setError);
 
   const onSubmit = (data: Step3Data) => {
-    updateFormData({ ...data, certificate_file: certificateFile, license_file: licenseFile })
+    updateFormData(data)
     onNext()
   }
 
@@ -95,10 +99,10 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
                 icon={ShieldCheck}
                 iconPosition="right"
                 rtl
-                error={errors.license_authority?.message}
+                error={errors.certificate_file?.message as string | undefined}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const file = e.target.files?.[0]
-                  if (file) setCertificateFile(file)
+                  const file = e.target.files?.[0] ?? null
+                  setValue("certificate_file", file, { shouldValidate: true })
                 }}
               />
             </div>
@@ -110,10 +114,10 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
                 icon={Copyright}
                 iconPosition="right"
                 rtl
-                error={errors.license_authority?.message}
+                error={errors.license_file?.message as string | undefined}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const file = e.target.files?.[0]
-                  if (file) setLicenseFile(file)
+                  const file = e.target.files?.[0] ?? null
+                  setValue("license_file", file, { shouldValidate: true })
                 }}
               />
             </div>
@@ -143,8 +147,8 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
 
 // "use client";
 // import { FormInput } from "@/shared/ui/forms";
-// import { useState } from "react"
-// import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
+// import type React from "react";
+// // import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 // import { useForm, FormProvider, Controller } from "react-hook-form"; // أضف Controller هنا
 // import { zodResolver } from "@hookform/resolvers/zod";
 // import * as z from "zod";
@@ -172,16 +176,19 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
 //   onBack: () => void
 //   formData: Partial<Step3Data>
 //   updateFormData: (data: Partial<Step3Data>) => void
+//   globalErrors?: Record<string, string>
 //   setGlobalErrors?: (errors: Record<string, string>) => void
 // }
 
-// export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }: TherapistStep3Props) {
+// export function TherapistFormStep3({ onNext, onBack, formData, updateFormData, globalErrors }: TherapistStep3Props) {
 //   const methods = useForm<Step3Data>({
 //     resolver: zodResolver(step3Schema),
 //     mode: "onChange",
 //     defaultValues: {
 //       license_number: formData.license_number || "",
 //       license_authority: formData.license_authority || "",
+//       certificate_file: formData.certificate_file || null,
+//       license_file: formData.license_file || null,
 //       certificate_file: null,
 //       license_file: null,
 //     },
@@ -246,7 +253,7 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
 //                     iconPosition="right"
 //                     rtl
 //                     // fileName={value ? value.name : ""} // عرض اسم الملف
-//                     error={errors.certificate_file?.message}
+//                     error={errors.certificate_file?.message as string | undefined}
 //                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 //                       const file = e.target.files?.[0] || null;
 //                       onChange(file);
@@ -268,7 +275,7 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
 //                     iconPosition="right"
 //                     rtl
 //                     // fileName={value ? value.name : ""} // عرض اسم الملف
-//                     error={errors.license_file?.message}
+//                     error={errors.license_file?.message as string | undefined}
 //                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 //                       const file = e.target.files?.[0] || null;
 //                       onChange(file);

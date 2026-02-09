@@ -37,7 +37,8 @@
 //   updateFormData: (
 //     data: Partial<Record<string, string | File | undefined>>
 //   ) => void;
-//   setGlobalErrors?: (errors: Record<string, string>) => void;
+//   globalErrors?: Record<string, string>;
+//  setGlobalErrors?: (errors: Record<string, string>) => void;
 // }
 
 // export function TherapistFormStep2({
@@ -218,6 +219,7 @@ import * as z from "zod"
 import { GraduationCap, Globe, Building2, Baseline as ChartLine, Video, MessageSquare } from "lucide-react"
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave"
+import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors"
 import { useCallback } from "react"
 import { medicalSpecialties } from "@/constants/medicalSpecialties"
 import { FormSelect } from "@/shared/ui/forms"
@@ -240,6 +242,7 @@ interface TherapistStep2Props {
   onBack: () => void
   formData: Partial<z.infer<typeof step2Schema>>
   updateFormData: (data: Partial<Record<string, string | File | undefined>>) => void
+  globalErrors?: Record<string, string>
   setGlobalErrors?: (errors: Record<string, string>) => void
 }
 
@@ -248,7 +251,7 @@ const currencyOptions = [
 
 ]
 
-export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }: TherapistStep2Props) {
+export function TherapistFormStep2({ onNext, onBack, formData, updateFormData, globalErrors }: TherapistStep2Props) {
   const methods = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
     mode: "onChange",
@@ -275,6 +278,8 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
   }, [updateFormData])
 
   useStepFormAutosave(methods, persistDraft)
+
+  useApplyGlobalFormErrors(globalErrors, methods.setError)
 
   const onSubmit = (data: Step2Data) => {
     updateFormData(data)

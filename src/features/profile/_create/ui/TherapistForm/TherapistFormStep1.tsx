@@ -16,6 +16,7 @@ import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { useSession } from "next-auth/react";
 import { parsePhoneNumber } from "@/lib/phone";
+import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -85,6 +86,8 @@ export function TherapistFormStep1({
 
   useStepFormAutosave(methods, persistDraft);
 
+  useApplyGlobalFormErrors(globalErrors, methods.setError);
+
   // useEffect(() => {
   //   if (profileImage) {
   //     methods.setValue("image", profileImage, { shouldValidate: true });
@@ -116,16 +119,6 @@ export function TherapistFormStep1({
       });
     }
   }, [session?.user, methods, formData]);
-  const { setError } = methods;
-
-  useEffect(() => {
-    if (globalErrors) {
-      Object.entries(globalErrors).forEach(([field, message]) => {
-        setError(field as keyof Step1Data, { type: "server", message });
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globalErrors]);
 
   if (status === "loading") {
     return (

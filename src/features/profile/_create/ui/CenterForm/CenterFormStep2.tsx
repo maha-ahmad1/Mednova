@@ -5,6 +5,8 @@ import { useForm, FormProvider, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { useCallback } from "react";
+import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { medicalSpecialties } from "@/constants/medicalSpecialties";
 import { Video, MessageSquare, Check } from "lucide-react";
 import { FormSelect } from "@/shared/ui/forms/components/FormSelect";
@@ -107,6 +109,12 @@ export function CenterFormStep2({
     setValue,
     formState: { errors },
   } = methods;
+
+  const persistDraft = useCallback((values: Partial<Step2Data>) => {
+    updateFormData(values);
+  }, [updateFormData]);
+
+  useStepFormAutosave(methods, persistDraft);
 
   const selectedSpecialties = watch("specialty_id");
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useCallback } from "react";
 import { Controller, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -15,6 +16,7 @@ import {
 } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { parsePhoneNumber } from "@/lib/phone";
 
 const step1Schema = z.object({
@@ -84,6 +86,12 @@ export function CenterFormStep1({
     formState: { errors },
     setError,
   } = methods;
+
+  const persistDraft = useCallback((values: Partial<Step1Data>) => {
+    updateFormData(values);
+  }, [updateFormData]);
+
+  useStepFormAutosave(methods, persistDraft);
 
   // useEffect(() => {
   //   if (centerImage) {

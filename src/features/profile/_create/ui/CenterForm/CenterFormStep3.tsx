@@ -1,6 +1,7 @@
 "use client"
 import { FormInput } from "@/shared/ui/forms"
 import type React from "react"
+import { useCallback } from "react"
 
 import { useState } from "react"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
@@ -9,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react"
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
+import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { FormFileUpload } from "@/shared/ui/forms"
 
 const step3Schema = z
@@ -78,6 +80,12 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
     control,
     formState: { errors },
   } = methods
+
+  const persistDraft = useCallback((values: Partial<Step3Data>) => {
+    updateFormData(values);
+  }, [updateFormData]);
+
+  useStepFormAutosave(methods, persistDraft);
 
   const hasCommercialReg = watch("has_commercial_registration")
 

@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import * as z from "zod";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { useCallback } from "react";
+import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { Controller } from "react-hook-form";
 import { TextArea } from "@/shared/ui/components/TextArea";
 import { useSession } from "next-auth/react";
@@ -48,6 +50,12 @@ export function TherapistFormStep5({
     control,
     formState: { errors },
   } = methods;
+
+  const persistDraft = useCallback((values: Partial<Step4Data>) => {
+    updateFormData(values);
+  }, [updateFormData]);
+
+  useStepFormAutosave(methods, persistDraft);
 
   const { data: session, update } = useSession();
   const router = useRouter();

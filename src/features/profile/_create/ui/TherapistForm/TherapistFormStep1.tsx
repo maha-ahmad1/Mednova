@@ -11,7 +11,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Mail, User, Phone, Home, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useCallback } from "react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { useSession } from "next-auth/react";
 import { parsePhoneNumber } from "@/lib/phone";
 
@@ -76,6 +78,12 @@ export function TherapistFormStep1({
     register,
     formState: { errors },
   } = methods;
+
+  const persistDraft = useCallback((values: Partial<Step1Data>) => {
+    updateFormData(values);
+  }, [updateFormData]);
+
+  useStepFormAutosave(methods, persistDraft);
 
   // useEffect(() => {
   //   if (profileImage) {

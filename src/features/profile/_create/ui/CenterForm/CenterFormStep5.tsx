@@ -13,6 +13,7 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import type { CenterFormValues } from "@/app/api/center";
 import { Loader2 } from "lucide-react";
+import { useCenterDraftStore } from "@/features/profile/_create/hooks/useCenterDraftStore";
 import type { SubmitHandler } from "react-hook-form";
 
 const step5Schema = z.object({
@@ -51,6 +52,8 @@ export function CenterFormStep5({
 
   const { data: session, update } = useSession();
   const router = useRouter();
+  const resetDraft = useCenterDraftStore((state) => state.resetDraft);
+
   const { storeCenter, isStoring } = useCenterStore({
     onValidationError: (errors) => {
       setGlobalErrors?.(errors);
@@ -177,6 +180,7 @@ export function CenterFormStep5({
       await storeCenter(payload);
       setGlobalErrors?.({});
       updateFormData({ bio: data.bio });
+      resetDraft();
 
       await update({
         user: {

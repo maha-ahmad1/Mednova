@@ -13,6 +13,7 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import type { TherapistFormValues } from "@/app/api/therapist";
 import { Loader2 } from "lucide-react";
+import { useTherapistDraftStore } from "@/features/profile/_create/hooks/useTherapistDraftStore";
 import { SubmitHandler } from "react-hook-form";
 
 interface TherapistStep4Props {
@@ -50,6 +51,8 @@ export function TherapistFormStep5({
 
   const { data: session, update } = useSession();
   const router = useRouter();
+  const resetDraft = useTherapistDraftStore((state) => state.resetDraft);
+
   const { storeTherapist, isStoring } = useTherapist({
     onValidationError: (errors) => {
       setGlobalErrors?.(errors);
@@ -186,6 +189,7 @@ export function TherapistFormStep5({
       await storeTherapist(payload);
       setGlobalErrors?.({});
       updateFormData({ bio: data.bio });
+      resetDraft();
 
       await update({
         user: {

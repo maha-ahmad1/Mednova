@@ -21,16 +21,7 @@ import { toast } from "sonner";
 import { FormPhoneInput } from "@/shared/ui/forms";
 import { parsePhoneNumber } from "@/lib/phone";
 
-// ✅ Zod Schema
-// const patientSchema = z.object({
-//   full_name: z.string().min(1, "الاسم الكامل مطلوب"),
-//   email: z.string().email("بريد إلكتروني غير صالح"),
-//   emergency_phone: z.string().optional(),
-//   phone: z.string().min(1, "رقم الهاتف مطلوب"),
-//   relationship: z.string().optional(),
-//   birth_date: z.string().min(1, "التاريخ الميلاد مطلوب"),
 
-// })
 
 const patientSchema = z.object({
   full_name: z.string().min(1, "الاسم الكامل مطلوب"),

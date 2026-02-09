@@ -4,13 +4,14 @@ import { useMutation } from "@tanstack/react-query"
 import type { AxiosError } from "axios"
 import { useAxiosInstance } from "@/lib/axios/axiosInstance"
 import { toast } from "sonner"
+import { useSession } from "next-auth/react" // أضف هذا
 
 export type UserType = "therapist" | "center" | "patient"
 
 type UpdateProfileImageOptions = {
   userType: UserType
   userId?: string
-  onSuccess?: (imageUrl: string) => void
+  onSuccess?: (data: any) => void // عدل هذا ليُرجع كل البيانات
   onError?: (error: string) => void
   refetch?: () => void
 }
@@ -22,6 +23,7 @@ type UpdatePayload = {
 
 export const useUpdateProfileImage = (options: UpdateProfileImageOptions) => {
   const axios = useAxiosInstance()
+  const { update } = useSession() // أضف هذا لتحديث الجلسة
 
   // Map user type to API endpoint
   const getEndpoint = (userType: UserType): string => {
@@ -42,30 +44,52 @@ export const useUpdateProfileImage = (options: UpdateProfileImageOptions) => {
       if (data.customer_id) {
         formData.append("customer_id", data.customer_id)
       }
-
+      
+      console.log("Updating profile image with data:", {
+        image: data.image,
+        customer_id: data.customer_id,
+      })
+      
       const endpoint = getEndpoint(options.userType)
-      const response = await axios.post(endpoint, formData)
+      const response = await axios.post(endpoint, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       return response.data
     },
+    
     onError: (err: AxiosError) => {
       const respData = err.response?.data as unknown as { message?: string } | undefined
-
       const message = respData?.message || err.message || "حدث خطأ أثناء تحديث الصورة"
-
       toast.error(String(message))
       options.onError?.(String(message))
     },
-    onSuccess: (data) => {
-      toast.success("تم تحديث الصورة بنجاح")
+    
+    onSuccess: async (data) => {
+      try {
+        // toast.success("تم تحديث الصورة بنجاح")
 
-      // Extract image URL from response
-      const imageUrl = data?.data?.image || data?.image
+        // Extract image URL from response
+        const imageUrl = data?.data?.image || data?.image || data?.data?.user?.image
+        
+        // تحديث الجلسة
+        if (imageUrl) {
+          await update({
+            user: {
+              image: imageUrl
+            }
+          })
+        }
 
-      if (imageUrl) {
-        options.onSuccess?.(imageUrl)
+        // استدعاء onSuccess مع البيانات الكاملة
+        options.onSuccess?.(data)
+        
+        options.refetch?.()
+      } catch (error) {
+        console.error("Error updating session:", error)
+        toast.error("تم تحديث الصورة لكن حدث خطأ في تحديث الجلسة")
       }
-
-      options.refetch?.()
     },
   })
 

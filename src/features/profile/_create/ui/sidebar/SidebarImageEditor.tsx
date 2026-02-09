@@ -8,7 +8,7 @@ import { Loader2, Upload, User, Pencil } from "lucide-react"
 import { toast } from "sonner"
 import { useUpdateProfileImage , type UserType } from "@/features/profile/_views/hooks/useUpdateProfileImage"
 import Image from "next/image"
-
+import { useSession } from "next-auth/react" // أضف هذا
 
 interface SidebarImageEditorProps {
   currentImage: string
@@ -17,23 +17,50 @@ interface SidebarImageEditorProps {
   refetch?: () => void
 }
 
-export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({ currentImage, userType, userId, refetch }) => {
+export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({ 
+  currentImage, 
+  userType, 
+  userId, 
+  refetch 
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  
+  // أضف useSession هنا
+  const {data: session, update } = useSession()
 
   const { updateImage, isUpdating } = useUpdateProfileImage({
     userType,
     userId,
-    onSuccess: () => {
-      setIsModalOpen(true)
+    onSuccess: async (data) => {
+      // تحديث الجلسة بعد نجاح رفع الصورة
+      // if (data?.image) {
+      //   try {
+      //     await update({
+      //       user: {
+      //         ...session?.user,
+      //         image: data.image // تأكد أن الـ API يرجع رابط الصورة الجديدة
+      //       }
+      //     })
+      //   } catch (error) {
+      //     console.error("Failed to update session:", error)
+      //   }
+      // }
+      
+      setIsModalOpen(false)
       setPreviewImage(null)
       setSelectedFile(null)
-
+      toast.success("تم تحديث الصورة بنجاح")
+      
+      if (refetch) {
+        refetch()
+      }
     },
     onError: (error) => {
       console.error("Image update failed:", error)
+      toast.error("فشل تحديث الصورة")
     },
     refetch,
   })
@@ -92,7 +119,13 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({ currentI
       <div className="relative group">
         <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
           {currentImage && currentImage !== "/images/placeholder.svg" ? (
-            <Image  src={currentImage || "/images/placeholder.svg"} alt="Profile" width={100} height={100} className="object-cover w-full h-full" />
+            <Image  
+              src={currentImage || "/images/placeholder.svg"} 
+              alt="Profile" 
+              width={100} 
+              height={100} 
+              className="object-cover w-full h-full" 
+            />
           ) : (
             <div className="flex items-center justify-center w-full h-full bg-gray-100 text-gray-400">
               <User className="w-8 h-8" />
@@ -145,8 +178,6 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({ currentI
               <Upload className="w-4 h-4 mr-2" />
               اختر صورة جديدة
             </Button>
-
-            {/* {selectedFile && <p className="text-sm text-gray-500">{selectedFile.name}</p>} */}
           </div>
 
           <DialogFooter className="flex gap-2 sm:gap-0">

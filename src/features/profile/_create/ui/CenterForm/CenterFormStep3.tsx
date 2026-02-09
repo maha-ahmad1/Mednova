@@ -175,6 +175,8 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData, glob
               rtl
               error={errors.license_number?.message}
               {...register("license_number")}
+              type="number" 
+              className="no-spinner"
             />
 
             <FormInput

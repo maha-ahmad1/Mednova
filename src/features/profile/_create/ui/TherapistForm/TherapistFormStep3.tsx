@@ -78,6 +78,8 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData, g
               rtl
               error={errors.license_number?.message}
               {...register("license_number")}
+              type="number"   
+              className="no-spinner"
             />
 
             <FormInput

@@ -11,7 +11,7 @@ export type UserType = "therapist" | "center" | "patient"
 type UpdateProfileImageOptions = {
   userType: UserType
   userId?: string
-  onSuccess?: (data: any) => void // عدل هذا ليُرجع كل البيانات
+  onSuccess?: (data: Record<string, unknown>) => void // عدل هذا ليُرجع كل البيانات
   onError?: (error: string) => void
   refetch?: () => void
 }

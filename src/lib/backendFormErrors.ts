@@ -24,6 +24,15 @@ const pushFieldError = (
 
 const normalizeFieldPath = (path: string) => path.replace(/\[(\d+)\]/g, ".$1").replace(/^\.+|\.+$/g, "")
 
+
+
+const stripKnownPrefix = (path: string): string | null => {
+  const prefixes = ["therapist_details.", "center_details.", "patient_details.", "location_details."]
+  const found = prefixes.find((prefix) => path.startsWith(prefix))
+  if (!found) return null
+  return path.slice(found.length)
+}
+
 const aliasFieldPath = (path: string): string[] => {
   const aliases = new Set<string>([path])
 
@@ -31,6 +40,9 @@ const aliasFieldPath = (path: string): string[] => {
     aliases.add("medical_specialties_id")
     aliases.add("specialty_id")
   }
+
+  const strippedPath = stripKnownPrefix(path)
+  if (strippedPath) aliases.add(strippedPath)
 
   if (path.startsWith("schedules")) {
     const cleaned = path.replace(/^schedules\.\d+\.?/, "")

@@ -18,6 +18,7 @@ import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton"
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { parsePhoneNumber } from "@/lib/phone";
+import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -84,7 +85,6 @@ export function CenterFormStep1({
     control,
     register,
     formState: { errors },
-    setError,
   } = methods;
 
   const persistDraft = useCallback((values: Partial<Step1Data>) => {
@@ -92,6 +92,8 @@ export function CenterFormStep1({
   }, [updateFormData]);
 
   useStepFormAutosave(methods, persistDraft);
+
+  useApplyGlobalFormErrors(globalErrors, methods.setError);
 
   // useEffect(() => {
   //   if (centerImage) {
@@ -133,17 +135,6 @@ export function CenterFormStep1({
       });
     }
   }, [session?.user, methods, formData]);
-
-  useEffect(() => {
-    if (globalErrors) {
-      Object.entries(globalErrors).forEach(([field, message]) => {
-        setError(field as keyof Step1Data, {
-          type: "server",
-          message,
-        });
-      });
-    }
-  }, [globalErrors, setError]);
 
   if (status === "loading") {
     return (

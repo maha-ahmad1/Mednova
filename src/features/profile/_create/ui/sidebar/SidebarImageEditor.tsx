@@ -1,14 +1,19 @@
 "use client"
 
 import type React from "react"
-import { useState, useRef } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { useRef, useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Loader2, Upload, User, Pencil } from "lucide-react"
+import { Loader2, Pencil, Upload, User } from "lucide-react"
 import { toast } from "sonner"
-import { useUpdateProfileImage , type UserType } from "@/features/profile/_views/hooks/useUpdateProfileImage"
+import { useUpdateProfileImage, type UserType } from "@/features/profile/_views/hooks/useUpdateProfileImage"
 import Image from "next/image"
-import { useSession } from "next-auth/react" // أضف هذا
 
 interface SidebarImageEditorProps {
   currentImage: string
@@ -17,46 +22,32 @@ interface SidebarImageEditorProps {
   refetch?: () => void
 }
 
-export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({ 
-  currentImage, 
-  userType, 
-  userId, 
-  refetch 
+export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
+  currentImage,
+  userType,
+  userId,
+  refetch,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [displayImage, setDisplayImage] = useState(currentImage)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  
-  // أضف useSession هنا
-  const {data: session, update } = useSession()
 
   const { updateImage, isUpdating } = useUpdateProfileImage({
     userType,
     userId,
-    onSuccess: async (data) => {
-      // تحديث الجلسة بعد نجاح رفع الصورة
-      // if (data?.image) {
-      //   try {
-      //     await update({
-      //       user: {
-      //         ...session?.user,
-      //         image: data.image // تأكد أن الـ API يرجع رابط الصورة الجديدة
-      //       }
-      //     })
-      //   } catch (error) {
-      //     console.error("Failed to update session:", error)
-      //   }
-      // }
-      
+    onSuccess: ({ imageUrl }) => {
+      if (imageUrl) {
+        setDisplayImage(imageUrl)
+      }
+
       setIsModalOpen(false)
       setPreviewImage(null)
       setSelectedFile(null)
       toast.success("تم تحديث الصورة بنجاح")
-      
-      if (refetch) {
-        refetch()
-      }
+
+      refetch?.()
     },
     onError: (error) => {
       console.error("Image update failed:", error)
@@ -69,13 +60,11 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       toast.error("يرجى اختيار صورة صالحة")
       return
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error("حجم الصورة يجب أن يكون أقل من 5 ميجابايت")
       return
@@ -83,7 +72,6 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
 
     setSelectedFile(file)
 
-    // Create preview URL
     const reader = new FileReader()
     reader.onloadend = () => {
       setPreviewImage(reader.result as string)
@@ -112,19 +100,20 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
     }
   }
 
-  const modalPreviewImage = previewImage || currentImage
+  const effectiveImage = displayImage || currentImage
+  const modalPreviewImage = previewImage || effectiveImage
 
   return (
     <>
       <div className="relative group">
         <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
-          {currentImage && currentImage !== "/images/placeholder.svg" ? (
-            <Image  
-              src={currentImage || "/images/placeholder.svg"} 
-              alt="Profile" 
-              width={100} 
-              height={100} 
-              className="object-cover w-full h-full" 
+          {effectiveImage && effectiveImage !== "/images/placeholder.svg" ? (
+            <Image
+              src={effectiveImage}
+              alt="Profile"
+              width={100}
+              height={100}
+              className="object-cover w-full h-full"
             />
           ) : (
             <div className="flex items-center justify-center w-full h-full bg-gray-100 text-gray-400">
@@ -152,7 +141,7 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#32A88D]/20">
               {modalPreviewImage && modalPreviewImage !== "/images/placeholder.svg" ? (
                 <Image
-                  src={modalPreviewImage || "/images/placeholder.svg"}
+                  src={modalPreviewImage}
                   alt="Preview"
                   className="object-cover w-full h-full"
                   width={100}
@@ -174,7 +163,12 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
               id="image-upload"
             />
 
-            <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full"
+            >
               <Upload className="w-4 h-4 mr-2" />
               اختر صورة جديدة
             </Button>

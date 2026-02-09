@@ -4,14 +4,30 @@ import { useMutation } from "@tanstack/react-query"
 import type { AxiosError } from "axios"
 import { useAxiosInstance } from "@/lib/axios/axiosInstance"
 import { toast } from "sonner"
-import { useSession } from "next-auth/react" // أضف هذا
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 export type UserType = "therapist" | "center" | "patient"
+
+type UpdateProfileImageResponse = {
+  image?: string
+  data?: {
+    image?: string
+    user?: {
+      image?: string
+    }
+  }
+}
+
+type UpdateProfileImageSuccessPayload = {
+  data: unknown
+  imageUrl?: string
+}
 
 type UpdateProfileImageOptions = {
   userType: UserType
   userId?: string
-  onSuccess?: (data: any) => void // عدل هذا ليُرجع كل البيانات
+  onSuccess?: (payload: UpdateProfileImageSuccessPayload) => void
   onError?: (error: string) => void
   refetch?: () => void
 }
@@ -23,9 +39,9 @@ type UpdatePayload = {
 
 export const useUpdateProfileImage = (options: UpdateProfileImageOptions) => {
   const axios = useAxiosInstance()
-  const { update } = useSession() // أضف هذا لتحديث الجلسة
+  const { update } = useSession()
+  const router = useRouter()
 
-  // Map user type to API endpoint
   const getEndpoint = (userType: UserType): string => {
     const endpoints: Record<UserType, string> = {
       therapist: "/api/therapist/update",
@@ -36,55 +52,55 @@ export const useUpdateProfileImage = (options: UpdateProfileImageOptions) => {
   }
 
   const mutation = useMutation({
-    mutationFn: async (data: UpdatePayload) => {
+    mutationFn: async (payload: UpdatePayload) => {
       const formData = new FormData()
-      formData.append("image", data.image)
+      formData.append("image", payload.image)
 
-      // Add customer_id if provided
-      if (data.customer_id) {
-        formData.append("customer_id", data.customer_id)
+      if (payload.customer_id) {
+        formData.append("customer_id", payload.customer_id)
       }
-      
-      console.log("Updating profile image with data:", {
-        image: data.image,
-        customer_id: data.customer_id,
-      })
-      
+
       const endpoint = getEndpoint(options.userType)
       const response = await axios.post(endpoint, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       })
       return response.data
     },
-    
+
     onError: (err: AxiosError) => {
-      const respData = err.response?.data as unknown as { message?: string } | undefined
+      const respData = err.response?.data as { message?: string } | undefined
       const message = respData?.message || err.message || "حدث خطأ أثناء تحديث الصورة"
       toast.error(String(message))
       options.onError?.(String(message))
     },
-    
+
     onSuccess: async (data) => {
       try {
-        // toast.success("تم تحديث الصورة بنجاح")
+        const parsedData = data as UpdateProfileImageResponse
+        const imageUrl =
+          parsedData?.data?.image || parsedData?.image || parsedData?.data?.user?.image
 
-        // Extract image URL from response
-        const imageUrl = data?.data?.image || data?.image || data?.data?.user?.image
-        
-        // تحديث الجلسة
         if (imageUrl) {
+          const imageWithVersion = `${imageUrl}${imageUrl.includes("?") ? "&" : "?"}v=${Date.now()}`
+
           await update({
+            image: imageWithVersion,
             user: {
-              image: imageUrl
-            }
+              image: imageWithVersion,
+            },
           })
+
+          // force session re-fetch so all useSession consumers (e.g. Navbar/UserMenu) re-render
+          await update()
+          router.refresh()
+
+          options.onSuccess?.({ data, imageUrl: imageWithVersion })
+        } else {
+          options.onSuccess?.({ data })
         }
 
-        // استدعاء onSuccess مع البيانات الكاملة
-        options.onSuccess?.(data)
-        
         options.refetch?.()
       } catch (error) {
         console.error("Error updating session:", error)

@@ -4,6 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import * as z from "zod";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { useCallback } from "react";
+import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
+import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 import { Controller } from "react-hook-form";
 import { TextArea } from "@/shared/ui/components/TextArea";
 import { useSession } from "next-auth/react";
@@ -13,13 +16,15 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import type { TherapistFormValues } from "@/app/api/therapist";
 import { Loader2 } from "lucide-react";
+import { useTherapistDraftStore } from "@/features/profile/_create/hooks/useTherapistDraftStore";
 import { SubmitHandler } from "react-hook-form";
 
 interface TherapistStep4Props {
   onBack: () => void;
   formData: Record<string, unknown>;
   updateFormData: (data: Partial<Record<string, unknown>>) => void;
-  setGlobalErrors?: (errors: Record<string, string>) => void;
+  globalErrors?: Record<string, string>;
+setGlobalErrors?: (errors: Record<string, string>) => void;
 }
 const step4Schema = z.object({
   bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
@@ -32,6 +37,7 @@ export function TherapistFormStep5({
   onBack,
   formData,
   updateFormData,
+  globalErrors,
   setGlobalErrors,
 }: TherapistStep4Props) {
   const methods = useForm<Step4Data>({
@@ -48,8 +54,18 @@ export function TherapistFormStep5({
     formState: { errors },
   } = methods;
 
+  const persistDraft = useCallback((values: Partial<Step4Data>) => {
+    updateFormData(values);
+  }, [updateFormData]);
+
+  useStepFormAutosave(methods, persistDraft);
+
+  useApplyGlobalFormErrors(globalErrors, methods.setError);
+
   const { data: session, update } = useSession();
   const router = useRouter();
+  const resetDraft = useTherapistDraftStore((state) => state.resetDraft);
+
   const { storeTherapist, isStoring } = useTherapist({
     onValidationError: (errors) => {
       setGlobalErrors?.(errors);
@@ -186,6 +202,7 @@ export function TherapistFormStep5({
       await storeTherapist(payload);
       setGlobalErrors?.({});
       updateFormData({ bio: data.bio });
+      resetDraft();
 
       await update({
         user: {

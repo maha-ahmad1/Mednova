@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm, FormProvider, Controller } from "react-hook-form";
+import { useCallback } from "react";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +9,8 @@ import * as z from "zod";
 import { countries } from "@/constants/countries";
 import { FormSelect } from "@/shared/ui/forms";
 import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector";
+import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
+import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 
 const step4Schema = z
   .object({
@@ -69,6 +72,7 @@ export function CenterFormStep4({
   onNext,
   formData,
   updateFormData,
+  globalErrors,
 }: Step4Props) {
   const methods = useForm<Step4Data>({
     resolver: zodResolver(step4Schema),
@@ -92,6 +96,14 @@ export function CenterFormStep4({
   });
 
   const { handleSubmit, control, watch, setValue } = methods;
+  const persistDraft = useCallback((values: Partial<Step4Data>) => {
+    updateFormData(values);
+  }, [updateFormData]);
+
+  useStepFormAutosave(methods, persistDraft);
+
+  useApplyGlobalFormErrors(globalErrors, methods.setError);
+
   const selectedDays = watch("day_of_week");
   const isEvening = watch("is_have_evening_time") === 1;
   const country = watch("country");

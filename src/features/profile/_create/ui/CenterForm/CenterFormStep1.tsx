@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useCallback } from "react";
 import { Controller, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -15,7 +16,9 @@ import {
 } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { parsePhoneNumber } from "@/lib/phone";
+import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 
 const step1Schema = z.object({
   full_name: z.string().min(1, "الاسم مطلوب"),
@@ -82,8 +85,15 @@ export function CenterFormStep1({
     control,
     register,
     formState: { errors },
-    setError,
   } = methods;
+
+  const persistDraft = useCallback((values: Partial<Step1Data>) => {
+    updateFormData(values);
+  }, [updateFormData]);
+
+  useStepFormAutosave(methods, persistDraft);
+
+  useApplyGlobalFormErrors(globalErrors, methods.setError);
 
   // useEffect(() => {
   //   if (centerImage) {
@@ -125,17 +135,6 @@ export function CenterFormStep1({
       });
     }
   }, [session?.user, methods, formData]);
-
-  useEffect(() => {
-    if (globalErrors) {
-      Object.entries(globalErrors).forEach(([field, message]) => {
-        setError(field as keyof Step1Data, {
-          type: "server",
-          message,
-        });
-      });
-    }
-  }, [globalErrors, setError]);
 
   if (status === "loading") {
     return (

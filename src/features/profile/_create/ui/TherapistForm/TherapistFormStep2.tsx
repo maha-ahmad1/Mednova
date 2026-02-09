@@ -217,6 +217,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { GraduationCap, Globe, Building2, Baseline as ChartLine, Video, MessageSquare } from "lucide-react"
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
+import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave"
+import { useCallback } from "react"
 import { medicalSpecialties } from "@/constants/medicalSpecialties"
 import { FormSelect } from "@/shared/ui/forms"
 
@@ -267,6 +269,12 @@ export function TherapistFormStep2({ onNext, onBack, formData, updateFormData }:
     register,
     formState: { errors },
   } = methods
+
+  const persistDraft = useCallback((values: Partial<Step2Data>) => {
+    updateFormData(values)
+  }, [updateFormData])
+
+  useStepFormAutosave(methods, persistDraft)
 
   const onSubmit = (data: Step2Data) => {
     updateFormData(data)

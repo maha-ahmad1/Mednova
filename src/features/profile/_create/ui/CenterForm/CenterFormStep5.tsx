@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import * as z from "zod";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { useCallback } from "react";
+import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { Controller } from "react-hook-form";
 import { TextArea } from "@/shared/ui/components/TextArea";
 import { useSession } from "next-auth/react";
@@ -13,6 +15,7 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import type { CenterFormValues } from "@/app/api/center";
 import { Loader2 } from "lucide-react";
+import { useCenterDraftStore } from "@/features/profile/_create/hooks/useCenterDraftStore";
 import type { SubmitHandler } from "react-hook-form";
 
 const step5Schema = z.object({
@@ -49,8 +52,16 @@ export function CenterFormStep5({
     formState: { errors },
   } = methods;
 
+  const persistDraft = useCallback((values: Partial<Step5Data>) => {
+    updateFormData(values);
+  }, [updateFormData]);
+
+  useStepFormAutosave(methods, persistDraft);
+
   const { data: session, update } = useSession();
   const router = useRouter();
+  const resetDraft = useCenterDraftStore((state) => state.resetDraft);
+
   const { storeCenter, isStoring } = useCenterStore({
     onValidationError: (errors) => {
       setGlobalErrors?.(errors);
@@ -177,6 +188,7 @@ export function CenterFormStep5({
       await storeCenter(payload);
       setGlobalErrors?.({});
       updateFormData({ bio: data.bio });
+      resetDraft();
 
       await update({
         user: {

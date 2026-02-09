@@ -1,12 +1,14 @@
 "use client";
 import { FormInput } from "@/shared/ui/forms";
 import { useState } from "react"
+import { useCallback } from "react"
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
+import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { FormFileUpload } from "@/shared/ui/forms";
 
 const step3Schema = z.object({
@@ -41,6 +43,12 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
     register,
     formState: { errors },
   } = methods;
+
+  const persistDraft = useCallback((values: Partial<Step3Data>) => {
+    updateFormData(values);
+  }, [updateFormData]);
+
+  useStepFormAutosave(methods, persistDraft);
 
   const [certificateFile, setCertificateFile] = useState<File | null>(formData.certificate_file || null)
   const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)

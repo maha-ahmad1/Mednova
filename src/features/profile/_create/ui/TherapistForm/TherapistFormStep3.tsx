@@ -9,6 +9,7 @@ import * as z from "zod";
 import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
+import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 import { FormFileUpload } from "@/shared/ui/forms";
 
 const step3Schema = z.object({
@@ -25,10 +26,11 @@ interface TherapistStep3Props {
   onBack: () => void
   formData: Partial<Step3Data>
   updateFormData: (data: Partial<Step3Data>) => void
-  setGlobalErrors?: (errors: Record<string, string>) => void
+  globalErrors?: Record<string, string>
+//  setGlobalErrors?: (errors: Record<string, string>) => void
 }
 
-export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }: TherapistStep3Props) {
+export function TherapistFormStep3({ onNext, onBack, formData, updateFormData, globalErrors }: TherapistStep3Props) {
   const methods = useForm<Step3Data>({
     resolver: zodResolver(step3Schema),
     mode: "onChange",
@@ -49,6 +51,8 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
   }, [updateFormData]);
 
   useStepFormAutosave(methods, persistDraft);
+
+  useApplyGlobalFormErrors(globalErrors, methods.setError);
 
   const [certificateFile, setCertificateFile] = useState<File | null>(formData.certificate_file || null)
   const [licenseFile, setLicenseFile] = useState<File | null>(formData.license_file || null)
@@ -172,10 +176,11 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }:
 //   onBack: () => void
 //   formData: Partial<Step3Data>
 //   updateFormData: (data: Partial<Step3Data>) => void
-//   setGlobalErrors?: (errors: Record<string, string>) => void
+//   globalErrors?: Record<string, string>
+//  setGlobalErrors?: (errors: Record<string, string>) => void
 // }
 
-// export function TherapistFormStep3({ onNext, onBack, formData, updateFormData }: TherapistStep3Props) {
+// export function TherapistFormStep3({ onNext, onBack, formData, updateFormData, globalErrors }: TherapistStep3Props) {
 //   const methods = useForm<Step3Data>({
 //     resolver: zodResolver(step3Schema),
 //     mode: "onChange",

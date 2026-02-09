@@ -11,6 +11,7 @@ import * as z from "zod"
 import { FileText, BadgeCheck, Copyright, ShieldCheck } from "lucide-react"
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
+import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 import { FormFileUpload } from "@/shared/ui/forms"
 
 const step3Schema = z
@@ -57,10 +58,11 @@ interface CenterStep3Props {
       }
     >,
   ) => void
+  globalErrors?: Record<string, string>
   setGlobalErrors?: (errors: Record<string, string>) => void
 }
 
-export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: CenterStep3Props) {
+export function CenterFormStep3({ onNext, onBack, formData, updateFormData, globalErrors }: CenterStep3Props) {
   const methods = useForm<Step3Data>({
     resolver: zodResolver(step3Schema),
     mode: "onChange",
@@ -86,6 +88,8 @@ export function CenterFormStep3({ onNext, onBack, formData, updateFormData }: Ce
   }, [updateFormData]);
 
   useStepFormAutosave(methods, persistDraft);
+
+  useApplyGlobalFormErrors(globalErrors, methods.setError);
 
   const hasCommercialReg = watch("has_commercial_registration")
 

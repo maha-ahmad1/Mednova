@@ -6,10 +6,85 @@ interface BackendErrorResponse {
   data?: Record<string, unknown>
 }
 
+type FieldErrors = Record<string, string>
+
+const pushFieldError = (
+  bag: FieldErrors,
+  key: string,
+  message: string,
+  summaryParts: string[],
+) => {
+  if (!key || !message) return
+
+  if (!bag[key]) {
+    bag[key] = message
+    summaryParts.push(message)
+  }
+}
+
+const normalizeFieldPath = (path: string) => path.replace(/\[(\d+)\]/g, ".$1").replace(/^\.+|\.+$/g, "")
+
+const aliasFieldPath = (path: string): string[] => {
+  const aliases = new Set<string>([path])
+
+  if (path.startsWith("medicalSpecialties") || path.startsWith("medical_specialties")) {
+    aliases.add("medical_specialties_id")
+    aliases.add("specialty_id")
+  }
+
+  if (path.startsWith("schedules")) {
+    const cleaned = path.replace(/^schedules\.\d+\.?/, "")
+    if (cleaned) aliases.add(cleaned)
+  }
+
+  return Array.from(aliases)
+}
+
+const collectValidationErrors = (
+  value: unknown,
+  path: string,
+  bag: FieldErrors,
+  summaryParts: string[],
+) => {
+  if (Array.isArray(value)) {
+    if (value.every((item) => typeof item === "string" || typeof item === "number")) {
+      const message = value.map(String).find(Boolean)
+      if (!message) return
+
+      const normalizedPath = normalizeFieldPath(path)
+      aliasFieldPath(normalizedPath).forEach((key) => {
+        pushFieldError(bag, key, message, summaryParts)
+      })
+      return
+    }
+
+    value.forEach((item, index) => {
+      const nextPath = path ? `${path}.${index}` : String(index)
+      collectValidationErrors(item, nextPath, bag, summaryParts)
+    })
+    return
+  }
+
+  if (value && typeof value === "object") {
+    Object.entries(value).forEach(([key, nestedValue]) => {
+      const nextPath = path ? `${path}.${key}` : key
+      collectValidationErrors(nestedValue, nextPath, bag, summaryParts)
+    })
+    return
+  }
+
+  if (typeof value === "string" || typeof value === "number") {
+    const normalizedPath = normalizeFieldPath(path)
+    aliasFieldPath(normalizedPath).forEach((key) => {
+      pushFieldError(bag, key, String(value), summaryParts)
+    })
+  }
+}
+
 export const extractValidationErrors = (
   errorData?: BackendErrorResponse,
 ): { fieldErrors: Record<string, string>; summary: string } => {
-  const fieldErrors: Record<string, string> = {}
+  const fieldErrors: FieldErrors = {}
   const summaryParts: string[] = []
 
   if (!errorData?.data) {
@@ -20,23 +95,7 @@ export const extractValidationErrors = (
   }
 
   Object.entries(errorData.data).forEach(([field, value]) => {
-    let message = ""
-
-    if (Array.isArray(value) && value.length > 0) {
-      message = String(value[0])
-    } else if (typeof value === "string") {
-      message = value
-    } else if (value && typeof value === "object") {
-      const first = Object.values(value)[0]
-      if (Array.isArray(first) && first.length > 0) {
-        message = String(first[0])
-      }
-    }
-
-    if (message) {
-      fieldErrors[field] = message
-      summaryParts.push(message)
-    }
+    collectValidationErrors(value, field, fieldErrors, summaryParts)
   })
 
   const summary = summaryParts.length

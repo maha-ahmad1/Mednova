@@ -10,18 +10,24 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { User, Settings, HelpCircle, LogOut } from "lucide-react";
+import { useProfileImageStore } from "@/store/useProfileImageStore";
 
 export function UserMenu() {
   const { data: session } = useSession();
+  const storeImage = useProfileImageStore((state) => state.image);
+  
   if (!session?.user) return null;
+
+  // Use Zustand store image (source of truth for UI), fallback to session image
+  const displayImage = storeImage || session.user.image;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="flex items-center gap-2">
-          {session.user.image ? (
+          {displayImage ? (
             <Image
-              src={session.user.image}
+              src={displayImage}
               width={40}
               height={40}
               alt="User"

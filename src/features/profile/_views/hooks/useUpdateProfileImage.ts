@@ -4,14 +4,14 @@ import { useMutation } from "@tanstack/react-query"
 import type { AxiosError } from "axios"
 import { useAxiosInstance } from "@/lib/axios/axiosInstance"
 import { toast } from "sonner"
-import { useSession } from "next-auth/react" // أضف هذا
+import { useSession } from "next-auth/react"
 
 export type UserType = "therapist" | "center" | "patient"
 
 type UpdateProfileImageOptions = {
   userType: UserType
   userId?: string
-  onSuccess?: (data: Record<string, unknown>) => void // عدل هذا ليُرجع كل البيانات
+  onSuccess?: (data: UpdateProfileImageResponse) => void
   onError?: (error: string) => void
   refetch?: () => void
 }
@@ -21,9 +21,20 @@ type UpdatePayload = {
   customer_id?: string
 }
 
+type UpdateProfileImageResponse = {
+  image?: string
+  data?: {
+    image?: string
+    user?: {
+      image?: string
+    }
+  }
+}
+
+
 export const useUpdateProfileImage = (options: UpdateProfileImageOptions) => {
   const axios = useAxiosInstance()
-  const { update } = useSession() // أضف هذا لتحديث الجلسة
+  const { update } = useSession()
 
   // Map user type to API endpoint
   const getEndpoint = (userType: UserType): string => {
@@ -40,7 +51,6 @@ export const useUpdateProfileImage = (options: UpdateProfileImageOptions) => {
       const formData = new FormData()
       formData.append("image", data.image)
 
-      // Add customer_id if provided
       if (data.customer_id) {
         formData.append("customer_id", data.customer_id)
       }

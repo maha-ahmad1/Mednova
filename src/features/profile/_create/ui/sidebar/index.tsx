@@ -4,14 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { sidebarMenus } from "@/constants/sidebar-menu";
-import { LogOut } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { SidebarImageEditor } from "./SidebarImageEditor";
 import { useFetcher } from "@/hooks/useFetcher";
 import { useEffect, useState } from "react";
 import { type UserType } from "@/features/profile/_views/hooks/useUpdateProfileImage";
-import { signOut } from "next-auth/react";
-// import { useUserStore } from "@/store/useUserStore";
+import { useProfileImageStore } from "@/store/useProfileImageStore";
 
 
 type TherapistProfile = {
@@ -37,6 +35,7 @@ type ProfileData = TherapistProfile | CenterProfile | PatientProfile;
 export function Sidebar() {
   const pathname = usePathname();
   const { data: session, status } = useSession();
+  const { setImage: setStoreImage } = useProfileImageStore();
   const [image, setImage] = useState<string | null>(null);
   // const { setUser } = useUserStore();
 
@@ -54,15 +53,15 @@ export function Sidebar() {
     `/api/customer/${userId}`
   );
 
-
-  
   useEffect(() => {
     if (profileData?.image) {
       setImage(profileData.image);
+      setStoreImage(profileData.image);
     } else if (session?.user?.image) {
       setImage(session.user.image);
+      setStoreImage(session.user.image);
     }
-  }, [profileData?.image, session?.user?.image]);
+  }, [profileData?.image, session?.user?.image, setStoreImage]);
 
 if (status === "loading" || isLoadingProfile) {
   return (

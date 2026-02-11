@@ -8,7 +8,8 @@ import { Loader2, Upload, User, Pencil } from "lucide-react"
 import { toast } from "sonner"
 import { useUpdateProfileImage , type UserType } from "@/features/profile/_views/hooks/useUpdateProfileImage"
 import Image from "next/image"
-import { useSession } from "next-auth/react" // أضف هذا
+import { useSession } from "next-auth/react"
+import { useProfileImageStore } from "@/store/useProfileImageStore"
 
 interface SidebarImageEditorProps {
   currentImage: string
@@ -28,26 +29,30 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
-  // أضف useSession هنا
-  const {data: session, update } = useSession()
+  const { setImage: setStoreImage } = useProfileImageStore()
+  
+  const { data: session, update } = useSession()
 
   const { updateImage, isUpdating } = useUpdateProfileImage({
     userType,
     userId,
     onSuccess: async (data) => {
-      // تحديث الجلسة بعد نجاح رفع الصورة
-      // if (data?.image) {
-      //   try {
-      //     await update({
-      //       user: {
-      //         ...session?.user,
-      //         image: data.image // تأكد أن الـ API يرجع رابط الصورة الجديدة
-      //       }
-      //     })
-      //   } catch (error) {
-      //     console.error("Failed to update session:", error)
-      //   }
-      // }
+      const newImageUrl = data?.image || data?.data?.image || data?.data?.user?.image
+      
+      if (newImageUrl) {
+        setStoreImage(newImageUrl)
+        
+        try {
+          await update({
+            user: {
+              ...session?.user,
+              image: newImageUrl
+            }
+          })
+        } catch (error) {
+          console.error("Failed to update session:", error)
+        }
+      }
       
       setIsModalOpen(false)
       setPreviewImage(null)

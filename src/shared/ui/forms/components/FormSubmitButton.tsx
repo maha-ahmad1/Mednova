@@ -42,8 +42,8 @@ const FormSubmitButton = React.forwardRef<HTMLButtonElement, FormSubmitButtonPro
           variant={variant}
           size={size}
           disabled={isLoading || disabled}
-          className={cn(className) }
-          {...props}
+          className={cn("cursor-pointer", className)}
+          {...props} 
         >
           {isLoading ? loadingText : children}
         </Button>

@@ -220,13 +220,13 @@ export function LoginForm() {
             <input
               type="checkbox"
               id="terms"
-              className="mt-1 rounded border-border"
+              className="mt-1 rounded border-border cursor-pointer"
               {...register("remember")}
             />
             <div className="flex justify-between w-full">
               <Label
                 htmlFor="terms"
-                className="text-sm text-muted-foreground cursor-pointer"
+                className="text-sm text-muted-foreground "
               >
                 تذكرني
               </Label>
@@ -243,13 +243,14 @@ export function LoginForm() {
             isLoading={mutation.isPending}
             loadingText="جاري تسجيل الدخول..."
             size="lg"
+            className="cursor-pointer"
           >
             تسجيل الدخول
           </FormSubmitButton>
         </form>
 
         {/* ✅ Divider */}
-        <div className="relative">
+        {/* <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-border" />
           </div>
@@ -267,7 +268,7 @@ export function LoginForm() {
             provider="facebook"
             onClick={() => signIn("facebook")}
           />
-        </div>
+        </div> */}
 
         <div>
           <a href="#" className="text-[#4B5563] text-md cursor-default">

@@ -26,7 +26,7 @@ export const mockUsers: AdminUser[] = [
     fullName: "Pulse Rehab Center",
     email: "admin@pulserehab.center",
     type: "Center",
-    status: "Suspended",
+    status: "Approved",
     isEmailVerified: false,
     isBlocked: true,
     createdAt: "2025-09-02T12:05:00.000Z",

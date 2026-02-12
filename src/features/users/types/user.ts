@@ -4,7 +4,6 @@ export type UserStatus =
   | "Pending"
   | "Approved"
   | "Rejected"
-  | "Suspended";
 
 export interface AdminUser {
   id: string;

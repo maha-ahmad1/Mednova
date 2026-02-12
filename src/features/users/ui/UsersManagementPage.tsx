@@ -20,6 +20,14 @@ type PendingAction =
   | { kind: "bulk-approve"; userIds: string[] }
   | null;
 
+
+const statusLabels: Record<UserStatus, string> = {
+  Pending: "قيد الانتظار",
+  Approved: "موافق عليه",
+  Rejected: "مرفوض",
+};
+
+  
 const initialFilters: UsersFilters = {
   search: "",
   type: "all",
@@ -109,58 +117,59 @@ export function UsersManagementPage() {
     setPendingAction(null);
   };
 
-  const getConfirmationCopy = () => {
-    if (!pendingAction) {
-      return {
-        title: "",
-        description: "",
-        confirmLabel: "Confirm",
-      };
-    }
+const getConfirmationCopy = () => {
+  if (!pendingAction) {
+    return {
+      title: "",
+      description: "",
+      confirmLabel: "تأكيد",
+    };
+  }
 
-    if (pendingAction.kind === "status") {
-      return {
-        title: "Change user status",
-        description: `Are you sure you want to change this user status to ${pendingAction.nextStatus}?`,
-        confirmLabel: "Update status",
-      };
-    }
+  if (pendingAction.kind === "status") {
+    return {
+      title: "تغيير حالة المستخدم",
+      description: `هل أنت متأكد أنك تريد تغيير حالة هذا المستخدم إلى ${statusLabels[pendingAction.nextStatus]}؟`,
+      confirmLabel: "تحديث الحالة",
+    };
+  }
 
-    if (pendingAction.kind === "toggle-block") {
-      const user = users.find((item) => item.id === pendingAction.userId);
-      const isCurrentlyBlocked = user?.isBlocked;
-
-      return {
-        title: isCurrentlyBlocked ? "Unblock user" : "Block user",
-        description: isCurrentlyBlocked
-          ? "This user will regain access to the platform."
-          : "This user will be blocked from accessing the platform.",
-        confirmLabel: isCurrentlyBlocked ? "Unblock" : "Block",
-      };
-    }
-
-    if (pendingAction.kind === "delete") {
-      return {
-        title: "Delete user",
-        description: "This action cannot be undone. Are you sure you want to delete this user?",
-        confirmLabel: "Delete",
-      };
-    }
+  if (pendingAction.kind === "toggle-block") {
+    const user = users.find((item) => item.id === pendingAction.userId);
+    const isCurrentlyBlocked = user?.isBlocked;
 
     return {
-      title: "Approve selected users",
-      description: `Approve ${pendingAction.userIds.length} selected users?`,
-      confirmLabel: "Approve selected",
+      title: isCurrentlyBlocked ? "إلغاء حظر المستخدم" : "حظر المستخدم",
+      description: isCurrentlyBlocked
+        ? "سيتمكن هذا المستخدم من الوصول إلى المنصة مرة أخرى."
+        : "سيتم حظر هذا المستخدم من الوصول إلى المنصة.",
+      confirmLabel: isCurrentlyBlocked ? "إلغاء الحظر" : "حظر",
     };
+  }
+
+  if (pendingAction.kind === "delete") {
+    return {
+      title: "حذف المستخدم",
+      description: "لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
+      confirmLabel: "حذف",
+    };
+  }
+
+  return {
+    title: "الموافقة على المستخدمين المحددين",
+    description: `هل تريد الموافقة على ${pendingAction.userIds.length} مستخدم/مستخدمين محددين؟`,
+    confirmLabel: "الموافقة",
   };
+};
+
 
   const confirmationCopy = getConfirmationCopy();
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-5 p-6">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold text-foreground">Users Management</h1>
-        <p className="text-sm text-muted-foreground">Manage user accounts, statuses, and moderation actions.</p>
+        <h1 className="text-2xl font-semibold text-foreground">إدارة المستخدمين</h1>
+        <p className="text-sm text-muted-foreground">إدارة حسابات المستخدمين، حالاتهم، وإجراءات الإشراف.</p>
       </div>
 
       <UsersTableFilters filters={filters} onChange={setFilters} />
@@ -187,12 +196,12 @@ export function UsersManagementPage() {
                   aria-label="Select all users"
                 />
               </th>
-              <th className="px-4 py-3 font-medium">Name</th>
-              <th className="px-4 py-3 font-medium">User Type</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium">Email Verification</th>
-              <th className="px-4 py-3 font-medium">Join Date</th>
-              <th className="px-4 py-3 font-medium">Actions</th>
+              <th className="px-4 py-3 font-medium text-right">الاسم</th>
+              <th className="px- py-3 font-medium ">نوع المستخدم</th>
+              <th className="px-6 py-3 font-medium ">الحالة</th>
+              <th className="px-4 py-3 font-medium">توثيق البريد</th>
+              <th className="px-4 py-3 font-medium">تاريخ الانضمام</th>
+              <th className="px-4 py-3 font-medium">الإجراءات</th>
             </tr>
           </thead>
 
@@ -214,7 +223,7 @@ export function UsersManagementPage() {
                     aria-label={`Select ${user.fullName}`}
                   />
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-3 text-right">
                   <div className="font-medium text-foreground">{user.fullName}</div>
                   <div className="text-xs text-muted-foreground">{user.email}</div>
                 </td>

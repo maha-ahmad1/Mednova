@@ -9,29 +9,29 @@ interface UsersTableFiltersProps {
 }
 
 const userTypeOptions: Array<{ label: string; value: "all" | UserType }> = [
-  { label: "All Types", value: "all" },
-  { label: "Patient", value: "Patient" },
-  { label: "Specialist", value: "Specialist" },
-  { label: "Center", value: "Center" },
+  { label: "جميع الأنواع", value: "all" },
+  { label: "مريض", value: "Patient" },
+  { label: "مختص", value: "Specialist" },
+  { label: "مركز", value: "Center" },
 ];
 
 const statusOptions: Array<{ label: string; value: "all" | UserStatus }> = [
-  { label: "All Statuses", value: "all" },
-  { label: "Pending", value: "Pending" },
-  { label: "Approved", value: "Approved" },
-  { label: "Rejected", value: "Rejected" },
-  { label: "Suspended", value: "Suspended" },
+  { label: "جميع الحالات", value: "all" },
+  { label: "معلق", value: "Pending" },
+  { label: "موافق", value: "Approved" },
+  { label: "مرفوض", value: "Rejected" },
+  // { label: "معلق مؤقت", value: "Suspended" },
 ];
 
 export function UsersTableFilters({ filters, onChange }: UsersTableFiltersProps) {
   return (
-    <div className="grid gap-3 rounded-xl border bg-white p-4 md:grid-cols-2 lg:grid-cols-5">
+    <div className="grid gap-3 rounded-xl border bg-white p-4 md:grid-cols-2 lg:grid-cols-5 " >
       <div className="relative lg:col-span-2">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={filters.search}
           onChange={(event) => onChange({ ...filters, search: event.target.value })}
-          placeholder="Search by name or email"
+          placeholder="بحث بالاسم أو البريد الإلكتروني"
           className="pl-10"
         />
       </div>
@@ -43,7 +43,7 @@ export function UsersTableFilters({ filters, onChange }: UsersTableFiltersProps)
         <SelectTrigger>
           <SelectValue placeholder="Filter by user type" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="text-right" dir="rtl">
           {userTypeOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
@@ -59,7 +59,7 @@ export function UsersTableFilters({ filters, onChange }: UsersTableFiltersProps)
         <SelectTrigger>
           <SelectValue placeholder="Filter by status" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="text-right" dir="rtl">
           {statusOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}

@@ -23,23 +23,37 @@ export function UserActionsDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon-sm" aria-label="Open actions menu">
-          <MoreHorizontal className="h-4 w-4" />
+        <Button variant="ghost" size="icon-sm" aria-label="Open actions menu" className="cursor-pointer">
+          <MoreHorizontal className="h-4 w-4 cursor-pointer" />
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-44">
-        <DropdownMenuItem onClick={onViewDetails}>
+      <DropdownMenuContent align="end" className="w-44 ">
+        <DropdownMenuItem
+          onClick={onViewDetails}
+          className="text-right cursor-pointer"
+          dir="rtl"
+        >
           <Eye className="h-4 w-4" />
-          View Details
+          عرض التفاصيل
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onToggleBlock}>
+        <DropdownMenuItem
+          onClick={onToggleBlock}
+          className="text-right cursor-pointer"
+          dir="rtl"
+        >
           <Ban className="h-4 w-4" />
-          {isBlocked ? "Unblock" : "Block"}
+
+          {isBlocked ? "إلغاء الحظر" : "حظر"}
         </DropdownMenuItem>
-        <DropdownMenuItem variant="destructive" onClick={onDelete}>
+        <DropdownMenuItem
+          variant="destructive"
+          onClick={onDelete}
+          className="text-right cursor-pointer"
+          dir="rtl"
+        >
           <Trash2 className="h-4 w-4" />
-          Delete
+          حذف
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

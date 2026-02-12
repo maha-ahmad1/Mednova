@@ -1,18 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import type { AdminNavItem } from "@/features/admin-layout/config/navigation";
+import type { AdminSidebarAction } from "@/features/admin-layout/config/navigation";
 
 interface SidebarItemProps {
-  item: AdminNavItem;
-  isActive: boolean;
+  item: AdminSidebarAction;
   collapsed: boolean;
   onNavigate?: () => void;
 }
 
-export function SidebarItem({ item, isActive, collapsed, onNavigate }: SidebarItemProps) {
+export function SidebarItem({ item, collapsed, onNavigate }: SidebarItemProps) {
   const Icon = item.icon;
 
   return (
@@ -20,21 +18,13 @@ export function SidebarItem({ item, isActive, collapsed, onNavigate }: SidebarIt
       href={item.href}
       onClick={onNavigate}
       className={cn(
-        "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-        "hover:bg-muted/80",
-        isActive && "bg-primary/10 text-primary",
+        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10",
         collapsed && "justify-center px-2",
       )}
-      aria-current={isActive ? "page" : undefined}
       title={collapsed ? item.label : undefined}
     >
       <Icon className="h-4 w-4 shrink-0" />
-      {!collapsed && (
-        <>
-          <span className="flex-1">{item.label}</span>
-          {item.badge ? <Badge variant="secondary">{item.badge}</Badge> : null}
-        </>
-      )}
+      {!collapsed ? <span>{item.label}</span> : null}
     </Link>
   );
 }

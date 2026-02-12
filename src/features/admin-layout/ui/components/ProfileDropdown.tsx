@@ -20,28 +20,29 @@ export function ProfileDropdown() {
           <Avatar className="h-8 w-8">
             <AvatarFallback className="bg-primary/10 text-primary">AD</AvatarFallback>
           </Avatar>
-          <span className="hidden text-sm sm:inline">مدير النظام</span>
+          <span className="hidden text-sm sm:inline">Admin</span>
           <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+
+      <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuItem asChild>
           <Link href="/profile" className="flex items-center gap-2">
             <UserCircle2 className="h-4 w-4" />
-            ملفي الشخصي
+            My Profile
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/admin/settings/platform" className="flex items-center gap-2">
+          <Link href="/admin/users/settings/platform" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
-            الإعدادات
+            Settings
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/login" className="flex items-center gap-2 text-destructive focus:text-destructive">
             <LogOut className="h-4 w-4" />
-            تسجيل الخروج
+            Logout
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

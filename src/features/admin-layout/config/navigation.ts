@@ -1,91 +1,100 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  ChartNoAxesCombined,
-  Users,
-  UserRound,
-  Stethoscope,
-  Building2,
-  UserRoundCheck,
-  Landmark,
-  Wallet,
-  HandCoins,
-  TrendingUp,
-  Cpu,
-  MonitorSmartphone,
-  Activity,
   BarChart3,
-  LineChart,
-  Settings,
-  ShieldCheck,
-  Bell,
-  Percent,
+  ChartNoAxesCombined,
+  Cpu,
+  Landmark,
   LogOut,
+  Settings,
+  Users,
 } from "lucide-react";
 
-export interface AdminNavItem {
+export interface AdminSidebarSubItem {
   label: string;
   href: string;
-  icon: LucideIcon;
   badge?: string;
 }
 
-export interface AdminNavGroup {
-  title: string;
-  items: AdminNavItem[];
+export interface AdminSidebarGroup {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  items: AdminSidebarSubItem[];
 }
 
-export const adminNavigation: AdminNavGroup[] = [
+export interface AdminSidebarAction {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+}
+
+export const adminSidebarGroups: AdminSidebarGroup[] = [
   {
-    title: "لوحة التحكم",
-    items: [{ label: "نظرة عامة", href: "/admin", icon: ChartNoAxesCombined }],
-  },
-  {
-    title: "إدارة المستخدمين",
+    id: "dashboard",
+    label: "Dashboard",
+    icon: ChartNoAxesCombined,
     items: [
-      { label: "جميع المستخدمين", href: "/admin/users", icon: Users },
-      { label: "المرضى", href: "/admin/users/patients", icon: UserRound },
-      { label: "المختصون", href: "/admin/users/specialists", icon: Stethoscope },
-      { label: "المراكز", href: "/admin/users/centers", icon: Building2 },
-      { label: "طلبات معلقة", href: "/admin/users/pending-requests", icon: UserRoundCheck, badge: "8" },
+      { label: "Overview", href: "/admin/users" },
+      { label: "Stats", href: "/admin/users/stats" },
     ],
   },
   {
-    title: "المالية",
+    id: "users-management",
+    label: "Users Management",
+    icon: Users,
     items: [
-      { label: "المعاملات", href: "/admin/finance/transactions", icon: Landmark },
-      { label: "المحافظ", href: "/admin/finance/wallets", icon: Wallet },
-      { label: "المدفوعات", href: "/admin/finance/payouts", icon: HandCoins },
-      { label: "الإيرادات", href: "/admin/finance/revenue", icon: TrendingUp },
+      { label: "All Users", href: "/admin/users" },
+      { label: "Patients", href: "/admin/users/patients" },
+      { label: "Specialists", href: "/admin/users/specialists" },
+      { label: "Centers", href: "/admin/users/centers" },
+      { label: "Pending Requests", href: "/admin/users/pending-requests", badge: "8" },
     ],
   },
   {
-    title: "الأجهزة",
+    id: "finance",
+    label: "Finance",
+    icon: Landmark,
     items: [
-      { label: "الأجهزة", href: "/admin/hardware/devices", icon: Cpu },
-      { label: "الأجهزة المخصصة", href: "/admin/hardware/assigned", icon: MonitorSmartphone },
-      { label: "حالة الأجهزة", href: "/admin/hardware/status", icon: Activity },
+      { label: "Transactions", href: "/admin/users/finance/transactions" },
+      { label: "Wallets", href: "/admin/users/finance/wallets" },
+      { label: "Payouts", href: "/admin/users/finance/payouts" },
+      { label: "Revenue", href: "/admin/users/finance/revenue" },
     ],
   },
   {
-    title: "التقارير",
+    id: "hardware",
+    label: "Hardware",
+    icon: Cpu,
     items: [
-      { label: "تحليلات الاستخدام", href: "/admin/reports/usage-analytics", icon: BarChart3 },
-      { label: "مؤشرات النمو", href: "/admin/reports/growth-metrics", icon: LineChart },
+      { label: "Devices", href: "/admin/users/hardware/devices" },
+      { label: "Assigned Devices", href: "/admin/users/hardware/assigned" },
+      { label: "Device Status", href: "/admin/users/hardware/status" },
     ],
   },
   {
-    title: "إعدادات النظام",
+    id: "reports",
+    label: "Reports",
+    icon: BarChart3,
     items: [
-      { label: "إعدادات المنصة", href: "/admin/settings/platform", icon: Settings },
-      { label: "الأدوار والصلاحيات", href: "/admin/settings/roles", icon: ShieldCheck },
-      { label: "الإشعارات", href: "/admin/settings/notifications", icon: Bell },
-      { label: "نسبة العمولة", href: "/admin/settings/commission-rate", icon: Percent },
+      { label: "Usage Analytics", href: "/admin/users/reports/usage-analytics" },
+      { label: "Growth Metrics", href: "/admin/users/reports/growth-metrics" },
+    ],
+  },
+  {
+    id: "system-settings",
+    label: "System Settings",
+    icon: Settings,
+    items: [
+      { label: "Platform Settings", href: "/admin/users/settings/platform" },
+      { label: "Roles & Permissions", href: "/admin/users/settings/roles" },
+      { label: "Notifications", href: "/admin/users/settings/notifications" },
+      { label: "Commission Rate", href: "/admin/users/settings/commission-rate" },
     ],
   },
 ];
 
-export const adminLogoutItem: AdminNavItem = {
-  label: "تسجيل الخروج",
+export const adminSidebarLogoutAction: AdminSidebarAction = {
+  label: "Logout",
   href: "/login",
   icon: LogOut,
 };

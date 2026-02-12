@@ -37,7 +37,7 @@ const FormAccountTypeSelector = React.forwardRef<HTMLDivElement, FormAccountType
                 type="button"
                 onClick={() => onChange(option.value)}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all",
+                  "flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all cursor-pointer",
                   isSelected
                     ? "border-[#32A88D] bg-[#F0FDF4] text-[#32A88D]"
                     : "border-border bg-card hover:border-[#32A88D] hover:bg-[#F0FDF4] hover:text-[#32A88D]",

@@ -232,6 +232,7 @@ export function RegistrationForm() {
               isLoading={mutation.isPending}
               loadingText="جاري الإنشاء..."
               size="lg"
+              
             >
               إنشاء حساب
             </FormSubmitButton>
@@ -239,7 +240,7 @@ export function RegistrationForm() {
         </FormProvider>
 
         {/* Social Login */}
-        <div className="relative">
+        {/* <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-border" />
           </div>
@@ -250,7 +251,7 @@ export function RegistrationForm() {
         <div className="grid grid-cols-2 gap-8">
           <SocialLoginButton provider="google" />
           <SocialLoginButton provider="facebook" />
-        </div>
+        </div> */}
 
         {/* Login Link */}
         <div>

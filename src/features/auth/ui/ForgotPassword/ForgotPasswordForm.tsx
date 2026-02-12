@@ -135,7 +135,7 @@ export function ForgotPassword() {
 
         <div className=" text-sm ">
           <span className="text-gray-600">تذكرت كلمة المرور؟ </span>
-          <Link href="/login" className="text-[#32A88D] hover:underline">
+          <Link href="/login" className="cursor-pointer text-[#32A88D] hover:underline">
             تسجيل الدخول
           </Link>
         </div>

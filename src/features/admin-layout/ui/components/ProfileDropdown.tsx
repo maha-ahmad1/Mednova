@@ -25,7 +25,7 @@ export function ProfileDropdown() {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-56" dir="rtl">
+      <DropdownMenuContent align="end" className="w-56 text-right">
         <DropdownMenuItem asChild>
           <Link href="/profile" className="flex flex-row-reverse items-center justify-end gap-2 text-right">
             <UserCircle2 className="h-4 w-4" />

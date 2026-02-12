@@ -34,7 +34,7 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div dir="rtl" className="min-h-screen bg-muted/30">
       <AdminSidebar
         collapsed={collapsed}
         openGroupId={openGroupId}
@@ -49,10 +49,10 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
       <main
         className={cn(
           "pt-16 transition-all",
-          collapsed ? "lg:pl-20" : "lg:pl-72",
+          collapsed ? "lg:pr-20" : "lg:pr-72",
         )}
       >
-        <div className="p-4 sm:p-6">{children}</div>
+        <div className="p-4 text-right sm:p-6">{children}</div>
       </main>
     </div>
   );

@@ -17,9 +17,9 @@ export function SidebarSubItem({ item, isActive, onNavigate }: SidebarSubItemPro
       href={item.href}
       onClick={onNavigate}
       className={cn(
-        "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
+        "flex flex-row-reverse items-center gap-2 rounded-md px-3 py-2 text-right text-sm transition-colors",
         "hover:bg-muted/80",
-        isActive && "border-l-2 border-primary bg-primary/10 font-medium text-primary",
+        isActive && "border-r-2 border-primary bg-primary/10 font-medium text-primary",
       )}
       aria-current={isActive ? "page" : undefined}
     >

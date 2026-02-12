@@ -18,7 +18,7 @@ export function SidebarItem({ item, collapsed, onNavigate }: SidebarItemProps) {
       href={item.href}
       onClick={onNavigate}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10",
+        "flex flex-row-reverse items-center justify-end gap-3 rounded-lg px-3 py-2.5 text-right text-sm font-medium text-destructive transition-colors hover:bg-destructive/10",
         collapsed && "justify-center px-2",
       )}
       title={collapsed ? item.label : undefined}

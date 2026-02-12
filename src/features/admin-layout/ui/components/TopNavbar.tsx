@@ -16,8 +16,8 @@ export function TopNavbar({ collapsed, onOpenMobileSidebar }: TopNavbarProps) {
   return (
     <header
       className={
-        "fixed right-0 top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 transition-all " +
-        (collapsed ? "left-0 lg:left-20" : "left-0 lg:left-72")
+        "fixed left-0 top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 transition-all " +
+        (collapsed ? "right-0 lg:right-20" : "right-0 lg:right-72")
       }
     >
       <div className="flex h-16 items-center justify-between gap-3 px-4 sm:px-6">
@@ -27,20 +27,21 @@ export function TopNavbar({ collapsed, onOpenMobileSidebar }: TopNavbarProps) {
             size="icon"
             className="lg:hidden"
             onClick={onOpenMobileSidebar}
-            aria-label="Open sidebar"
+            aria-label="فتح القائمة"
           >
             <Menu className="h-5 w-5" />
           </Button>
 
-          <div className="relative hidden w-full max-w-sm sm:block">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Quick search..." className="pl-9" />
-          </div>
+          <div className="hidden text-sm font-semibold text-primary sm:block">لوحة تحكم MedNova</div>
         </div>
 
         <Breadcrumbs />
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          <div className="relative hidden w-full max-w-xs sm:block">
+            <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input placeholder="بحث سريع..." className="pr-9 text-right" />
+          </div>
           <NotificationDropdown />
           <ProfileDropdown />
         </div>

@@ -17,32 +17,38 @@ export function ProfileDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="gap-2 px-2">
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          <span className="hidden text-sm sm:inline">مدير النظام</span>
           <Avatar className="h-8 w-8">
             <AvatarFallback className="bg-primary/10 text-primary">AD</AvatarFallback>
           </Avatar>
-          <span className="hidden text-sm sm:inline">Admin</span>
-          <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-52">
+      <DropdownMenuContent align="end" className="w-56" dir="rtl">
         <DropdownMenuItem asChild>
-          <Link href="/profile" className="flex items-center gap-2">
+          <Link href="/profile" className="flex flex-row-reverse items-center justify-end gap-2 text-right">
             <UserCircle2 className="h-4 w-4" />
-            My Profile
+            ملفي الشخصي
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/admin/users/settings/platform" className="flex items-center gap-2">
+          <Link
+            href="/admin/users/settings/platform"
+            className="flex flex-row-reverse items-center justify-end gap-2 text-right"
+          >
             <Settings className="h-4 w-4" />
-            Settings
+            الإعدادات
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/login" className="flex items-center gap-2 text-destructive focus:text-destructive">
+          <Link
+            href="/login"
+            className="flex flex-row-reverse items-center justify-end gap-2 text-right text-destructive focus:text-destructive"
+          >
             <LogOut className="h-4 w-4" />
-            Logout
+            تسجيل الخروج
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

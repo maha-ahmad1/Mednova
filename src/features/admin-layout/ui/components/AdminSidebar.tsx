@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
-import { ChevronsLeftRight } from "lucide-react";
+import { PanelRightClose, PanelRightOpen } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -49,23 +50,32 @@ export function AdminSidebar({
 
   const sidebarContent = (
     <div className="flex h-full flex-col">
-      <div className="flex h-16 items-center justify-between border-b px-4">
-        {!collapsed ? (
-          <Link href="/admin/users" className="text-base font-bold text-primary">
-            MedNova Admin
-          </Link>
-        ) : (
-          <span className="text-sm font-bold text-primary">MN</span>
-        )}
+      <div className="flex h-20 items-center justify-between border-b px-4">
+        <Link href="/admin/users" className="flex items-center gap-2">
+          {collapsed ? (
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-sm font-bold text-primary">
+              M
+            </span>
+          ) : (
+            <Image
+              src="/images/auth/mednova-logo.png"
+              alt="MedNova"
+              width={128}
+              height={36}
+              className="h-9 w-auto"
+              priority
+            />
+          )}
+        </Link>
 
         <Button
           variant="ghost"
           size="icon"
           className="hidden lg:inline-flex"
           onClick={onToggleCollapsed}
-          aria-label="Toggle sidebar"
+          aria-label="طي الشريط الجانبي"
         >
-          <ChevronsLeftRight className="h-4 w-4" />
+          {collapsed ? <PanelRightOpen className="h-4 w-4" /> : <PanelRightClose className="h-4 w-4" />}
         </Button>
       </div>
 
@@ -99,7 +109,7 @@ export function AdminSidebar({
     <>
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 hidden border-r bg-card lg:block",
+          "fixed inset-y-0 right-0 z-40 hidden border-l bg-card lg:block",
           sidebarWidthClass,
         )}
       >
@@ -107,7 +117,7 @@ export function AdminSidebar({
       </aside>
 
       <Sheet open={mobileOpen} onOpenChange={onMobileOpenChange}>
-        <SheetContent side="left" className="w-[280px] p-0">
+        <SheetContent side="right" className="w-[280px] p-0">
           {sidebarContent}
         </SheetContent>
       </Sheet>

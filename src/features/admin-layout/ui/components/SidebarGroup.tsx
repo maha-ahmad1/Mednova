@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { AdminSidebarGroup as AdminSidebarGroupType } from "@/features/admin-layout/config/navigation";
 import { SidebarSubItem } from "./SidebarSubItem";
@@ -48,24 +48,24 @@ export function SidebarGroup({
         type="button"
         onClick={onToggle}
         className={cn(
-          "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted/80",
+          "flex w-full flex-row-reverse items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted/80",
           hasActiveSubItem && "text-primary",
         )}
         aria-expanded={isOpen}
       >
         <GroupIcon className="h-4 w-4 shrink-0" />
-        <span className="flex-1 text-left">{group.label}</span>
-        <ChevronDown
+        <span className="flex-1 text-right">{group.label}</span>
+        <ChevronLeft
           className={cn(
             "h-4 w-4 text-muted-foreground transition-transform duration-200",
-            isOpen && "rotate-180",
+            isOpen && "-rotate-90",
           )}
         />
       </button>
 
       <div
         className={cn(
-          "grid overflow-hidden pr-6 transition-all duration-300",
+          "grid overflow-hidden pl-1 pr-6 transition-all duration-300",
           isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-70",
         )}
       >

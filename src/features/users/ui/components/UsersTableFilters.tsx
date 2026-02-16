@@ -25,23 +25,26 @@ const statusOptions: Array<{ label: string; value: "all" | UserStatus }> = [
 
 export function UsersTableFilters({ filters, onChange }: UsersTableFiltersProps) {
   return (
-    <div className="grid gap-3 rounded-xl border bg-white p-4 md:grid-cols-2 lg:grid-cols-5 " >
-      <div className="relative lg:col-span-2">
+    <div className="grid gap-3 rounded-xl border bg-white p-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
+      {/* حقل البحث - يأخذ العرض الكامل على الموبايل، وعمودين على الشاشات المتوسطة، وعمودين على الكبيرة */}
+      <div className="relative md:col-span-1 lg:col-span-2">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={filters.search}
           onChange={(event) => onChange({ ...filters, search: event.target.value })}
           placeholder="بحث بالاسم أو البريد الإلكتروني"
-          className="pl-10"
+          className="pl-10 w-full"
+          dir="rtl"
         />
       </div>
 
+      {/* فلتر نوع المستخدم - عرض كامل على الموبايل */}
       <Select
         value={filters.type}
         onValueChange={(value) => onChange({ ...filters, type: value as UsersFilters["type"] })}
       >
-        <SelectTrigger>
-          <SelectValue placeholder="Filter by user type" />
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="نوع المستخدم" />
         </SelectTrigger>
         <SelectContent className="text-right" dir="rtl">
           {userTypeOptions.map((option) => (
@@ -52,12 +55,13 @@ export function UsersTableFilters({ filters, onChange }: UsersTableFiltersProps)
         </SelectContent>
       </Select>
 
+      {/* فلتر الحالة - عرض كامل على الموبايل */}
       <Select
         value={filters.status}
         onValueChange={(value) => onChange({ ...filters, status: value as UsersFilters["status"] })}
       >
-        <SelectTrigger>
-          <SelectValue placeholder="Filter by status" />
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="الحالة" />
         </SelectTrigger>
         <SelectContent className="text-right" dir="rtl">
           {statusOptions.map((option) => (
@@ -68,22 +72,25 @@ export function UsersTableFilters({ filters, onChange }: UsersTableFiltersProps)
         </SelectContent>
       </Select>
 
-      <div className="grid grid-cols-2 gap-2">
+      {/* الفلاتر الإضافية - يمكن إضافتها عند الحاجة */}
+      {/* <div className="grid grid-cols-2 gap-2 md:col-span-2 lg:col-span-1">
         <Input
           type="date"
           value={filters.dateFrom}
           onChange={(event) => onChange({ ...filters, dateFrom: event.target.value })}
-          aria-label="Date from"
-          className="p-3"
+          aria-label="من تاريخ"
+          className="w-full"
+          dir="rtl"
         />
         <Input
           type="date"
           value={filters.dateTo}
           onChange={(event) => onChange({ ...filters, dateTo: event.target.value })}
-          aria-label="Date to"
-          className="p-3"
+          aria-label="إلى تاريخ"
+          className="w-full"
+          dir="rtl"
         />
-      </div>
+      </div> */}
     </div>
   );
 }

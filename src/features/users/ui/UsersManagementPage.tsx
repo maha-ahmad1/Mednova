@@ -172,7 +172,7 @@ const getConfirmationCopy = () => {
         <p className="text-sm text-muted-foreground">إدارة حسابات المستخدمين، حالاتهم، وإجراءات الإشراف.</p>
       </div>
 
-      <UsersTableFilters filters={filters} onChange={setFilters} />
+         <UsersTableFilters filters={filters} onChange={setFilters} />
 
       {selectedRows.length > 0 && (
         <div className="flex items-center justify-between rounded-lg border bg-white p-3">
@@ -185,9 +185,9 @@ const getConfirmationCopy = () => {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border bg-white">
-        <table className="min-w-full text-left text-sm">
-          <thead className="bg-muted/40 text-muted-foreground">
+      <div className="overflow-x-auto rounded-xl border bg-white">
+  <table className="w-full text-left text-sm">
+    <thead className="bg-muted/40 text-muted-foreground">
             <tr>
               <th className="w-12 px-4 py-3">
                 <Checkbox

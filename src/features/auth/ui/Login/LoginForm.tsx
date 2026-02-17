@@ -44,7 +44,7 @@ const loginSchema = z.object({
     .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
-      "يجب أن تحتوي كلمة المرور على حرف كبير وحرف صغير ورمز واحد على الأقل",
+      "يجب أن تحتوي كلمة المرور على حرف كبير وحرف صغير ورمز واحد على الأقل"
     ),
   remember: z.boolean().optional(),
 });
@@ -69,22 +69,23 @@ export function LoginForm() {
     mode: "onChange",
   });
 
-  useEffect(() => {
-    const message = searchParams.get("message");
+useEffect(() => {
+  const message = searchParams.get("message");
 
-    if (message) {
-      if (message === "verified") {
-        toast.success("تم التحقق من البريد الإلكتروني بنجاح 🎉");
-      }
-
-      if (message === "already_verified") {
-        toast.info("تم التحقق من البريد مسبقاً");
-      }
-
-      // تنظيف الرابط
-      router.replace("/login");
+  if (message) {
+    if (message === "verified") {
+      toast.success("تم التحقق من البريد الإلكتروني بنجاح 🎉");
     }
-  }, [searchParams, router]);
+
+    if (message === "already_verified") {
+      toast.info("تم التحقق من البريد مسبقاً");
+    }
+
+    // تنظيف الرابط
+    // router.replace("/login");
+  }
+}, [searchParams, router]);
+
 
   const mutation = useMutation({
     mutationFn: (data: LoginData) => loginUser(data),
@@ -242,7 +243,10 @@ export function LoginForm() {
               {...register("remember")}
             />
             <div className="flex justify-between w-full">
-              <Label htmlFor="terms" className="text-sm text-muted-foreground ">
+              <Label
+                htmlFor="terms"
+                className="text-sm text-muted-foreground "
+              >
                 تذكرني
               </Label>
               <Link

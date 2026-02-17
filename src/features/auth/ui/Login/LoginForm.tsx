@@ -8,11 +8,9 @@ import { useMutation } from "@tanstack/react-query";
 import * as z from "zod";
 import Link from "next/link";
 import { Mail } from "lucide-react";
-import type { AxiosError } from "axios";
 import axios from "axios";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
-
 import {
   Card,
   CardContent,
@@ -20,7 +18,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import { Label } from "@/components/ui/label";
 import {
   FormInput,
@@ -28,8 +25,11 @@ import {
   FormSubmitButton,
   SocialLoginButton,
 } from "@/shared/ui/forms";
-
 import { loginUser, type LoginData } from "@/features/auth/api/authApi";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { toast } from "sonner";
+
 type BackendErrorResponse = {
   success: boolean;
   message?: string;
@@ -44,7 +44,7 @@ const loginSchema = z.object({
     .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
-      "يجب أن تحتوي كلمة المرور على حرف كبير وحرف صغير ورمز واحد على الأقل"
+      "يجب أن تحتوي كلمة المرور على حرف كبير وحرف صغير ورمز واحد على الأقل",
     ),
   remember: z.boolean().optional(),
 });
@@ -54,6 +54,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export function LoginForm() {
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const { data: session } = useSession();
   console.log("session " + session?.role);
@@ -67,6 +68,23 @@ export function LoginForm() {
     resolver: zodResolver(loginSchema),
     mode: "onChange",
   });
+
+  useEffect(() => {
+    const message = searchParams.get("message");
+
+    if (message) {
+      if (message === "verified") {
+        toast.success("تم التحقق من البريد الإلكتروني بنجاح 🎉");
+      }
+
+      if (message === "already_verified") {
+        toast.info("تم التحقق من البريد مسبقاً");
+      }
+
+      // تنظيف الرابط
+      router.replace("/login");
+    }
+  }, [searchParams, router]);
 
   const mutation = useMutation({
     mutationFn: (data: LoginData) => loginUser(data),
@@ -224,10 +242,7 @@ export function LoginForm() {
               {...register("remember")}
             />
             <div className="flex justify-between w-full">
-              <Label
-                htmlFor="terms"
-                className="text-sm text-muted-foreground "
-              >
+              <Label htmlFor="terms" className="text-sm text-muted-foreground ">
                 تذكرني
               </Label>
               <Link

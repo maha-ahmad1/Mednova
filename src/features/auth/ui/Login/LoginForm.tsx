@@ -44,7 +44,7 @@ const loginSchema = z.object({
     .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
-      "يجب أن تحتوي كلمة المرور على حرف كبير وحرف صغير ورمز واحد على الأقل"
+      "يجب أن تحتوي كلمة المرور على حرف كبير وحرف صغير ورمز واحد على الأقل",
     ),
   remember: z.boolean().optional(),
 });
@@ -55,7 +55,7 @@ export function LoginForm() {
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { data: session } = useSession();
   console.log("session " + session?.role);
 
@@ -69,23 +69,24 @@ export function LoginForm() {
     mode: "onChange",
   });
 
-useEffect(() => {
-  const message = searchParams.get("message");
+  useEffect(() => {
+    const message = searchParams.get("message");
 
-  if (message) {
-    if (message === "verified") {
-      toast.success("تم التحقق من البريد الإلكتروني بنجاح 🎉");
+    if (message) {
+      if (message === "verified") {
+        setSuccessMessage("تم التحقق من البريد الإلكتروني بنجاح 🎉"); // استخدام setSuccessMessage بدل toast
+      }
+
+      if (message === "already_verified") {
+        setSuccessMessage("تم التحقق من البريد مسبقاً");
+      }
+
+      // تنظيف الرابط بدون إعادة تحميل
+      const url = new URL(window.location.href);
+      url.searchParams.delete("message");
+      window.history.replaceState({}, "", url.toString());
     }
-
-    if (message === "already_verified") {
-      toast.info("تم التحقق من البريد مسبقاً");
-    }
-
-    // تنظيف الرابط
-    // router.replace("/login");
-  }
-}, [searchParams, router]);
-
+  }, [searchParams]);
 
   const mutation = useMutation({
     mutationFn: (data: LoginData) => loginUser(data),
@@ -209,6 +210,11 @@ useEffect(() => {
 
       <CardContent className="space-y-6 flex-1 flex flex-col justify-center mt-[-30px]">
         <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+            {successMessage && (
+            <div className="bg-green-100 text-green-700 border border-green-300 p-3 rounded text-right text-sm">
+              {successMessage}
+            </div>
+          )}
           {serverError && (
             <div className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-right text-sm">
               {serverError}
@@ -243,10 +249,7 @@ useEffect(() => {
               {...register("remember")}
             />
             <div className="flex justify-between w-full">
-              <Label
-                htmlFor="terms"
-                className="text-sm text-muted-foreground "
-              >
+              <Label htmlFor="terms" className="text-sm text-muted-foreground ">
                 تذكرني
               </Label>
               <Link

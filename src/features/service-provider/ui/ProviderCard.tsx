@@ -113,7 +113,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({ provider }) => {
             {/* محادثة */}
             <div className="flex items-center gap-1">
               <span>محادثة</span>
-              <span className="font-bold">{prices.chatPrice}</span>
+              <span className="font-bold text-[#32A88D]">{prices.chatPrice}</span>
               <CurrencyRenderer currency={prices.currency} />
             </div>
 
@@ -121,8 +121,8 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({ provider }) => {
 
             {/* فيديو */}
             <div className="flex items-center gap-1">
-              <span>فيديو</span>
-              <span className="font-bold">{prices.videoPrice}</span>
+              <span>فيديو</span> 
+              <span className="font-bold text-[#32A88D]">{prices.videoPrice}</span>
               <CurrencyRenderer currency={prices.currency} />
             </div>
           </div>

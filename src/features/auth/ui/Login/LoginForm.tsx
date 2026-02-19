@@ -123,12 +123,35 @@ export function LoginForm() {
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
+        console.log("Error response:", error.response?.data);
+
         const backendData = error.response?.data as BackendErrorResponse;
-        if (backendData?.data?.error) {
+
+        // ✅ معالجة الحالة الأولى: أخطاء الحقول (422)
+        if (error.response?.status === 422 && backendData?.data) {
+          if (backendData.data.email) {
+            setError("email", {
+              type: "server",
+              message: backendData.data.email,
+            });
+          }
+          if (backendData.data.password) {
+            setError("password", {
+              type: "server",
+              message: backendData.data.password,
+            });
+          }
+        }
+        // ✅ معالجة الحالة الثانية: errors عامة في data.error (500)
+        else if (backendData?.data?.error) {
           setServerError(backendData.data.error);
-        } else if (backendData?.message) {
+        }
+        // ✅ معالجة الحالة الثالثة: رسالة عامة
+        else if (backendData?.message) {
           setServerError(backendData.message);
-        } else {
+        }
+        // ✅ معالجة الحالة الرابعة: خطأ غير متوقع
+        else {
           setServerError("حدث خطأ غير متوقع");
         }
       } else {
@@ -210,7 +233,7 @@ export function LoginForm() {
 
       <CardContent className="space-y-6 flex-1 flex flex-col justify-center mt-[-30px]">
         <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-            {successMessage && (
+          {successMessage && (
             <div className="bg-green-100 text-green-700 border border-green-300 p-3 rounded text-right text-sm">
               {successMessage}
             </div>

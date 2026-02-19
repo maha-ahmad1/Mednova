@@ -37,6 +37,7 @@ export const registerUser = async (data: RegistrationData) => {
 
 
 export const loginUser = async (data: LoginData) => {
+   console.log("Sending login data:", data);
   const response = await api.post("/auth/login", data, {
     headers: { "Content-Type": "application/json" },
   });

@@ -19,6 +19,7 @@ export const useAvailableSlots = ({
   selectedDate,
   type_appointment,
   patient_id,
+  timezone,
   enabled = true,
 }: UseAvailableSlotsParams) => {
   const { data: session } = useSession();

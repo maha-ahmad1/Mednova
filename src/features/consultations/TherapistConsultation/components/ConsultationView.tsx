@@ -11,6 +11,7 @@ import { useFetcher } from "@/hooks/useFetcher";
 import { useSession } from "next-auth/react";
 import { useConsultationStore } from "@/store/consultationStore";
 import { useEchoNotifications } from '@/hooks/useEchoNotifications';
+import { TimeZoneService } from "@/lib/timezone-service";
 
 interface ConsultationViewProps {
   userType?: UserType;
@@ -25,10 +26,14 @@ interface ApiResponse {
 
 export default function ConsultationView({}: ConsultationViewProps) {
 
+  const [timezone, setTimezone] = useState<string>("");
 
   const { data, isLoading, error } = useFetcher<ApiResponse>(
     ["consultations"],
-    "/api/consultation-request/get-status-request?limit=30"
+    `/api/consultation-request/get-status-request?limit=30${timezone ? `&current_time_zone=${timezone}` : ""}`,
+    {
+      enabled: !!timezone
+    }
   );
 
   const { requests, setRequests, updateRequest } = useConsultationStore();
@@ -36,6 +41,11 @@ export default function ConsultationView({}: ConsultationViewProps) {
   const [isMobile, setIsMobile] = useState(false);
 
   const { data: session } = useSession();
+
+  useEffect(() => {
+    const userTimezone = TimeZoneService.detectUserTimeZone();
+    setTimezone(userTimezone);
+  }, []);
 
   const roleMap: Record<string, "patient" | "consultable"> = {
     patient: "patient",

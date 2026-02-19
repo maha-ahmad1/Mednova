@@ -12,6 +12,8 @@ import {
   Video as VideoIcon,
   ExternalLink,
   RefreshCw,
+  Calendar,
+  Clock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,6 +26,42 @@ import ChatInterface from "@/features/chat/ui/ChatInterface";
 import { useConsultationStore } from "@/store/consultationStore";
 import { Badge } from "@/components/ui/badge";
 import { getStatusBadge, getTypeIcon } from "@/features/consultations/utils/consultation-helpers";
+
+// دالة مساعدة لتنسيق التاريخ والوقت
+const formatAppointmentDateTime = (request: ConsultationRequest) => {
+  if (request.data?.appointment) {
+    const appointment = request.data.appointment;
+    const dayMap: Record<string, string> = {
+      "Sunday": "الأحد",
+      "Monday": "الإثنين", 
+      "Tuesday": "الثلاثاء",
+      "Wednesday": "الأربعاء",
+      "Thursday": "الخميس",
+      "Friday": "الجمعة",
+      "Saturday": "السبت"
+    };
+    
+    const arabicDay = dayMap[appointment.requested_day] || appointment.requested_day;
+    
+    // تنسيق الوقت بشكل أفضل
+    let timeDisplay = appointment.requested_time;
+    if (appointment.requested_time) {
+      // إذا كان الوقت بصيغة "HH:MM" حولها لتنسيق مقروء
+      const timeParts = appointment.requested_time.split(':');
+      if (timeParts.length >= 2) {
+        timeDisplay = `${timeParts[0]}:${timeParts[1]}`;
+      }
+    }
+    
+    return {
+      fullDate: `${arabicDay} ${timeDisplay}`,
+      day: arabicDay,
+      time: timeDisplay,
+    };
+  }
+  return null;
+};
+
 interface ConsultationDetailsProps {
   request: ConsultationRequest;
   isMobile: boolean;
@@ -51,6 +89,9 @@ export default function ConsultationDetails({
 
   const patient = displayRequest.data.patient;
   const consultant = displayRequest.data.consultant;
+
+  // ✅ معلومات تاريخ الحجز
+  const appointmentInfo = formatAppointmentDateTime(displayRequest);
 
   // ✅ استخدم حالة الـ store، ليس الـ API
   const canShowChat = ["accepted", "active", "completed"].includes(
@@ -107,6 +148,7 @@ const shouldShowZoomButton = () => {
       source: isZoomLinkFromPusher() ? "البوشر" : "API",
       initialStatus: initialRequest.status,
       storeStatus: storeRequest?.status,
+      appointment: displayRequest.data?.appointment,
     });
   }, [displayRequest, storeRequest]);
 
@@ -215,7 +257,7 @@ const shouldShowZoomButton = () => {
 
       {userRole === "patient" && (
         <>
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-6 sm:mb-8" >
             <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
               <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
               بيانات{" "}
@@ -257,12 +299,12 @@ const shouldShowZoomButton = () => {
                 label="الاسم الكامل"
                 value={patient.full_name}
               />
-              <InfoCard
+              {/* <InfoCard
                 icon={Mail}
                 label="البريد الإلكتروني"
                 value={patient.email}
               />
-              <InfoCard icon={Phone} label="رقم الهاتف" value={patient.phone} />
+              <InfoCard icon={Phone} label="رقم الهاتف" value={patient.phone} /> */}
             </div>
           </div>
         </>
@@ -282,6 +324,25 @@ const shouldShowZoomButton = () => {
               {displayRequest.type === "chat" ? "محادثة نصية" : "استشارة فيديو"}
             </p>
           </div>
+
+          {/* ✅ عرض تاريخ الحجز - يظهر للمختص والمركز */}
+          {appointmentInfo && (
+            <div className="p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm">
+              <p className="text-xs sm:text-sm text-gray-600 mb-2 flex items-center gap-1">
+                <Calendar className="w-4 h-4 text-[#32A88D]" />
+                تاريخ الحجز
+              </p>
+              <div className="font-semibold text-gray-800 text-sm sm:text-base">
+                <div className="flex items-center gap-2">
+                  <span>{appointmentInfo.fullDate}</span>
+                  <Badge variant="outline" className="text-xs bg-[#32A88D]/5 text-[#32A88D] border-[#32A88D]/20">
+                    <Clock className="w-3 h-3 ml-1" />
+                    {appointmentInfo.time}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm">
             <p className="text-xs sm:text-sm text-gray-600 mb-2">
@@ -375,7 +436,7 @@ const shouldShowZoomButton = () => {
   };
 
   return (
-    <div className={`lg:col-span-2 ${isMobile ? "block" : "block"}`}>
+    <div className={`lg:col-span-2 ${isMobile ? "block" : "block"}`} dir="rtl">
       <Card className="bg-gradient-to-b from-white to-gray-50/50 border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg h-full flex flex-col">
         <CardHeader className="pb-3 sm:pb-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white rounded-t-xl sm:rounded-t-2xl">
           <div className="flex items-center justify-between">

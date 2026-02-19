@@ -9,9 +9,20 @@ import { useConsultationRequestStore } from "@/features/home/hooks/useConsultati
 import { ar, enUS } from "date-fns/locale";
 import { format } from "date-fns";
 import { slotsApi, type CheckAvailableSlotsParams } from "@/app/api/slots";
-import{formatTime,detectUserTimeZone,categorizeTimeSlots,isSlotAvailable,getTimeZoneLabel,SUPPORTED_TIME_ZONES} from '@/utils/timeUtils';
-import{translateDay,translateSessionType,translateProviderType,getLocalizedDay} from '@/utils/translationUtils';
-
+import {
+  formatTime,
+  detectUserTimeZone,
+  categorizeTimeSlots,
+  isSlotAvailable,
+  getTimeZoneLabel,
+  SUPPORTED_TIME_ZONES,
+} from "@/utils/timeUtils";
+import {
+  translateDay,
+  translateSessionType,
+  translateProviderType,
+  getLocalizedDay,
+} from "@/utils/translationUtils";
 
 export function useBookingLogic({
   doctorId,
@@ -41,7 +52,7 @@ export function useBookingLogic({
   const { data: provider, isLoading: isLoadingProvider } =
     useFetcher<ServiceProvider | null>(
       ["providerProfile", effectiveDoctorId],
-      effectiveDoctorId ? `/api/customer/${effectiveDoctorId}` : null
+      effectiveDoctorId ? `/api/customer/${effectiveDoctorId}` : null,
     );
 
   // اكتشاف المنطقة الزمنية للمستخدم عند التحميل
@@ -83,7 +94,7 @@ export function useBookingLogic({
 
       return null;
     },
-    []
+    [],
   );
 
   // دالة لتحميل الأوقات المتاحة مع المنطقة الزمنية
@@ -124,6 +135,7 @@ export function useBookingLogic({
           date: formattedDate,
           type_appointment: "online",
           patient_id: patientId || session?.user?.id,
+          timezone: timezone,
         };
 
         const token = getAuthToken();
@@ -178,7 +190,7 @@ export function useBookingLogic({
       session?.user?.id,
       getAuthToken,
       ensureDate,
-    ]
+    ],
   );
 
   // تأثير عند تغيير التاريخ أو المنطقة الزمنية
@@ -212,7 +224,7 @@ export function useBookingLogic({
         loadAvailableSlots(selectedDate, newTimeZone);
       }
     },
-    [selectedDate]
+    [selectedDate],
   );
 
   const handleSelectDate = useCallback(
@@ -227,7 +239,7 @@ export function useBookingLogic({
         setSelectedTime(""); // إعادة تعيين الوقت عند تغيير التاريخ
       }
     },
-    [ensureDate]
+    [ensureDate],
   );
 
   const handleSelectTime = useCallback((time: string) => {
@@ -272,6 +284,7 @@ export function useBookingLogic({
         requested_day: getEnglishDay(selectedDate),
         requested_time: `${format(selectedDate, "yyyy-MM-dd")} ${selectedTime}`,
         type_appointment: "online",
+        timezone: selectedTimeZone,
       };
 
       console.log("بيانات الحجز المرسلة للـAPI:", {
@@ -292,6 +305,7 @@ export function useBookingLogic({
         requestedDay: getEnglishDay(selectedDate),
         requestedTime: `${format(selectedDate, "yyyy-MM-dd")} ${selectedTime}`,
         appointmentType: "online",
+        
       });
 
       router.push("/payment");
@@ -333,7 +347,7 @@ export function useBookingLogic({
       groupedSlots.morning.length +
       groupedSlots.afternoon.length +
       groupedSlots.evening.length,
-    [groupedSlots]
+    [groupedSlots],
   );
 
   // تحويل الأوقات إلى مصفوفة مسطحة
@@ -343,7 +357,7 @@ export function useBookingLogic({
       ...groupedSlots.afternoon,
       ...groupedSlots.evening,
     ],
-    [groupedSlots]
+    [groupedSlots],
   );
 
   // دالة للتحقق من توفر الوقت المحدد

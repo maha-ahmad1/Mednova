@@ -14,6 +14,7 @@ export interface CheckAvailableSlotsParams {
   date: string;
   type_appointment: string;
   patient_id?: string | number;
+  timezone?: string;
 }
 
 export interface AvailableSlotsResponse {

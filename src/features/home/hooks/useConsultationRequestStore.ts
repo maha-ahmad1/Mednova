@@ -12,6 +12,7 @@ interface ConsultationRequest {
   requested_day?: string | undefined;
   requested_time?: string | undefined;
   type_appointment?: string | undefined;
+  timezone?: string | undefined;
 }
 
 interface UseConsultationRequestStoreOptions {

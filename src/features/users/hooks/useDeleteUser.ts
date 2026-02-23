@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import { deleteUser } from "../api/usersManagement.api";
+import { AxiosError } from "axios";
 
 export function useDeleteUser() {
   const axiosInstance = useAxiosInstance();
@@ -16,7 +17,8 @@ export function useDeleteUser() {
       toast.success("تم حذف المستخدم بنجاح");
     },
     onError: (error: Error) => {
-      toast.error(error.message || "تعذر حذف المستخدم. حاول مرة أخرى.");
+      const axiosError = error as AxiosError<{ message: string }>;
+      toast.error(axiosError.response?.data?.message || "تعذر حذف المستخدم. حاول مرة أخرى.");
     },
   });
 }

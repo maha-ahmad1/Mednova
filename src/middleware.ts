@@ -59,7 +59,7 @@ export async function middleware(req: NextRequest) {
   if (token) {
     const isCompleted =
       token.is_completed ?? token.isCompleted ?? token.user?.is_completed ?? token.user?.isCompleted ?? false;
-    const status = token.status ?? token.user?.status ?? undefined;
+    const approval_status = token.approval_status ?? token.user?.approval_status ?? undefined;
 
     if (!isCompleted) {
       if (!pathname.startsWith("/profile/create")) {

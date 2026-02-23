@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { UsersFilters, UserStatus, UserType } from "../../types/user";
+import type { UserStatus, UserType, UserVerificationFilter, UsersFilters } from "../../types/user";
 
 interface UsersTableFiltersProps {
   filters: UsersFilters;
@@ -22,6 +22,13 @@ const statusOptions: Array<{ label: string; value: "all" | UserStatus }> = [
   { label: "مرفوض", value: "Rejected" },
   // { label: "معلق مؤقت", value: "Suspended" },
 ];
+
+const verificationOptions: Array<{ label: string; value: UserVerificationFilter }> = [
+  { label: "حالة التوثيق", value: "all" },
+  { label: "موثق", value: "verified" },
+  { label: "غير موثق", value: "unverified" },
+];
+
 
 export function UsersTableFilters({ filters, onChange }: UsersTableFiltersProps) {
   return (
@@ -65,6 +72,24 @@ export function UsersTableFilters({ filters, onChange }: UsersTableFiltersProps)
         </SelectTrigger>
         <SelectContent className="text-right" dir="rtl">
           {statusOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Select
+        value={filters.verification}
+        onValueChange={(value) =>
+          onChange({ ...filters, verification: value as UserVerificationFilter })
+        }
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="حالة التوثيق" />
+        </SelectTrigger>
+        <SelectContent className="text-right" dir="rtl">
+          {verificationOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
             </SelectItem>

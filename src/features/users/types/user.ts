@@ -44,3 +44,68 @@ export interface UsersApiResponse {
   data: UsersApiUser[];
   status: string;
 }
+
+export interface UserLocationDetails {
+  id: number;
+  latitude: string | null;
+  longitude: string | null;
+  formatted_address: string | null;
+  country: string | null;
+  region: string | null;
+  city: string | null;
+  district: string | null;
+  postal_code: string | null;
+  location_type: string | null;
+}
+
+export interface UserCenterDetails {
+  id: number;
+  name_center: string | null;
+  year_establishment: number | null;
+  license_number: string | null;
+  license_authority: string | null;
+  license_file: string | null;
+  bio: string | null;
+  has_commercial_registration: number;
+  commercial_registration_number: string | null;
+  commercial_registration_file: string | null;
+  commercial_registration_authority: string | null;
+  video_consultation_price: string | null;
+  chat_consultation_price: string | null;
+  currency: string | null;
+}
+
+export interface UserSchedule {
+  id: number;
+  day_of_week: string[];
+  start_time_morning: string | null;
+  end_time_morning: string | null;
+  is_have_evening_time: boolean;
+  start_time_evening: string | null;
+  end_time_evening: string | null;
+  type_time: "offline" | "online";
+}
+
+export interface AdminUserDetails {
+  id: number;
+  image: string | null;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  type_account: UsersApiAccountType;
+  birth_date: string | null;
+  gender: string | null;
+  patient_details: unknown;
+  location_details: UserLocationDetails | null;
+  therapist_details: unknown;
+  center_details: UserCenterDetails | null;
+  medicalSpecialties: unknown[];
+  schedules: UserSchedule[];
+  average_rating: number | null;
+  total_reviews: number | null;
+  is_completed: boolean;
+  approval_status: UsersApiApprovalStatus;
+  timezone: string | null;
+  email_verified_at: string | null;
+  phone_verified_at: string | null;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -49,6 +50,7 @@ const rejectReasonSchema = z.object({
 type RejectReasonFormValues = z.infer<typeof rejectReasonSchema>;
 
 export function UsersManagementPage() {
+  const router = useRouter();
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [filters, setFilters] = useState<UsersFilters>(initialFilters);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
@@ -328,7 +330,7 @@ export function UsersManagementPage() {
                   <td className="px-4 py-3">
                     <UserActionsDropdown
                       isBlocked={user.isBlocked}
-                      onViewDetails={() => console.info(`View details for ${user.fullName}`)}
+                      onViewDetails={() => router.push(`/admin/users/${user.id}`)}
                       onToggleBlock={() => openConfirmation({ kind: "toggle-block", userId: user.id })}
                       onDelete={() => openConfirmation({ kind: "delete", userId: user.id })}
                     />

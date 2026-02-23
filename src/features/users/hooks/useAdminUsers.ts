@@ -10,7 +10,7 @@ export function useAdminUsers(filters: UsersFilters) {
 
   const query = useFetcher<UsersApiUser[], Record<string, string | number>>(
     ["admin-users"],
-    "/api/control-panel/users/",
+    "/api/control-panel/users",
     {
       params,
     },

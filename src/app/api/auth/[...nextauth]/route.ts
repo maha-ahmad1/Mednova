@@ -13,46 +13,50 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
         access_token: { label: "Access Token", type: "text" },
         user: { label: "User JSON", type: "text" },
+        login_context: { label: "Login Context", type: "text" },
       },
       async authorize(credentials) {
         if (credentials?.email && credentials?.password) {
-          const res = await fetch(
-            "https://api.mednovacare.com/api/auth/login",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: credentials.email,
-                password: credentials.password,
-              }),
-            },
-          );
+          const isControlPanelLogin = credentials.login_context === "control-panel";
+          const loginUrl = isControlPanelLogin
+            ? "https://api.mednovacare.com/api/control-panel/auth/login"
+            : "https://api.mednovacare.com/api/auth/login";
+
+          const res = await fetch(loginUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          });
 
           const data = await res.json();
           if (!res.ok || !data?.success) return null;
 
-          const rawToken: string = data.data.access_token || "";
-          const accessToken = rawToken.replace(/^Bearer\s+/i, "");
+          const payload = data.data ?? {};
+          const rawToken: string =
+            payload.access_token ??
+            payload.token ??
+            payload.accessToken ??
+            payload?.data?.access_token ??
+            "";
+          const accessToken = String(rawToken).replace(/^Bearer\s+/i, "");
 
-          const user = data.data.user;
-
-          // const isCompleted = Boolean(
-          //   user.phone && user.gender && user.birth_date
-          // );
+          const user = payload.user ?? payload.admin ?? payload;
 
           const typedUser: UserT = {
             id: String(user.id),
-            full_name: user.full_name,
+            full_name: user.full_name ?? user.name ?? "Admin",
             email: user.email,
-            phone: user.phone,
-            type_account: user.type_account,
+            phone: user.phone ?? "",
+            type_account: isControlPanelLogin ? "admin" : user.type_account,
             birth_date: user.birth_date,
             gender: user.gender,
             image: user.image,
             accessToken,
-            // isCompleted: Boolean(user.is_completed),
           };
-          console.log("user" + user);
+
           return typedUser;
         }
 

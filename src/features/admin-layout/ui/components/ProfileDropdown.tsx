@@ -11,8 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAdminLogout } from "@/features/admin-auth/hooks/useAdminLogout";
 
 export function ProfileDropdown() {
+  const { logout } = useAdminLogout();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -42,14 +44,12 @@ export function ProfileDropdown() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link
-            href="/login"
-            className="flex flex-row-reverse items-center justify-end gap-2 text-right text-destructive focus:text-destructive"
-          >
-            <LogOut className="h-4 w-4" />
-            تسجيل الخروج
-          </Link>
+        <DropdownMenuItem
+          onClick={logout}
+          className="flex flex-row-reverse items-center justify-end gap-2 text-right text-destructive focus:text-destructive"
+        >
+          <LogOut className="h-4 w-4" />
+          تسجيل الخروج
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

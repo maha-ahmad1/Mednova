@@ -4,10 +4,15 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAdminUsers } from "../hooks/useAdminUsers";
+import {
+  useDeleteAdminUserMutation,
+  useUpdateApprovalStatusMutation,
+} from "../hooks/useAdminUserMutations";
 import type { AdminUser, UserStatus, UsersFilters } from "../types/user";
 import { filterUsersByDate, formatJoinDate } from "../utils/users";
 import { ConfirmationModal } from "./components/ConfirmationModal";
 import { EmailVerificationIndicator } from "./components/EmailVerificationIndicator";
+import { RejectUserModal } from "./components/RejectUserModal";
 import { StatusDropdown } from "./components/StatusDropdown";
 import { UserActionsDropdown } from "./components/UserActionsDropdown";
 import { UserTypeBadge } from "./components/UserTypeBadge";
@@ -39,20 +44,21 @@ export function UsersManagementPage() {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [filters, setFilters] = useState<UsersFilters>(initialFilters);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
+  const [rejectingUserId, setRejectingUserId] = useState<string | null>(null);
 
   const { users: fetchedUsers, isLoading, isError } = useAdminUsers(filters);
+  const deleteUserMutation = useDeleteAdminUserMutation();
+  const updateStatusMutation = useUpdateApprovalStatusMutation();
   const [overrides, setOverrides] = useState<Record<string, Partial<AdminUser>>>({});
-  const [deletedUserIds, setDeletedUserIds] = useState<string[]>([]);
 
   const users = useMemo(
     () =>
       fetchedUsers
-        .filter((user) => !deletedUserIds.includes(user.id))
         .map((user) => ({
           ...user,
           ...(overrides[user.id] ?? {}),
         })),
-    [deletedUserIds, fetchedUsers, overrides],
+    [fetchedUsers, overrides],
   );
 
   const filteredUsers = useMemo(() => filterUsersByDate(users, filters), [users, filters]);
@@ -112,8 +118,14 @@ export function UsersManagementPage() {
     }
 
     if (pendingAction.kind === "delete") {
-      setDeletedUserIds((prev) => Array.from(new Set([...prev, pendingAction.userId])));
-      setSelectedRows((prev) => prev.filter((id) => id !== pendingAction.userId));
+      deleteUserMutation.mutate(
+        { userId: pendingAction.userId },
+        {
+          onSuccess: () => {
+            setSelectedRows((prev) => prev.filter((id) => id !== pendingAction.userId));
+          },
+        },
+      );
     }
 
     if (pendingAction.kind === "bulk-approve") {
@@ -131,6 +143,30 @@ export function UsersManagementPage() {
     }
 
     setPendingAction(null);
+  };
+
+  const handleApprove = (userId: string) => {
+    updateStatusMutation.mutate({
+      userId,
+      approvalStatus: "approved",
+    });
+  };
+
+  const handleReject = (reason: string) => {
+    if (!rejectingUserId) return;
+
+    updateStatusMutation.mutate(
+      {
+        userId: rejectingUserId,
+        approvalStatus: "rejected",
+        reason,
+      },
+      {
+        onSuccess: () => {
+          setRejectingUserId(null);
+        },
+      },
+    );
   };
 
   const visibleUsers = filteredUsers;
@@ -280,12 +316,37 @@ export function UsersManagementPage() {
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">{formatJoinDate(user.createdAt)}</td>
                   <td className="px-4 py-3">
-                    <UserActionsDropdown
-                      isBlocked={user.isBlocked}
-                      onViewDetails={() => console.info(`View details for ${user.fullName}`)}
-                      onToggleBlock={() => openConfirmation({ kind: "toggle-block", userId: user.id })}
-                      onDelete={() => openConfirmation({ kind: "delete", userId: user.id })}
-                    />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => handleApprove(user.id)}
+                        disabled={updateStatusMutation.isPending}
+                      >
+                        موافقة
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setRejectingUserId(user.id)}
+                        disabled={updateStatusMutation.isPending}
+                      >
+                        رفض
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => openConfirmation({ kind: "delete", userId: user.id })}
+                        disabled={deleteUserMutation.isPending}
+                      >
+                        حذف
+                      </Button>
+                      <UserActionsDropdown
+                        isBlocked={user.isBlocked}
+                        onViewDetails={() => console.info(`View details for ${user.fullName}`)}
+                        onToggleBlock={() => openConfirmation({ kind: "toggle-block", userId: user.id })}
+                        onDelete={() => openConfirmation({ kind: "delete", userId: user.id })}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -304,6 +365,17 @@ export function UsersManagementPage() {
           }
         }}
         onConfirm={confirmAction}
+      />
+
+      <RejectUserModal
+        open={Boolean(rejectingUserId)}
+        isLoading={updateStatusMutation.isPending}
+        onOpenChange={(open) => {
+          if (!open) {
+            setRejectingUserId(null);
+          }
+        }}
+        onConfirm={handleReject}
       />
     </div>
   );

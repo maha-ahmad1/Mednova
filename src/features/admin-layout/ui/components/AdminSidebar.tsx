@@ -3,18 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
-import { PanelRightClose, PanelRightOpen } from "lucide-react";
+import { LogOut, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import {
-  adminSidebarGroups,
-  adminSidebarLogoutAction,
-} from "@/features/admin-layout/config/navigation";
+import { adminSidebarGroups } from "@/features/admin-layout/config/navigation";
+import { useAdminLogout } from "@/features/admin-auth/hooks/useAdminLogout";
 import { SidebarGroup } from "./SidebarGroup";
-import { SidebarItem } from "./SidebarItem";
 
 interface AdminSidebarProps {
   collapsed: boolean;
@@ -34,6 +31,7 @@ export function AdminSidebar({
   onMobileOpenChange,
 }: AdminSidebarProps) {
   const pathname = usePathname();
+  const { logout } = useAdminLogout();
   const sidebarWidthClass = collapsed ? "lg:w-20" : "lg:w-72";
 
   const isItemActive = useMemo(
@@ -96,11 +94,21 @@ export function AdminSidebar({
       </ScrollArea>
 
       <div className="border-t p-3">
-        <SidebarItem
-          item={adminSidebarLogoutAction}
-          collapsed={collapsed}
-          onNavigate={() => onMobileOpenChange(false)}
-        />
+        <Button
+          variant="ghost"
+          onClick={async () => {
+            onMobileOpenChange(false);
+            await logout();
+          }}
+          className={cn(
+            "flex w-full flex-row-reverse items-center justify-end gap-3 rounded-lg px-3 py-2.5 text-right text-sm font-medium text-destructive transition-colors hover:bg-destructive/10",
+            collapsed && "justify-center px-2",
+          )}
+          title={collapsed ? "تسجيل الخروج" : undefined}
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          {!collapsed ? <span>تسجيل الخروج</span> : null}
+        </Button>
       </div>
     </div>
   );

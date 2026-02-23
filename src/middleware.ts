@@ -5,8 +5,8 @@ import { getToken } from "next-auth/jwt";
 interface TokenUser {
   id?: string;
   type_account?: string;
+  role?: string;
   isCompleted?: boolean;
-  // possible snake_case fields present in some tokens
   is_completed?: boolean;
   approval_status?: string;
 }
@@ -15,23 +15,24 @@ interface Token {
   user?: TokenUser;
   role?: string;
   isCompleted?: boolean;
-  // token may include snake_case fields depending on backend
   is_completed?: boolean;
   approval_status?: string;
   accessToken?: string;
 }
 
+const isAdminToken = (token: Token | null): boolean => {
+  if (!token) {
+    return false;
+  }
+
+  return token.role === "admin" || token.user?.type_account === "admin" || token.user?.role === "admin";
+};
+
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const pathname = req.nextUrl.pathname;
 
-  const publicPaths = [
-    "/login",
-    "/api/auth",
-    "/_next",
-    "/favicon.ico",
-    "/public",
-  ];
+  const publicPaths = ["/login", "/admin/login", "/api/auth", "/_next", "/favicon.ico", "/public"];
   if (publicPaths.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }
@@ -41,20 +42,24 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   })) as Token | null;
 
-  console.log("🔐 Full Token:", token);
+  if (pathname.startsWith("/admin/users")) {
+    if (!isAdminToken(token)) {
+      url.pathname = "/admin/login";
+      return NextResponse.redirect(url);
+    }
+
+    return NextResponse.next();
+  }
 
   if (!token && pathname.startsWith("/profile")) {
-    console.log("🚫 No token found, redirecting to /login");
-
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
-  console.log(" bS===");
 
   if (token) {
-    const isCompleted = token.is_completed ?? token.isCompleted ?? token.user?.is_completed ?? token.user?.isCompleted ?? false;
-    const approval_status = token.approval_status ?? token.user?.approval_status ?? undefined;
-    console.log("approval_status" + approval_status);
+    const isCompleted =
+      token.is_completed ?? token.isCompleted ?? token.user?.is_completed ?? token.user?.isCompleted ?? false;
+    const status = token.status ?? token.user?.status ?? undefined;
 
     if (!isCompleted) {
       if (!pathname.startsWith("/profile/create")) {
@@ -76,9 +81,10 @@ export async function middleware(req: NextRequest) {
       }
     }
   }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/profile/:path*"],
+  matcher: ["/profile/:path*", "/admin/users/:path*"],
 };

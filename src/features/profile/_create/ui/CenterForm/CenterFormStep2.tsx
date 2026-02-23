@@ -9,9 +9,8 @@ import { useCallback } from "react";
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 import { medicalSpecialties } from "@/constants/medicalSpecialties";
-import { Video, MessageSquare, Check } from "lucide-react";
+import { Video, MessageSquare } from "lucide-react";
 import { FormSelect } from "@/shared/ui/forms/components/FormSelect";
-import { cn } from "@/lib/utils";
 import { CustomCheckbox } from "@/shared/ui/forms/components/CustomCheckbox";
 
 const step2Schema = z.object({
@@ -107,7 +106,6 @@ export function CenterFormStep2({
   const {
     handleSubmit,
     register,
-    control,
     watch,
     setValue,
     formState: { errors },

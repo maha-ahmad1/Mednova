@@ -7,13 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Mail, User, Phone, Home, Loader2, Calendar } from "lucide-react";
 import { useSession } from "next-auth/react";
-
-import {
-  FormInput,
-  FormPhoneInput,
-  FormSelect,
-  ProfileImageUpload,
-} from "@/shared/ui/forms";
+import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
 import { FormSubmitButton } from "@/shared/ui/forms/components/FormSubmitButton";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
@@ -85,11 +79,16 @@ export function CenterFormStep1({
     control,
     register,
     formState: { errors },
+    getValues,
+    setValue
   } = methods;
 
-  const persistDraft = useCallback((values: Partial<Step1Data>) => {
-    updateFormData(values);
-  }, [updateFormData]);
+  const persistDraft = useCallback(
+    (values: Partial<Step1Data>) => {
+      updateFormData(values);
+    },
+    [updateFormData],
+  );
 
   useStepFormAutosave(methods, persistDraft);
 
@@ -109,32 +108,55 @@ export function CenterFormStep1({
   //   }
   // }, [centerImage, methods]);
 
-   useEffect(() => {
-  if (centerImage) {
-    methods.setValue("image", centerImage, { shouldValidate: true });
-  } else {
-    // عند إزالة الصورة، اضبط القيمة على null وافرض التحقق
-    methods.setValue("image", null);
-  }
-}, [centerImage, methods]);
-
   useEffect(() => {
-    if (session?.user && !formData.full_name) {
-      const parsedSessionPhone = parsePhoneNumber(session.user.phone);
-      setPhoneCountryCode(parsedSessionPhone.countryCode);
-      methods.reset({
-        full_name: session.user.full_name || "",
-        email: session.user.email || "",
-        phone: parsedSessionPhone.localNumber,
-        gender: formData.gender || undefined,
-        formatted_address: formData.formatted_address || "",
-        year_establishment: formData.year_establishment || "",
-        birth_date: formData.birth_date || "",
-        image: formData?.image instanceof File ? formData.image : undefined,
-        name_center: formData.name_center || "",
-      });
+    if (centerImage) {
+      methods.setValue("image", centerImage, { shouldValidate: true });
+    } else {
+      // عند إزالة الصورة، اضبط القيمة على null وافرض التحقق
+      methods.setValue("image", null);
     }
-  }, [session?.user, methods, formData]);
+  }, [centerImage, methods]);
+
+  // useEffect(() => {
+  //   if (session?.user && !formData.full_name) {
+  //     const parsedSessionPhone = parsePhoneNumber(session.user.phone);
+  //     setPhoneCountryCode(parsedSessionPhone.countryCode);
+  //     methods.reset({
+  //       full_name: session.user.full_name || "",
+  //       email: session.user.email || "",
+  //       phone: parsedSessionPhone.localNumber,
+  //       gender: formData.gender || undefined,
+  //       formatted_address: formData.formatted_address || "",
+  //       year_establishment: formData.year_establishment || "",
+  //       birth_date: formData.birth_date || "",
+  //       image: formData?.image instanceof File ? formData.image : undefined,
+  //       name_center: formData.name_center || "",
+  //     });
+  //   }
+  // }, [session?.user, methods, formData]);
+
+// useEffect(() => {
+//   if (status === "authenticated" && session?.user) {
+//     const parsed = parsePhoneNumber(session.user.phone);
+
+//     methods.setValue("full_name", session.user.full_name || "");
+//     methods.setValue("email", session.user.email || "");
+//     methods.setValue("phone", parsed.localNumber);
+//   }
+// }, [status, session, methods]);
+
+
+useEffect(() => {
+    if (status === "authenticated" && session?.user) {
+      if (!getValues("full_name")) setValue("full_name", session.user.full_name || "");
+      if (!getValues("email")) setValue("email", session.user.email || "");
+      if (!getValues("phone")) {
+        const parsed = parsePhoneNumber(session.user.phone);
+        setValue("phone", parsed.localNumber);
+      }
+    }
+  }, [session, status, setValue, getValues]);
+
 
   if (status === "loading") {
     return (
@@ -184,24 +206,7 @@ export function CenterFormStep1({
               readOnly
             />
 
-            {/* <Controller
-              name="phone"
-              control={control}
-              render={({ field }) => (
-                <FormPhoneInput
-                  {...field}
-                  label="رقم الهاتف"
-                  icon={Phone}
-                  iconPosition="right"
-                  rtl
-                  countryCodeValue={phoneCountryCode}
-                  onCountryCodeChange={setPhoneCountryCode}
-                  error={errors.phone?.message}
-                  className="no-spinner"
-                  readOnly
-                />
-              )}
-            /> */}
+           
             <FormInput
               label="رقم الهاتف"
               placeholder="0000 0000"

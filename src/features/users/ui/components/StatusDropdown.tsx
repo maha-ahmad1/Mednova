@@ -28,6 +28,9 @@ const statusLabels: Record<UserStatus, string> = {
   // Suspended: "موقوف",
 };
 export function StatusDropdown({ status, onSelectStatus }: StatusDropdownProps) {
+  const allowedStatuses: UserStatus[] =
+    status === "Pending" ? ["Approved", "Rejected"] : ["Approved", "Rejected"];
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -43,11 +46,13 @@ export function StatusDropdown({ status, onSelectStatus }: StatusDropdownProps) 
         </Badge>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-36">
-        {Object.entries(statusLabels).map(([key, label]) => (
-          <DropdownMenuItem key={key} onClick={() => onSelectStatus(key as UserStatus)}>
-            {label}
-          </DropdownMenuItem>
-        ))}
+        {allowedStatuses
+          .filter((nextStatus) => nextStatus !== status)
+          .map((nextStatus) => (
+            <DropdownMenuItem key={nextStatus} onClick={() => onSelectStatus(nextStatus)}>
+              {statusLabels[nextStatus]}
+            </DropdownMenuItem>
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

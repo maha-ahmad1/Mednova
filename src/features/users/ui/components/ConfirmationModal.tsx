@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +17,9 @@ interface ConfirmationModalProps {
   cancelLabel?: string;
   onConfirm: () => void;
   onOpenChange: (open: boolean) => void;
+  confirmDisabled?: boolean;
+  isConfirming?: boolean;
+  children?: ReactNode;
 }
 
 export function ConfirmationModal({
@@ -26,6 +30,9 @@ export function ConfirmationModal({
   cancelLabel = "Cancel",
   onConfirm,
   onOpenChange,
+  confirmDisabled = false,
+  isConfirming = false,
+  children,
 }: ConfirmationModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -35,11 +42,15 @@ export function ConfirmationModal({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
+        {children}
+
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isConfirming}>
             {cancelLabel}
           </Button>
-          <Button onClick={onConfirm}>{confirmLabel}</Button>
+          <Button onClick={onConfirm} disabled={confirmDisabled || isConfirming}>
+            {isConfirming ? "جاري التنفيذ..." : confirmLabel}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

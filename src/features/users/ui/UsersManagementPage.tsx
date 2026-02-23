@@ -1,9 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 import { useAdminUsers } from "../hooks/useAdminUsers";
+import { useDeleteUser } from "../hooks/useDeleteUser";
+import { useUpdateUserStatus } from "../hooks/useUpdateUserStatus";
 import type { AdminUser, UserStatus, UsersFilters } from "../types/user";
 import { filterUsersByDate, formatJoinDate } from "../utils/users";
 import { ConfirmationModal } from "./components/ConfirmationModal";
@@ -35,24 +42,35 @@ const initialFilters: UsersFilters = {
   dateTo: "",
 };
 
+const rejectReasonSchema = z.object({
+  reason: z.string().trim().min(1, "سبب الرفض مطلوب"),
+});
+
+type RejectReasonFormValues = z.infer<typeof rejectReasonSchema>;
+
 export function UsersManagementPage() {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [filters, setFilters] = useState<UsersFilters>(initialFilters);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
 
   const { users: fetchedUsers, isLoading, isError } = useAdminUsers(filters);
+  const { mutateAsync: updateUserStatus, isPending: isUpdatingStatus } = useUpdateUserStatus();
+  const { mutateAsync: removeUser, isPending: isDeletingUser } = useDeleteUser();
   const [overrides, setOverrides] = useState<Record<string, Partial<AdminUser>>>({});
-  const [deletedUserIds, setDeletedUserIds] = useState<string[]>([]);
+
+  const rejectReasonForm = useForm<RejectReasonFormValues>({
+    resolver: zodResolver(rejectReasonSchema),
+    defaultValues: { reason: "" },
+    mode: "onChange",
+  });
 
   const users = useMemo(
     () =>
-      fetchedUsers
-        .filter((user) => !deletedUserIds.includes(user.id))
-        .map((user) => ({
-          ...user,
-          ...(overrides[user.id] ?? {}),
-        })),
-    [deletedUserIds, fetchedUsers, overrides],
+      fetchedUsers.map((user) => ({
+        ...user,
+        ...(overrides[user.id] ?? {}),
+      })),
+    [fetchedUsers, overrides],
   );
 
   const filteredUsers = useMemo(() => filterUsersByDate(users, filters), [users, filters]);
@@ -62,6 +80,9 @@ export function UsersManagementPage() {
 
   const openConfirmation = (action: PendingAction) => {
     setPendingAction(action);
+    if (action?.kind === "status" && action.nextStatus === "Rejected") {
+      rejectReasonForm.reset({ reason: "" });
+    }
   };
 
   const handleSelectAll = (checked: boolean | "indeterminate") => {
@@ -87,17 +108,35 @@ export function UsersManagementPage() {
     });
   };
 
-  const confirmAction = () => {
+  const confirmAction = async () => {
     if (!pendingAction) return;
 
     if (pendingAction.kind === "status") {
-      setOverrides((prev) => ({
-        ...prev,
-        [pendingAction.userId]: {
-          ...prev[pendingAction.userId],
-          status: pendingAction.nextStatus,
-        },
-      }));
+      if (pendingAction.nextStatus === "Pending") {
+        return;
+      }
+
+      const reason =
+        pendingAction.nextStatus === "Rejected"
+          ? rejectReasonForm.getValues("reason").trim()
+          : undefined;
+
+      if (pendingAction.nextStatus === "Rejected") {
+        const isValid = await rejectReasonForm.trigger("reason");
+        if (!isValid) {
+          return;
+        }
+      }
+
+      await updateUserStatus({
+        userId: pendingAction.userId,
+        approvalStatus: pendingAction.nextStatus === "Approved" ? "approved" : "rejected",
+        ...(reason ? { reason } : {}),
+      });
+
+      setPendingAction(null);
+      rejectReasonForm.reset({ reason: "" });
+      return;
     }
 
     if (pendingAction.kind === "toggle-block") {
@@ -109,11 +148,15 @@ export function UsersManagementPage() {
           isBlocked: !(target?.isBlocked ?? false),
         },
       }));
+      setPendingAction(null);
+      return;
     }
 
     if (pendingAction.kind === "delete") {
-      setDeletedUserIds((prev) => Array.from(new Set([...prev, pendingAction.userId])));
+      await removeUser(pendingAction.userId);
       setSelectedRows((prev) => prev.filter((id) => id !== pendingAction.userId));
+      setPendingAction(null);
+      return;
     }
 
     if (pendingAction.kind === "bulk-approve") {
@@ -181,6 +224,9 @@ export function UsersManagementPage() {
   };
 
   const confirmationCopy = getConfirmationCopy();
+
+  const isRejectAction =
+    pendingAction?.kind === "status" && pendingAction.nextStatus === "Rejected";
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-5 p-6">
@@ -301,10 +347,40 @@ export function UsersManagementPage() {
         onOpenChange={(open) => {
           if (!open) {
             setPendingAction(null);
+            rejectReasonForm.reset({ reason: "" });
           }
         }}
         onConfirm={confirmAction}
-      />
+        confirmDisabled={isRejectAction && !rejectReasonForm.formState.isValid}
+        isConfirming={isUpdatingStatus || isDeletingUser}
+      >
+        {isRejectAction && (
+          <Form {...rejectReasonForm}>
+            <form className="space-y-2">
+              <FormField
+                control={rejectReasonForm.control}
+                name="reason"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>سبب الرفض</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder="اكتب سبب الرفض"
+                        onChange={(event) => {
+                          field.onChange(event);
+                          rejectReasonForm.trigger("reason");
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        )}
+      </ConfirmationModal>
     </div>
   );
 }

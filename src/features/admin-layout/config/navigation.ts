@@ -55,10 +55,10 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
     label: "المالية",
     icon: Landmark,
     items: [
-      { label: "المعاملات", href: "/admin/users/finance/transactions" },
-      { label: "المحافظ", href: "/admin/users/finance/wallets" },
-      { label: "المدفوعات", href: "/admin/users/finance/payouts" },
-      { label: "الإيرادات", href: "/admin/users/finance/revenue" },
+      { label: "المعاملات", href: "/coming-soon" },
+      { label: "المحافظ", href: "/coming-soon" },
+      { label: "المدفوعات", href: "/coming-soon" },
+      { label: "الإيرادات", href: "/coming-soon" },
     ],
   },
   {
@@ -66,9 +66,9 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
     label: "الأجهزة",
     icon: Cpu,
     items: [
-      { label: "الأجهزة", href: "/admin/users/hardware/devices" },
-      { label: "الأجهزة المخصصة", href: "/admin/users/hardware/assigned" },
-      { label: "حالة الأجهزة", href: "/admin/users/hardware/status" },
+      { label: "الأجهزة", href: "/coming-soon" },
+      { label: "الأجهزة المخصصة", href: "/coming-soon" },
+      { label: "حالة الأجهزة", href: "/coming-soon" },
     ],
   },
   {
@@ -76,8 +76,8 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
     label: "التقارير",
     icon: BarChart3,
     items: [
-      { label: "تحليلات الاستخدام", href: "/admin/users/reports/usage-analytics" },
-      { label: "مؤشرات النمو", href: "/admin/users/reports/growth-metrics" },
+      { label: "تحليلات الاستخدام", href: "/coming-soon" },
+      { label: "مؤشرات النمو", href: "/coming-soon" },
     ],
   },
   {
@@ -85,10 +85,10 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
     label: "إعدادات النظام",
     icon: Settings,
     items: [
-      { label: "إعدادات المنصة", href: "/admin/users/settings/platform" },
-      { label: "الأدوار والصلاحيات", href: "/admin/users/settings/roles" },
-      { label: "الإشعارات", href: "/admin/users/settings/notifications" },
-      { label: "نسبة العمولة", href: "/admin/users/settings/commission-rate" },
+      { label: "إعدادات المنصة", href: "/coming-soon" },
+      { label: "الأدوار والصلاحيات", href: "/coming-soon" },
+      { label: "الإشعارات", href: "/coming-soon" },
+      { label: "نسبة العمولة", href: "/coming-soon" },
     ],
   },
 ];

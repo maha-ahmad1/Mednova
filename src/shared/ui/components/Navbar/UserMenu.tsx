@@ -59,14 +59,14 @@ export function UserMenu() {
         </DropdownMenuItem>
 
         <DropdownMenuItem className="flex gap-2">
-          <Link href="/settings" className="flex-1 text-sm text-right">
+          <Link href="/coming-soon" className="flex-1 text-sm text-right">
             الإعدادات
           </Link>
           <Settings className="w-4 h-4" />
         </DropdownMenuItem>
 
         <DropdownMenuItem className="flex gap-2">
-          <Link href="/help" className="flex-1 text-sm text-right">
+          <Link href="/coming-soon" className="flex-1 text-sm text-right">
             المساعدة
           </Link>
           <HelpCircle className="w-4 h-4" />

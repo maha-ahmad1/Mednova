@@ -335,10 +335,10 @@ const shouldShowZoomButton = () => {
               <div className="font-semibold text-gray-800 text-sm sm:text-base">
                 <div className="flex items-center gap-2">
                   <span>{appointmentInfo.fullDate}</span>
-                  <Badge variant="outline" className="text-xs bg-[#32A88D]/5 text-[#32A88D] border-[#32A88D]/20">
+                  {/* <Badge variant="outline" className="text-xs bg-[#32A88D]/5 text-[#32A88D] border-[#32A88D]/20">
                     <Clock className="w-3 h-3 ml-1" />
                     {appointmentInfo.time}
-                  </Badge>
+                  </Badge> */}
                 </div>
               </div>
             </div>

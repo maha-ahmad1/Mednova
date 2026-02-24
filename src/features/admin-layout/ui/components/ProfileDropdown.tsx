@@ -36,7 +36,7 @@ export function ProfileDropdown() {
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link
-            href="/admin/users/settings/platform"
+            href="/coming-soon"
             className="flex flex-row-reverse items-center justify-end gap-2 text-right"
           >
             <Settings className="h-4 w-4" />

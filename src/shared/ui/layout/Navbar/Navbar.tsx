@@ -125,7 +125,7 @@ export default function Navbar() {
                        className="flex items-center gap-2 px-3 py-2 rounded-md 
                       hover:bg-gray-100/60 text-gray-700 transition "
                      >
-                       <Link href="/settings" className="text-sm w-full text-right">
+                       <Link href="/coming-soon" className="text-sm w-full text-right">
                          الإعدادات
                        </Link>
                        <Settings className="w-4 h-4 text-gray-900" />
@@ -134,7 +134,7 @@ export default function Navbar() {
                        className="flex items-center gap-2 px-3 py-2 rounded-md
                       hover:bg-gray-100/60 text-gray-700 transition"
                      >
-                       <Link href="/help" className="text-sm w-full text-right">
+                       <Link href="/coming-soon" className="text-sm w-full text-right">
                          المساعدة
                        </Link>
                        <HelpCircle className="w-4 h-4 text-gray-900" />

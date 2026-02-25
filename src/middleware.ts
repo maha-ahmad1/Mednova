@@ -63,8 +63,8 @@ export async function middleware(req: NextRequest) {
 
     if (!isCompleted) {
       if (!pathname.startsWith("/profile/create")) {
-        url.pathname = "/profile/create";
-        return NextResponse.redirect(url);
+        url.pathname = "/profile/create"; //يعدل مسار الـ URL object
+        return NextResponse.redirect(url); //يطلب من المتصفح يروح على الرابط الجديد
       }
     } else if (approval_status === "pending") {
       if (!pathname.startsWith("/profile/pending")) {

@@ -61,7 +61,6 @@ function createEchoInstance(token: string, type: "notifications" | "chat") {
   return instance;
 }
 
-// ... باقي الدوال نفسها
 
 export function cleanupChatEcho() {
   if (chatEchoInstance) {

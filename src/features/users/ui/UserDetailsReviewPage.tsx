@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { AlertTriangle, ArrowLeft, CheckCircle2, Mail, MapPin, Phone, ShieldCheck, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -69,6 +69,43 @@ function InfoItem({ label, value }: { label: string; value: string }) {
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="text-sm font-medium text-foreground break-words">{value}</p>
     </div>
+  );
+}
+
+function VerificationStatusItem({
+  label,
+  isVerified,
+  icon,
+}: {
+  label: string;
+  isVerified: boolean;
+  icon: ReactNode;
+}) {
+  return (
+    <div className="space-y-1 rounded-lg border border-border/70 bg-muted/20 p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-sm font-medium">
+        {isVerified ? (
+          <span className="inline-flex items-center gap-1 text-emerald-700">
+            {icon}
+            موثّق
+          </span>
+        ) : (
+          <span className="text-amber-700">غير موثّق</span>
+        )}
+      </p>
+    </div>
+  );
+}
+
+function DetailsSection({ title, children, contentClassName }: { title: string; children: ReactNode; contentClassName: string }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-right">{title}</CardTitle>
+      </CardHeader>
+      <CardContent className={contentClassName}>{children}</CardContent>
+    </Card>
   );
 }
 
@@ -180,163 +217,126 @@ export function UserDetailsReviewPage({ userId }: UserDetailsReviewPageProps) {
         </TabsList>
 
         <TabsContent value="overview">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-right">البيانات الأساسية</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              <InfoItem label="الاسم الكامل" value={safeValue(user.full_name)} />
-              <InfoItem label="البريد الإلكتروني" value={safeValue(user.email)} />
-              <InfoItem label="رقم الجوال" value={safeValue(user.phone)} />
-              <InfoItem label="تاريخ الميلاد" value={safeValue(user.birth_date)} />
-              <InfoItem label="الجنس" value={safeValue(user.gender)} />
-              <InfoItem label="المنطقة الزمنية" value={safeValue(user.timezone)} />
-              <InfoItem label="نوع الحساب" value={accountTypeMap[user.type_account] ?? user.type_account} />
-              <InfoItem label="حالة الموافقة" value={approval.label} />
-              <InfoItem label="اكتمال الحساب" value={user.is_completed ? "مكتمل" : "غير مكتمل"} />
+          <DetailsSection title="البيانات الأساسية" contentClassName="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <InfoItem label="الاسم الكامل" value={safeValue(user.full_name)} />
+            <InfoItem label="البريد الإلكتروني" value={safeValue(user.email)} />
+            <InfoItem label="رقم الجوال" value={safeValue(user.phone)} />
+            <InfoItem label="تاريخ الميلاد" value={safeValue(user.birth_date)} />
+            <InfoItem label="الجنس" value={safeValue(user.gender)} />
+            <InfoItem label="المنطقة الزمنية" value={safeValue(user.timezone)} />
+            <InfoItem label="نوع الحساب" value={accountTypeMap[user.type_account] ?? user.type_account} />
+            <InfoItem label="حالة الموافقة" value={approval.label} />
+            <InfoItem label="اكتمال الحساب" value={user.is_completed ? "مكتمل" : "غير مكتمل"} />
 
-              <div className="space-y-1 rounded-lg border border-border/70 bg-muted/20 p-3">
-                <p className="text-xs text-muted-foreground">توثيق البريد الإلكتروني</p>
-                <p className="text-sm font-medium">
-                  {user.email_verified_at ? (
-                    <span className="inline-flex items-center gap-1 text-emerald-700">
-                      <CheckCircle2 className="h-4 w-4" />
-                      موثّق
-                    </span>
-                  ) : (
-                    <span className="text-amber-700">غير موثّق</span>
-                  )}
-                </p>
-              </div>
-
-              <div className="space-y-1 rounded-lg border border-border/70 bg-muted/20 p-3">
-                <p className="text-xs text-muted-foreground">توثيق الهاتف</p>
-                <p className="text-sm font-medium">
-                  {user.phone_verified_at ? (
-                    <span className="inline-flex items-center gap-1 text-emerald-700">
-                      <ShieldCheck className="h-4 w-4" />
-                      موثّق
-                    </span>
-                  ) : (
-                    <span className="text-amber-700">غير موثّق</span>
-                  )}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+            <VerificationStatusItem
+              label="توثيق البريد الإلكتروني"
+              isVerified={Boolean(user.email_verified_at)}
+              icon={<CheckCircle2 className="h-4 w-4" />}
+            />
+            <VerificationStatusItem
+              label="توثيق الهاتف"
+              isVerified={Boolean(user.phone_verified_at)}
+              icon={<ShieldCheck className="h-4 w-4" />}
+            />
+          </DetailsSection>
         </TabsContent>
 
         <TabsContent value="location">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-right">بيانات الموقع</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              <InfoItem label="الدولة" value={safeValue(user.location_details?.country)} />
-              <InfoItem label="المنطقة" value={safeValue(user.location_details?.region)} />
-              <InfoItem label="المدينة" value={safeValue(user.location_details?.city)} />
-              <InfoItem label="العنوان" value={safeValue(user.location_details?.formatted_address)} />
-              <InfoItem label="الرمز البريدي" value={safeValue(user.location_details?.postal_code)} />
-              <InfoItem
-                label="الإحداثيات"
-                value={`${safeValue(user.location_details?.latitude)} , ${safeValue(user.location_details?.longitude)}`}
-              />
-              <div className="space-y-1 rounded-lg border border-border/70 bg-muted/20 p-3 md:col-span-2 lg:col-span-3">
-                <p className="text-xs text-muted-foreground">رابط خرائط Google</p>
-                {mapUrl ? (
-                  <Link
-                    href={mapUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                  >
-                    <MapPin className="h-4 w-4" />
-                    فتح الموقع على الخريطة
-                  </Link>
-                ) : (
-                  <p className="text-sm font-medium text-muted-foreground">لا توجد إحداثيات متاحة.</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <DetailsSection title="بيانات الموقع" contentClassName="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <InfoItem label="الدولة" value={safeValue(user.location_details?.country)} />
+            <InfoItem label="المنطقة" value={safeValue(user.location_details?.region)} />
+            <InfoItem label="المدينة" value={safeValue(user.location_details?.city)} />
+            <InfoItem label="العنوان" value={safeValue(user.location_details?.formatted_address)} />
+            <InfoItem label="الرمز البريدي" value={safeValue(user.location_details?.postal_code)} />
+            <InfoItem
+              label="الإحداثيات"
+              value={`${safeValue(user.location_details?.latitude)} , ${safeValue(user.location_details?.longitude)}`}
+            />
+            <div className="space-y-1 rounded-lg border border-border/70 bg-muted/20 p-3 md:col-span-2 lg:col-span-3">
+              <p className="text-xs text-muted-foreground">رابط خرائط Google</p>
+              {mapUrl ? (
+                <Link
+                  href={mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                >
+                  <MapPin className="h-4 w-4" />
+                  فتح الموقع على الخريطة
+                </Link>
+              ) : (
+                <p className="text-sm font-medium text-muted-foreground">لا توجد إحداثيات متاحة.</p>
+              )}
+            </div>
+          </DetailsSection>
         </TabsContent>
 
         {isCenter && (
           <TabsContent value="center">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-right">بيانات المركز</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                <InfoItem label="اسم المركز" value={safeValue(user.center_details?.name_center)} />
-                <InfoItem label="سنة التأسيس" value={safeValue(user.center_details?.year_establishment)} />
-                <InfoItem label="رقم الترخيص" value={safeValue(user.center_details?.license_number)} />
-                <InfoItem label="جهة الترخيص" value={safeValue(user.center_details?.license_authority)} />
-                <InfoItem
-                  label="السجل التجاري"
-                  value={
-                    user.center_details?.has_commercial_registration
-                      ? safeValue(user.center_details?.commercial_registration_number)
-                      : "لا يوجد"
-                  }
-                />
-                <InfoItem label="جهة السجل التجاري" value={safeValue(user.center_details?.commercial_registration_authority)} />
-                <InfoItem label="سعر الاستشارة المرئية" value={safeValue(user.center_details?.video_consultation_price)} />
-                <InfoItem label="سعر الاستشارة الكتابية" value={safeValue(user.center_details?.chat_consultation_price)} />
-                <InfoItem label="العملة" value={safeValue(user.center_details?.currency)} />
+            <DetailsSection title="بيانات المركز" contentClassName="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              <InfoItem label="اسم المركز" value={safeValue(user.center_details?.name_center)} />
+              <InfoItem label="سنة التأسيس" value={safeValue(user.center_details?.year_establishment)} />
+              <InfoItem label="رقم الترخيص" value={safeValue(user.center_details?.license_number)} />
+              <InfoItem label="جهة الترخيص" value={safeValue(user.center_details?.license_authority)} />
+              <InfoItem
+                label="السجل التجاري"
+                value={
+                  user.center_details?.has_commercial_registration
+                    ? safeValue(user.center_details?.commercial_registration_number)
+                    : "لا يوجد"
+                }
+              />
+              <InfoItem label="جهة السجل التجاري" value={safeValue(user.center_details?.commercial_registration_authority)} />
+              <InfoItem label="سعر الاستشارة المرئية" value={safeValue(user.center_details?.video_consultation_price)} />
+              <InfoItem label="سعر الاستشارة الكتابية" value={safeValue(user.center_details?.chat_consultation_price)} />
+              <InfoItem label="العملة" value={safeValue(user.center_details?.currency)} />
 
-                {!user.center_details?.license_file && (
-                  <div className="md:col-span-2 lg:col-span-3">
-                    <Badge variant="outline" className="gap-1 border-amber-200 bg-amber-50 text-amber-700">
-                      <AlertTriangle className="h-3.5 w-3.5" />
-                      تنبيه: ملف الترخيص غير مرفوع
-                    </Badge>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              {!user.center_details?.license_file && (
+                <div className="md:col-span-2 lg:col-span-3">
+                  <Badge variant="outline" className="gap-1 border-amber-200 bg-amber-50 text-amber-700">
+                    <AlertTriangle className="h-3.5 w-3.5" />
+                    تنبيه: ملف الترخيص غير مرفوع
+                  </Badge>
+                </div>
+              )}
+            </DetailsSection>
           </TabsContent>
         )}
 
         <TabsContent value="schedule">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-right">جدول العمل</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {user.schedules.length === 0 && (
-                <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground text-center">
-                  لا يوجد جدول عمل مضاف.
-                </p>
-              )}
+          <DetailsSection title="جدول العمل" contentClassName="space-y-3">
+            {user.schedules.length === 0 && (
+              <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground text-center">
+                لا يوجد جدول عمل مضاف.
+              </p>
+            )}
 
-              {user.schedules.map((schedule) => (
-                <div key={schedule.id} className="grid gap-3 rounded-lg border p-4 md:grid-cols-2 lg:grid-cols-4">
-                  <InfoItem
-                    label="الأيام"
-                    value={schedule.day_of_week.map((day) => dayMap[day] ?? day).join("، ") || "—"}
-                  />
-                  <InfoItem
-                    label="الفترة الصباحية"
-                    value={
-                      schedule.start_time_morning && schedule.end_time_morning
-                        ? `${schedule.start_time_morning} - ${schedule.end_time_morning}`
-                        : "—"
-                    }
-                  />
-                  <InfoItem
-                    label="الفترة المسائية"
-                    value={
-                      schedule.is_have_evening_time && schedule.start_time_evening && schedule.end_time_evening
-                        ? `${schedule.start_time_evening} - ${schedule.end_time_evening}`
-                        : "لا توجد"
-                    }
-                  />
-                  <InfoItem label="نوع الدوام" value={scheduleTypeMap[schedule.type_time] ?? schedule.type_time} />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+            {user.schedules.map((schedule) => (
+              <div key={schedule.id} className="grid gap-3 rounded-lg border p-4 md:grid-cols-2 lg:grid-cols-4">
+                <InfoItem
+                  label="الأيام"
+                  value={schedule.day_of_week.map((day) => dayMap[day] ?? day).join("، ") || "—"}
+                />
+                <InfoItem
+                  label="الفترة الصباحية"
+                  value={
+                    schedule.start_time_morning && schedule.end_time_morning
+                      ? `${schedule.start_time_morning} - ${schedule.end_time_morning}`
+                      : "—"
+                  }
+                />
+                <InfoItem
+                  label="الفترة المسائية"
+                  value={
+                    schedule.is_have_evening_time && schedule.start_time_evening && schedule.end_time_evening
+                      ? `${schedule.start_time_evening} - ${schedule.end_time_evening}`
+                      : "لا توجد"
+                  }
+                />
+                <InfoItem label="نوع الدوام" value={scheduleTypeMap[schedule.type_time] ?? schedule.type_time} />
+              </div>
+            ))}
+          </DetailsSection>
         </TabsContent>
       </Tabs>
     </div>

@@ -17,7 +17,8 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (credentials?.email && credentials?.password) {
-          const isControlPanelLogin = credentials.login_context === "control-panel";
+          const isControlPanelLogin =
+            credentials.login_context === "control-panel";
           const loginUrl = isControlPanelLogin
             ? "https://api.mednovacare.com/api/control-panel/auth/login"
             : "https://api.mednovacare.com/api/auth/login";
@@ -97,6 +98,8 @@ export const authOptions: NextAuthOptions = {
         token.user = typedUser;
         token.accessToken = typedUser.accessToken ?? token.accessToken;
         token.role = typedUser.type_account;
+        token.approval_status =
+          (typedUser as UserT & { approval_status?: string }).approval_status ?? token.approval_status;
         // token.isCompleted = typedUser.isCompleted
       }
 
@@ -114,6 +117,10 @@ export const authOptions: NextAuthOptions = {
         }
         token.role = session.user.type_account ?? token.role;
         // token.isCompleted = session.user.isCompleted ?? token.isCompleted
+        token.approval_status =
+          session.approval_status ??
+          session.user?.approval_status ??
+          token.approval_status;
       }
 
       return token;
@@ -124,6 +131,8 @@ export const authOptions: NextAuthOptions = {
       session.accessToken = token.accessToken as string;
       session.role = token.role as string;
       session.isCompleted = token.isCompleted as boolean;
+      session.approval_status = token.approval_status as string;
+
       return session;
     },
   },

@@ -72,7 +72,7 @@ export function SidebarGroup({
         <div className="min-h-0 space-y-1">
           {group.items.map((item) => (
             <SidebarSubItem
-              key={item.href}
+              key={`${item.href}-${item.label}`}
               item={item}
               isActive={isItemActive(item.href)}
               onNavigate={onNavigate}

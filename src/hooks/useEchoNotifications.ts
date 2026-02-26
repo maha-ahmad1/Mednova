@@ -42,7 +42,7 @@ type SystemNotificationEvent = {
 };
 
 export const useEchoNotifications = (): void => {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const router = useRouter(); // إضافة
   const pathname = usePathname(); // إضافة
   const pathnameRef = useRef(pathname);
@@ -279,6 +279,8 @@ export const useEchoNotifications = (): void => {
       channelName = `patient.${userId}`;
     } else if (role === "therapist" || role === "rehabilitation_center") {
       channelName = `consultant.${userId}`;
+    } else if (role === "admin") {
+      return;
     } else {
       console.error("❌ نوع حساب غير معروف:", role);
       return;
@@ -343,7 +345,7 @@ export const useEchoNotifications = (): void => {
 
     accountChannel.listen(
       ".account.status.updated",
-      (event: { status: string; reason?: string; message?: string }) => {
+      async (event: { status: string; reason?: string; message?: string }) => {
         console.log("📢 حدث تحديث حالة الحساب:", event);
         console.log("🔥🔥🔥 حدث تحديث الحساب واصل:", event);
         // إنشاء إشعار
@@ -366,26 +368,29 @@ export const useEchoNotifications = (): void => {
         };
         addNotification(notification);
 
-        // عرض toast
         if (event.status === "approved") {
-          toast.success(event.message || "تم قبول حسابك", { duration: 5000 });
-        } else {
-          toast.error(event.message || "تم رفض حسابك", { duration: 5000 });
+          toast.success(event.message || "تم قبول حسابك", {
+            duration: 5000,
+          });
+
+          await update({
+            approval_status: "approved",
+            user: {
+              ...session?.user,
+              approval_status: "approved",
+            },
+          });
+
+          router.replace("/profile");
+          router.refresh();
         }
 
-        // التوجيه بناءً على الحالة والمسار الحالي
-        if (event.status === "approved") {
-          if (pathnameRef.current === "/profile/pending") {
-            router.push("/profile");
-            setTimeout(() => {
-              router.refresh();
-            }, 300);
-          }
-        } else if (event.status === "rejected") {
-          // (اختياري) يمكن توجيهه لصفحة توضح سبب الرفض
-          if (pathnameRef.current === "/profile/pending") {
-            router.push("/profile/rejected"); // تأكد من وجود هذه الصفحة أو استبدلها بالمسار المناسب
-          }
+        if (event.status === "rejected") {
+          toast.error(event.message || "تم رفض حسابك", {
+            duration: 5000,
+          });
+
+          router.replace("/profile/rejected");
         }
       },
     );
@@ -445,5 +450,5 @@ export const useEchoNotifications = (): void => {
         processedEventsRef.current.clear();
       }
     };
-  }, [session, handleConsultationEvent, addNotification, router]);
+  }, [session, handleConsultationEvent, addNotification, router, update]);
 };

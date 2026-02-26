@@ -99,7 +99,7 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = typedUser.accessToken ?? token.accessToken;
         token.role = typedUser.type_account;
         token.approval_status =
-          (typedUser as any).approval_status ?? token.approval_status;
+          (typedUser as UserT & { approval_status?: string }).approval_status ?? token.approval_status;
         // token.isCompleted = typedUser.isCompleted
       }
 

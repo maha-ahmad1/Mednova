@@ -7,6 +7,7 @@ import {
   LogOut,
   Settings,
   Users,
+  BookOpen,
 } from "lucide-react";
 
 export interface AdminSidebarSubItem {
@@ -48,6 +49,16 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
       { label: "المختصون", href: "/admin/users/specialists" },
       { label: "المراكز", href: "/admin/users/centers" },
       { label: "طلبات معلقة", href: "/admin/users/pending-requests", badge: "8" },
+    ],
+  },
+  {
+    id: "programs-management",
+    label: "إدارة البرامج",
+    icon: BookOpen,
+    items: [
+      { label: "جميع البرامج", href: "/admin/programs" },
+      { label: "البرامج المنشورة", href: "/admin/programs?status=published" },
+      { label: "البرامج غير الموافق عليها", href: "/admin/programs?is_approved=0" },
     ],
   },
   {

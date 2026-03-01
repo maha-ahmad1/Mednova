@@ -42,7 +42,7 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   })) as Token | null;
 
-  if (pathname.startsWith("/admin/users")) {
+  if (pathname.startsWith("/admin/users") || pathname.startsWith("/admin/programs")) {
     if (!isAdminToken(token)) {
       url.pathname = "/admin/login";
       return NextResponse.redirect(url);
@@ -86,5 +86,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/admin/users/:path*"],
+  matcher: ["/profile/:path*", "/admin/users/:path*", "/admin/programs/:path*"],
 };

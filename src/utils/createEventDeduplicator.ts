@@ -1,5 +1,8 @@
 import { useCallback, useMemo, useRef } from "react";
 
+//It is a simple hook to prevent the same event from happening twice (e.g., receiving a notification from Pusher twice).
+
+
 export const useEventDeduplicator = () => {
   const processedEventsRef = useRef<Set<string>>(new Set());
 

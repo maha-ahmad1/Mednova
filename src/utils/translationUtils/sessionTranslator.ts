@@ -33,16 +33,16 @@ export const translateProviderType = (type: string): string => {
     // الإنجليزية
     'therapist': 'معالج نفسي',
     'rehabilitation_center': 'مركز تأهيل',
-    'coach': 'مدرب',
-    'nutritionist': 'أخصائي تغذية',
-    'psychiatrist': 'طبيب نفسي',
+    // 'coach': 'مدرب',
+    // 'nutritionist': 'أخصائي تغذية',
+    // 'psychiatrist': 'طبيب نفسي',
     
     // العربية
     'معالج نفسي': 'Therapist',
     'مركز تأهيل': 'Rehabilitation Center',
-    'مدرب': 'Coach',
-    'أخصائي تغذية': 'Nutritionist',
-    'طبيب نفسي': 'Psychiatrist',
+    // 'مدرب': 'Coach',
+    // 'أخصائي تغذية': 'Nutritionist',
+    // 'طبيب نفسي': 'Psychiatrist',
   };
   
   const normalizedType = type.trim().toLowerCase();

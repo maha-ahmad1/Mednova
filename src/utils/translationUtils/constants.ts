@@ -66,7 +66,7 @@ export const SESSION_TYPES = {
 export const PROVIDER_TYPES = {
   THERAPIST: 'therapist',
   REHAB_CENTER: 'rehabilitation_center',
-  COACH: 'coach',
-  NUTRITIONIST: 'nutritionist',
-  PSYCHIATRIST: 'psychiatrist',
+  // COACH: 'coach',
+  // NUTRITIONIST: 'nutritionist',
+  // PSYCHIATRIST: 'psychiatrist',
 } as const;

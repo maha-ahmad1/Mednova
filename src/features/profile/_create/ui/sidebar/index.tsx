@@ -122,7 +122,7 @@ return (
         const isActive = pathname === item.href;
         return (
           <Link
-            key={item.href}
+            key={`${item.href}-${item.label}`}
             href={item.href}
             className={cn(
               "flex items-center gap-3 rounded-xl px-3 lg:px-4 py-3 lg:py-3 text-sm font-medium transition-all duration-200 justify-center lg:justify-start flex-1 lg:flex-none",

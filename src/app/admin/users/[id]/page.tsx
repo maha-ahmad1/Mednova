@@ -1,4 +1,4 @@
-import { UserDetailsReviewPage } from "@/features/users/ui";
+import { UserDetailsReviewPage } from "@/features/control-panel/users/ui";
 
 interface AdminUserDetailsPageProps {
   params: Promise<{ id: string }>;

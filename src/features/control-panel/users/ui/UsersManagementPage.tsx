@@ -49,6 +49,51 @@ const rejectReasonSchema = z.object({
 
 type RejectReasonFormValues = z.infer<typeof rejectReasonSchema>;
 
+const getConfirmationCopy = (pendingAction: PendingAction, users: AdminUser[]) => {
+  if (!pendingAction) {
+    return {
+      title: "",
+      description: "",
+      confirmLabel: "تأكيد",
+    };
+  }
+
+  if (pendingAction.kind === "status") {
+    return {
+      title: "تغيير حالة المستخدم",
+      description: `هل أنت متأكد أنك تريد تغيير حالة هذا المستخدم إلى ${statusLabels[pendingAction.nextStatus]}؟`,
+      confirmLabel: "تحديث الحالة",
+    };
+  }
+
+  if (pendingAction.kind === "toggle-block") {
+    const user = users.find((item) => item.id === pendingAction.userId);
+    const isCurrentlyBlocked = user?.isBlocked;
+
+    return {
+      title: isCurrentlyBlocked ? "إلغاء حظر المستخدم" : "حظر المستخدم",
+      description: isCurrentlyBlocked
+        ? "سيتمكن هذا المستخدم من الوصول إلى المنصة مرة أخرى."
+        : "سيتم حظر هذا المستخدم من الوصول إلى المنصة.",
+      confirmLabel: isCurrentlyBlocked ? "إلغاء الحظر" : "حظر",
+    };
+  }
+
+  if (pendingAction.kind === "delete") {
+    return {
+      title: "حذف المستخدم",
+      description: "لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
+      confirmLabel: "حذف",
+    };
+  }
+
+  return {
+    title: "الموافقة على المستخدمين المحددين",
+    description: `هل تريد الموافقة على ${pendingAction.userIds.length} مستخدم/مستخدمين محددين؟`,
+    confirmLabel: "الموافقة",
+  };
+};
+
 export function UsersManagementPage() {
   const router = useRouter();
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -113,119 +158,75 @@ export function UsersManagementPage() {
   const confirmAction = async () => {
     if (!pendingAction) return;
 
-    if (pendingAction.kind === "status") {
-      if (pendingAction.nextStatus === "Pending") {
+    switch (pendingAction.kind) {
+      case "status": {
+        if (pendingAction.nextStatus === "Pending") {
+          return;
+        }
+
+        const reason =
+          pendingAction.nextStatus === "Rejected"
+            ? rejectReasonForm.getValues("reason").trim()
+            : undefined;
+
+        if (pendingAction.nextStatus === "Rejected") {
+          const isValid = await rejectReasonForm.trigger("reason");
+          if (!isValid) {
+            return;
+          }
+        }
+
+        await updateUserStatus({
+          userId: pendingAction.userId,
+          approvalStatus: pendingAction.nextStatus === "Approved" ? "approved" : "rejected",
+          ...(reason ? { reason } : {}),
+        });
+
+        setPendingAction(null);
+        rejectReasonForm.reset({ reason: "" });
         return;
       }
 
-      const reason =
-        pendingAction.nextStatus === "Rejected"
-          ? rejectReasonForm.getValues("reason").trim()
-          : undefined;
-
-      if (pendingAction.nextStatus === "Rejected") {
-        const isValid = await rejectReasonForm.trigger("reason");
-        if (!isValid) {
-          return;
-        }
+      case "toggle-block": {
+        const target = users.find((user) => user.id === pendingAction.userId);
+        setOverrides((prev) => ({
+          ...prev,
+          [pendingAction.userId]: {
+            ...prev[pendingAction.userId],
+            isBlocked: !(target?.isBlocked ?? false),
+          },
+        }));
+        setPendingAction(null);
+        return;
       }
 
-      await updateUserStatus({
-        userId: pendingAction.userId,
-        approvalStatus: pendingAction.nextStatus === "Approved" ? "approved" : "rejected",
-        ...(reason ? { reason } : {}),
-      });
+      case "delete": {
+        await removeUser(pendingAction.userId);
+        setSelectedRows((prev) => prev.filter((id) => id !== pendingAction.userId));
+        setPendingAction(null);
+        return;
+      }
 
-      setPendingAction(null);
-      rejectReasonForm.reset({ reason: "" });
-      return;
-    }
-
-    if (pendingAction.kind === "toggle-block") {
-      const target = users.find((user) => user.id === pendingAction.userId);
-      setOverrides((prev) => ({
-        ...prev,
-        [pendingAction.userId]: {
-          ...prev[pendingAction.userId],
-          isBlocked: !(target?.isBlocked ?? false),
-        },
-      }));
-      setPendingAction(null);
-      return;
-    }
-
-    if (pendingAction.kind === "delete") {
-      await removeUser(pendingAction.userId);
-      setSelectedRows((prev) => prev.filter((id) => id !== pendingAction.userId));
-      setPendingAction(null);
-      return;
-    }
-
-    if (pendingAction.kind === "bulk-approve") {
-      setOverrides((prev) => {
-        const next = { ...prev };
-        pendingAction.userIds.forEach((userId) => {
-          next[userId] = {
-            ...next[userId],
-            status: "Approved",
-          };
+      case "bulk-approve": {
+        setOverrides((prev) => {
+          const next = { ...prev };
+          pendingAction.userIds.forEach((userId) => {
+            next[userId] = {
+              ...next[userId],
+              status: "Approved",
+            };
+          });
+          return next;
         });
-        return next;
-      });
-      setSelectedRows([]);
+        setSelectedRows([]);
+        setPendingAction(null);
+      }
     }
-
-    setPendingAction(null);
   };
 
   const visibleUsers = filteredUsers;
 
-  const getConfirmationCopy = () => {
-    if (!pendingAction) {
-      return {
-        title: "",
-        description: "",
-        confirmLabel: "تأكيد",
-      };
-    }
-
-    if (pendingAction.kind === "status") {
-      return {
-        title: "تغيير حالة المستخدم",
-        description: `هل أنت متأكد أنك تريد تغيير حالة هذا المستخدم إلى ${statusLabels[pendingAction.nextStatus]}؟`,
-        confirmLabel: "تحديث الحالة",
-      };
-    }
-
-    if (pendingAction.kind === "toggle-block") {
-      const user = users.find((item) => item.id === pendingAction.userId);
-      const isCurrentlyBlocked = user?.isBlocked;
-
-      return {
-        title: isCurrentlyBlocked ? "إلغاء حظر المستخدم" : "حظر المستخدم",
-        description: isCurrentlyBlocked
-          ? "سيتمكن هذا المستخدم من الوصول إلى المنصة مرة أخرى."
-          : "سيتم حظر هذا المستخدم من الوصول إلى المنصة.",
-        confirmLabel: isCurrentlyBlocked ? "إلغاء الحظر" : "حظر",
-      };
-    }
-
-    if (pendingAction.kind === "delete") {
-      return {
-        title: "حذف المستخدم",
-        description: "لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
-        confirmLabel: "حذف",
-      };
-    }
-
-    return {
-      title: "الموافقة على المستخدمين المحددين",
-      description: `هل تريد الموافقة على ${pendingAction.userIds.length} مستخدم/مستخدمين محددين؟`,
-      confirmLabel: "الموافقة",
-    };
-  };
-
-  const confirmationCopy = getConfirmationCopy();
+  const confirmationCopy = getConfirmationCopy(pendingAction, users);
 
   const isRejectAction =
     pendingAction?.kind === "status" && pendingAction.nextStatus === "Rejected";

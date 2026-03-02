@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
-import { TableSkeletonRows } from "@/shared/ui/components/TableSkeletonRows";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
@@ -105,7 +104,7 @@ export function UsersManagementPage() {
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { users: fetchedUsers, isLoading, isFetching, isError, pagination } = useAdminUsers(filters, currentPage, USERS_PER_PAGE);
+  const { users: fetchedUsers, isLoading, isError, pagination } = useAdminUsers(filters, currentPage, USERS_PER_PAGE);
   const { mutateAsync: updateUserStatus, isPending: isUpdatingStatus } = useUpdateUserStatus();
   const { mutateAsync: removeUser, isPending: isDeletingUser } = useDeleteUser();
   const [overrides, setOverrides] = useState<Record<string, Partial<AdminUser>>>({});
@@ -352,7 +351,7 @@ export function UsersManagementPage() {
         currentPage={pagination?.current_page ?? currentPage}
         lastPage={pagination?.last_page ?? 1}
         total={pagination?.total}
-        isLoading={showSkeletonRows}
+        isLoading={isLoading}
         onPageChange={(page) => {
           if (page < 1 || page > (pagination?.last_page ?? 1)) {
             return;

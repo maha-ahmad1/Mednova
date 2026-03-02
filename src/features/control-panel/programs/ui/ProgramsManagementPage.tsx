@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ConfirmationModal } from "@/features/control-panel/users/ui/components/ConfirmationModal";
+import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { useControlPanelPrograms } from "../hooks/useControlPanelPrograms";
 import type { ControlPanelProgram, ProgramsFilters } from "../types/program";
 import { filterAndSortPrograms } from "../utils/programs";
@@ -23,11 +24,13 @@ const initialFilters: ProgramsFilters = {
   limit: 10,
 };
 
+const SKELETON_ROWS_COUNT = 10;
+
 export function ProgramsManagementPage() {
   const [filters, setFilters] = useState<ProgramsFilters>(initialFilters);
   const [pendingAction, setPendingAction] = useState<PendingProgramAction>(null);
 
-  const { programs, isLoading, isError } = useControlPanelPrograms(filters);
+  const { programs, isLoading, isFetching, isError } = useControlPanelPrograms(filters);
 
   const { rows, total } = useMemo(() => filterAndSortPrograms(programs, filters), [programs, filters]);
   const totalPages = Math.max(1, Math.ceil(total / filters.limit));
@@ -90,22 +93,30 @@ export function ProgramsManagementPage() {
             </tr>
           </thead>
           <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">جاري تحميل البرامج...</td>
-              </tr>
-            )}
-            {!isLoading && isError && (
+            {(isLoading || isFetching) &&
+              Array.from({ length: SKELETON_ROWS_COUNT }).map((_, index) => (
+                <tr key={`programs-skeleton-${index}`} className="border-t align-middle">
+                  <td className="px-4 py-3"><Skeleton className="h-4 w-10" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-4 w-40" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-4 w-28" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-6 w-20" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-6 w-24" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-4 w-16" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-4 w-12" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-8 w-10" /></td>
+                </tr>
+              ))}
+            {!isLoading && !isFetching && isError && (
               <tr>
                 <td colSpan={8} className="px-4 py-10 text-center text-destructive">تعذر تحميل البرامج. حاول مرة أخرى.</td>
               </tr>
             )}
-            {!isLoading && !isError && rows.length === 0 && (
+            {!isLoading && !isFetching && !isError && rows.length === 0 && (
               <tr>
                 <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">لا توجد برامج مطابقة.</td>
               </tr>
             )}
-            {!isLoading && !isError && rows.map((program) => (
+            {!isLoading && !isFetching && !isError && rows.map((program) => (
               <ProgramRow
                 key={program.id}
                 program={program}
@@ -118,25 +129,19 @@ export function ProgramsManagementPage() {
         </table>
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">صفحة {filters.page} من {totalPages}</p>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            disabled={filters.page <= 1}
-            onClick={() => setFilters((prev) => ({ ...prev, page: prev.page - 1 }))}
-          >
-            السابق
-          </Button>
-          <Button
-            variant="outline"
-            disabled={filters.page >= totalPages}
-            onClick={() => setFilters((prev) => ({ ...prev, page: prev.page + 1 }))}
-          >
-            التالي
-          </Button>
-        </div>
-      </div>
+      <PaginationControls
+        currentPage={filters.page}
+        lastPage={totalPages}
+        total={total}
+        isLoading={isLoading || isFetching}
+        onPageChange={(page) => {
+          if (page < 1 || page > totalPages) {
+            return;
+          }
+
+          setFilters((prev) => ({ ...prev, page }));
+        }}
+      />
 
       <ConfirmationModal
         open={Boolean(pendingAction)}

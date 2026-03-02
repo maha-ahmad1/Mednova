@@ -32,18 +32,18 @@ export function TopNavbar({ collapsed, onOpenMobileSidebar }: TopNavbarProps) {
             <Menu className="h-5 w-5" />
           </Button>
 
-          <div className="hidden text-sm font-semibold text-primary sm:block">لوحة تحكم MedNova</div>
+          <div className="hidden text-sm font-semibold text-primary sm:block">لوحة تحكم ميدنوفا</div>
         </div>
 
         <Breadcrumbs />
 
         <div className="flex items-center gap-2">
-          <div className="relative hidden w-full max-w-xs sm:block">
+          {/* <div className="relative hidden w-full max-w-xs sm:block">
             <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input placeholder="بحث سريع..." className="pr-9 text-right" />
-          </div>
-          <NotificationDropdown />
-          <ProfileDropdown />
+          </div> */}
+          {/* <NotificationDropdown /> */}
+          {/* <ProfileDropdown /> */}
         </div>
       </div>
     </header>

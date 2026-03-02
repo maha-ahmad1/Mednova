@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { PaginationControls } from "@/shared/ui/components/PaginationControls";
+import { TableSkeletonRows } from "@/shared/ui/components/TableSkeletonRows";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,6 +35,8 @@ const statusLabels: Record<UserStatus, string> = {
   Approved: "موافق عليه",
   Rejected: "مرفوض",
 };
+
+const USERS_PER_PAGE = 10;
 
 const initialFilters: UsersFilters = {
   search: "",
@@ -99,8 +103,9 @@ export function UsersManagementPage() {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [filters, setFilters] = useState<UsersFilters>(initialFilters);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { users: fetchedUsers, isLoading, isError } = useAdminUsers(filters);
+  const { users: fetchedUsers, isLoading, isFetching, isError, pagination } = useAdminUsers(filters, currentPage, USERS_PER_PAGE);
   const { mutateAsync: updateUserStatus, isPending: isUpdatingStatus } = useUpdateUserStatus();
   const { mutateAsync: removeUser, isPending: isDeletingUser } = useDeleteUser();
   const [overrides, setOverrides] = useState<Record<string, Partial<AdminUser>>>({});
@@ -230,6 +235,7 @@ export function UsersManagementPage() {
 
   const isRejectAction =
     pendingAction?.kind === "status" && pendingAction.nextStatus === "Rejected";
+  const showSkeletonRows = isLoading || isFetching;
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-5 p-6">
@@ -238,7 +244,13 @@ export function UsersManagementPage() {
         <p className="text-sm text-muted-foreground">إدارة حسابات المستخدمين، حالاتهم، وإجراءات الإشراف.</p>
       </div>
 
-      <UsersTableFilters filters={filters} onChange={setFilters} />
+      <UsersTableFilters
+        filters={filters}
+        onChange={(nextFilters) => {
+          setFilters(nextFilters);
+          setCurrentPage(1);
+        }}
+      />
 
       {selectedRows.length > 0 && (
         <div className="flex items-center justify-between rounded-lg border bg-white p-3">
@@ -270,15 +282,9 @@ export function UsersManagementPage() {
           </thead>
 
           <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
-                  جاري تحميل المستخدمين...
-                </td>
-              </tr>
-            )}
+            {showSkeletonRows && <TableSkeletonRows columns={7} rows={USERS_PER_PAGE} />}
 
-            {!isLoading && isError && (
+            {!showSkeletonRows && isError && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-destructive">
                   تعذر تحميل بيانات المستخدمين. حاول مرة أخرى.
@@ -286,7 +292,7 @@ export function UsersManagementPage() {
               </tr>
             )}
 
-            {!isLoading && !isError && visibleUsers.length === 0 && (
+            {!showSkeletonRows && !isError && visibleUsers.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
                   No users found.
@@ -294,7 +300,7 @@ export function UsersManagementPage() {
               </tr>
             )}
 
-            {!isLoading &&
+            {!showSkeletonRows &&
               !isError &&
               visibleUsers.map((user) => (
                 <tr key={user.id} className="border-t align-middle">
@@ -341,6 +347,20 @@ export function UsersManagementPage() {
           </tbody>
         </table>
       </div>
+
+      <PaginationControls
+        currentPage={pagination?.current_page ?? currentPage}
+        lastPage={pagination?.last_page ?? 1}
+        total={pagination?.total}
+        isLoading={showSkeletonRows}
+        onPageChange={(page) => {
+          if (page < 1 || page > (pagination?.last_page ?? 1)) {
+            return;
+          }
+
+          setCurrentPage(page);
+        }}
+      />
 
       <ConfirmationModal
         open={Boolean(pendingAction)}

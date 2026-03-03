@@ -141,7 +141,7 @@ export function UserDetailsReviewPage({ userId }: UserDetailsReviewPageProps) {
             <p className="text-destructive font-medium">تعذر تحميل بيانات المستخدم.</p>
             <p className="text-sm text-muted-foreground">يرجى المحاولة لاحقًا.</p>
             <Button asChild variant="outline" className="mt-3">
-              <Link href="/admin/users">العودة إلى قائمة المستخدمين</Link>
+              <Link href="/control-panel/users">العودة إلى قائمة المستخدمين</Link>
             </Button>
           </CardContent>
         </Card>
@@ -160,7 +160,7 @@ export function UserDetailsReviewPage({ userId }: UserDetailsReviewPageProps) {
           <p className="text-sm text-muted-foreground">تفاصيل الحساب والاعتماد والموقع ضمن لوحة التحكم.</p>
         </div>
         <Button asChild variant="outline" className="gap-2">
-          <Link href="/admin/users">
+          <Link href="/control-panel/users">
             <ArrowLeft className="h-4 w-4" />
             رجوع
           </Link>

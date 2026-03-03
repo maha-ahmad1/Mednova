@@ -356,7 +356,7 @@ export function UsersManagementPage() {
                   <td className="px-4 py-3">
                     <UserActionsDropdown
                       isBlocked={user.isBlocked}
-                      onViewDetails={() => router.push(`/admin/users/${user.id}`)}
+                      onViewDetails={() => router.push(`/control-panel/users/${user.id}`)}
                       onToggleBlock={() => openConfirmation({ kind: "toggle-block", userId: user.id })}
                       onDelete={() => openConfirmation({ kind: "delete", userId: user.id })}
                     />

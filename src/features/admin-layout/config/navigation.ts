@@ -35,8 +35,8 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
     label: "لوحة التحكم",
     icon: ChartNoAxesCombined,
     items: [
-      { label: "نظرة عامة", href: "/admin/users" },
-      { label: "الإحصائيات", href: "/admin/users/stats" },
+      { label: "نظرة عامة", href: "/control-panel/users" },
+      { label: "الإحصائيات", href: "/control-panel/users/stats" },
     ],
   },
   {
@@ -44,11 +44,11 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
     label: "إدارة المستخدمين",
     icon: Users,
     items: [
-      { label: "جميع المستخدمين", href: "/admin/users" },
-      { label: "المرضى", href: "/admin/users/patients" },
-      { label: "المختصون", href: "/admin/users/specialists" },
-      { label: "المراكز", href: "/admin/users/centers" },
-      { label: "طلبات معلقة", href: "/admin/users/pending-requests", badge: "8" },
+      { label: "جميع المستخدمين", href: "/control-panel/users" },
+      { label: "المرضى", href: "/control-panel/users/patients" },
+      { label: "المختصون", href: "/control-panel/users/specialists" },
+      { label: "المراكز", href: "/control-panel/users/centers" },
+      { label: "طلبات معلقة", href: "/control-panel/users/pending-requests", badge: "8" },
     ],
   },
   {
@@ -56,9 +56,9 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
     label: "إدارة البرامج",
     icon: BookOpen,
     items: [
-      { label: "جميع البرامج", href: "/admin/programs" },
-      { label: "البرامج المنشورة", href: "/admin/programs?status=published" },
-      { label: "البرامج غير الموافق عليها", href: "/admin/programs?is_approved=0" },
+      { label: "جميع البرامج", href: "/control-panel/programs" },
+      { label: "البرامج المنشورة", href: "/control-panel/programs?status=published" },
+      { label: "البرامج غير الموافق عليها", href: "/control-panel/programs?is_approved=0" },
     ],
   },
   {

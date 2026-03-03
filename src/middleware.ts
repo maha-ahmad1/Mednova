@@ -32,7 +32,7 @@ export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const pathname = req.nextUrl.pathname;
 
-  const publicPaths = ["/login", "/admin/login", "/api/auth", "/_next", "/favicon.ico", "/public"];
+  const publicPaths = ["/login", "/control-panel/login", "/api/auth", "/_next", "/favicon.ico", "/public"];
   if (publicPaths.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }
@@ -42,11 +42,11 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   })) as Token | null;
 
-  if (pathname.startsWith("/admin/users") || pathname.startsWith("/admin/programs")) {
+  if (pathname.startsWith("/control-panel/users") || pathname.startsWith("/control-panel/programs")) {
     if (!isAdminToken(token)) {
 
       
-      url.pathname = "/admin/login";
+      url.pathname = "/control-panel/login";
       return NextResponse.redirect(url);
     }
 
@@ -88,5 +88,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/admin/users/:path*", "/admin/programs/:path*"],
+  matcher: ["/profile/:path*", "/control-panel/users/:path*", "/control-panel/programs/:path*"],
 };

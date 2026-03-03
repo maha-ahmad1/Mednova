@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { AdminLayoutShell } from "@/features/admin-layout/ui";
 
-export default function ControlPanelProgramsLayout({ children }: { children: ReactNode }) {
+export default function AdminProgramsLayout({ children }: { children: ReactNode }) {
   return <AdminLayoutShell>{children}</AdminLayoutShell>;
 }

@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { ConfirmationModal } from "@/features/control-panel/users/ui/components/ConfirmationModal";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { useControlPanelPrograms } from "../hooks/useControlPanelPrograms";
@@ -61,9 +62,14 @@ export function ProgramsManagementPage() {
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-5 p-6">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold text-foreground">إدارة البرامج</h1>
-        <p className="text-sm text-muted-foreground">إدارة البرامج وحالات النشر والموافقة من لوحة التحكم.</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold text-foreground">إدارة البرامج</h1>
+          <p className="text-sm text-muted-foreground">إدارة البرامج وحالات النشر والموافقة من لوحة التحكم.</p>
+        </div>
+        <Button asChild>
+          <Link href="/control-panel/programs/create">إنشاء برنامج</Link>
+        </Button>
       </div>
 
       <ProgramsTableFilters filters={filters} onChange={setFilters} />

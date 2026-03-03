@@ -38,3 +38,15 @@ export interface ProgramsApiItem {
   currency: string | null;
   cover_image: string | null;
 }
+
+export interface ProgramsPaginationMeta {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
+export interface ProgramsApiPaginatedData {
+  data: ProgramsApiItem[];
+  pagination?: ProgramsPaginationMeta;
+}

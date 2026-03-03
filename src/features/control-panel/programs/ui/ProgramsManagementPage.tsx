@@ -8,7 +8,7 @@ import { ConfirmationModal } from "@/features/control-panel/users/ui/components/
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { useControlPanelPrograms } from "../hooks/useControlPanelPrograms";
 import type { ControlPanelProgram, ProgramsFilters } from "../types/program";
-import { filterAndSortPrograms } from "../utils/programs";
+import { filterAndSortPrograms, paginatePrograms } from "../utils/programs";
 import { ProgramRow } from "./components/ProgramRow";
 import { ProgramsTableFilters } from "./components/ProgramsTableFilters";
 
@@ -30,10 +30,20 @@ export function ProgramsManagementPage() {
   const [filters, setFilters] = useState<ProgramsFilters>(initialFilters);
   const [pendingAction, setPendingAction] = useState<PendingProgramAction>(null);
 
-  const { programs, isLoading, isFetching, isError } = useControlPanelPrograms(filters);
+  const { programs, pagination, isLoading, isFetching, isError } = useControlPanelPrograms(filters);
 
-  const { rows, total } = useMemo(() => filterAndSortPrograms(programs, filters), [programs, filters]);
-  const totalPages = Math.max(1, Math.ceil(total / filters.limit));
+  const { rows: sortedRows, total: localTotal } = useMemo(() => filterAndSortPrograms(programs, filters), [programs, filters]);
+  const rows = useMemo(() => {
+    if (pagination) {
+      return sortedRows;
+    }
+
+    return paginatePrograms(sortedRows, filters.page, filters.limit);
+  }, [filters.limit, filters.page, pagination, sortedRows]);
+
+  const total = pagination?.total ?? localTotal;
+  const currentPage = pagination?.current_page ?? filters.page;
+  const totalPages = pagination?.last_page ?? Math.max(1, Math.ceil(localTotal / filters.limit));
 
   const onConfirmAction = () => {
     if (!pendingAction) return;
@@ -130,7 +140,7 @@ export function ProgramsManagementPage() {
       </div>
 
       <PaginationControls
-        currentPage={filters.page}
+        currentPage={currentPage}
         lastPage={totalPages}
         total={total}
         isLoading={isLoading || isFetching}

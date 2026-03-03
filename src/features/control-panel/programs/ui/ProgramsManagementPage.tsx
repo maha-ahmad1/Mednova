@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { PaginationControls } from "@/shared/ui/components/PaginationControls";
+import { TableSkeletonRows } from "@/shared/ui/components/TableSkeletonRows";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ConfirmationModal } from "@/features/control-panel/users/ui/components/ConfirmationModal";
 import { useControlPanelPrograms } from "../hooks/useControlPanelPrograms";
@@ -27,10 +28,11 @@ export function ProgramsManagementPage() {
   const [filters, setFilters] = useState<ProgramsFilters>(initialFilters);
   const [pendingAction, setPendingAction] = useState<PendingProgramAction>(null);
 
-  const { programs, isLoading, isError } = useControlPanelPrograms(filters);
+  const { programs, isLoading, isFetching, isError } = useControlPanelPrograms(filters);
 
   const { rows, total } = useMemo(() => filterAndSortPrograms(programs, filters), [programs, filters]);
   const totalPages = Math.max(1, Math.ceil(total / filters.limit));
+  const showSkeletonRows = isLoading || isFetching;
 
   const onConfirmAction = () => {
     if (!pendingAction) return;
@@ -90,22 +92,18 @@ export function ProgramsManagementPage() {
             </tr>
           </thead>
           <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">جاري تحميل البرامج...</td>
-              </tr>
-            )}
-            {!isLoading && isError && (
+            {showSkeletonRows && <TableSkeletonRows columns={8} rows={filters.limit} />}
+            {!showSkeletonRows && isError && (
               <tr>
                 <td colSpan={8} className="px-4 py-10 text-center text-destructive">تعذر تحميل البرامج. حاول مرة أخرى.</td>
               </tr>
             )}
-            {!isLoading && !isError && rows.length === 0 && (
+            {!showSkeletonRows && !isError && rows.length === 0 && (
               <tr>
                 <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">لا توجد برامج مطابقة.</td>
               </tr>
             )}
-            {!isLoading && !isError && rows.map((program) => (
+            {!showSkeletonRows && !isError && rows.map((program) => (
               <ProgramRow
                 key={program.id}
                 program={program}
@@ -118,25 +116,19 @@ export function ProgramsManagementPage() {
         </table>
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">صفحة {filters.page} من {totalPages}</p>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            disabled={filters.page <= 1}
-            onClick={() => setFilters((prev) => ({ ...prev, page: prev.page - 1 }))}
-          >
-            السابق
-          </Button>
-          <Button
-            variant="outline"
-            disabled={filters.page >= totalPages}
-            onClick={() => setFilters((prev) => ({ ...prev, page: prev.page + 1 }))}
-          >
-            التالي
-          </Button>
-        </div>
-      </div>
+      <PaginationControls
+        currentPage={filters.page}
+        lastPage={totalPages}
+        total={total}
+        isLoading={showSkeletonRows}
+        onPageChange={(page) => {
+          if (page < 1 || page > totalPages) {
+            return;
+          }
+
+          setFilters((prev) => ({ ...prev, page }));
+        }}
+      />
 
       <ConfirmationModal
         open={Boolean(pendingAction)}

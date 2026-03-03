@@ -234,6 +234,7 @@ export function UsersManagementPage() {
 
   const isRejectAction =
     pendingAction?.kind === "status" && pendingAction.nextStatus === "Rejected";
+  const showSkeletonRows = isLoading || isFetching;
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-5 p-6">
@@ -280,15 +281,9 @@ export function UsersManagementPage() {
           </thead>
 
           <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
-                  جاري تحميل المستخدمين...
-                </td>
-              </tr>
-            )}
+            {showSkeletonRows && <TableSkeletonRows columns={7} rows={USERS_PER_PAGE} />}
 
-            {!isLoading && isError && (
+            {!showSkeletonRows && isError && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-destructive">
                   تعذر تحميل بيانات المستخدمين. حاول مرة أخرى.
@@ -296,7 +291,7 @@ export function UsersManagementPage() {
               </tr>
             )}
 
-            {!isLoading && !isError && visibleUsers.length === 0 && (
+            {!showSkeletonRows && !isError && visibleUsers.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
                   No users found.
@@ -304,7 +299,7 @@ export function UsersManagementPage() {
               </tr>
             )}
 
-            {!isLoading &&
+            {!showSkeletonRows &&
               !isError &&
               visibleUsers.map((user) => (
                 <tr key={user.id} className="border-t align-middle">

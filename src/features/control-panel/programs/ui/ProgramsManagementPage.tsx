@@ -68,7 +68,7 @@ export function ProgramsManagementPage() {
 
       <ProgramsTableFilters filters={filters} onChange={setFilters} />
 
-      <div className="flex items-center justify-between rounded-lg border bg-white p-3">
+      {/* <div className="flex items-center justify-between rounded-lg border bg-white p-3">
         <p className="text-sm text-muted-foreground">إجمالي البرامج: {total}</p>
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">عدد العناصر</span>
@@ -86,7 +86,7 @@ export function ProgramsManagementPage() {
             </SelectContent>
           </Select>
         </div>
-      </div>
+      </div> */}
 
       <div className="overflow-x-auto rounded-xl border bg-white">
         <table className="w-full text-left text-sm">

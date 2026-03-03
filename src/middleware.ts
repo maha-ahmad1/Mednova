@@ -44,6 +44,8 @@ export async function middleware(req: NextRequest) {
 
   if (pathname.startsWith("/admin/users") || pathname.startsWith("/admin/programs")) {
     if (!isAdminToken(token)) {
+
+      
       url.pathname = "/admin/login";
       return NextResponse.redirect(url);
     }

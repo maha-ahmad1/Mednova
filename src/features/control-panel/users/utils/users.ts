@@ -44,7 +44,10 @@ export const mapApiUserToAdminUser = (user: UsersApiUser): AdminUser => ({
   createdAt: user.created_at ?? "",
 });
 
-export const buildUsersQueryParams = (filters: UsersFilters) => {
+export const buildUsersQueryParams = (
+  filters: UsersFilters,
+  pagination?: { page?: number; per_page?: number },
+) => {
   return {
     ...(filters.search.trim() ? { search: filters.search.trim() } : {}),
     ...(filters.type !== "all" ? { type_account: typeToApiMap[filters.type] } : {}),
@@ -54,6 +57,8 @@ export const buildUsersQueryParams = (filters: UsersFilters) => {
       : filters.verification === "unverified"
         ? { verified: 0 }
         : {}),
+    ...(pagination?.page ? { page: pagination.page } : {}),
+    ...(pagination?.per_page ? { per_page: pagination.per_page } : {}),
   };
 };
 

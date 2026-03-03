@@ -12,7 +12,8 @@ export const mapApiProgramToControlPanelProgram = (program: ProgramsApiItem): Co
 });
 
 export const buildProgramsQueryParams = (filters: ProgramsFilters) => ({
-  limit: filters.limit,
+  page: filters.page,
+  per_page: filters.limit,
   ...(filters.status !== "all" ? { status: filters.status } : {}),
   ...(filters.approval === "approved"
     ? { is_approved: 1 }
@@ -48,11 +49,14 @@ export const filterAndSortPrograms = (programs: ControlPanelProgram[], filters: 
     return a.title.localeCompare(b.title) * direction;
   });
 
-  const start = (filters.page - 1) * filters.limit;
-  const end = start + filters.limit;
-
   return {
     total: sorted.length,
-    rows: sorted.slice(start, end),
+    rows: sorted,
   };
+};
+
+export const paginatePrograms = (rows: ControlPanelProgram[], page: number, limit: number) => {
+  const start = (page - 1) * limit;
+  const end = start + limit;
+  return rows.slice(start, end);
 };

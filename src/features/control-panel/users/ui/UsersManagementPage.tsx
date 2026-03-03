@@ -10,6 +10,7 @@ import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminUsers } from "../hooks/useAdminUsers";
 import { useDeleteUser } from "../hooks/useDeleteUser";
 import { useUpdateUserStatus } from "../hooks/useUpdateUserStatus";
@@ -36,6 +37,7 @@ const statusLabels: Record<UserStatus, string> = {
 };
 
 const USERS_PER_PAGE = 10;
+const SKELETON_ROWS_COUNT = 10;
 
 const initialFilters: UsersFilters = {
   search: "",
@@ -104,7 +106,11 @@ export function UsersManagementPage() {
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { users: fetchedUsers, isLoading, isError, pagination } = useAdminUsers(filters, currentPage, USERS_PER_PAGE);
+  const { users: fetchedUsers, isLoading, isFetching, isError, pagination } = useAdminUsers(
+    filters,
+    currentPage,
+    USERS_PER_PAGE,
+  );
   const { mutateAsync: updateUserStatus, isPending: isUpdatingStatus } = useUpdateUserStatus();
   const { mutateAsync: removeUser, isPending: isDeletingUser } = useDeleteUser();
   const [overrides, setOverrides] = useState<Record<string, Partial<AdminUser>>>({});
@@ -280,15 +286,23 @@ export function UsersManagementPage() {
           </thead>
 
           <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
-                  جاري تحميل المستخدمين...
-                </td>
-              </tr>
-            )}
+            {(isLoading || isFetching) &&
+              Array.from({ length: SKELETON_ROWS_COUNT }).map((_, index) => (
+                <tr key={`users-skeleton-${index}`} className="border-t align-middle">
+                  <td className="px-4 py-3"><Skeleton className="h-4 w-4" /></td>
+                  <td className="px-4 py-3 text-right">
+                    <Skeleton className="mb-2 h-4 w-32" />
+                    <Skeleton className="h-3 w-40" />
+                  </td>
+                  <td className="px-4 py-3"><Skeleton className="h-6 w-24" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-8 w-32" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-6 w-20" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-4 w-28" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-8 w-10" /></td>
+                </tr>
+              ))}
 
-            {!isLoading && isError && (
+            {!isLoading && !isFetching && isError && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-destructive">
                   تعذر تحميل بيانات المستخدمين. حاول مرة أخرى.
@@ -296,7 +310,7 @@ export function UsersManagementPage() {
               </tr>
             )}
 
-            {!isLoading && !isError && visibleUsers.length === 0 && (
+            {!isLoading && !isFetching && !isError && visibleUsers.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
                   No users found.
@@ -305,6 +319,7 @@ export function UsersManagementPage() {
             )}
 
             {!isLoading &&
+              !isFetching &&
               !isError &&
               visibleUsers.map((user) => (
                 <tr key={user.id} className="border-t align-middle">
@@ -341,7 +356,7 @@ export function UsersManagementPage() {
                   <td className="px-4 py-3">
                     <UserActionsDropdown
                       isBlocked={user.isBlocked}
-                      onViewDetails={() => router.push(`/admin/users/${user.id}`)}
+                      onViewDetails={() => router.push(`/control-panel/users/${user.id}`)}
                       onToggleBlock={() => openConfirmation({ kind: "toggle-block", userId: user.id })}
                       onDelete={() => openConfirmation({ kind: "delete", userId: user.id })}
                     />
@@ -356,7 +371,7 @@ export function UsersManagementPage() {
         currentPage={pagination?.current_page ?? currentPage}
         lastPage={pagination?.last_page ?? 1}
         total={pagination?.total}
-        isLoading={isLoading}
+        isLoading={isLoading || isFetching}
         onPageChange={(page) => {
           if (page < 1 || page > (pagination?.last_page ?? 1)) {
             return;

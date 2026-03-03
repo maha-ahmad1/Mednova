@@ -37,7 +37,7 @@ export function AdminSidebar({
   const isItemActive = useMemo(
     () =>
       (href: string) => {
-        if (href === "/admin/users") {
+        if (href === "/control-panel/users") {
           return pathname === href;
         }
 
@@ -49,7 +49,7 @@ export function AdminSidebar({
   const sidebarContent = (
     <div className="flex h-full flex-col">
       <div className="flex h-20 items-center justify-between border-b px-4">
-        <Link href="/admin/users" className="flex items-center gap-2">
+        <Link href="/control-panel/users" className="flex items-center gap-2">
           {collapsed ? (
             <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-sm font-bold text-primary">
               M

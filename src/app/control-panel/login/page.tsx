@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     if (status === "authenticated" && session?.role === "admin") {
-      router.replace("/admin/users");
+      router.replace("/control-panel/users");
     }
   }, [router, session?.role, status]);
 
@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
       return;
     }
 
-    router.replace("/admin/users");
+    router.replace("/control-panel/users");
   };
 
   return (

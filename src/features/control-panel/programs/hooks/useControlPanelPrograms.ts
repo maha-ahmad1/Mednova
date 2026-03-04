@@ -10,8 +10,8 @@ import type {
 } from "../types/program";
 import { buildProgramsQueryParams, mapApiProgramToControlPanelProgram } from "../utils/programs";
 
-export function useControlPanelPrograms(filters: ProgramsFilters) {
-  const params = useMemo(() => buildProgramsQueryParams(filters), [filters]);
+export function useControlPanelPrograms(filters: ProgramsFilters, page: number, perPage: number) {
+  const params = useMemo(() => buildProgramsQueryParams(filters, page, perPage), [filters, page, perPage]);
 
   const query = useFetcher<ProgramsApiItem[] | ProgramsApiPaginatedData, Record<string, string | number>>(
     ["control-panel-programs"],

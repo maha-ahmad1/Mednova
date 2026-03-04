@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Clock3, PlayCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,29 @@ const statusLabel = {
 
 export function ProgramDetailsPage({ programId }: ProgramDetailsPageProps) {
   const { data: program, isLoading, isError } = useProgramDetails(programId);
+
+  const [activeVideoId, setActiveVideoId] = useState<number | null>(null);
+
+  const activeVideo = useMemo(() => {
+    if (!program?.videos.length) {
+      return null;
+    }
+
+    const selectedVideo = program.videos.find((video) => video.id === activeVideoId);
+    return selectedVideo ?? program.videos[0];
+  }, [activeVideoId, program?.videos]);
+
+  const getPlayableVideoUrl = (videoPath: string | null) => {
+    if (!videoPath) {
+      return null;
+    }
+
+    if (videoPath.startsWith("http://") || videoPath.startsWith("https://")) {
+      return videoPath;
+    }
+
+    return `https://api.mednovacare.com${videoPath.startsWith("/") ? "" : "/"}${videoPath}`;
+  };
 
   if (isLoading) {
     return (
@@ -91,11 +115,34 @@ export function ProgramDetailsPage({ programId }: ProgramDetailsPageProps) {
           <CardTitle className="text-right">قائمة الفيديوهات</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
+          {activeVideo && (
+            <div className="space-y-3 rounded-lg border bg-muted/20 p-3">
+              <p className="text-sm font-medium text-right">{activeVideo.title}</p>
+              {getPlayableVideoUrl(activeVideo.videoPath) ? (
+                <video
+                  key={activeVideo.id}
+                  controls
+                  className="w-full rounded-lg bg-black"
+                  src={getPlayableVideoUrl(activeVideo.videoPath) ?? undefined}
+                >
+                  متصفحك لا يدعم تشغيل الفيديو.
+                </video>
+              ) : (
+                <p className="text-sm text-muted-foreground text-right">رابط الفيديو غير متاح.</p>
+              )}
+            </div>
+          )}
+
           {program.videos.length === 0 ? (
             <p className="text-sm text-muted-foreground">لا توجد فيديوهات مرتبطة بهذا البرنامج.</p>
           ) : (
             program.videos.map((video) => (
-              <div key={video.id} className="flex items-start justify-between rounded-lg border p-3">
+              <button
+                key={video.id}
+                type="button"
+                onClick={() => setActiveVideoId(video.id)}
+                className="flex w-full items-start justify-between rounded-lg border p-3 text-right transition hover:bg-muted/40"
+              >
                 <div className="space-y-1">
                   <p className="font-medium">{video.order ? `#${video.order} - ` : ""}{video.title}</p>
                   <p className="text-sm text-muted-foreground">{video.description}</p>
@@ -105,7 +152,7 @@ export function ProgramDetailsPage({ programId }: ProgramDetailsPageProps) {
                   </div>
                 </div>
                 <PlayCircle className="h-5 w-5 text-muted-foreground" />
-              </div>
+              </button>
             ))
           )}
         </CardContent>

@@ -28,16 +28,22 @@ const initialFilters: ProgramsFilters = {
 };
 
 const SKELETON_ROWS_COUNT = 10;
+const PROGRAMS_PER_PAGE = 10;
 
 export function ProgramsManagementPage() {
   const router = useRouter();
   const [filters, setFilters] = useState<ProgramsFilters>(initialFilters);
+  const [currentPage, setCurrentPage] = useState(1);
   const [pendingAction, setPendingAction] = useState<PendingProgramAction>(null);
   const [overrides, setOverrides] = useState<Record<number, Partial<ControlPanelProgram>>>({});
   const [deletedIds, setDeletedIds] = useState<number[]>([]);
   const [statusLoadingId, setStatusLoadingId] = useState<number | null>(null);
 
-  const { programs, pagination, isLoading, isFetching, isError } = useControlPanelPrograms(filters);
+  const { programs, pagination, isLoading, isFetching, isError } = useControlPanelPrograms(
+    filters,
+    currentPage,
+    PROGRAMS_PER_PAGE,
+  );
   const { mutateAsync: updateProgramStatus } = useProgramStatusAction();
   const { mutateAsync: removeProgram, isPending: isDeletingProgram } = useDeleteProgram();
 
@@ -58,12 +64,12 @@ export function ProgramsManagementPage() {
       return sortedRows;
     }
 
-    return paginatePrograms(sortedRows, filters.page, filters.limit);
-  }, [filters.limit, filters.page, pagination, sortedRows]);
+    return paginatePrograms(sortedRows, currentPage, PROGRAMS_PER_PAGE);
+  }, [currentPage, pagination, sortedRows]);
 
   const total = pagination?.total ?? localTotal;
-  const currentPage = pagination?.current_page ?? filters.page;
-  const totalPages = pagination?.last_page ?? Math.max(1, Math.ceil(localTotal / filters.limit));
+  const activePage = pagination?.current_page ?? currentPage;
+  const totalPages = pagination?.last_page ?? Math.max(1, Math.ceil(localTotal / PROGRAMS_PER_PAGE));
 
   const onConfirmAction = async () => {
     if (!pendingAction) return;
@@ -104,7 +110,13 @@ export function ProgramsManagementPage() {
         </Button>
       </div>
 
-      <ProgramsTableFilters filters={filters} onChange={setFilters} />
+      <ProgramsTableFilters
+        filters={filters}
+        onChange={(nextFilters) => {
+          setFilters(nextFilters);
+          setCurrentPage(1);
+        }}
+      />
 
       {/* <div className="flex items-center justify-between rounded-lg border bg-white p-3">
         <p className="text-sm text-muted-foreground">إجمالي البرامج: {total}</p>
@@ -179,7 +191,7 @@ export function ProgramsManagementPage() {
       </div>
 
       <PaginationControls
-        currentPage={currentPage}
+        currentPage={activePage}
         lastPage={totalPages}
         total={total}
         isLoading={isLoading || isFetching}
@@ -188,7 +200,7 @@ export function ProgramsManagementPage() {
             return;
           }
 
-          setFilters((prev) => ({ ...prev, page }));
+          setCurrentPage(page);
         }}
       />
 

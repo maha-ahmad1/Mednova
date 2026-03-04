@@ -3,13 +3,22 @@
 import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, Controller } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { FormSelect } from "@/shared/ui/forms/components/FormSelect";
+import { ProfileImageUpload } from "@/shared/ui/forms";
 import { useAddProgramVideos } from "../../hooks/useAddProgramVideos";
 import { useCreateProgram } from "../../hooks/useCreateProgram";
 import { useDeleteProgramVideo } from "../../hooks/useDeleteProgramVideo";
@@ -35,31 +44,49 @@ interface ProgramFormProps {
   initialVideos?: ControlPanelProgramVideo[];
 }
 
-export function ProgramForm({ mode, programId, initialValues, initialVideos = [] }: ProgramFormProps) {
+export function ProgramForm({
+  mode,
+  programId,
+  initialValues,
+  initialVideos = [],
+}: ProgramFormProps) {
   const { data: session } = useSession();
   const isCreateMode = mode === "create";
   const { createProgram, isLoading: isCreating } = useCreateProgram();
-  const { updateProgram, isLoading: isUpdatingProgram } = useUpdateProgram(programId ?? 0);
-  const { addVideos, isLoading: isAddingVideos } = useAddProgramVideos(programId ?? 0);
-  const { updateVideo, isLoading: isUpdatingVideo } = useUpdateProgramVideo(programId ?? 0);
-  const { deleteVideo, isLoading: isDeletingVideo } = useDeleteProgramVideo(programId ?? 0);
+  const { updateProgram, isLoading: isUpdatingProgram } = useUpdateProgram(
+    programId ?? 0,
+  );
+  const { addVideos, isLoading: isAddingVideos } = useAddProgramVideos(
+    programId ?? 0,
+  );
+  const { updateVideo, isLoading: isUpdatingVideo } = useUpdateProgramVideo(
+    programId ?? 0,
+  );
+  const { deleteVideo, isLoading: isDeletingVideo } = useDeleteProgramVideo(
+    programId ?? 0,
+  );
 
   const [videos, setVideos] = useState(initialVideos);
   const [isAddVideosFormOpen, setIsAddVideosFormOpen] = useState(false);
 
   const form = useForm<CreateProgramFormValues | UpdateProgramFormValues>({
-    resolver: zodResolver(isCreateMode ? createProgramSchema : updateProgramSchema),
+    resolver: zodResolver(
+      isCreateMode ? createProgramSchema : updateProgramSchema,
+    ),
     defaultValues: {
       title_ar: initialValues?.title_ar ?? "",
       description_ar: initialValues?.description_ar ?? "",
       what_you_will_learn_ar: initialValues?.what_you_will_learn_ar ?? "",
       price: initialValues?.price ?? 0,
-      currency: initialValues?.currency ?? "SAR",
+      currency: initialValues?.currency ?? "",
       cover_image: undefined,
       ...(isCreateMode ? { videos: [createDefaultVideo(1)] } : {}),
     },
     mode: "onSubmit",
   });
+
+  // reuse same options as CenterFormStep2
+  const currencyOptions = [{ value: "OMR", label: "ريال عماني (OMR)" }];
 
   const createVideosFieldArray = useFieldArray({
     control: form.control,
@@ -80,11 +107,15 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
 
   const handleAddVideoField = () => {
     if (isCreateMode) {
-      createVideosFieldArray.append(createDefaultVideo(createVideosFieldArray.fields.length + 1) as never);
+      createVideosFieldArray.append(
+        createDefaultVideo(createVideosFieldArray.fields.length + 1) as never,
+      );
       return;
     }
 
-    addVideosFieldArray.append(createDefaultVideo(addVideosFieldArray.fields.length + 1));
+    addVideosFieldArray.append(
+      createDefaultVideo(addVideosFieldArray.fields.length + 1),
+    );
   };
 
   const submitProgram = form.handleSubmit(async (values) => {
@@ -98,7 +129,10 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
         price: createValues.price,
         currency: createValues.currency,
         cover_image: createValues.cover_image as File,
-        videos: createValues.videos.map((video) => ({ ...video, video_path: video.video_path as File })),
+        videos: createValues.videos.map((video) => ({
+          ...video,
+          video_path: video.video_path as File,
+        })),
       });
       return;
     }
@@ -144,7 +178,10 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
 
   const isSubmittingProgram = isCreateMode ? isCreating : isUpdatingProgram;
 
-  const sortedVideos = useMemo(() => [...videos].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)), [videos]);
+  const sortedVideos = useMemo(
+    () => [...videos].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+    [videos],
+  );
 
   return (
     <div className="space-y-5">
@@ -155,53 +192,118 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
               <CardTitle className="text-lg">معلومات البرنامج</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2">
-              <FormField control={form.control} name="currency" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>العملة</FormLabel>
-                  <FormControl><Input placeholder="SAR" {...field} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              {/* program title should be first field */}
+              <FormField
+                control={form.control}
+                name="title_ar"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>عنوان البرنامج</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="أدخل عنوان البرنامج"
+                        {...field}
+                        dir="rtl"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <FormField control={form.control} name="title_ar" render={({ field }) => (
-                <FormItem className="md:col-span-2">
-                  <FormLabel>عنوان البرنامج</FormLabel>
-                  <FormControl><Input placeholder="أدخل عنوان البرنامج" {...field} dir="rtl" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              {/* price and currency side-by-side */}
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>السعر</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={0}
+                        value={field.value}
+                        onChange={(event) =>
+                          field.onChange(Number(event.target.value))
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <FormField control={form.control} name="price" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>السعر</FormLabel>
-                  <FormControl><Input type="number" min={0} value={field.value} onChange={(event) => field.onChange(Number(event.target.value))} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              <Controller
+                control={form.control}
+                name="currency"
+                render={({ field }) => (
+                  <FormSelect
+                    label="العملة"
+                    placeholder="اختر العملة"
+                    options={currencyOptions}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    rtl
+                    error={form.formState.errors.currency?.message}
+                  />
+                )}
+              />
 
-              <FormField control={form.control} name="cover_image" render={({ field: { onChange, ...field } }) => (
-                <FormItem>
-                  <FormLabel>صورة الغلاف</FormLabel>
-                  <FormControl><Input type="file" accept="image/*" {...field} value={undefined} onChange={(event) => onChange(event.target.files?.[0])} /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              <FormField
+                control={form.control}
+                name="description_ar"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>وصف البرنامج</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        rows={4}
+                        placeholder="اكتب وصف البرنامج"
+                        {...field}
+                        dir="rtl"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <FormField control={form.control} name="description_ar" render={({ field }) => (
-                <FormItem className="md:col-span-2">
-                  <FormLabel>وصف البرنامج</FormLabel>
-                  <FormControl><Textarea rows={4} placeholder="اكتب وصف البرنامج" {...field} dir="rtl" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              <FormField
+                control={form.control}
+                name="what_you_will_learn_ar"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>ماذا سيتعلم المستخدم</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        rows={4}
+                        placeholder="اكتب مخرجات التعلم"
+                        {...field}
+                        dir="rtl"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <FormField control={form.control} name="what_you_will_learn_ar" render={({ field }) => (
-                <FormItem className="md:col-span-2">
-                  <FormLabel>ماذا سيتعلم المستخدم</FormLabel>
-                  <FormControl><Textarea rows={4} placeholder="اكتب مخرجات التعلم" {...field} dir="rtl" /></FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              {/* cover image using ProfileImageUpload component */}
+              <FormField
+                control={form.control}
+                name="cover_image"
+                render={({ field: { onChange, value, ...field } }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormControl>
+                      <ProfileImageUpload
+                        label="صورة الغلاف"
+                        value={value as File | null}
+                        onChange={(file) => onChange(file)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 
@@ -209,19 +311,39 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
                 <CardTitle className="text-lg">الفيديوهات</CardTitle>
-                <Button type="button" variant="outline" onClick={handleAddVideoField}><Plus className="ml-2 h-4 w-4" />إضافة فيديو</Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddVideoField}
+                >
+                  <Plus className="ml-2 h-4 w-4" />
+                  إضافة فيديو
+                </Button>
               </CardHeader>
               <CardContent className="space-y-4">
                 {createVideosFieldArray.fields.map((field, index) => (
-                  <VideoFormSection key={field.id} index={index} form={form as never} basePath={`videos.${index}` as never} canRemove={createVideosFieldArray.fields.length > 1} onRemove={() => createVideosFieldArray.remove(index)} />
+                  <VideoFormSection
+                    key={field.id}
+                    index={index}
+                    form={form as never}
+                    basePath={`videos.${index}` as never}
+                    canRemove={createVideosFieldArray.fields.length > 1}
+                    onRemove={() => createVideosFieldArray.remove(index)}
+                  />
                 ))}
               </CardContent>
             </Card>
           )}
 
-          <div className="sticky bottom-4 z-10 flex justify-end rounded-lg border bg-background/95 p-3 backdrop-blur">
+          <div className="flex justify-end rounded-lg border bg-background/95 p-3 backdrop-blur">
             <Button type="submit" disabled={isSubmittingProgram}>
-              {isSubmittingProgram ? (isCreateMode ? "جاري الإنشاء..." : "جاري التحديث...") : isCreateMode ? "إنشاء البرنامج" : "تحديث البرنامج"}
+              {isSubmittingProgram
+                ? isCreateMode
+                  ? "جاري الإنشاء..."
+                  : "جاري التحديث..."
+                : isCreateMode
+                  ? "إنشاء البرنامج"
+                  : "تحديث البرنامج"}
             </Button>
           </div>
         </form>
@@ -233,7 +355,8 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
             <div className="space-y-1">
               <CardTitle className="text-lg">إدارة فيديوهات البرنامج</CardTitle>
               <p className="text-sm text-muted-foreground">
-                بيانات كل فيديو معروضة بالكامل بالأسفل لتستطيع تعديل أي حقل مباشرة.
+                بيانات كل فيديو معروضة بالكامل بالأسفل لتستطيع تعديل أي حقل
+                مباشرة.
               </p>
             </div>
           </CardHeader>
@@ -251,21 +374,29 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
                   isDeleting={isDeletingVideo}
                   onUpdate={async (videoId, values) => {
                     await updateVideo({ videoId, payload: values });
-                    setVideos((prev) => prev.map((item) => item.id === videoId ? {
-                      ...item,
-                      title: values.title_ar,
-                      titleAr: values.title_ar,
-                      description: values.description_ar,
-                      descriptionAr: values.description_ar,
-                      durationMinute: values.duration_minute,
-                      order: values.order,
-                      isProgramIntro: values.is_program_intro,
-                      isFree: values.is_free,
-                    } : item));
+                    setVideos((prev) =>
+                      prev.map((item) =>
+                        item.id === videoId
+                          ? {
+                              ...item,
+                              title: values.title_ar,
+                              titleAr: values.title_ar,
+                              description: values.description_ar,
+                              descriptionAr: values.description_ar,
+                              durationMinute: values.duration_minute,
+                              order: values.order,
+                              isProgramIntro: values.is_program_intro,
+                              isFree: values.is_free,
+                            }
+                          : item,
+                      ),
+                    );
                   }}
                   onDelete={async (videoId) => {
                     await deleteVideo(videoId);
-                    setVideos((prev) => prev.filter((item) => item.id !== videoId));
+                    setVideos((prev) =>
+                      prev.filter((item) => item.id !== videoId),
+                    );
                   }}
                 />
               ))
@@ -275,34 +406,65 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="space-y-1">
                   <h3 className="font-semibold">إضافة فيديوهات جديدة</h3>
-                  <p className="text-sm text-muted-foreground">اضغط على زر إضافة فيديو جديد لفتح نموذج الإضافة.</p>
+                  <p className="text-sm text-muted-foreground">
+                    اضغط على زر إضافة فيديو جديد لفتح نموذج الإضافة.
+                  </p>
                 </div>
-                <Button type="button" onClick={() => setIsAddVideosFormOpen((prev) => !prev)}>
+                <Button
+                  type="button"
+                  onClick={() => setIsAddVideosFormOpen((prev) => !prev)}
+                >
                   <Plus className="ml-2 h-4 w-4" />
-                  {isAddVideosFormOpen ? "إغلاق نموذج الإضافة" : "إضافة فيديو جديد"}
+                  {isAddVideosFormOpen
+                    ? "إغلاق نموذج الإضافة"
+                    : "إضافة فيديو جديد"}
                 </Button>
               </div>
 
               {isAddVideosFormOpen ? (
                 <Form {...addVideoForm}>
-                  <form onSubmit={submitAddVideos} className="space-y-4 rounded-lg border bg-background p-3">
+                  <form
+                    onSubmit={submitAddVideos}
+                    className="space-y-4 rounded-lg border bg-background p-3"
+                  >
                     <div className="flex items-center justify-between rounded-lg border bg-muted/30 p-2">
                       <p className="text-sm text-muted-foreground">
-                        عدد الفيديوهات الجديدة الجاهزة للإضافة: <span className="font-semibold text-foreground">{addVideosFieldArray.fields.length}</span>
+                        عدد الفيديوهات الجديدة الجاهزة للإضافة:{" "}
+                        <span className="font-semibold text-foreground">
+                          {addVideosFieldArray.fields.length}
+                        </span>
                       </p>
-                      <Button type="button" variant="outline" onClick={handleAddVideoField}>
-                        <Plus className="ml-2 h-4 w-4" />إضافة حقل فيديو
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleAddVideoField}
+                      >
+                        <Plus className="ml-2 h-4 w-4" />
+                        إضافة حقل فيديو
                       </Button>
                     </div>
                     {addVideosFieldArray.fields.map((field, index) => (
-                      <VideoFormSection key={field.id} index={index} form={addVideoForm} basePath={`videos.${index}` as const} canRemove={addVideosFieldArray.fields.length > 1} onRemove={() => addVideosFieldArray.remove(index)} />
+                      <VideoFormSection
+                        key={field.id}
+                        index={index}
+                        form={addVideoForm}
+                        basePath={`videos.${index}` as const}
+                        canRemove={addVideosFieldArray.fields.length > 1}
+                        onRemove={() => addVideosFieldArray.remove(index)}
+                      />
                     ))}
                     <div className="flex justify-end gap-2">
-                      <Button type="button" variant="outline" onClick={() => setIsAddVideosFormOpen(false)}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsAddVideosFormOpen(false)}
+                      >
                         إلغاء
                       </Button>
                       <Button type="submit" disabled={isAddingVideos}>
-                        {isAddingVideos ? "جارٍ الإضافة..." : "حفظ الفيديوهات الجديدة"}
+                        {isAddingVideos
+                          ? "جارٍ الإضافة..."
+                          : "حفظ الفيديوهات الجديدة"}
                       </Button>
                     </div>
                   </form>

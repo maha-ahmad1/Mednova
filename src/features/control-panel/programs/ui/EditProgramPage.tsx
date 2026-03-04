@@ -62,7 +62,7 @@ export function EditProgramPage({ programId }: EditProgramPageProps) {
           description_ar: program.descriptionAr || program.description,
           what_you_will_learn_ar: program.whatYouWillLearnAr || program.whatYouWillLearn,
           price: program.price ?? 0,
-          currency: program.currency ?? "SAR",
+          currency: program.currency ?? "",
         }}
         initialVideos={program.videos}
       />

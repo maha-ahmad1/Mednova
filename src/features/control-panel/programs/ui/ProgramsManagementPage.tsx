@@ -146,7 +146,7 @@ export function ProgramsManagementPage() {
               <th className="px-4 py-3 font-medium">العنوان</th>
               <th className="px-4 py-3 font-medium">المنشئ</th>
               <th className="px-4 py-3 font-medium">الحالة</th>
-              <th className="px-4 py-3 font-medium">الموافقة</th>
+              {/* <th className="px-4 py-3 font-medium">الموافقة</th> */}
               <th className="px-4 py-3 font-medium">السعر</th>
               <th className="px-4 py-3 font-medium">العملة</th>
               <th className="px-4 py-3 font-medium">الإجراءات</th>

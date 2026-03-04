@@ -38,11 +38,11 @@ function ProgramRowComponent({ program, isUpdatingStatus = false, onStatusChange
           onSelectStatus={onStatusChange}
         />
       </td>
-      <td className="px-4 py-3">
+      {/* <td className="px-4 py-3">
         <Badge variant={program.isApproved ? "default" : "secondary"}>
           {program.isApproved ? "Approved" : "Pending"}
         </Badge>
-      </td>
+      </td> */}
       <td className="px-4 py-3">{program.price ?? "-"}</td>
       <td className="px-4 py-3">{program.currency ?? "-"}</td>
       <td className="px-4 py-3">

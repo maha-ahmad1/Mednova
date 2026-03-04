@@ -5,7 +5,7 @@ const fileSchema = z
   .refine((file): file is File => file instanceof File, "الملف مطلوب");
 
 export const createProgramSchema = z.object({
-  creator_id: z.string().trim().min(1, "معرف المنشئ مطلوب"),
+  //  creator_id: z.string().trim().min(1, "معرف المنشئ مطلوب"),
   title_ar: z.string().trim().min(1, "عنوان البرنامج مطلوب"),
   description_ar: z.string().trim().min(1, "وصف البرنامج مطلوب"),
   what_you_will_learn_ar: z.string().trim().min(1, "حقل ماذا ستتعلم مطلوب"),

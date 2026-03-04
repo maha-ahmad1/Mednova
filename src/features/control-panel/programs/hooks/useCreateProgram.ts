@@ -23,7 +23,7 @@ export function useCreateProgram() {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["control-panel-programs"] });
       toast.success(response.message || "تم الإنشاء بنجاح");
-      router.push("/admin/programs");
+      router.push("/control-panel/programs");
     },
     onError: (error: AxiosError<ValidationErrorResponse>) => {
       const responseData = error.response?.data;

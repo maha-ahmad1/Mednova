@@ -11,14 +11,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCreateProgram } from "../hooks/useCreateProgram";
 import { createDefaultVideo, createProgramSchema, type CreateProgramFormValues } from "../types/create-program-form";
 import { VideoFormSection } from "./components/VideoFormSection";
+import { useSession } from "next-auth/react";
+
+
 
 export function CreateProgramPage() {
   const { createProgram, isLoading } = useCreateProgram();
+  const { data: session } = useSession();
 
   const form = useForm<CreateProgramFormValues>({
     resolver: zodResolver(createProgramSchema),
     defaultValues: {
-      creator_id: "",
+      // creator_id: session?.user?.id ?? "",
       title_ar: "",
       description_ar: "",
       what_you_will_learn_ar: "",
@@ -42,6 +46,8 @@ export function CreateProgramPage() {
   const onSubmit = async (values: CreateProgramFormValues) => {
     await createProgram({
       ...values,
+            creator_id: session?.user?.id ?? "",
+
       cover_image: values.cover_image as File,
       videos: values.videos.map((video) => ({
         ...video,
@@ -50,12 +56,12 @@ export function CreateProgramPage() {
     });
 
     form.reset({
-      creator_id: "",
+      // creator_id: "",
       title_ar: "",
       description_ar: "",
       what_you_will_learn_ar: "",
       price: 0,
-      currency: "SAR",
+      currency: "",
       cover_image: undefined,
       videos: [createDefaultVideo(1)],
     });
@@ -75,7 +81,7 @@ export function CreateProgramPage() {
               <CardTitle className="text-lg">معلومات البرنامج</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2">
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="creator_id"
                 render={({ field }) => (
@@ -87,7 +93,7 @@ export function CreateProgramPage() {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               <FormField
                 control={form.control}

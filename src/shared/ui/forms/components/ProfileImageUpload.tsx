@@ -144,8 +144,8 @@ export function ProfileImageUpload({
                   {preview 
                     ? "تم رفع الصورة بنجاح" 
                     : showError 
-                      ? "انقر لرفع صورة المركز" 
-                      : "انقر لرفع صورة المركز"
+                      ? "انقر لرفع الصورة " 
+                      : "انقر لرفع الصورة "
                   }
                 </p>
                 
@@ -211,7 +211,7 @@ export function ProfileImageUpload({
       {/* حالة عندما لا توجد صورة ولا خطأ - رسالة توجيهية */}
       {!preview && !showError && required && (
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          هذا الحقل مطلوب. يرجى رفع صورة للمركز.
+          هذا الحقل مطلوب. يرجى رفع الصورة .
         </p>
       )}
     </div>

@@ -221,11 +221,11 @@ export function ProgramForm({
                     <FormControl>
                       <Input
                         type="number"
-                        min={0}
                         value={field.value}
                         onChange={(event) =>
                           field.onChange(Number(event.target.value))
                         }
+                        className="no-spinner"
                       />
                     </FormControl>
                     <FormMessage />

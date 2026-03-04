@@ -89,7 +89,7 @@ export const addProgramVideos = async (axiosInstance: AxiosInstance, payload: Ad
   payload.videos.forEach((video, index) => appendVideoData(formData, index, video));
 
   const response = await axiosInstance.post<CreateProgramResponse>(
-    "/api/control-panel/programs/videos",
+    "/api/control-panel/programs/videos/store",
     formData,
     multipartConfig,
   );
@@ -106,7 +106,7 @@ export const updateProgramVideo = async (
   appendVideoData(formData, 0, payload);
 
   const response = await axiosInstance.post<CreateProgramResponse>(
-    `/api/control-panel/programs/videos/${videoId}`,
+    `/api/control-panel/programs/videos/update/${videoId}`,
     formData,
     multipartConfig,
   );

@@ -2,7 +2,13 @@ import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
@@ -29,8 +35,16 @@ export function VideoFormSection<TValues extends FieldValues>({
   return (
     <Card className="border-dashed">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-base font-semibold">{title ?? `الفيديو #${index + 1}`}</CardTitle>
-        <Button type="button" variant="ghost" size="icon" onClick={onRemove} disabled={!canRemove}>
+        <CardTitle className="text-base font-semibold">
+          {title ?? `الفيديو #${index + 1}`}
+        </CardTitle>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={onRemove}
+          disabled={!canRemove}
+        >
           <Trash2 className="h-4 w-4" />
         </Button>
       </CardHeader>
@@ -57,10 +71,12 @@ export function VideoFormSection<TValues extends FieldValues>({
               <FormLabel>المدة (دقيقة)</FormLabel>
               <FormControl>
                 <Input
+                  className="no-spinner"
                   type="number"
-                  min={1}
                   value={field.value as number}
-                  onChange={(event) => field.onChange(Number(event.target.value))}
+                  onChange={(event) =>
+                    field.onChange(Number(event.target.value))
+                  }
                 />
               </FormControl>
               <FormMessage />
@@ -79,7 +95,10 @@ export function VideoFormSection<TValues extends FieldValues>({
                   type="number"
                   min={1}
                   value={field.value as number}
-                  onChange={(event) => field.onChange(Number(event.target.value))}
+                  onChange={(event) =>
+                    field.onChange(Number(event.target.value))
+                  }
+                  className="no-spinner"
                 />
               </FormControl>
               <FormMessage />
@@ -114,7 +133,12 @@ export function VideoFormSection<TValues extends FieldValues>({
             <FormItem className="md:col-span-2">
               <FormLabel>وصف الفيديو</FormLabel>
               <FormControl>
-                <Textarea rows={3} placeholder="اكتب وصف الفيديو" {...field} dir="rtl" />
+                <Textarea
+                  rows={3}
+                  placeholder="اكتب وصف الفيديو"
+                  {...field}
+                  dir="rtl"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -127,9 +151,16 @@ export function VideoFormSection<TValues extends FieldValues>({
           render={({ field }) => (
             <FormItem className="flex flex-row items-center gap-2 space-y-0 rounded-lg border p-3">
               <FormControl>
-                <Checkbox checked={Boolean(field.value)} onCheckedChange={(checked) => field.onChange(Boolean(checked))} />
+                <Checkbox
+                  checked={Boolean(field.value)}
+                  onCheckedChange={(checked) =>
+                    field.onChange(Boolean(checked))
+                  }
+                />
               </FormControl>
-              <FormLabel className="mb-0 cursor-pointer">هذا الفيديو مقدمة البرنامج</FormLabel>
+              <FormLabel className="mb-0 cursor-pointer">
+                هذا الفيديو مقدمة البرنامج
+              </FormLabel>
             </FormItem>
           )}
         />
@@ -140,7 +171,12 @@ export function VideoFormSection<TValues extends FieldValues>({
           render={({ field }) => (
             <FormItem className="flex flex-row items-center gap-2 space-y-0 rounded-lg border p-3">
               <FormControl>
-                <Checkbox checked={Boolean(field.value)} onCheckedChange={(checked) => field.onChange(Boolean(checked))} />
+                <Checkbox
+                  checked={Boolean(field.value)}
+                  onCheckedChange={(checked) =>
+                    field.onChange(Boolean(checked))
+                  }
+                />
               </FormControl>
               <FormLabel className="mb-0 cursor-pointer">فيديو مجاني</FormLabel>
             </FormItem>

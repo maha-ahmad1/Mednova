@@ -1,4 +1,4 @@
-import { Eye, Trash2, MoreHorizontal } from "lucide-react";
+import { Eye, Pencil, Trash2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,10 +9,11 @@ import {
 
 interface ProgramActionsDropdownProps {
   onView: () => void;
+  onEdit: () => void;
   onDelete: () => void;
 }
 
-export function ProgramActionsDropdown({ onView, onDelete }: ProgramActionsDropdownProps) {
+export function ProgramActionsDropdown({ onView, onEdit, onDelete }: ProgramActionsDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -24,6 +25,11 @@ export function ProgramActionsDropdown({ onView, onDelete }: ProgramActionsDropd
         <DropdownMenuItem onClick={onView} className="cursor-pointer text-right" dir="rtl">
           <Eye className="h-4 w-4" />
           عرض التفاصيل
+        </DropdownMenuItem>
+
+        <DropdownMenuItem onClick={onEdit} className="cursor-pointer text-right" dir="rtl">
+          <Pencil className="h-4 w-4" />
+          تحديث
         </DropdownMenuItem>
         <DropdownMenuItem variant="destructive" onClick={onDelete} className="cursor-pointer text-right" dir="rtl">
           <Trash2 className="h-4 w-4" />

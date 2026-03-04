@@ -31,6 +31,7 @@ interface ProgramDetailsApiResponse {
     duration_minute?: number | null;
     order?: number | null;
     is_program_intro?: boolean | 0 | 1 | null;
+    is_free?: boolean | 0 | 1 | null;
     video_path?: string | null;
   }>;
 }
@@ -63,8 +64,11 @@ export const getProgramDetails = async (
   return {
     id: program.id,
     title: program.title_ar ?? program.title ?? "-",
+    titleAr: program.title_ar ?? "",
     description: program.description_ar ?? program.description ?? "-",
+    descriptionAr: program.description_ar ?? "",
     whatYouWillLearn: program.what_you_will_learn_ar ?? program.what_you_will_learn ?? "-",
+    whatYouWillLearnAr: program.what_you_will_learn_ar ?? "",
     creator: program.creator?.full_name ?? program.creator?.name ?? program.creator_name ?? "-",
     status: program.status,
     price: program.price === null ? null : Number(program.price),
@@ -75,9 +79,12 @@ export const getProgramDetails = async (
         id: video.id,
         title: video.title_ar ?? video.title ?? "-",
         description: video.description_ar ?? video.description ?? "-",
+        titleAr: video.title_ar ?? "",
+        descriptionAr: video.description_ar ?? "",
         durationMinute: video.duration_minute ?? null,
         order: video.order ?? null,
         isProgramIntro: Boolean(video.is_program_intro),
+        isFree: Boolean(video.is_free),
         videoPath: video.video_path ?? null,
       })) ?? [],
   };

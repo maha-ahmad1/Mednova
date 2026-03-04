@@ -43,17 +43,23 @@ export interface ControlPanelProgramVideo {
   id: number;
   title: string;
   description: string;
+  titleAr: string;
+  descriptionAr: string;
   durationMinute: number | null;
   order: number | null;
   isProgramIntro: boolean;
+  isFree: boolean;
   videoPath: string | null;
 }
 
 export interface ControlPanelProgramDetails {
   id: number;
   title: string;
+  titleAr: string;
   description: string;
+  descriptionAr: string;
   whatYouWillLearn: string;
+  whatYouWillLearnAr: string;
   creator: string;
   status: ProgramStatus;
   price: number | null;

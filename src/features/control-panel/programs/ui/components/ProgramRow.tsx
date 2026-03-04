@@ -1,6 +1,5 @@
 import { memo } from "react";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
 import type { ControlPanelProgram } from "../../types/program";
 import { ProgramActionsDropdown } from "./ProgramActionsDropdown";
 import { ProgramStatusDropdown } from "./ProgramStatusDropdown";
@@ -10,10 +9,11 @@ interface ProgramRowProps {
   isUpdatingStatus?: boolean;
   onStatusChange: (status: "approved" | "rejected") => void;
   onView: () => void;
+  onEdit: () => void;
   onDelete: () => void;
 }
 
-function ProgramRowComponent({ program, isUpdatingStatus = false, onStatusChange, onView, onDelete }: ProgramRowProps) {
+function ProgramRowComponent({ program, isUpdatingStatus = false, onStatusChange, onView, onEdit, onDelete }: ProgramRowProps) {
   const normalizedStatus =
     program.status === "approved" || program.status === "rejected" ? program.status : "draft";
 
@@ -46,7 +46,7 @@ function ProgramRowComponent({ program, isUpdatingStatus = false, onStatusChange
       <td className="px-4 py-3">{program.price ?? "-"}</td>
       <td className="px-4 py-3">{program.currency ?? "-"}</td>
       <td className="px-4 py-3">
-        <ProgramActionsDropdown onView={onView} onDelete={onDelete} />
+        <ProgramActionsDropdown onView={onView} onEdit={onEdit} onDelete={onDelete} />
       </td>
     </tr>
   );

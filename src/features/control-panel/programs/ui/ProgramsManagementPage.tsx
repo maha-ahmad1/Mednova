@@ -183,6 +183,7 @@ export function ProgramsManagementPage() {
                 isUpdatingStatus={statusLoadingId === program.id}
                 onStatusChange={(nextStatus) => handleStatusChange(program.id, nextStatus)}
                 onView={() => router.push(`/control-panel/programs/${program.id}`)}
+                onEdit={() => router.push(`/control-panel/programs/${program.id}/edit`)}
                 onDelete={() => setPendingAction({ type: "delete", program })}
               />
             ))}

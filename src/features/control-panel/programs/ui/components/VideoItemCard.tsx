@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Pencil } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -21,91 +21,90 @@ interface VideoItemCardProps {
 }
 
 export function VideoItemCard({ video, onUpdate, onDelete, isUpdating, isDeleting }: VideoItemCardProps) {
-  const [isEditing, setIsEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const { data: details, isFetching } = useProgramVideoDetails(isEditing ? video.id : null);
+  const { data: details, isFetching } = useProgramVideoDetails(video.id);
+
+  const initialVideoValues = useMemo(
+    () => ({
+      title_ar: video.titleAr || video.title,
+      description_ar: video.descriptionAr || video.description,
+      duration_minute: video.durationMinute ?? 1,
+      order: video.order ?? 1,
+      is_program_intro: video.isProgramIntro,
+      is_free: video.isFree,
+      video_path: undefined,
+    }),
+    [video],
+  );
 
   const form = useForm<NewVideosFormValues>({
     resolver: zodResolver(newVideosSchema),
     defaultValues: {
-      videos: [
-        {
-          title_ar: video.titleAr || video.title,
-          description_ar: video.descriptionAr || video.description,
-          duration_minute: video.durationMinute ?? 1,
-          order: video.order ?? 1,
-          is_program_intro: video.isProgramIntro,
-          is_free: video.isFree,
-          video_path: undefined,
-        },
-      ],
+      videos: [initialVideoValues],
     },
   });
 
   useEffect(() => {
-    if (!isEditing || !details) return;
+    if (!details) {
+      form.reset({ videos: [initialVideoValues] });
+      return;
+    }
 
     form.reset({
       videos: [
         {
-          title_ar: details.title_ar ?? "",
-          description_ar: details.description_ar ?? "",
-          duration_minute: details.duration_minute ?? 1,
-          order: details.order ?? 1,
+          title_ar: details.title_ar ?? initialVideoValues.title_ar,
+          description_ar: details.description_ar ?? initialVideoValues.description_ar,
+          duration_minute: details.duration_minute ?? initialVideoValues.duration_minute,
+          order: details.order ?? initialVideoValues.order,
           is_program_intro: Boolean(details.is_program_intro),
           is_free: Boolean(details.is_free),
           video_path: undefined,
         },
       ],
     });
-  }, [details, form, isEditing]);
-
-  const handleEditToggle = () => {
-    setIsEditing((prev) => !prev);
-  };
+  }, [details, form, initialVideoValues]);
 
   const handleUpdate = form.handleSubmit(async (values) => {
     await onUpdate(video.id, values.videos[0]);
-    setIsEditing(false);
   });
 
   return (
     <div className="space-y-3 rounded-lg border bg-muted/20 p-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-b pb-2">
         <div className="space-y-1 text-right">
-          <p className="font-medium">{video.title}</p>
-          <p className="text-xs text-muted-foreground">#{video.order ?? "-"}</p>
+          <p className="font-semibold">تعديل الفيديو الحالي</p>
+          <p className="text-xs text-muted-foreground">{video.title} • الترتيب: #{video.order ?? "-"}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={handleEditToggle}>
-            <Pencil className="ml-1 h-4 w-4" />
-            {isEditing ? "إلغاء" : "تعديل"}
-          </Button>
-          <Button type="button" variant="destructive" size="sm" onClick={() => setShowDeleteModal(true)}>
-            حذف
-          </Button>
-        </div>
+        <Button type="button" variant="destructive" size="sm" onClick={() => setShowDeleteModal(true)}>
+          حذف الفيديو
+        </Button>
       </div>
 
-      {isEditing && (
-        <Form {...form}>
-          <form onSubmit={handleUpdate} className="space-y-3">
-            {isFetching ? (
-              <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                جاري تحميل تفاصيل الفيديو...
-              </div>
-            ) : (
-              <VideoFormSection index={0} form={form} basePath="videos.0" canRemove={false} onRemove={() => undefined} title="تعديل الفيديو" />
-            )}
-            <div className="flex justify-end">
-              <Button type="submit" disabled={isUpdating}>
-                {isUpdating ? "جارٍ الحفظ..." : "حفظ التعديلات"}
-              </Button>
+      <Form {...form}>
+        <form onSubmit={handleUpdate} className="space-y-3">
+          {isFetching ? (
+            <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
+              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+              جاري تحميل بيانات الفيديو...
             </div>
-          </form>
-        </Form>
-      )}
+          ) : (
+            <VideoFormSection
+              index={0}
+              form={form}
+              basePath="videos.0"
+              canRemove={false}
+              onRemove={() => undefined}
+              title="بيانات الفيديو"
+            />
+          )}
+          <div className="flex justify-end">
+            <Button type="submit" disabled={isUpdating || isFetching}>
+              {isUpdating ? "جارٍ الحفظ..." : "حفظ تعديلات الفيديو"}
+            </Button>
+          </div>
+        </form>
+      </Form>
 
       <ConfirmationModal
         open={showDeleteModal}

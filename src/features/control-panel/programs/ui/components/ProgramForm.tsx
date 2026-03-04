@@ -228,47 +228,70 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
       {!isCreateMode && programId && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-lg">إدارة فيديوهات البرنامج</CardTitle>
+            <div className="space-y-1">
+              <CardTitle className="text-lg">إدارة فيديوهات البرنامج</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                بيانات كل فيديو معروضة بالكامل بالأسفل لتستطيع تعديل أي حقل مباشرة.
+              </p>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {sortedVideos.map((video) => (
-              <VideoItemCard
-                key={video.id}
-                video={video}
-                isUpdating={isUpdatingVideo}
-                isDeleting={isDeletingVideo}
-                onUpdate={async (videoId, values) => {
-                  await updateVideo({ videoId, payload: values });
-                  setVideos((prev) => prev.map((item) => item.id === videoId ? {
-                    ...item,
-                    title: values.title_ar,
-                    titleAr: values.title_ar,
-                    description: values.description_ar,
-                    descriptionAr: values.description_ar,
-                    durationMinute: values.duration_minute,
-                    order: values.order,
-                    isProgramIntro: values.is_program_intro,
-                    isFree: values.is_free,
-                  } : item));
-                }}
-                onDelete={async (videoId) => {
-                  await deleteVideo(videoId);
-                  setVideos((prev) => prev.filter((item) => item.id !== videoId));
-                }}
-              />
-            ))}
+            {sortedVideos.length === 0 ? (
+              <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+                لا توجد فيديوهات حالية لهذا البرنامج حتى الآن.
+              </div>
+            ) : (
+              sortedVideos.map((video) => (
+                <VideoItemCard
+                  key={video.id}
+                  video={video}
+                  isUpdating={isUpdatingVideo}
+                  isDeleting={isDeletingVideo}
+                  onUpdate={async (videoId, values) => {
+                    await updateVideo({ videoId, payload: values });
+                    setVideos((prev) => prev.map((item) => item.id === videoId ? {
+                      ...item,
+                      title: values.title_ar,
+                      titleAr: values.title_ar,
+                      description: values.description_ar,
+                      descriptionAr: values.description_ar,
+                      durationMinute: values.duration_minute,
+                      order: values.order,
+                      isProgramIntro: values.is_program_intro,
+                      isFree: values.is_free,
+                    } : item));
+                  }}
+                  onDelete={async (videoId) => {
+                    await deleteVideo(videoId);
+                    setVideos((prev) => prev.filter((item) => item.id !== videoId));
+                  }}
+                />
+              ))
+            )}
 
             <Form {...addVideoForm}>
-              <form onSubmit={submitAddVideos} className="space-y-3 rounded-xl border border-dashed p-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-medium">إضافة فيديوهات جديدة</h3>
-                  <Button type="button" variant="outline" onClick={handleAddVideoField}><Plus className="ml-2 h-4 w-4" />إضافة حقل</Button>
+              <form onSubmit={submitAddVideos} className="space-y-4 rounded-xl border border-dashed bg-muted/10 p-4">
+                <div className="space-y-1">
+                  <h3 className="font-semibold">إضافة فيديو جديد للبرنامج</h3>
+                  <p className="text-sm text-muted-foreground">
+                    أضف فيديو واحد أو أكثر ثم اضغط زر حفظ الفيديوهات الجديدة لإرسالها.
+                  </p>
+                </div>
+                <div className="flex items-center justify-between rounded-lg border bg-background p-2">
+                  <p className="text-sm text-muted-foreground">
+                    عدد الفيديوهات الجديدة الجاهزة للإضافة: <span className="font-semibold text-foreground">{addVideosFieldArray.fields.length}</span>
+                  </p>
+                  <Button type="button" variant="outline" onClick={handleAddVideoField}>
+                    <Plus className="ml-2 h-4 w-4" />إضافة فيديو جديد
+                  </Button>
                 </div>
                 {addVideosFieldArray.fields.map((field, index) => (
                   <VideoFormSection key={field.id} index={index} form={addVideoForm} basePath={`videos.${index}` as const} canRemove={addVideosFieldArray.fields.length > 1} onRemove={() => addVideosFieldArray.remove(index)} />
                 ))}
                 <div className="flex justify-end">
-                  <Button type="submit" disabled={isAddingVideos}>{isAddingVideos ? "جارٍ الإضافة..." : "إضافة الفيديوهات"}</Button>
+                  <Button type="submit" disabled={isAddingVideos}>
+                    {isAddingVideos ? "جارٍ الإضافة..." : "حفظ الفيديوهات الجديدة"}
+                  </Button>
                 </div>
               </form>
             </Form>

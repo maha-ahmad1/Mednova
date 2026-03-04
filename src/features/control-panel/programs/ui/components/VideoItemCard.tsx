@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Pencil } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -22,7 +22,8 @@ interface VideoItemCardProps {
 
 export function VideoItemCard({ video, onUpdate, onDelete, isUpdating, isDeleting }: VideoItemCardProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const { data: details, isFetching } = useProgramVideoDetails(video.id);
+  const [isEditing, setIsEditing] = useState(false);
+  const { data: details, isFetching } = useProgramVideoDetails(isEditing ? video.id : null);
 
   const initialVideoValues = useMemo(
     () => ({
@@ -45,6 +46,10 @@ export function VideoItemCard({ video, onUpdate, onDelete, isUpdating, isDeletin
   });
 
   useEffect(() => {
+    if (!isEditing) {
+      return;
+    }
+
     if (!details) {
       form.reset({ videos: [initialVideoValues] });
       return;
@@ -63,48 +68,61 @@ export function VideoItemCard({ video, onUpdate, onDelete, isUpdating, isDeletin
         },
       ],
     });
-  }, [details, form, initialVideoValues]);
+  }, [details, form, initialVideoValues, isEditing]);
 
   const handleUpdate = form.handleSubmit(async (values) => {
     await onUpdate(video.id, values.videos[0]);
+    setIsEditing(false);
   });
+
+  const handleToggleEdit = () => {
+    setIsEditing((prev) => !prev);
+  };
 
   return (
     <div className="space-y-3 rounded-lg border bg-muted/20 p-3">
       <div className="flex items-center justify-between border-b pb-2">
         <div className="space-y-1 text-right">
-          <p className="font-semibold">تعديل الفيديو الحالي</p>
-          <p className="text-xs text-muted-foreground">{video.title} • الترتيب: #{video.order ?? "-"}</p>
+          <p className="font-semibold">{video.title}</p>
+          <p className="text-xs text-muted-foreground">الترتيب: #{video.order ?? "-"}</p>
         </div>
-        <Button type="button" variant="destructive" size="sm" onClick={() => setShowDeleteModal(true)}>
-          حذف الفيديو
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={handleToggleEdit}>
+            <Pencil className="ml-1 h-4 w-4" />
+            {isEditing ? "إغلاق التعديل" : "تعديل"}
+          </Button>
+          <Button type="button" variant="destructive" size="sm" onClick={() => setShowDeleteModal(true)}>
+            حذف
+          </Button>
+        </div>
       </div>
 
-      <Form {...form}>
-        <form onSubmit={handleUpdate} className="space-y-3">
-          {isFetching ? (
-            <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
-              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-              جاري تحميل بيانات الفيديو...
+      {isEditing ? (
+        <Form {...form}>
+          <form onSubmit={handleUpdate} className="space-y-3">
+            {isFetching ? (
+              <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
+                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                جاري تحميل بيانات الفيديو...
+              </div>
+            ) : (
+              <VideoFormSection
+                index={0}
+                form={form}
+                basePath="videos.0"
+                canRemove={false}
+                onRemove={() => undefined}
+                title="تعديل بيانات الفيديو"
+              />
+            )}
+            <div className="flex justify-end">
+              <Button type="submit" disabled={isUpdating || isFetching}>
+                {isUpdating ? "جارٍ الحفظ..." : "حفظ التعديلات"}
+              </Button>
             </div>
-          ) : (
-            <VideoFormSection
-              index={0}
-              form={form}
-              basePath="videos.0"
-              canRemove={false}
-              onRemove={() => undefined}
-              title="بيانات الفيديو"
-            />
-          )}
-          <div className="flex justify-end">
-            <Button type="submit" disabled={isUpdating || isFetching}>
-              {isUpdating ? "جارٍ الحفظ..." : "حفظ تعديلات الفيديو"}
-            </Button>
-          </div>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      ) : null}
 
       <ConfirmationModal
         open={showDeleteModal}

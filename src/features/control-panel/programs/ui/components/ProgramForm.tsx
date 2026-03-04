@@ -45,6 +45,7 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
   const { deleteVideo, isLoading: isDeletingVideo } = useDeleteProgramVideo(programId ?? 0);
 
   const [videos, setVideos] = useState(initialVideos);
+  const [isAddVideosFormOpen, setIsAddVideosFormOpen] = useState(false);
 
   const form = useForm<CreateProgramFormValues | UpdateProgramFormValues>({
     resolver: zodResolver(isCreateMode ? createProgramSchema : updateProgramSchema),
@@ -138,6 +139,7 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
     ]);
 
     addVideoForm.reset({ videos: [createDefaultVideo(videos.length + 1)] });
+    setIsAddVideosFormOpen(false);
   });
 
   const isSubmittingProgram = isCreateMode ? isCreating : isUpdatingProgram;
@@ -269,32 +271,44 @@ export function ProgramForm({ mode, programId, initialValues, initialVideos = []
               ))
             )}
 
-            <Form {...addVideoForm}>
-              <form onSubmit={submitAddVideos} className="space-y-4 rounded-xl border border-dashed bg-muted/10 p-4">
+            <div className="rounded-xl border border-dashed bg-muted/10 p-4 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="space-y-1">
-                  <h3 className="font-semibold">إضافة فيديو جديد للبرنامج</h3>
-                  <p className="text-sm text-muted-foreground">
-                    أضف فيديو واحد أو أكثر ثم اضغط زر حفظ الفيديوهات الجديدة لإرسالها.
-                  </p>
+                  <h3 className="font-semibold">إضافة فيديوهات جديدة</h3>
+                  <p className="text-sm text-muted-foreground">اضغط على زر إضافة فيديو جديد لفتح نموذج الإضافة.</p>
                 </div>
-                <div className="flex items-center justify-between rounded-lg border bg-background p-2">
-                  <p className="text-sm text-muted-foreground">
-                    عدد الفيديوهات الجديدة الجاهزة للإضافة: <span className="font-semibold text-foreground">{addVideosFieldArray.fields.length}</span>
-                  </p>
-                  <Button type="button" variant="outline" onClick={handleAddVideoField}>
-                    <Plus className="ml-2 h-4 w-4" />إضافة فيديو جديد
-                  </Button>
-                </div>
-                {addVideosFieldArray.fields.map((field, index) => (
-                  <VideoFormSection key={field.id} index={index} form={addVideoForm} basePath={`videos.${index}` as const} canRemove={addVideosFieldArray.fields.length > 1} onRemove={() => addVideosFieldArray.remove(index)} />
-                ))}
-                <div className="flex justify-end">
-                  <Button type="submit" disabled={isAddingVideos}>
-                    {isAddingVideos ? "جارٍ الإضافة..." : "حفظ الفيديوهات الجديدة"}
-                  </Button>
-                </div>
-              </form>
-            </Form>
+                <Button type="button" onClick={() => setIsAddVideosFormOpen((prev) => !prev)}>
+                  <Plus className="ml-2 h-4 w-4" />
+                  {isAddVideosFormOpen ? "إغلاق نموذج الإضافة" : "إضافة فيديو جديد"}
+                </Button>
+              </div>
+
+              {isAddVideosFormOpen ? (
+                <Form {...addVideoForm}>
+                  <form onSubmit={submitAddVideos} className="space-y-4 rounded-lg border bg-background p-3">
+                    <div className="flex items-center justify-between rounded-lg border bg-muted/30 p-2">
+                      <p className="text-sm text-muted-foreground">
+                        عدد الفيديوهات الجديدة الجاهزة للإضافة: <span className="font-semibold text-foreground">{addVideosFieldArray.fields.length}</span>
+                      </p>
+                      <Button type="button" variant="outline" onClick={handleAddVideoField}>
+                        <Plus className="ml-2 h-4 w-4" />إضافة حقل فيديو
+                      </Button>
+                    </div>
+                    {addVideosFieldArray.fields.map((field, index) => (
+                      <VideoFormSection key={field.id} index={index} form={addVideoForm} basePath={`videos.${index}` as const} canRemove={addVideosFieldArray.fields.length > 1} onRemove={() => addVideosFieldArray.remove(index)} />
+                    ))}
+                    <div className="flex justify-end gap-2">
+                      <Button type="button" variant="outline" onClick={() => setIsAddVideosFormOpen(false)}>
+                        إلغاء
+                      </Button>
+                      <Button type="submit" disabled={isAddingVideos}>
+                        {isAddingVideos ? "جارٍ الإضافة..." : "حفظ الفيديوهات الجديدة"}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              ) : null}
+            </div>
           </CardContent>
         </Card>
       )}

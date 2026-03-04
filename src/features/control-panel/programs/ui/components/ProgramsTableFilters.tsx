@@ -26,18 +26,18 @@ export function ProgramsTableFilters({ filters, onChange }: ProgramsTableFilters
         value={filters.status}
         onValueChange={(value) => onChange({ ...filters, status: value as ProgramsFilters["status"], page: 1 })}
       >
-        <SelectTrigger>
+        <SelectTrigger  className="w-full">
           <SelectValue placeholder="الحالة" />
         </SelectTrigger>
         <SelectContent className="text-right" dir="rtl">
           <SelectItem value="all">كل الحالات</SelectItem>
           <SelectItem value="draft">مسودة</SelectItem>
-          <SelectItem value="published">منشور</SelectItem>
-          <SelectItem value="archived">مؤرشف</SelectItem>
+          <SelectItem value="approved">موافق عليه</SelectItem>
+          <SelectItem value="rejected">مرفوض</SelectItem>
         </SelectContent>
       </Select>
 
-      <Select
+      {/* <Select
         value={filters.approval}
         onValueChange={(value) => onChange({ ...filters, approval: value as ProgramsFilters["approval"], page: 1 })}
       >
@@ -49,7 +49,7 @@ export function ProgramsTableFilters({ filters, onChange }: ProgramsTableFilters
           <SelectItem value="approved">موافق عليه</SelectItem>
           <SelectItem value="unapproved">غير موافق عليه</SelectItem>
         </SelectContent>
-      </Select>
+      </Select> */}
 
       <Select
         value={`${filters.sortBy}:${filters.sortOrder}`}
@@ -58,7 +58,7 @@ export function ProgramsTableFilters({ filters, onChange }: ProgramsTableFilters
           onChange({ ...filters, sortBy, sortOrder });
         }}
       >
-        <SelectTrigger>
+        <SelectTrigger  className="w-full">
           <SelectValue placeholder="الترتيب" />
         </SelectTrigger>
         <SelectContent className="text-right" dir="rtl">

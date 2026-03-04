@@ -12,7 +12,7 @@ export function useAdminLogout() {
     } catch {
       // Always clear local session even if remote logout fails.
     } finally {
-      await signOut({ callbackUrl: "/admin/login" });
+      await signOut({ callbackUrl: "/control-panel/login" });
     }
   };
 

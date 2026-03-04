@@ -2,18 +2,20 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ConfirmationModal } from "@/features/control-panel/users/ui/components/ConfirmationModal";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
+import { useDeleteProgram } from "../hooks/useDeleteProgram";
+import { useProgramStatusAction } from "../hooks/useProgramStatusAction";
 import { useControlPanelPrograms } from "../hooks/useControlPanelPrograms";
 import type { ControlPanelProgram, ProgramsFilters } from "../types/program";
 import { filterAndSortPrograms, paginatePrograms } from "../utils/programs";
 import { ProgramRow } from "./components/ProgramRow";
 import { ProgramsTableFilters } from "./components/ProgramsTableFilters";
 
-type PendingProgramAction = { type: "approve" | "delete" | "edit"; program: ControlPanelProgram } | null;
+type PendingProgramAction = { type: "delete"; program: ControlPanelProgram } | null;
 
 const initialFilters: ProgramsFilters = {
   search: "",
@@ -26,38 +28,74 @@ const initialFilters: ProgramsFilters = {
 };
 
 const SKELETON_ROWS_COUNT = 10;
+const PROGRAMS_PER_PAGE = 10;
 
 export function ProgramsManagementPage() {
+  const router = useRouter();
   const [filters, setFilters] = useState<ProgramsFilters>(initialFilters);
+  const [currentPage, setCurrentPage] = useState(1);
   const [pendingAction, setPendingAction] = useState<PendingProgramAction>(null);
+  const [overrides, setOverrides] = useState<Record<number, Partial<ControlPanelProgram>>>({});
+  const [deletedIds, setDeletedIds] = useState<number[]>([]);
+  const [statusLoadingId, setStatusLoadingId] = useState<number | null>(null);
 
-  const { programs, pagination, isLoading, isFetching, isError } = useControlPanelPrograms(filters);
+  const { programs, pagination, isLoading, isFetching, isError } = useControlPanelPrograms(
+    filters,
+    currentPage,
+    PROGRAMS_PER_PAGE,
+  );
+  const { mutateAsync: updateProgramStatus } = useProgramStatusAction();
+  const { mutateAsync: removeProgram, isPending: isDeletingProgram } = useDeleteProgram();
 
-  const { rows: sortedRows, total: localTotal } = useMemo(() => filterAndSortPrograms(programs, filters), [programs, filters]);
+  const syncedPrograms = useMemo(
+    () =>
+      programs
+        .filter((program) => !deletedIds.includes(program.id))
+        .map((program) => ({ ...program, ...(overrides[program.id] ?? {}) })),
+    [deletedIds, overrides, programs],
+  );
+
+  const { rows: sortedRows, total: localTotal } = useMemo(
+    () => filterAndSortPrograms(syncedPrograms, filters),
+    [filters, syncedPrograms],
+  );
   const rows = useMemo(() => {
     if (pagination) {
       return sortedRows;
     }
 
-    return paginatePrograms(sortedRows, filters.page, filters.limit);
-  }, [filters.limit, filters.page, pagination, sortedRows]);
+    return paginatePrograms(sortedRows, currentPage, PROGRAMS_PER_PAGE);
+  }, [currentPage, pagination, sortedRows]);
 
   const total = pagination?.total ?? localTotal;
-  const currentPage = pagination?.current_page ?? filters.page;
-  const totalPages = pagination?.last_page ?? Math.max(1, Math.ceil(localTotal / filters.limit));
+  const activePage = pagination?.current_page ?? currentPage;
+  const totalPages = pagination?.last_page ?? Math.max(1, Math.ceil(localTotal / PROGRAMS_PER_PAGE));
 
-  const onConfirmAction = () => {
+  const onConfirmAction = async () => {
     if (!pendingAction) return;
 
-    if (pendingAction.type === "approve") {
-      toast.success(`تمت الموافقة على البرنامج: ${pendingAction.program.title}`);
-    } else if (pendingAction.type === "delete") {
-      toast.success(`تم حذف البرنامج: ${pendingAction.program.title}`);
-    } else {
-      toast.info(`فتح تعديل البرنامج: ${pendingAction.program.title}`);
-    }
+    await removeProgram(pendingAction.program.id);
+    setDeletedIds((prev) => [...prev, pendingAction.program.id]);
 
     setPendingAction(null);
+  };
+
+  const handleStatusChange = async (programId: number, nextStatus: "approved" | "rejected") => {
+    setStatusLoadingId(programId);
+
+    try {
+      await updateProgramStatus({ programId, nextStatus });
+      setOverrides((prev) => ({
+        ...prev,
+        [programId]: {
+          ...prev[programId],
+          status: nextStatus,
+          isApproved: nextStatus === "approved",
+        },
+      }));
+    } finally {
+      setStatusLoadingId(null);
+    }
   };
 
   return (
@@ -72,7 +110,13 @@ export function ProgramsManagementPage() {
         </Button>
       </div>
 
-      <ProgramsTableFilters filters={filters} onChange={setFilters} />
+      <ProgramsTableFilters
+        filters={filters}
+        onChange={(nextFilters) => {
+          setFilters(nextFilters);
+          setCurrentPage(1);
+        }}
+      />
 
       {/* <div className="flex items-center justify-between rounded-lg border bg-white p-3">
         <p className="text-sm text-muted-foreground">إجمالي البرامج: {total}</p>
@@ -102,7 +146,7 @@ export function ProgramsManagementPage() {
               <th className="px-4 py-3 font-medium">العنوان</th>
               <th className="px-4 py-3 font-medium">المنشئ</th>
               <th className="px-4 py-3 font-medium">الحالة</th>
-              <th className="px-4 py-3 font-medium">الموافقة</th>
+              {/* <th className="px-4 py-3 font-medium">الموافقة</th> */}
               <th className="px-4 py-3 font-medium">السعر</th>
               <th className="px-4 py-3 font-medium">العملة</th>
               <th className="px-4 py-3 font-medium">الإجراءات</th>
@@ -136,9 +180,11 @@ export function ProgramsManagementPage() {
               <ProgramRow
                 key={program.id}
                 program={program}
-                onEdit={() => setPendingAction({ type: "edit", program })}
+                isUpdatingStatus={statusLoadingId === program.id}
+                onStatusChange={(nextStatus) => handleStatusChange(program.id, nextStatus)}
+                onView={() => router.push(`/control-panel/programs/${program.id}`)}
+                onEdit={() => router.push(`/control-panel/programs/${program.id}/edit`)}
                 onDelete={() => setPendingAction({ type: "delete", program })}
-                onApprove={() => setPendingAction({ type: "approve", program })}
               />
             ))}
           </tbody>
@@ -146,7 +192,7 @@ export function ProgramsManagementPage() {
       </div>
 
       <PaginationControls
-        currentPage={currentPage}
+        currentPage={activePage}
         lastPage={totalPages}
         total={total}
         isLoading={isLoading || isFetching}
@@ -155,7 +201,7 @@ export function ProgramsManagementPage() {
             return;
           }
 
-          setFilters((prev) => ({ ...prev, page }));
+          setCurrentPage(page);
         }}
       />
 
@@ -167,6 +213,7 @@ export function ProgramsManagementPage() {
         cancelLabel="إلغاء"
         onConfirm={onConfirmAction}
         onOpenChange={(open) => !open && setPendingAction(null)}
+        isConfirming={isDeletingProgram}
       />
     </div>
   );

@@ -1,2 +1,10 @@
 export { useControlPanelPrograms } from "./useControlPanelPrograms";
 export { useCreateProgram } from "./useCreateProgram";
+export { useDeleteProgram } from "./useDeleteProgram";
+export { useProgramDetails } from "./useProgramDetails";
+export { useProgramStatusAction } from "./useProgramStatusAction";
+export { useUpdateProgram } from "./useUpdateProgram";
+export { useAddProgramVideos } from "./useAddProgramVideos";
+export { useUpdateProgramVideo } from "./useUpdateProgramVideo";
+export { useDeleteProgramVideo } from "./useDeleteProgramVideo";
+export { useProgramVideoDetails } from "./useProgramVideoDetails";

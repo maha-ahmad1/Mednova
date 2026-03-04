@@ -14,9 +14,9 @@ export const mapApiProgramToControlPanelProgram = (program: ProgramsApiItem): Co
   coverImage: program.cover_image,
 });
 
-export const buildProgramsQueryParams = (filters: ProgramsFilters) => ({
-  page: filters.page,
-  per_page: filters.limit,
+export const buildProgramsQueryParams = (filters: ProgramsFilters, page: number, perPage: number) => ({
+  page,
+  per_page: perPage,
   ...(filters.status !== "all" ? { status: filters.status } : {}),
   ...(filters.approval === "approved"
     ? { is_approved: 1 }

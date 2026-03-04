@@ -32,8 +32,8 @@ export function ProgramsTableFilters({ filters, onChange }: ProgramsTableFilters
         <SelectContent className="text-right" dir="rtl">
           <SelectItem value="all">كل الحالات</SelectItem>
           <SelectItem value="draft">مسودة</SelectItem>
-          <SelectItem value="published">منشور</SelectItem>
-          <SelectItem value="archived">مؤرشف</SelectItem>
+          <SelectItem value="approved">موافق عليه</SelectItem>
+          <SelectItem value="rejected">مرفوض</SelectItem>
         </SelectContent>
       </Select>
 

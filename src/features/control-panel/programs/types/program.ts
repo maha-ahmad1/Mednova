@@ -1,4 +1,4 @@
-export type ProgramStatus = "draft" | "published" | "archived";
+export type ProgramStatus = "draft" | "approved" | "rejected" | "published" | "archived";
 
 export type ProgramApprovalFilter = "all" | "approved" | "unapproved";
 export type ProgramSortBy = "id" | "title" | "price";
@@ -37,6 +37,29 @@ export interface ProgramsApiItem {
   price: number | string | null;
   currency: string | null;
   cover_image: string | null;
+}
+
+export interface ControlPanelProgramVideo {
+  id: number;
+  title: string;
+  description: string;
+  durationMinute: number | null;
+  order: number | null;
+  isProgramIntro: boolean;
+  videoPath: string | null;
+}
+
+export interface ControlPanelProgramDetails {
+  id: number;
+  title: string;
+  description: string;
+  whatYouWillLearn: string;
+  creator: string;
+  status: ProgramStatus;
+  price: number | null;
+  currency: string | null;
+  coverImage: string | null;
+  videos: ControlPanelProgramVideo[];
 }
 
 export interface ProgramsPaginationMeta {

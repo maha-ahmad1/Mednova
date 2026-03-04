@@ -43,14 +43,22 @@ export function ProgramStatusDropdown({ status, isLoading = false, onSelectStatu
           {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ChevronDown className="h-3.5 w-3.5" />}
         </Badge>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-36" dir="rtl">
-        <DropdownMenuItem disabled>
+      <DropdownMenuContent align="start" className="w-36 text-right">
+        <DropdownMenuItem disabled className="justify-end">
           {statusLabels.draft}
         </DropdownMenuItem>
-        <DropdownMenuItem disabled={status === "approved"} onClick={() => onSelectStatus("approved")}>
+        <DropdownMenuItem
+          disabled={status === "approved"}
+          onClick={() => onSelectStatus("approved")}
+          className="justify-end"
+        >
           {statusLabels.approved}
         </DropdownMenuItem>
-        <DropdownMenuItem disabled={status === "rejected"} onClick={() => onSelectStatus("rejected")}>
+        <DropdownMenuItem
+          disabled={status === "rejected"}
+          onClick={() => onSelectStatus("rejected")}
+          className="justify-end"
+        >
           {statusLabels.rejected}
         </DropdownMenuItem>
       </DropdownMenuContent>

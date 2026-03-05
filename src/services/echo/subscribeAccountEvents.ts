@@ -56,7 +56,6 @@ export const subscribeAccountEvents = ({
       });
 
       router.replace("/profile");
-      router.refresh();
     }
 
     if (event.status === "rejected") {

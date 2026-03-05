@@ -15,6 +15,7 @@ declare module "next-auth" {
       isCompleted?: boolean;
       role?: string;
       status?: string;
+      approval_status?: string;
       // legacy snake_case fields sometimes present on JWT/session
       is_completed?: boolean;
     } & DefaultSession["user"];
@@ -53,6 +54,7 @@ declare module "next-auth/jwt" {
       image?: string | null;
       role?: string;
       status?: string;
+      approval_status?: string;
       is_completed?: boolean;
     };
   }

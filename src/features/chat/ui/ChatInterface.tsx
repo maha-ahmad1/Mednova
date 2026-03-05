@@ -37,6 +37,7 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const lastProcessedRef = useRef<number>(0);
+  const recentReadMarksRef = useRef<Map<number, number>>(new Map());
   const markAsReadTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const virtuosoRef = useRef<VirtuosoHandle | null>(null);
 
@@ -71,12 +72,13 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
 
     console.log(`✅ إجمالي الرسائل المحملة: ${allMessages.length}`);
 
-    // إزالة التكرارات بناءً على ID
-    const uniqueMessages = Array.from(
-      new Map(allMessages.map((msg) => [msg.id, msg])).values()
-    );
+    const uniqueMessages = Array.from(new Map(allMessages.map((msg) => [msg.id, msg])).values());
 
-    return uniqueMessages.reverse();
+    return uniqueMessages.sort((a, b) => {
+      const diff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      if (diff !== 0) return diff;
+      return a.id - b.id;
+    });
 
     // ترتيب من الأقدم للأحدث
     // return uniqueMessages.sort(
@@ -117,7 +119,6 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
 
   const allMessages = useMemo(() => {
     console.log("🔄 إعادة حساب allMessages", {
-      dataPages: data?.pages?.length,
       messagesLength: messages.length,
       optimisticCount: optimisticMessages.length,
     });
@@ -125,14 +126,13 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
     // استخدام messages بدلاً من data.pages مباشرة
     const merged = [...messages, ...optimisticMessages];
 
-    // إزالة التكرارات
-    const uniqueMessages = merged.reduce<Message[]>((acc, current) => {
-      if (!current || !current.id) return acc;
-
-      const exists = acc.find((msg) => msg.id === current.id);
-      if (!exists) acc.push(current);
-      return acc;
-    }, []);
+    const uniqueMessages = Array.from(
+      new Map(merged.filter((msg) => !!msg && !!msg.id).map((msg) => [msg.id, msg])).values()
+    ).sort((a, b) => {
+      const diff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      if (diff !== 0) return diff;
+      return a.id - b.id;
+    });
 
     // الترتيب من الأقدم للأحدث
     // const sorted = uniqueMessages.sort(
@@ -143,7 +143,7 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
     // console.log(`📈 allMessages النتيجة: ${sorted.length} رسالة`);
 
     return uniqueMessages;
-  }, [messages, optimisticMessages, data]);
+  }, [messages, optimisticMessages]);
 
 
   useEffect(() => {
@@ -252,6 +252,10 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
       if (unreadSenders.size > 0) {
         lastProcessedRef.current = now;
         unreadSenders.forEach((senderId) => {
+          const lastMarkAt = recentReadMarksRef.current.get(senderId) ?? 0;
+          if (now - lastMarkAt < 2000) return;
+
+          recentReadMarksRef.current.set(senderId, now);
           markAsReadMutation.mutate(senderId);
         });
       }
@@ -332,11 +336,13 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
         })) as Message;
       }
 
-      setOptimisticMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === tempId ? { ...realMessage, status: "sent" } : msg
-        )
-      );
+      setOptimisticMessages((prev) => {
+        const withoutTemp = prev.filter((msg) => msg.id !== tempId);
+        const hasReal = withoutTemp.some((msg) => msg.id === realMessage.id);
+        if (hasReal) return withoutTemp;
+
+        return [...withoutTemp, { ...realMessage, status: "sent" }];
+      });
 
       handleRemoveFile();
     } catch (error) {

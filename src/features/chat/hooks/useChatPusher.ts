@@ -44,21 +44,8 @@ export const useChatPusher = (
       queryClient.invalidateQueries({
         queryKey: ["messages", chatRequestId],
       });
-
-      // إشعار فقط إذا كانت الرسالة موجهة للمستخدم الحالي
-      const receiverId =
-        typeof newMessage.receiver_id === "object"
-          ? newMessage.receiver_id.id
-          : newMessage.receiver_id;
-
-      if (Number(receiverId) === Number(session?.user?.id)) {
-        toast.info("📩 رسالة جديدة", {
-          duration: 3000,
-          position: "top-center",
-        });
-      }
     },
-    [chatRequestId, queryClient, session?.user?.id]
+    [chatRequestId, queryClient]
   );
 
   useEffect(() => {
@@ -141,6 +128,10 @@ export const useChatPusher = (
           }
 
           processedMessagesRef.current.add(receivedMessage.id);
+          if (processedMessagesRef.current.size > 2000) {
+            const latestIds = Array.from(processedMessagesRef.current).slice(-1000);
+            processedMessagesRef.current = new Set(latestIds);
+          }
 
           const newMessage: Message = {
             ...receivedMessage,
@@ -166,24 +157,33 @@ export const useChatPusher = (
           logger.info("📖 حدث تحديث حالة القراءة:", event);
 
           if (event.sender_id && chatRequestId) {
-            queryClient.setQueryData(
+            queryClient.setQueryData<InfiniteData<PaginatedMessages>>(
               ["messages", chatRequestId],
-              (old: Message[] = []) =>
-                old.map((msg) => {
-                  const msgSenderId =
-                    typeof msg.sender_id === "object"
-                      ? msg.sender_id.id
-                      : msg.sender_id;
+              (old) => {
+                if (!old) return old;
 
-                  if (Number(msgSenderId) === Number(event.sender_id)) {
-                    return {
-                      ...msg,
-                      is_read: true,
-                      read_at: event.read_at || new Date().toISOString(),
-                    };
-                  }
-                  return msg;
-                })
+                return {
+                  ...old,
+                  pages: old.pages.map((page) => ({
+                    ...page,
+                    data: page.data.map((msg) => {
+                      const msgSenderId =
+                        typeof msg.sender_id === "object"
+                          ? msg.sender_id.id
+                          : msg.sender_id;
+
+                      if (Number(msgSenderId) === Number(event.sender_id)) {
+                        return {
+                          ...msg,
+                          is_read: true,
+                          read_at: event.read_at || new Date().toISOString(),
+                        };
+                      }
+                      return msg;
+                    }),
+                  })),
+                };
+              }
             );
           }
         };
@@ -216,8 +216,23 @@ export const useChatPusher = (
     initializePusher();
 
     return () => {
-      // 🔥 تنظيف عند unmount فقط، ليس عند إعادة التصيير
       logger.info("🧹 تنظيف useChatPusher");
+      try {
+        if (channelRef.current) {
+          channelRef.current.stopListening("MessageSent");
+          channelRef.current.stopListening("MessageRead");
+        }
+
+        if (echoRef.current) {
+          echoRef.current.leave(channelName);
+        }
+      } catch (error) {
+        logger.warn("⚠️ خطأ أثناء تنظيف قناة الشات:", error);
+      }
+
+      channelRef.current = null;
+      isConnectedRef.current = false;
+      processedMessagesRef.current.clear();
       isInitializingRef.current = false;
     };
   }, [

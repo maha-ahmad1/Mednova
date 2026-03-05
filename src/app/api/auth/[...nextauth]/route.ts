@@ -132,6 +132,9 @@ export const authOptions: NextAuthOptions = {
       session.role = token.role as string;
       session.isCompleted = token.isCompleted as boolean;
       session.approval_status = token.approval_status as string;
+      if (session.user) {
+        session.user.approval_status = token.approval_status as string;
+      }
 
       return session;
     },

@@ -47,7 +47,7 @@ export const subscribeAccountEvents = ({
         duration: 5000,
       });
 
-      await updateSession({
+      const updatedSession = await updateSession({
         approval_status: "approved",
         user: {
           ...(sessionUser || {}),
@@ -55,8 +55,21 @@ export const subscribeAccountEvents = ({
         },
       });
 
+      const isApproved =
+        (updatedSession as { approval_status?: string } | null)?.approval_status ===
+          "approved" ||
+        (
+          updatedSession as {
+            user?: { approval_status?: string };
+          } | null
+        )?.user?.approval_status === "approved";
+
+      if (isApproved && typeof window !== "undefined") {
+        window.location.replace("/profile");
+        return;
+      }
+
       router.replace("/profile");
-      router.refresh();
     }
 
     if (event.status === "rejected") {

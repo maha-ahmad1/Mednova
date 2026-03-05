@@ -23,6 +23,22 @@ interface ChatInterfaceProps {
   onBack?: () => void;
 }
 
+const getMessageTime = (message: Message): number => {
+  const createdAt = new Date(message.created_at).getTime();
+  if (Number.isFinite(createdAt)) return createdAt;
+
+  const updatedAt = new Date(message.updated_at).getTime();
+  if (Number.isFinite(updatedAt)) return updatedAt;
+
+  return Number.MAX_SAFE_INTEGER;
+};
+
+const sortMessagesChronologically = (a: Message, b: Message): number => {
+  const timeDiff = getMessageTime(a) - getMessageTime(b);
+  if (timeDiff !== 0) return timeDiff;
+  return a.id - b.id;
+};
+
 function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
   const { data: session } = useSession();
   const [newMessage, setNewMessage] = useState("");
@@ -74,11 +90,7 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
 
     const uniqueMessages = Array.from(new Map(allMessages.map((msg) => [msg.id, msg])).values());
 
-    return uniqueMessages.sort((a, b) => {
-      const diff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-      if (diff !== 0) return diff;
-      return a.id - b.id;
-    });
+    return uniqueMessages.sort(sortMessagesChronologically);
 
     // ترتيب من الأقدم للأحدث
     // return uniqueMessages.sort(
@@ -128,11 +140,7 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
 
     const uniqueMessages = Array.from(
       new Map(merged.filter((msg) => !!msg && !!msg.id).map((msg) => [msg.id, msg])).values()
-    ).sort((a, b) => {
-      const diff = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-      if (diff !== 0) return diff;
-      return a.id - b.id;
-    });
+    ).sort(sortMessagesChronologically);
 
     // الترتيب من الأقدم للأحدث
     // const sorted = uniqueMessages.sort(

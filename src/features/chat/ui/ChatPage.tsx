@@ -21,6 +21,11 @@ export default function ChatPage() {
 
   const chatIdFromUrl = useMemo(() => Number(searchParams.get("chat") || 0), [searchParams]);
 
+  const preferredChatId = useMemo(() => {
+    if (typeof window === "undefined") return 0;
+    return Number(window.sessionStorage.getItem("preferred_chat_id") || 0);
+  }, []);
+
   useEffect(() => {
     const checkScreenSize = () => {
       const sidebarWidth = 250;
@@ -36,18 +41,25 @@ export default function ChatPage() {
   useEffect(() => {
     if (!chats.length) return;
 
-    if (chatIdFromUrl) {
-      const matched = chats.find((chat) => chat.id === chatIdFromUrl);
+    const targetChatId = chatIdFromUrl || preferredChatId;
+
+    if (targetChatId) {
+      const matched = chats.find((chat) => chat.id === targetChatId);
       if (matched) {
-        setSelectedChat(matched);
+        if (matched.id !== selectedChat?.id) {
+          setSelectedChat(matched);
+        }
+        if (typeof window !== "undefined") {
+          window.sessionStorage.removeItem("preferred_chat_id");
+        }
         return;
       }
     }
 
-    if (!selectedChat) {
+    if (!selectedChat || !chats.some((chat) => chat.id === selectedChat.id)) {
       setSelectedChat(chats[0]);
     }
-  }, [chats, chatIdFromUrl, selectedChat]);
+  }, [chats, chatIdFromUrl, preferredChatId, selectedChat]);
 
   if (!session) {
     return (

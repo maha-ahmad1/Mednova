@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { NotificationDropdown } from "@/features/notifications/components/NotificationDropdown";
+import { ChatDropdown } from "@/features/chat/ui/ChatDropdown";
 import { UserMenu } from "./UserMenu";
 
 export function AuthActions() {
@@ -23,6 +24,7 @@ export function AuthActions() {
 
   return (
     <div className="flex items-center gap-2">
+      <ChatDropdown />
       <NotificationDropdown />
       <UserMenu />
     </div>

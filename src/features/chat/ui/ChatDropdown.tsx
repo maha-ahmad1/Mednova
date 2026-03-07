@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MessageCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,18 @@ import { useCurrentChats } from "../hooks/useChatApi";
 
 export function ChatDropdown() {
   const [open, setOpen] = useState(false);
-  const { data: chats = [], isLoading } = useCurrentChats();
+  const { data: chats = [], isLoading, refetch } = useCurrentChats();
+
+  useEffect(() => {
+    if (!open) return;
+
+    refetch();
+    const interval = window.setInterval(() => {
+      refetch();
+    }, 5000);
+
+    return () => window.clearInterval(interval);
+  }, [open, refetch]);
 
   const unreadCount = useMemo(
     () => chats.reduce((total, chat) => total + (chat.unread_count ?? 0), 0),
@@ -67,7 +78,10 @@ export function ChatDropdown() {
                     key={chat.id}
                     href={`/profile/chat?chat=${chat.id}`}
                     className="block p-3 border-b last:border-0 hover:bg-muted/60 transition"
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      window.sessionStorage.setItem("preferred_chat_id", String(chat.id));
+                      setOpen(false);
+                    }}
                   >
                     <div className="flex gap-3 items-start">
                       <Avatar className="w-10 h-10">

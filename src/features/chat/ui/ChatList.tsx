@@ -67,7 +67,7 @@ export default function ChatList({ selectedChat, onSelectChat }: ChatListProps) 
       <div className="h-full flex flex-col items-center justify-center p-8 text-center">
         <MessageCircle className="w-14 h-14 text-gray-300 mb-4" />
         <h3 className="font-semibold text-gray-700 mb-2">تعذر تحميل المحادثات</h3>
-        <p className="text-gray-500 text-sm">يرجى تحديث الصفحة والمحاولة مرة أخرى.</p>
+        <p className="text-gray-500 text-sm">يرجى تحديث الصفحة. إذا استمرت المشكلة فتأكد من توفر API: /api/messages/current-chats.</p>
       </div>
     );
   }

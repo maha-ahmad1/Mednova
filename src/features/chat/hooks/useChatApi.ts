@@ -19,12 +19,7 @@ interface ApiErrorResponse {
   status?: string;
 }
 
-const CHAT_LIST_ENDPOINTS = [
-  "/api/messages/current-chats",
-  "/api/messages/chats",
-  "/api/chat-requests",
-  "/api/chat-requests/current",
-];
+const CURRENT_CHATS_ENDPOINT = "/api/messages/current-chats";
 
 const normalizeChatsResponse = (payload: unknown): ChatRequest[] => {
   if (!payload || typeof payload !== "object") return [];
@@ -61,32 +56,20 @@ export const useCurrentChats = () => {
   return useQuery({
     queryKey: ["current-chats"],
     queryFn: async () => {
-      let lastError: unknown;
+      const response = await axiosInstance.get(CURRENT_CHATS_ENDPOINT);
 
-      for (const endpoint of CHAT_LIST_ENDPOINTS) {
-        try {
-          const response = await axiosInstance.get(endpoint);
-          if (response.data?.success === false) {
-            continue;
-          }
-
-          const chats = normalizeChatsResponse(response.data?.data ?? response.data);
-          return chats
-            .filter((chat) => chat && typeof chat.id === "number")
-            .sort(
-              (a, b) =>
-                new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-            );
-        } catch (error) {
-          lastError = error;
-        }
+      if (response.data?.success === false) {
+        throw new Error(response.data?.message || "فشل في جلب المحادثات");
       }
 
-      if (lastError) {
-        throw lastError;
-      }
+      const chats = normalizeChatsResponse(response.data?.data ?? response.data);
 
-      return [] as ChatRequest[];
+      return chats
+        .filter((chat) => chat && typeof chat.id === "number")
+        .sort(
+          (a, b) =>
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        );
     },
     staleTime: 1000 * 20,
     refetchInterval: 1000 * 12,
@@ -102,17 +85,13 @@ export const useMessages = (chatRequestId: number, limit = 15) => {
     queryFn: async ({ pageParam = null }) => {
       const params = new URLSearchParams();
       params.append("limit", String(limit));
-      params.append("order", "desc"); // إضافة ترتيب تنازلي
+      params.append("order", "desc");
 
-      // معالجة خاصة للـ cursor اليدوي
       if (pageParam) {
-        // تحقق إذا كان cursor يدوياً (timestamp)
         if (typeof pageParam === "string" && /^\d+$/.test(pageParam)) {
-          // هذا cursor يدوي، أضفه كـ created_before
           params.append("created_before", pageParam);
           console.log(`📅 استخدام cursor يدوي (timestamp): ${pageParam}`);
         } else {
-          // استخدام الـ cursor العادي
           params.append("next_cursor", pageParam);
           console.log(`🎯 استخدام cursor عادي: ${pageParam}`);
         }
@@ -133,8 +112,8 @@ export const useMessages = (chatRequestId: number, limit = 15) => {
         hasNextCursor: !!apiData.next_cursor,
       });
 
-       let messagesArray: Message[] = [];
- 
+      let messagesArray: Message[] = [];
+
       if (apiData["0"] && Array.isArray(apiData["0"])) {
         messagesArray = apiData["0"];
       } else if (apiData.data && Array.isArray(apiData.data)) {
@@ -149,10 +128,6 @@ export const useMessages = (chatRequestId: number, limit = 15) => {
         }
       }
 
-      console.log(`📝 الرسائل المستلمة: ${messagesArray.length} رسالة`);
-
-    
-
       const cleanedMessages = messagesArray.filter(
         (msg: Message) =>
           msg &&
@@ -165,32 +140,21 @@ export const useMessages = (chatRequestId: number, limit = 15) => {
       return {
         data: cleanedMessages,
         next_cursor: apiData.next_cursor,
-        // manual_cursor: manualNextCursor, // إضافة cursor يدوي
       };
     },
-getNextPageParam: (lastPage) => {
-  console.log(`🔍 فحص للصفحة التالية:`, {
-    nextCursor: lastPage.next_cursor,
-    dataLength: lastPage.data?.length || 0,
-    hasData: !!lastPage.data && lastPage.data.length > 0,
-  });
+    getNextPageParam: (lastPage) => {
+      if (lastPage.next_cursor && lastPage.data && lastPage.data.length > 0) {
+        return lastPage.next_cursor;
+      }
 
-  // التحقق البسيط: إذا كان هناك cursor وكانت هناك بيانات
-  if (lastPage.next_cursor && lastPage.data && lastPage.data.length > 0) {
-    console.log(`✅ إرجاع cursor للصفحة التالية: ${lastPage.next_cursor.substring(0, 50)}...`);
-    return lastPage.next_cursor;
-  }
-
-  console.log("❌ لا يوجد cursor صالح للصفحة التالية");
-  return undefined;
-},
+      return undefined;
+    },
     enabled: !!chatRequestId && chatRequestId > 0,
     staleTime: 1000 * 60 * 5,
     initialPageParam: null,
     retry: 1,
     refetchOnWindowFocus: false,
-    // إضافة إعدادات مهمة للتحديث التلقائي
-    refetchInterval: 30000, // تحديث كل 30 ثانية
+    refetchInterval: 30000,
   });
 };
 
@@ -199,10 +163,6 @@ export const useSendMessage = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // Accept either:
-    // - SendMessageData (no attachment)
-    // - FormData
-    // - an object: { formData: FormData, onUploadProgress?: (ev: ProgressEvent) => void, chat_request_id?: number }
     mutationFn: async (
       payload:
         | SendMessageData
@@ -215,7 +175,6 @@ export const useSendMessage = () => {
     ) => {
       let response;
 
-      // If caller passed wrapper with formData and callback
       if (payload && typeof payload === "object" && "formData" in payload) {
         const wrapper = payload as {
           formData: FormData;
@@ -252,7 +211,6 @@ export const useSendMessage = () => {
       return response.data.data;
     },
     onSuccess: (data, variables) => {
-      // Determine chat_request_id whether variables is FormData or object
       let chatId: number | null = null;
       if (variables instanceof FormData) {
         const v = variables.get("chat_request_id");
@@ -268,8 +226,6 @@ export const useSendMessage = () => {
       toast.success("تم إرسال الرسالة بنجاح");
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
-      // console.error('❌ خطأ في إرسال الرسالة:', error);
-
       const errorData = error.response?.data;
       const errorMessage =
         errorData?.data?.error ||

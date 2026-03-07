@@ -21,10 +21,13 @@ export default function ChatPage() {
 
   const chatIdFromUrl = useMemo(() => Number(searchParams.get("chat") || 0), [searchParams]);
 
-  const preferredChatId = useMemo(() => {
-    if (typeof window === "undefined") return 0;
-    return Number(window.sessionStorage.getItem("preferred_chat_id") || 0);
-  }, []);
+  const [preferredChatId, setPreferredChatId] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const nextPreferredId = Number(window.sessionStorage.getItem("preferred_chat_id") || 0);
+    setPreferredChatId(nextPreferredId);
+  }, [chatIdFromUrl]);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -52,6 +55,7 @@ export default function ChatPage() {
         if (typeof window !== "undefined") {
           window.sessionStorage.removeItem("preferred_chat_id");
         }
+        setPreferredChatId(0);
         return;
       }
     }

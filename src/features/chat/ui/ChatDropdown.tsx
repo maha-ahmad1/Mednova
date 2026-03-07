@@ -17,7 +17,7 @@ import { useCurrentChats } from "../hooks/useChatApi";
 
 export function ChatDropdown() {
   const [open, setOpen] = useState(false);
-  const { data: chats = [], isLoading, refetch } = useCurrentChats();
+  const { data: chats = [], isLoading, isError, refetch } = useCurrentChats();
 
   useEffect(() => {
     if (!open) return;
@@ -66,6 +66,8 @@ export function ChatDropdown() {
           <DropdownMenuGroup>
             {isLoading ? (
               <div className="p-4 text-sm text-muted-foreground">جارٍ تحميل المحادثات...</div>
+            ) : isError ? (
+              <div className="p-4 text-sm text-red-500">تعذر جلب المحادثات من API الحالي.</div>
             ) : recentChats.length === 0 ? (
               <div className="p-6 text-sm text-muted-foreground text-center">لا توجد محادثات حالياً</div>
             ) : (

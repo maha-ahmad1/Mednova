@@ -1,10 +1,11 @@
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useInfiniteQuery,
 } from "@tanstack/react-query";
 import { useAxiosInstance } from "@/lib/axios/axiosInstance";
-import type { Message, SendMessageData } from "@/types/chat";
+import type { ChatRequest, Message, SendMessageData } from "@/types/chat";
 import type { AxiosError, AxiosProgressEvent } from "axios";
 import { toast } from "sonner";
 import { logger } from "@/lib/logger";
@@ -18,6 +19,80 @@ interface ApiErrorResponse {
   status?: string;
 }
 
+const CHAT_LIST_ENDPOINTS = [
+  "/api/messages/current-chats",
+  "/api/messages/chats",
+  "/api/chat-requests",
+  "/api/chat-requests/current",
+];
+
+const normalizeChatsResponse = (payload: unknown): ChatRequest[] => {
+  if (!payload || typeof payload !== "object") return [];
+
+  const asRecord = payload as Record<string, unknown>;
+  const possibleCollections: unknown[] = [
+    payload,
+    asRecord.data,
+    asRecord.chats,
+    asRecord.chat_requests,
+  ];
+
+  for (const collection of possibleCollections) {
+    if (Array.isArray(collection)) {
+      return collection as ChatRequest[];
+    }
+
+    if (collection && typeof collection === "object") {
+      const nestedRecord = collection as Record<string, unknown>;
+      for (const value of Object.values(nestedRecord)) {
+        if (Array.isArray(value)) {
+          return value as ChatRequest[];
+        }
+      }
+    }
+  }
+
+  return [];
+};
+
+export const useCurrentChats = () => {
+  const axiosInstance = useAxiosInstance();
+
+  return useQuery({
+    queryKey: ["current-chats"],
+    queryFn: async () => {
+      let lastError: unknown;
+
+      for (const endpoint of CHAT_LIST_ENDPOINTS) {
+        try {
+          const response = await axiosInstance.get(endpoint);
+          if (response.data?.success === false) {
+            continue;
+          }
+
+          const chats = normalizeChatsResponse(response.data?.data ?? response.data);
+          return chats
+            .filter((chat) => chat && typeof chat.id === "number")
+            .sort(
+              (a, b) =>
+                new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+            );
+        } catch (error) {
+          lastError = error;
+        }
+      }
+
+      if (lastError) {
+        throw lastError;
+      }
+
+      return [] as ChatRequest[];
+    },
+    staleTime: 1000 * 20,
+    refetchInterval: 1000 * 12,
+    refetchOnWindowFocus: true,
+  });
+};
 
 export const useMessages = (chatRequestId: number, limit = 15) => {
   const axiosInstance = useAxiosInstance();
@@ -188,6 +263,7 @@ export const useSendMessage = () => {
 
       if (chatId) {
         queryClient.invalidateQueries({ queryKey: ["messages", chatId] });
+        queryClient.invalidateQueries({ queryKey: ["current-chats"] });
       }
       toast.success("تم إرسال الرسالة بنجاح");
     },
@@ -207,6 +283,7 @@ export const useSendMessage = () => {
 
 export const useMarkAsRead = () => {
   const axiosInstance = useAxiosInstance();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (senderId: number) => {
@@ -226,6 +303,7 @@ export const useMarkAsRead = () => {
     },
     onSuccess: (data, senderId) => {
       logger.info(`✅ تم تعليم رسائل المرسل ${senderId} كمقروءة`);
+      queryClient.invalidateQueries({ queryKey: ["current-chats"] });
     },
     onError: (error: AxiosError<ApiErrorResponse>, senderId) => {
       logger.error(`❌ فشل في تعليم رسائل المرسل ${senderId}:`, error);
@@ -240,4 +318,3 @@ export const useMarkAsRead = () => {
     },
   });
 };
-

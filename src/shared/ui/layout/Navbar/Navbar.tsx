@@ -14,14 +14,13 @@ import { ChevronDown, Menu,
   HelpCircle,
   User,
   LogOut,
-  Settings,
-  Bell, } from "lucide-react";
+  Settings, } from "lucide-react";
 import { NavLinks } from "./NavLinks";
 import MobileMenu from "./MobileMenu";
 import { useSession, signOut } from "next-auth/react";
-import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { NotificationDropdown } from "@/features/notifications/components/NotificationDropdown";
+import { ChatDropdown } from "@/features/chat/ui/ChatDropdown";
 
 
 export default function Navbar() {
@@ -86,6 +85,7 @@ export default function Navbar() {
        
              {session?.user ? (
                <div className="flex items-center gap-2">
+               <ChatDropdown />
                <NotificationDropdown/>
                  <DropdownMenu>
                    <DropdownMenuTrigger asChild>

@@ -1,7 +1,7 @@
 ﻿"use client";
 import { useState, useRef, useEffect, useMemo, useCallback, memo } from "react";
 import { useSession } from "next-auth/react";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,7 +34,6 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
   const [shouldFollowOutput, setShouldFollowOutput] = useState<boolean>(true);
   const [isAtBottom, setIsAtBottom] = useState<boolean>(true);
   const [isAtTop, setIsAtTop] = useState<boolean>(false);
-  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const lastProcessedRef = useRef<number>(0);
   const markAsReadTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -146,13 +145,6 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
   }, [messages, optimisticMessages, data]);
 
 
-  useEffect(() => {
-    // عندما ينتهي تحميل الصفحات التالية، أعد ضبط isLoadingMore
-    if (!isFetchingNextPage && isLoadingMore) {
-      console.log("🔄 إعادة ضبط isLoadingMore إلى false");
-      setIsLoadingMore(false);
-    }
-  }, [isFetchingNextPage, isLoadingMore]);
   // أضف هذه الـ useEffect للتحقق من حالة البيانات
   useEffect(() => {
     console.log("🔍 فحص حالة الـ query:", {
@@ -415,20 +407,12 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
   }
 
   return (
-    <Card className="h-[900px] flex flex-col">
+    <Card className="h-full min-h-0 flex flex-col">
       <ChatHeader otherUser={otherUser} onBack={onBack} />
 
       <CardContent className="flex-1 p-0 flex flex-col">
-        <div className="flex-1 overflow-hidden bg-gray-50">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            </div>
-          ) : error ? (
-            <div className="flex items-center justify-center h-full text-red-500">
-              حدث خطأ في تحميل الرسائل
-            </div>
-          ) : allMessages.length > 0 ? (
+        <div className="flex-1 overflow-hidden bg-gray-50 relative">
+          {allMessages.length > 0 ? (
             <Virtuoso
               ref={virtuosoRef}
               data={allMessages}
@@ -476,6 +460,25 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
             <div className="flex items-center justify-center h-full text-gray-500">
               لا توجد رسائل بعد
             </div>
+          )}
+
+          {!isAtBottom && allMessages.length > 0 && (
+            <Button
+              type="button"
+              size="sm"
+              className="absolute bottom-4 left-4 rounded-full shadow"
+              onClick={() => {
+                virtuosoRef.current?.scrollToIndex({
+                  index: allMessages.length - 1,
+                  align: "end",
+                  behavior: "smooth",
+                });
+                setShouldFollowOutput(true);
+              }}
+            >
+              <ArrowDown className="w-4 h-4 ml-1" />
+              أحدث الرسائل
+            </Button>
           )}
         </div>
 

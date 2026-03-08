@@ -28,10 +28,10 @@ export function ChatHeader({ otherUser, onBack }: ChatHeaderProps) {
   };
 
   return (
-    <CardHeader className="border-b bg-gray-50 py-4">
+    <CardHeader className="border-b bg-gray-50 py-4" dir="rtl">
       <div className="flex items-center gap-3">
         {onBack && (
-          <Button variant="ghost" size="sm" onClick={onBack} className="p-2">
+          <Button variant="ghost" size="sm" onClick={onBack} className="p-2" aria-label="العودة إلى قائمة المحادثات">
             <ArrowRight className="w-4 h-4" />
           </Button>
         )}

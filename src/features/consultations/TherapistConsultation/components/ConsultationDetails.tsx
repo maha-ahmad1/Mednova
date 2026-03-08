@@ -4,8 +4,6 @@ import type React from "react";
 import type { ConsultationRequest } from "@/types/consultation";
 import {
   User,
-  Mail,
-  Phone,
   ChevronLeft,
   MessageCircle,
   Info,
@@ -13,7 +11,6 @@ import {
   ExternalLink,
   RefreshCw,
   Calendar,
-  Clock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -270,16 +267,6 @@ const shouldShowZoomButton = () => {
                 icon={User}
                 label="الاسم الكامل"
                 value={consultant.full_name}
-              />
-              <InfoCard
-                icon={Mail}
-                label="البريد الإلكتروني"
-                value={consultant.email}
-              />
-              <InfoCard
-                icon={Phone}
-                label="رقم الهاتف"
-                value={consultant.phone}
               />
             </div>
           </div>

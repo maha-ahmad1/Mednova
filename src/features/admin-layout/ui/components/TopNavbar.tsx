@@ -1,9 +1,9 @@
 "use client";
 
-import { Menu, Search } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { NotificationDropdown } from "@/features/notifications/components/NotificationDropdown";
+import { ChatMessagesDropdown } from "@/features/chat/ui/ChatMessagesDropdown";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { ProfileDropdown } from "./ProfileDropdown";
 
@@ -38,12 +38,9 @@ export function TopNavbar({ collapsed, onOpenMobileSidebar }: TopNavbarProps) {
         <Breadcrumbs />
 
         <div className="flex items-center gap-2">
-          {/* <div className="relative hidden w-full max-w-xs sm:block">
-            <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="بحث سريع..." className="pr-9 text-right" />
-          </div> */}
-          {/* <NotificationDropdown /> */}
-          {/* <ProfileDropdown /> */}
+          <ChatMessagesDropdown />
+          <NotificationDropdown />
+          <ProfileDropdown />
         </div>
       </div>
     </header>

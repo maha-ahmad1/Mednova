@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFetcher } from "@/hooks/useFetcher";
@@ -10,6 +11,7 @@ import type { ChatRequest } from "@/types/chat";
 import type { ConsultationRequest } from "@/types/consultation";
 import ChatInterface from "./ChatInterface";
 import ChatList from "./ChatList";
+import { useNotificationStore } from "@/store/notificationStore";
 
 interface ConsultationResponse {
   success: boolean;
@@ -41,9 +43,13 @@ const mapConsultationToChatRequest = (
 
 export default function ChatPage() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
   const [selectedChat, setSelectedChat] = useState<ChatRequest | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [timezone, setTimezone] = useState<string>("");
+  const notifications = useNotificationStore((state) => state.notifications);
+
+  const requestedChatId = Number(searchParams.get("chatId"));
 
   useEffect(() => {
     setTimezone(TimeZoneService.detectUserTimeZone());
@@ -76,11 +82,48 @@ export default function ChatPage() {
       );
   }, [data]);
 
+  const unreadByChatId = useMemo(() => {
+    const map: Record<number, number> = {};
+
+    notifications
+      .filter((notification) => !notification.read)
+      .filter((notification) => notification.type === "consultation_message")
+      .forEach((notification) => {
+        const consultationId = Number(
+          (notification.data as { consultation_id?: number })?.consultation_id
+        );
+
+        if (!consultationId) return;
+        map[consultationId] = (map[consultationId] || 0) + 1;
+      });
+
+    return map;
+  }, [notifications]);
+
+  const sortedChats = useMemo(() => {
+    return [...chats].sort((a, b) => {
+      const aUnread = unreadByChatId[a.id] || 0;
+      const bUnread = unreadByChatId[b.id] || 0;
+
+      if (aUnread !== bUnread) return bUnread - aUnread;
+
+      return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+    });
+  }, [chats, unreadByChatId]);
+
   useEffect(() => {
-    if (!selectedChat && chats.length > 0 && !isMobile) {
-      setSelectedChat(chats[0]);
+    if (requestedChatId && sortedChats.length > 0) {
+      const requestedChat = sortedChats.find((chat) => chat.id === requestedChatId);
+      if (requestedChat) {
+        setSelectedChat(requestedChat);
+        return;
+      }
     }
-  }, [chats, selectedChat, isMobile]);
+
+    if (!selectedChat && sortedChats.length > 0 && !isMobile) {
+      setSelectedChat(sortedChats[0]);
+    }
+  }, [sortedChats, selectedChat, isMobile, requestedChatId]);
 
   if (!session) {
     return (
@@ -101,7 +144,8 @@ export default function ChatPage() {
         } w-full lg:w-96 xl:w-[30rem] flex-col`}
       >
         <ChatList
-          chats={chats}
+          chats={sortedChats}
+          unreadByChatId={unreadByChatId}
           selectedChat={selectedChat}
           onSelectChat={setSelectedChat}
           isMobile={isMobile}
@@ -122,8 +166,8 @@ export default function ChatPage() {
               <p className="text-gray-600 text-sm mb-5">
                 اختر محادثة من القائمة لعرض الرسائل وإرسال ردودك بشكل فوري.
               </p>
-              {isMobile && chats.length > 0 && (
-                <Button onClick={() => setSelectedChat(chats[0])}>
+              {isMobile && sortedChats.length > 0 && (
+                <Button onClick={() => setSelectedChat(sortedChats[0])}>
                   فتح آخر محادثة
                 </Button>
               )}

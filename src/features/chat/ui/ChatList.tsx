@@ -10,6 +10,7 @@ import type { ChatRequest } from "@/types/chat";
 
 interface ChatListProps {
   chats: ChatRequest[];
+  unreadByChatId?: Record<number, number>;
   selectedChat: ChatRequest | null;
   onSelectChat: (chat: ChatRequest) => void;
   isMobile: boolean;
@@ -20,6 +21,7 @@ const ACCESSIBLE_STATUSES = new Set(["accepted", "active", "completed"]);
 
 export default function ChatList({
   chats,
+  unreadByChatId = {},
   selectedChat,
   onSelectChat,
   isMobile,
@@ -136,6 +138,7 @@ export default function ChatList({
           filteredChats.map((chat) => {
             const isSelected = selectedChat?.id === chat.id;
             const isAccessible = ACCESSIBLE_STATUSES.has(chat.status);
+            const unreadCount = unreadByChatId[chat.id] || 0;
             const totalMessages =
               (chat.patient_message_count || 0) +
               (chat.consultant_message_count || 0);
@@ -153,7 +156,9 @@ export default function ChatList({
                   isSelected
                     ? "bg-[#32A88D]/10 border-r-4 border-r-[#32A88D]"
                     : "hover:bg-gray-50 border-r-4 border-r-transparent"
-                } ${!isAccessible ? "opacity-70 cursor-not-allowed" : ""}`}
+                } ${!isAccessible ? "opacity-70 cursor-not-allowed" : ""} ${
+                  unreadCount > 0 ? "bg-emerald-50/40" : ""
+                }`}
               >
                 <div className="flex items-start gap-3">
                   <Avatar className="h-11 w-11">
@@ -163,13 +168,20 @@ export default function ChatList({
 
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="font-medium text-sm text-gray-800 truncate">
+                      <p className={`font-medium text-sm truncate ${unreadCount > 0 ? "text-emerald-700" : "text-gray-800"}`}>
                         {displayName}
                       </p>
-                      <span className="text-xs text-gray-500 flex items-center gap-1 shrink-0">
+                      <div className="flex items-center gap-2 shrink-0">
+                        {unreadCount > 0 && (
+                          <Badge className="h-5 min-w-5 px-1 text-xs bg-emerald-600 hover:bg-emerald-600">
+                            {unreadCount > 99 ? "99+" : unreadCount}
+                          </Badge>
+                        )}
+                        <span className="text-xs text-gray-500 flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {formatTime(chat.updated_at)}
-                      </span>
+                        </span>
+                      </div>
                     </div>
 
                     <p className="text-xs text-gray-500 truncate">

@@ -1,25 +1,36 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
-//import { Card } from "@/components/ui/card";
-// import ChatList from "./ChatList";
+import { useSearchParams } from "next/navigation";
+import ChatList from "./ChatList";
 import ChatInterface from "./ChatInterface";
 import type { ChatRequest } from "@/types/chat";
 import { MessageCircle, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useCurrentChats } from "../hooks/useChatApi";
 
 export default function ChatPage() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const { data: chats = [] } = useCurrentChats();
   const [selectedChat, setSelectedChat] = useState<ChatRequest | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // التحقق من حجم الشاشة مع مراعاة السايدبار
+  const chatIdFromUrl = useMemo(() => Number(searchParams.get("chat") || 0), [searchParams]);
+
+  const [preferredChatId, setPreferredChatId] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const nextPreferredId = Number(window.sessionStorage.getItem("preferred_chat_id") || 0);
+    setPreferredChatId(nextPreferredId);
+  }, [chatIdFromUrl]);
+
   useEffect(() => {
     const checkScreenSize = () => {
-      // افتراض أن السايدبار بعرض 250px، عدل حسب ديزاينك
       const sidebarWidth = 250;
       const availableWidth = window.innerWidth - sidebarWidth;
       setIsMobile(availableWidth < 1024);
@@ -29,6 +40,30 @@ export default function ChatPage() {
     window.addEventListener("resize", checkScreenSize);
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
+
+  useEffect(() => {
+    if (!chats.length) return;
+
+    const targetChatId = chatIdFromUrl || preferredChatId;
+
+    if (targetChatId) {
+      const matched = chats.find((chat) => chat.id === targetChatId);
+      if (matched) {
+        if (matched.id !== selectedChat?.id) {
+          setSelectedChat(matched);
+        }
+        if (typeof window !== "undefined") {
+          window.sessionStorage.removeItem("preferred_chat_id");
+        }
+        setPreferredChatId(0);
+        return;
+      }
+    }
+
+    if (!selectedChat || !chats.some((chat) => chat.id === selectedChat.id)) {
+      setSelectedChat(chats[0]);
+    }
+  }, [chats, chatIdFromUrl, preferredChatId, selectedChat]);
 
   if (!session) {
     return (
@@ -43,7 +78,6 @@ export default function ChatPage() {
 
   return (
     <div className="h-full flex flex-col">
-      {/* هيدر للموبايل */}
       {isMobile && selectedChat && (
         <div className="flex items-center gap-3 p-4 border-b bg-white lg:hidden">
           <Button
@@ -63,7 +97,6 @@ export default function ChatPage() {
       )}
 
       <div className="flex-1 flex">
-        {/* القائمة الجانبية للمحادثات */}
         <div
           className={`
             ${isMobile && selectedChat ? "hidden" : "flex"}
@@ -72,31 +105,29 @@ export default function ChatPage() {
             lg:flex lg:static
           `}
         >
-          {/* <ChatList
+          <ChatList
             selectedChat={selectedChat}
             onSelectChat={(chat) => {
               setSelectedChat(chat);
               if (isMobile) setMobileMenuOpen(false);
             }}
             isMobile={isMobile}
-          /> */}
+          />
         </div>
 
-        {/* Sheet للقائمة في الموبايل */}
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
           <SheetContent side="left" className="w-80 p-0">
-            {/* <ChatList
+            <ChatList
               selectedChat={selectedChat}
               onSelectChat={(chat) => {
                 setSelectedChat(chat);
                 setMobileMenuOpen(false);
               }}
               isMobile={isMobile}
-            /> */}
+            />
           </SheetContent>
         </Sheet>
 
-        {/* واجهة المحادثة */}
         <div
           className={`
             ${isMobile && !selectedChat ? "hidden" : "flex"}
@@ -125,20 +156,6 @@ export default function ChatPage() {
                   اختر محادثة من القائمة لبدء التحدث مع المرضى أو المستشارين.
                   يمكنك إرسال الرسائل النصية والملفات والصور.
                 </p>
-                <div className="grid grid-cols-1 gap-3 text-sm text-gray-500">
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-                    <span>محادثات فورية مع المرضى والمستشارين</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-                    <span>إرسال الصور والملفات حتى 10MB</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-                    <span>واجهة مستخدم متجاوبة لجميع الأجهزة</span>
-                  </div>
-                </div>
               </div>
             </div>
           )}

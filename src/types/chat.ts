@@ -50,6 +50,9 @@ export interface ChatRequest {
   patient_full_name: string;
   patient_image?: string | undefined;
   consultant_image?: string | undefined;
+  last_message?: string;
+  unread_count?: number;
+  is_online?: boolean;
 }
 
 export interface SendMessageData {

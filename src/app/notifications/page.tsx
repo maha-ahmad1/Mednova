@@ -35,6 +35,7 @@ import type {
   Notification as AppNotification,
   NotificationData,
 } from "@/features/notifications/types";
+import Navbar from "@/shared/ui/components/Navbar/Navbar";
 
 
 // ===== Helper Functions =====
@@ -336,6 +337,8 @@ export default function NotificationsPage() {
       : 0;
 
   return (
+    <>
+      <Navbar variant="landing" />
     <div className="container mx-auto p-4 max-w-6xl">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
@@ -545,5 +548,6 @@ export default function NotificationsPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

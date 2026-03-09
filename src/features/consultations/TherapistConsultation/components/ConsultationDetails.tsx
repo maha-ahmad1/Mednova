@@ -271,7 +271,7 @@ const shouldShowZoomButton = () => {
                 label="الاسم الكامل"
                 value={consultant.full_name}
               />
-              <InfoCard
+              {/* <InfoCard
                 icon={Mail}
                 label="البريد الإلكتروني"
                 value={consultant.email}
@@ -280,7 +280,7 @@ const shouldShowZoomButton = () => {
                 icon={Phone}
                 label="رقم الهاتف"
                 value={consultant.phone}
-              />
+              /> */}
             </div>
           </div>
         </>

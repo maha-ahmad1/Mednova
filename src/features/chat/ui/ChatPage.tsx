@@ -1,34 +1,129 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
-//import { Card } from "@/components/ui/card";
-// import ChatList from "./ChatList";
-import ChatInterface from "./ChatInterface";
-import type { ChatRequest } from "@/types/chat";
-import { MessageCircle, Menu } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useFetcher } from "@/hooks/useFetcher";
+import { TimeZoneService } from "@/lib/timezone-service";
+import type { ChatRequest } from "@/types/chat";
+import type { ConsultationRequest } from "@/types/consultation";
+import ChatInterface from "./ChatInterface";
+import ChatList from "./ChatList";
+import { useNotificationStore } from "@/store/notificationStore";
+
+interface ConsultationResponse {
+  success: boolean;
+  message: string;
+  data: ConsultationRequest[];
+  status: string;
+}
+
+const mapConsultationToChatRequest = (
+  consultation: ConsultationRequest
+): ChatRequest => ({
+  id: consultation.id,
+  patient_id: consultation.data.patient.id,
+  consultant_id: consultation.data.consultant.id,
+  consultant_type: consultation.data.consultant_type,
+  status: consultation.status,
+  first_patient_message_at: consultation.data.first_patient_message_at,
+  first_consultant_message_at: consultation.data.first_consultant_reply_at,
+  patient_message_count: consultation.data.patient_message_count,
+  consultant_message_count: consultation.data.consultant_message_count,
+  max_messages_for_patient: consultation.data.max_messages_for_patient,
+  created_at: consultation.created_at,
+  updated_at: consultation.updated_at,
+  consultant_full_name: consultation.data.consultant.full_name,
+  patient_full_name: consultation.data.patient.full_name,
+  patient_image: consultation.data.patient.image,
+  consultant_image: consultation.data.consultant.image,
+});
 
 export default function ChatPage() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
   const [selectedChat, setSelectedChat] = useState<ChatRequest | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [timezone, setTimezone] = useState<string>("");
+  const notifications = useNotificationStore((state) => state.notifications);
 
-  // التحقق من حجم الشاشة مع مراعاة السايدبار
+  const requestedChatId = Number(searchParams.get("chatId"));
+
   useEffect(() => {
+    setTimezone(TimeZoneService.detectUserTimeZone());
+
     const checkScreenSize = () => {
-      // افتراض أن السايدبار بعرض 250px، عدل حسب ديزاينك
-      const sidebarWidth = 250;
-      const availableWidth = window.innerWidth - sidebarWidth;
-      setIsMobile(availableWidth < 1024);
+      setIsMobile(window.innerWidth < 1024);
     };
 
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
+
+  const { data, isLoading } = useFetcher<ConsultationResponse>(
+    ["chat-consultations"],
+    timezone
+      ? `/api/consultation-request/get-status-request?limit=50&current_time_zone=${timezone}`
+      : null,
+    { enabled: !!timezone }
+  );
+
+  const chats = useMemo(() => {
+    const source = data?.data || [];
+    return source
+      .filter((request) => request.type === "chat")
+      .map(mapConsultationToChatRequest)
+      .sort(
+        (a, b) =>
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      );
+  }, [data]);
+
+  const unreadByChatId = useMemo(() => {
+    const map: Record<number, number> = {};
+
+    notifications
+      .filter((notification) => !notification.read)
+      .filter((notification) => notification.type === "consultation_message")
+      .forEach((notification) => {
+        const consultationId = Number(
+          (notification.data as { consultation_id?: number })?.consultation_id
+        );
+
+        if (!consultationId) return;
+        map[consultationId] = (map[consultationId] || 0) + 1;
+      });
+
+    return map;
+  }, [notifications]);
+
+  const sortedChats = useMemo(() => {
+    return [...chats].sort((a, b) => {
+      const aUnread = unreadByChatId[a.id] || 0;
+      const bUnread = unreadByChatId[b.id] || 0;
+
+      if (aUnread !== bUnread) return bUnread - aUnread;
+
+      return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+    });
+  }, [chats, unreadByChatId]);
+
+  useEffect(() => {
+    if (requestedChatId && sortedChats.length > 0) {
+      const requestedChat = sortedChats.find((chat) => chat.id === requestedChatId);
+      if (requestedChat) {
+        setSelectedChat(requestedChat);
+        return;
+      }
+    }
+
+    if (!selectedChat && sortedChats.length > 0 && !isMobile) {
+      setSelectedChat(sortedChats[0]);
+    }
+  }, [sortedChats, selectedChat, isMobile, requestedChatId]);
 
   if (!session) {
     return (
@@ -42,108 +137,44 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="h-full flex flex-col">
-      {/* هيدر للموبايل */}
-      {isMobile && selectedChat && (
-        <div className="flex items-center gap-3 p-4 border-b bg-white lg:hidden">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSelectedChat(null)}
-            className="p-2"
-          >
-            <Menu className="w-5 h-5" />
-          </Button>
-          <div className="flex-1">
-            <h2 className="font-semibold text-gray-800">
-              {selectedChat.patient_full_name || selectedChat.consultant_full_name}
-            </h2>
-          </div>
-        </div>
-      )}
+    <div className="h-[calc(100vh-120px)] min-h-[640px] flex bg-white rounded-xl border overflow-hidden">
+      <aside
+        className={`border-l bg-white ${
+          isMobile && selectedChat ? "hidden" : "flex"
+        } w-full lg:w-96 xl:w-[30rem] flex-col`}
+      >
+        <ChatList
+          chats={sortedChats}
+          unreadByChatId={unreadByChatId}
+          selectedChat={selectedChat}
+          onSelectChat={setSelectedChat}
+          isMobile={isMobile}
+          isLoading={isLoading}
+        />
+      </aside>
 
-      <div className="flex-1 flex">
-        {/* القائمة الجانبية للمحادثات */}
-        <div
-          className={`
-            ${isMobile && selectedChat ? "hidden" : "flex"}
-            ${isMobile ? "w-full" : "w-full lg:w-96 xl:w-1/3"}
-            flex-col border-l bg-white
-            lg:flex lg:static
-          `}
-        >
-          {/* <ChatList
-            selectedChat={selectedChat}
-            onSelectChat={(chat) => {
-              setSelectedChat(chat);
-              if (isMobile) setMobileMenuOpen(false);
-            }}
-            isMobile={isMobile}
-          /> */}
-        </div>
-
-        {/* Sheet للقائمة في الموبايل */}
-        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetContent side="left" className="w-80 p-0">
-            {/* <ChatList
-              selectedChat={selectedChat}
-              onSelectChat={(chat) => {
-                setSelectedChat(chat);
-                setMobileMenuOpen(false);
-              }}
-              isMobile={isMobile}
-            /> */}
-          </SheetContent>
-        </Sheet>
-
-        {/* واجهة المحادثة */}
-        <div
-          className={`
-            ${isMobile && !selectedChat ? "hidden" : "flex"}
-            flex-1 flex-col
-            bg-gray-50
-          `}
-        >
-          {selectedChat ? (
-            <ChatInterface
-              chatRequest={selectedChat}
-              onBack={() => {
-                setSelectedChat(null);
-                if (isMobile) setMobileMenuOpen(true);
-              }}
-            />
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center max-w-md mx-auto p-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#32A88D] to-[#2a8f7a] rounded-full flex items-center justify-center mx-auto mb-6">
-                  <MessageCircle className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-3">
-                  مرحباً في المحادثات
-                </h3>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  اختر محادثة من القائمة لبدء التحدث مع المرضى أو المستشارين.
-                  يمكنك إرسال الرسائل النصية والملفات والصور.
-                </p>
-                <div className="grid grid-cols-1 gap-3 text-sm text-gray-500">
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-                    <span>محادثات فورية مع المرضى والمستشارين</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-                    <span>إرسال الصور والملفات حتى 10MB</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-                    <span>واجهة مستخدم متجاوبة لجميع الأجهزة</span>
-                  </div>
-                </div>
+      <main className={`${isMobile && !selectedChat ? "hidden" : "flex"} flex-1 bg-gray-50`}>
+        {selectedChat ? (
+          <ChatInterface chatRequest={selectedChat} onBack={() => setSelectedChat(null)} />
+        ) : (
+          <div className="flex-1 flex items-center justify-center p-8" dir="rtl">
+            <div className="text-center max-w-md">
+              <div className="w-16 h-16 bg-[#32A88D]/15 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageCircle className="w-8 h-8 text-[#32A88D]" />
               </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">مرحباً بك في المحادثات</h3>
+              <p className="text-gray-600 text-sm mb-5">
+                اختر محادثة من القائمة لعرض الرسائل وإرسال ردودك بشكل فوري.
+              </p>
+              {isMobile && sortedChats.length > 0 && (
+                <Button onClick={() => setSelectedChat(sortedChats[0])}>
+                  فتح آخر محادثة
+                </Button>
+              )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Clock, User, Video } from "lucide-react";
@@ -15,14 +15,24 @@ export function NotificationItem({
   data,
   read,
   createdAt,
-  source,
   onMarkAsRead,
   getIcon,
   getColor,
   formatTimeAgo,
 }: NotificationItemProps) {
+  const router = useRouter();
+
   const handleClick = () => {
     onMarkAsRead(id);
+
+    const consultationId = Number((data as { consultation_id?: number })?.consultation_id);
+    if (!consultationId) return;
+
+    if (type === "consultation_message") {
+      router.push(`/profile/chat?chatId=${consultationId}`);
+      return;
+    }
+
   };
 
   const renderZoomAction = () => {

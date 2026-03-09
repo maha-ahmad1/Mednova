@@ -44,7 +44,7 @@ export function MessageInput({
 
   return (
     <div className="border-t bg-white p-3">
-      <div className="flex items-center gap-2">
+      <div className="flex items-end gap-2">
         <div className="relative">
           <input
             ref={fileInputRef}
@@ -57,6 +57,7 @@ export function MessageInput({
             size="sm"
             onClick={() => onSetShowUploadMenu((s) => !s)}
             className="p-2"
+            aria-label="إرفاق ملف"
           >
             <Paperclip className="w-4 h-4" />
           </Button>
@@ -84,12 +85,14 @@ export function MessageInput({
           placeholder="اكتب رسالة..."
           className="flex-1 min-h-[40px] max-h-[120px] resize-none rounded-2xl bg-gray-100 border-none focus-visible:ring-0 px-4 py-3"
           rows={1}
+          aria-label="حقل كتابة الرسالة"
         />
 
         <Button
           onClick={onSendMessage}
           disabled={(!newMessage.trim() && !selectedFile) || isSending}
           className="rounded-full h-10 w-10 p-0 bg-[#32A88D] hover:bg-[#2a8f7a]"
+          aria-label="إرسال الرسالة"
         >
           {isSending ? (
             <Loader2 className="w-4 h-4 animate-spin" />

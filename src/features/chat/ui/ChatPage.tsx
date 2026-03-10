@@ -13,6 +13,7 @@ import type { ConsultationRequest } from "@/types/consultation";
 import type { ChatRequest } from "@/types/chat";
 import ChatInterface from "./ChatInterface";
 import ChatList from "./ChatList";
+import { TimeZoneService } from "@/lib/timezone-service";
 
 interface ConsultationsResponse {
   success: boolean;
@@ -50,12 +51,13 @@ export default function ChatPage() {
   const [selectedChat, setSelectedChat] = useState<ChatRequest | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [timezone, setTimezone] = useState<string>("");
 
   const { data: consultationsResponse, isLoading } = useFetcher<ConsultationsResponse>(
     ["chat-conversations"],
-    "/api/consultation-request/get-status-request?limit=30",
+    `/api/consultation-request/get-status-request?limit=30${timezone ? `&current_time_zone=${timezone}` : ""}`,
     {
-      enabled: !!session?.user,
+      enabled: !!session?.user && !!timezone,
       staleTime: 1,
     }
   );
@@ -64,6 +66,11 @@ export default function ChatPage() {
     notifications: state.notifications,
     markAsRead: state.markAsRead,
   }));
+
+  useEffect(() => {
+    const userTimezone = TimeZoneService.detectUserTimeZone();
+    setTimezone(userTimezone);
+  }, []);
 
   const chats = useMemo(() => {
     const consultations = consultationsResponse?.data ?? [];

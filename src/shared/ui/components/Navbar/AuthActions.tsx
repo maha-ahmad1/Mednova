@@ -10,34 +10,22 @@ import { UserMenu } from "./UserMenu";
 
 export function AuthActions() {
   const { data: session } = useSession();
-  const unreadMessagesCount = useNotificationStore((state) =>
-    state.notifications.filter(
-      (notification) => !notification.read && notification.type === "message"
-    ).length
+  const unreadMessagesCount = useNotificationStore(
+    (state) =>
+      state.notifications.filter(
+        (notification) => !notification.read && notification.type === "message"
+      ).length
   );
 
   if (!session?.user) {
     return (
-      <div className="flex items-center gap-2">
-        <Button
-          asChild
-          variant="outline"
-          className="h-10 rounded-xl border-[#32A88D]/40 text-[#1F6F5C] hover:bg-[#32A88D]/10"
-        >
-          <Link href="/login" aria-label="تسجيل الدخول لفتح الشات">
-            <MessageCircleMore className="h-4 w-4" />
-            <span className="hidden md:inline">تنبيه الشات</span>
-          </Link>
-        </Button>
-
-        <Button
-          variant="outline"
-          className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-6 py-2 transition-all duration-200"
-          asChild
-        >
-          <Link href="/login">تسجيل دخول</Link>
-        </Button>
-      </div>
+      <Button
+        variant="outline"
+        className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-6 py-2 transition-all duration-200"
+        asChild
+      >
+        <Link href="/login">تسجيل دخول</Link>
+      </Button>
     );
   }
 
@@ -48,9 +36,9 @@ export function AuthActions() {
         variant="outline"
         className="relative h-10 rounded-xl border-[#32A88D]/40 text-[#1F6F5C] hover:bg-[#32A88D]/10"
       >
-        <Link href="/profile/chat" aria-label="فتح الشات">
+        <Link href="/profile/chat" aria-label="فتح الرسائل">
           <MessageCircleMore className="h-4 w-4" />
-          <span className="hidden md:inline">تنبيه الشات</span>
+          <span className="hidden md:inline">الرسائل</span>
           {unreadMessagesCount > 0 && (
             <span className="absolute -top-2 -left-2 min-w-5 rounded-full bg-red-500 px-1.5 py-0.5 text-center text-[10px] font-bold leading-none text-white">
               {unreadMessagesCount}
@@ -58,6 +46,7 @@ export function AuthActions() {
           )}
         </Link>
       </Button>
+
       <NotificationDropdown />
       <UserMenu />
     </div>

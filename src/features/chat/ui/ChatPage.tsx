@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
 import { MessageCircle, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -45,8 +44,7 @@ const mapConsultationToChatRequest = (
 
 export default function ChatPage() {
   const { data: session } = useSession();
-  const searchParams = useSearchParams();
-  const consultationIdFromQuery = Number(searchParams.get("consultationId") || 0);
+  const [consultationIdFromQuery, setConsultationIdFromQuery] = useState(0);
 
   const [selectedChat, setSelectedChat] = useState<ChatRequest | null>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -72,8 +70,25 @@ export default function ChatPage() {
     setTimezone(userTimezone);
   }, []);
 
+  useEffect(() => {
+    const search = new URLSearchParams(window.location.search);
+    const queryId = Number(search.get("consultationId") || 0);
+    setConsultationIdFromQuery(queryId);
+  }, []);
+
   const chats = useMemo(() => {
-    const consultations = consultationsResponse?.data ?? [];
+    const consultationsPayload = consultationsResponse as
+      | ConsultationRequest[]
+      | { data?: ConsultationRequest[] }
+      | null
+      | undefined;
+
+    const consultations = Array.isArray(consultationsPayload)
+      ? consultationsPayload
+      : Array.isArray(consultationsPayload?.data)
+      ? consultationsPayload.data
+      : [];
+
     return consultations
       .filter((consultation) => consultation.type === "chat")
       .map(mapConsultationToChatRequest)

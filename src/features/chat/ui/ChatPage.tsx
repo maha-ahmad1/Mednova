@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { MessageCircle, Menu } from "lucide-react";
+import { AlertCircle, MessageCircle, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useFetcher } from "@/hooks/useFetcher";
@@ -23,37 +23,66 @@ interface ConsultationsResponse {
 
 const mapConsultationToChatRequest = (
   consultation: ConsultationRequest
-): ChatRequest => ({
-  id: consultation.id,
-  patient_id: consultation.data.patient.id,
-  consultant_id: consultation.data.consultant.id,
-  consultant_type: consultation.data.consultant_type,
-  status: consultation.status,
-  first_patient_message_at: consultation.data.first_patient_message_at,
-  first_consultant_message_at: consultation.data.first_consultant_reply_at,
-  patient_message_count: consultation.data.patient_message_count,
-  consultant_message_count: consultation.data.consultant_message_count,
-  max_messages_for_patient: consultation.data.max_messages_for_patient,
-  created_at: consultation.created_at,
-  updated_at: consultation.updated_at,
-  consultant_full_name: consultation.data.consultant.full_name,
-  patient_full_name: consultation.data.patient.full_name,
-  patient_image: consultation.data.patient.image,
-  consultant_image: consultation.data.consultant.image,
-});
+): ChatRequest | null => {
+  if (
+    !consultation?.id ||
+    !consultation?.data?.patient?.id ||
+    !consultation?.data?.consultant?.id
+  ) {
+    return null;
+  }
+
+  return {
+    id: consultation.id,
+    patient_id: consultation.data.patient.id,
+    consultant_id: consultation.data.consultant.id,
+    consultant_type: consultation.data.consultant_type,
+    status: consultation.status,
+    first_patient_message_at: consultation.data.first_patient_message_at,
+    first_consultant_message_at: consultation.data.first_consultant_reply_at,
+    patient_message_count: consultation.data.patient_message_count,
+    consultant_message_count: consultation.data.consultant_message_count,
+    max_messages_for_patient: consultation.data.max_messages_for_patient,
+    created_at: consultation.created_at,
+    updated_at: consultation.updated_at,
+    consultant_full_name: consultation.data.consultant.full_name,
+    patient_full_name: consultation.data.patient.full_name,
+    patient_image: consultation.data.patient.image,
+    consultant_image: consultation.data.consultant.image,
+  };
+};
+
+const normalizeConsultationsPayload = (
+  payload: ConsultationsResponse | ConsultationRequest[] | null | undefined
+): ConsultationRequest[] => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.data)) return payload.data;
+  return [];
+};
 
 export default function ChatPage() {
   const { data: session } = useSession();
   const [consultationIdFromQuery, setConsultationIdFromQuery] = useState(0);
-
   const [selectedChat, setSelectedChat] = useState<ChatRequest | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [timezone, setTimezone] = useState<string>("");
 
-  const { data: consultationsResponse, isLoading } = useFetcher<ConsultationsResponse>(
+  const queryEndpoint = useMemo(() => {
+    const params = new URLSearchParams({ limit: "30" });
+    if (timezone) {
+      params.set("current_time_zone", timezone);
+    }
+    return `/api/consultation-request/get-status-request?${params.toString()}`;
+  }, [timezone]);
+
+  const {
+    data: consultationsResponse,
+    isLoading,
+    error,
+  } = useFetcher<ConsultationsResponse | ConsultationRequest[]>(
     ["chat-conversations"],
-    `/api/consultation-request/get-status-request?limit=30${timezone ? `&current_time_zone=${timezone}` : ""}`,
+    queryEndpoint,
     {
       enabled: !!session?.user && !!timezone,
       staleTime: 1,
@@ -77,21 +106,12 @@ export default function ChatPage() {
   }, []);
 
   const chats = useMemo(() => {
-    const consultationsPayload = consultationsResponse as
-      | ConsultationRequest[]
-      | { data?: ConsultationRequest[] }
-      | null
-      | undefined;
-
-    const consultations = Array.isArray(consultationsPayload)
-      ? consultationsPayload
-      : Array.isArray(consultationsPayload?.data)
-      ? consultationsPayload.data
-      : [];
+    const consultations = normalizeConsultationsPayload(consultationsResponse);
 
     return consultations
-      .filter((consultation) => consultation.type === "chat")
+      .filter((consultation) => consultation?.type === "chat")
       .map(mapConsultationToChatRequest)
+      .filter((chat): chat is ChatRequest => chat !== null)
       .sort(
         (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       );
@@ -159,6 +179,23 @@ export default function ChatPage() {
         <div className="text-center">
           <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <p className="text-gray-600">يجب تسجيل الدخول للوصول إلى المحادثات</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-full flex items-center justify-center p-6">
+        <div className="max-w-lg w-full rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
+          <AlertCircle className="mx-auto mb-3 h-8 w-8 text-red-600" />
+          <h3 className="mb-2 text-lg font-semibold text-red-700">تعذر تحميل المحادثات</h3>
+          <p className="mb-4 text-sm text-red-600">
+            الخادم أعاد خطأ أثناء تحميل قائمة المحادثات. حاول إعادة تحميل الصفحة.
+          </p>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            إعادة المحاولة
+          </Button>
         </div>
       </div>
     );

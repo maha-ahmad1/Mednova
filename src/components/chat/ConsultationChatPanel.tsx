@@ -10,6 +10,7 @@ interface ConsultationChatPanelProps {
   request: ConsultationRequest;
   canShowChat: boolean;
   onBackToDetails: () => void;
+  backButtonLabel?: string;
 }
 
 const getChatUnavailableMessage = (status: ConsultationRequest["status"]) => {
@@ -47,6 +48,7 @@ export default function ConsultationChatPanel({
   request,
   canShowChat,
   onBackToDetails,
+  backButtonLabel = "العودة إلى التفاصيل",
 }: ConsultationChatPanelProps) {
   if (!canShowChat) {
     return (
@@ -60,7 +62,7 @@ export default function ConsultationChatPanel({
             {getChatUnavailableMessage(request.status)}
           </p>
           <Button onClick={onBackToDetails} variant="outline" className="mt-4">
-            العودة إلى التفاصيل
+            {backButtonLabel}
           </Button>
         </div>
       </div>

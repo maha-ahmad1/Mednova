@@ -6,7 +6,6 @@ import {
   User,
   ChevronLeft,
   MessageCircle,
-  Info,
   Video as VideoIcon,
   ExternalLink,
   RefreshCw,
@@ -14,14 +13,13 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { getStatusBadge, getTypeIcon } from "@/lib/consultation-helpers";
 import ConsultationActions from "./ConsultationActions";
 import { useSession } from "next-auth/react";
-import { useState, useEffect, useCallback } from "react"; // أضف useEffect
-import ConsultationChatPanel from "@/components/chat/ConsultationChatPanel";
+import { useEffect, useCallback } from "react"; // أضف useEffect
 import { useConsultationStore } from "@/store/consultationStore";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 import { getStatusBadge, getTypeIcon } from "@/features/consultations/utils/consultation-helpers";
 
 // دالة مساعدة لتنسيق التاريخ والوقت
@@ -75,8 +73,6 @@ export default function ConsultationDetails({
   userRole,
 }: ConsultationDetailsProps) {
   const { data: session } = useSession();
-  const [activeTab, setActiveTab] = useState<"details" | "chat">("details");
-
   // ✅ احصل على أحدث نسخة من الـ store
   const { requests } = useConsultationStore();
   const storeRequest = requests.find((r) => r.id === initialRequest.id);
@@ -90,10 +86,6 @@ export default function ConsultationDetails({
   // ✅ معلومات تاريخ الحجز
   const appointmentInfo = formatAppointmentDateTime(displayRequest);
 
-  // ✅ استخدم حالة الـ store، ليس الـ API
-  const canShowChat = ["accepted", "active", "completed"].includes(
-    displayRequest.status
-  );
 
   // ✅ ✅ ✅ **الجزء الأهم:** اكتشاف إذا كان الرابط من البوشر
   const isZoomLinkFromPusher = useCallback(() => {
@@ -355,12 +347,11 @@ const shouldShowZoomButton = () => {
       {displayRequest.type === "chat" &&
         ["accepted", "active"].includes(displayRequest.status) && (
           <div className="mb-6 sm:mb-8">
-            <Button
-              onClick={() => setActiveTab("chat")}
-              className="w-full bg-[#32A88D] hover:bg-[#2a8a7a] text-white py-3"
-            >
-              <MessageCircle className="w-5 h-5 ml-2" />
-              الانتقال إلى المحادثة
+            <Button asChild className="w-full bg-[#32A88D] hover:bg-[#2a8a7a] text-white py-3">
+              <Link href="/profile/chat">
+                <MessageCircle className="w-5 h-5 ml-2" />
+                فتح المحادثة
+              </Link>
             </Button>
           </div>
         )}
@@ -372,14 +363,6 @@ const shouldShowZoomButton = () => {
         userRole={userRole}
       />
     </div>
-  );
-
-  const renderChatContent = () => (
-    <ConsultationChatPanel
-      request={displayRequest}
-      canShowChat={canShowChat}
-      onBackToDetails={() => setActiveTab("details")}
-    />
   );
 
   return (
@@ -412,48 +395,10 @@ const shouldShowZoomButton = () => {
            
             </div>
           </div>
-
-          {displayRequest.type === "chat" && canShowChat && (
-            <Tabs
-              value={activeTab}
-              onValueChange={(value) =>
-                setActiveTab(value as "details" | "chat")
-              }
-              className="mt-4"
-            >
-              <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1 rounded-lg">
-                <TabsTrigger
-                  value="details"
-                  className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-[#32A88D] transition-all"
-                >
-                  <Info className="w-4 h-4" />
-                  التفاصيل
-                </TabsTrigger>
-                <TabsTrigger
-                  value="chat"
-                  className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-[#32A88D] transition-all"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  المحادثة
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          )}
         </CardHeader>
 
         <CardContent className="flex-1 p-0 overflow-hidden">
-          {canShowChat ? (
-            <Tabs value={activeTab} className="h-full">
-              <TabsContent value="details" className="m-0 h-full">
-                {renderDetailsContent()}
-              </TabsContent>
-              <TabsContent value="chat" className="m-0 h-full">
-                {renderChatContent()}
-              </TabsContent>
-            </Tabs>
-          ) : (
-            <div className="h-full">{renderDetailsContent()}</div>
-          )}
+          <div className="h-full">{renderDetailsContent()}</div>
         </CardContent>
       </Card>
     </div>

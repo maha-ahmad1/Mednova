@@ -4,8 +4,6 @@ import type React from "react";
 import type { ConsultationRequest } from "@/types/consultation";
 import {
   User,
-  Mail,
-  Phone,
   ChevronLeft,
   MessageCircle,
   Info,
@@ -13,7 +11,6 @@ import {
   ExternalLink,
   RefreshCw,
   Calendar,
-  Clock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,8 +18,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { getStatusBadge, getTypeIcon } from "@/lib/consultation-helpers";
 import ConsultationActions from "./ConsultationActions";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react"; // أضف useEffect
-import ChatInterface from "@/features/chat/ui/ChatInterface";
+import { useState, useEffect, useCallback } from "react"; // أضف useEffect
+import ConsultationChatPanel from "@/components/chat/ConsultationChatPanel";
 import { useConsultationStore } from "@/store/consultationStore";
 import { Badge } from "@/components/ui/badge";
 import { getStatusBadge, getTypeIcon } from "@/features/consultations/utils/consultation-helpers";
@@ -99,7 +96,7 @@ export default function ConsultationDetails({
   );
 
   // ✅ ✅ ✅ **الجزء الأهم:** اكتشاف إذا كان الرابط من البوشر
-  const isZoomLinkFromPusher = () => {
+  const isZoomLinkFromPusher = useCallback(() => {
     if (!storeRequest) return false;
 
     // ✅ ✅ ✅ **التصحيح:** قارن بين الـ store والـ API الأصلي
@@ -115,7 +112,7 @@ export default function ConsultationDetails({
 
     // ✅ الرابط من البوشر إذا كان موجوداً في الـ store ولكن ليس في الـ API
     return hasLinkInStore && !hasLinkInAPI;
-  };
+  }, [storeRequest, initialRequest.video_room_link]);
 
   // ✅ وظيفة التحقق من ظهور زر الزوم
 const shouldShowZoomButton = () => {
@@ -150,7 +147,7 @@ const shouldShowZoomButton = () => {
       storeStatus: storeRequest?.status,
       appointment: displayRequest.data?.appointment,
     });
-  }, [displayRequest, storeRequest]);
+  }, [displayRequest, storeRequest, isZoomLinkFromPusher, initialRequest.status]);
 
   const renderDetailsContent = () => (
     <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-200px)]">
@@ -377,63 +374,13 @@ const shouldShowZoomButton = () => {
     </div>
   );
 
-  const renderChatContent = () => {
-    if (!canShowChat) {
-      return (
-        <div className="p-8 text-center h-full flex items-center justify-center">
-          <div>
-            <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">
-              المحادثة غير متاحة
-            </h3>
-            <p className="text-gray-500 text-sm">
-              {displayRequest.status === "pending"
-                ? "يجب قبول الاستشارة أولاً لبدء المحادثة"
-                : displayRequest.status === "cancelled"
-                ? "تم رفض هذه الاستشارة"
-                : "لا يمكن الوصول إلى المحادثة في الوقت الحالي"}
-            </p>
-            <Button
-              onClick={() => setActiveTab("details")}
-              variant="outline"
-              className="mt-4"
-            >
-              العودة إلى التفاصيل
-            </Button>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <ChatInterface
-        chatRequest={{
-          id: displayRequest.id,
-          patient_id: displayRequest.data.patient.id,
-          consultant_id: displayRequest.data.consultant.id,
-          consultant_type: displayRequest.data.consultant_type,
-          status: displayRequest.status,
-          first_patient_message_at:
-            displayRequest.data.first_patient_message_at,
-          first_consultant_message_at:
-            displayRequest.data.first_consultant_reply_at,
-          patient_message_count: displayRequest.data.patient_message_count,
-          consultant_message_count:
-            displayRequest.data.consultant_message_count,
-          max_messages_for_patient:
-            displayRequest.data.max_messages_for_patient,
-          created_at: displayRequest.created_at,
-          updated_at: displayRequest.updated_at,
-          consultant_full_name: displayRequest.data.consultant.full_name,
-          patient_full_name: displayRequest.data.patient.full_name,
-          patient_image: displayRequest.data.patient.image,
-          consultant_image: displayRequest.data.consultant.image,
-          // video_room_link: displayRequest.video_room_link,
-        }}
-        onBack={() => setActiveTab("details")}
-      />
-    );
-  };
+  const renderChatContent = () => (
+    <ConsultationChatPanel
+      request={displayRequest}
+      canShowChat={canShowChat}
+      onBackToDetails={() => setActiveTab("details")}
+    />
+  );
 
   return (
     <div className={`lg:col-span-2 ${isMobile ? "block" : "block"}`} dir="rtl">

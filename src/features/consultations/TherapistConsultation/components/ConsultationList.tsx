@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { ConsultationRequest } from "@/types/consultation";
 // import {
 //   getStatusBadge,
@@ -40,7 +41,6 @@ export default function ConsultationList({
 }: ConsultationListProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "video" | "chat">("all");
-console.log("requests:", requests);
 
   const filteredRequests = requests.filter((request) => {
     if (request.status === "cancelled") {
@@ -69,7 +69,6 @@ console.log("requests:", requests);
     }
   }
   const uniqueRequests = Array.from(uniqueRequestsMap.values());
-console.log("Rendered ConsultationList with requests:", requests);
   return (
     <div
       className={`lg:col-span-1 ${
@@ -175,7 +174,7 @@ console.log("Rendered ConsultationList with requests:", requests);
                       >
                         <div className="flex flex-row-reverse items-start gap-2 sm:gap-3">
                           <Avatar className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-gray-200 group-hover:border-[#32A88D]/30 transition-colors duration-300">
-                            <img
+                            <AvatarImage
                               src={
                                 isPatient
                                   ? request.data.consultant.image ||
@@ -184,8 +183,10 @@ console.log("Rendered ConsultationList with requests:", requests);
                                     "/images/placeholder.svg"
                               }
                               alt="صورة المستخدم"
-                              className="w-full h-full object-cover rounded-full"
                             />
+                            <AvatarFallback className="bg-[#32A88D]/10 text-[#32A88D]">
+                              {displayName.charAt(0)}
+                            </AvatarFallback>
                           </Avatar>
 
                           <div className="flex-1 min-w-0">
@@ -201,23 +202,25 @@ console.log("Rendered ConsultationList with requests:", requests);
                               </div>
                             </div>
 
-                            <div className="flex flex-row-reverse items-center justify-between">
+                            <div className="flex flex-row-reverse items-center justify-between gap-2">
                               <div className="flex flex-row-reverse items-center gap-2 sm:gap-4 text-xs text-gray-500">
                                 <span className="flex flex-row-reverse items-center gap-1 text-xs">
                                   <Clock className="w-3 h-3" />
-                                  {/* {new Date(
-                                    request.created_at
-                                  ).toLocaleDateString("ar-SA")} */}
-                                  {new Date(
-                                    request.created_at
-                                  ).toLocaleDateString("en-US")}
+                                  {new Date(request.created_at).toLocaleDateString("en-US")}
                                 </span>
-
-                                {/* <span className="text-gray-400">•</span> */}
-                                {/* <span className="text-[#32A88D] font-medium">
-                                  {getRemainingTime(request.created_at)}
-                                </span> */}
                               </div>
+
+                              {request.type === "chat" && (
+                                <Button
+                                  asChild
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-8 border-[#32A88D]/30 text-[#32A88D] hover:bg-[#32A88D]/10"
+                                  onClick={(event) => event.stopPropagation()}
+                                >
+                                  <Link href="/profile/chat">فتح المحادثة</Link>
+                                </Button>
+                              )}
                             </div>
                           </div>
                         </div>

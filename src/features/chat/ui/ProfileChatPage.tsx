@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { Loader2, MessageCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useFetcher } from "@/hooks/useFetcher";
 import { useConsultationStore } from "@/store/consultationStore";
 import { TimeZoneService } from "@/lib/timezone-service";
@@ -18,14 +19,28 @@ interface ApiResponse {
   status: string;
 }
 
+const ACCEPTED_CHAT_STATUSES: ConsultationRequest["status"][] = [
+  "accepted",
+  "active",
+  "completed",
+];
+
 const canAccessChat = (status: ConsultationRequest["status"]) =>
-  ["accepted", "active", "completed"].includes(status);
+  ACCEPTED_CHAT_STATUSES.includes(status);
+
+const getStatusLabel = (status: ConsultationRequest["status"]) => {
+  if (status === "active") return "نشطة";
+  if (status === "accepted") return "مقبولة";
+  if (status === "completed") return "مكتملة";
+  return status;
+};
 
 export default function ProfileChatPage() {
   const { data: session } = useSession();
   const [timezone, setTimezone] = useState<string>("");
   const [isMobile, setIsMobile] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<ConsultationRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] =
+    useState<ConsultationRequest | null>(null);
 
   const { requests, setRequests } = useConsultationStore();
 
@@ -61,7 +76,11 @@ export default function ProfileChatPage() {
   }, []);
 
   const chatRequests = useMemo(
-    () => requests.filter((request) => request.type === "chat"),
+    () =>
+      requests.filter(
+        (request) =>
+          request.type === "chat" && ACCEPTED_CHAT_STATUSES.includes(request.status)
+      ),
     [requests]
   );
 
@@ -71,7 +90,10 @@ export default function ProfileChatPage() {
       return;
     }
 
-    if (!selectedRequest || !chatRequests.some((request) => request.id === selectedRequest.id)) {
+    if (
+      !selectedRequest ||
+      !chatRequests.some((request) => request.id === selectedRequest.id)
+    ) {
       setSelectedRequest(chatRequests[0]);
     }
   }, [chatRequests, selectedRequest]);
@@ -110,15 +132,15 @@ export default function ProfileChatPage() {
             <CardContent className="p-0 overflow-y-auto h-[calc(100%-68px)]">
               {chatRequests.length === 0 ? (
                 <div className="h-full flex items-center justify-center p-6 text-center text-gray-500 text-sm">
-                  لا توجد محادثات متاحة حالياً.
+                  لا توجد محادثات للمستخدمين المقبولين حالياً.
                 </div>
               ) : (
                 chatRequests.map((request) => {
                   const isActive = selectedRequest?.id === request.id;
-                  const counterpartName =
+                  const counterpart =
                     session.role === "patient"
-                      ? request.data.consultant.full_name
-                      : request.data.patient.full_name;
+                      ? request.data.consultant
+                      : request.data.patient;
 
                   return (
                     <button
@@ -129,10 +151,26 @@ export default function ProfileChatPage() {
                         isActive ? "bg-[#32A88D]/10" : "hover:bg-gray-50"
                       }`}
                     >
-                      <p className="font-semibold text-gray-800">{counterpartName}</p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {request.status === "active" ? "نشطة" : request.status}
-                      </p>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10 border border-gray-200">
+                          <AvatarImage
+                            src={counterpart.image || "/images/placeholder.svg"}
+                            alt={counterpart.full_name}
+                          />
+                          <AvatarFallback className="bg-[#32A88D]/10 text-[#32A88D]">
+                            {counterpart.full_name.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-gray-800 truncate">
+                            {counterpart.full_name}
+                          </p>
+                          <p className="text-sm text-gray-500 mt-1">
+                            {getStatusLabel(request.status)}
+                          </p>
+                        </div>
+                      </div>
                     </button>
                   );
                 })

@@ -17,6 +17,7 @@ import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { MessageBubble } from "./MessageBubble";
 import { ChatHeader } from "./ChatHeader";
 import { MessageInput } from "./MessageInput";
+import ScrollToLatestButton from "@/components/chat/ScrollToLatestButton";
 
 interface ChatInterfaceProps {
   chatRequest: ChatRequest;
@@ -378,6 +379,19 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+
+  const handleScrollToLatest = useCallback(() => {
+    if (!allMessages.length || !virtuosoRef.current) return;
+
+    virtuosoRef.current.scrollToIndex({
+      index: allMessages.length - 1,
+      align: "end",
+      behavior: "smooth",
+    });
+
+    setShouldFollowOutput(true);
+  }, [allMessages.length]);
+
   const openFilePicker = (type: "image" | "file") => {
     if (!fileInputRef.current) return;
     fileInputRef.current.value = "";
@@ -419,7 +433,7 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
       <ChatHeader otherUser={otherUser} onBack={onBack} />
 
       <CardContent className="flex-1 p-0 flex flex-col">
-        <div className="flex-1 overflow-hidden bg-gray-50">
+        <div className="flex-1 overflow-hidden bg-gray-50 relative">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -477,6 +491,11 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
               لا توجد رسائل بعد
             </div>
           )}
+
+          <ScrollToLatestButton
+            isVisible={!isAtBottom && allMessages.length > 0}
+            onClick={handleScrollToLatest}
+          />
         </div>
 
         <MessageInput

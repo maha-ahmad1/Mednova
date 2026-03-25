@@ -13,12 +13,12 @@ export const sidebarMenus = {
   patient: [
     { icon: LayoutDashboard, label: "لوحة التحكم", href: "/" },
     { icon: UserPlus, label: "الصفحة الشخصية", href: "/profile" },
-    { icon: Users, label: "المستخدمين", href: "/coming-soon" },
+    // { icon: Users, label: "المستخدمين", href: "/coming-soon" },
     { icon: Calendar, label: "طلبات الاستشارة", href: "/profile/consultations" },
     { icon: Activity, label: "الجلسات", href: "/coming-soon" },
-    { icon: FileText, label: "التقارير", href: "/coming-soon" },
-    { icon: Settings, label: "الإعدادات", href: "/coming-soon" },
-    { icon: HelpCircle, label: "المساعدة", href: "/coming-soon" },
+    // { icon: FileText, label: "التقارير", href: "/coming-soon" },
+    // { icon: Settings, label: "الإعدادات", href: "/coming-soon" },
+    // { icon: HelpCircle, label: "المساعدة", href: "/coming-soon" },
   ],
 
   therapist: [

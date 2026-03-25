@@ -7,6 +7,7 @@ import { CenterFormStep4 } from "./CenterFormStep4";
 import { CenterFormStep5 } from "./CenterFormStep5";
 import { CenterFormStep1 } from "./CenterFormStep1";
 import { useCenterDraftStore } from "@/features/profile/_create/hooks/useCenterDraftStore";
+import { useSession } from "next-auth/react";
 
 export default function CenterWrapper() {
   const currentStep = useCenterDraftStore((state) => state.currentStep);
@@ -18,6 +19,7 @@ export default function CenterWrapper() {
 
   const nextStep = () => setCurrentStep(Math.min(currentStep + 1, 5));
   const prevStep = () => setCurrentStep(Math.max(currentStep - 1, 1));
+  const { data: session } = useSession();
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -35,6 +37,7 @@ export default function CenterWrapper() {
       <div className="mt-10">
         {currentStep === 1 && (
           <CenterFormStep1
+            key={session?.user?.id}
             onNext={nextStep}
             formData={formData}
             updateFormData={updateFormData}

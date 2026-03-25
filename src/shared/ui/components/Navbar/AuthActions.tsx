@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MessageCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { NotificationDropdown } from "@/features/notifications/components/NotificationDropdown";
@@ -23,6 +24,11 @@ export function AuthActions() {
 
   return (
     <div className="flex items-center gap-2">
+      <Button variant="ghost" size="icon" asChild>
+        <Link href="/profile/chat" aria-label="المحادثات">
+          <MessageCircle className="h-5 w-5" />
+        </Link>
+      </Button>
       <NotificationDropdown />
       <UserMenu />
     </div>

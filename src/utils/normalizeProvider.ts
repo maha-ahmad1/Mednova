@@ -5,8 +5,10 @@ export type ProviderService = {
   name: string;
   description: string;
   price: number;
-  duration?: string;
+  duration: string;
 };
+
+type ProviderSchedule = NonNullable<ServiceProvider["schedules"]>[number];
 
 export interface NormalizedProvider {
   id: number;
@@ -17,7 +19,7 @@ export interface NormalizedProvider {
   experienceYears: number | null;
   specialties: Array<{ id: number; name: string }>;
   services: ProviderService[];
-  schedule: ServiceProvider["schedules"] extends Array<infer T> ? T | null : null;
+  schedule: ProviderSchedule | null;
   rating: number;
   reviewsCount: number;
   location: string;

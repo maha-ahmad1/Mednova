@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,10 +19,12 @@ import Navbar from "@/shared/ui/components/Navbar/Navbar";
 import { ReviewsSection } from "@/features/service-provider/public-profile/ui/reviews/ReviewsSection";
 import { useSession } from "next-auth/react";
 import { EmptyState } from "@/shared/ui/components/EmptyState";
+import { normalizeProvider } from "@/utils/normalizeProvider";
 
 export default function SpecialistProfile(): React.ReactNode {
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   const reviewsTabRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -33,18 +35,25 @@ export default function SpecialistProfile(): React.ReactNode {
     ["providerProfile", params.id],
     params.id ? `/api/customer/${params.id}` : null
   );
+
+  const provider = therapist ? normalizeProvider(therapist) : null;
+  const isCenter = provider?.type === "rehabilitation_center";
+
+  useEffect(() => {
+    if (!provider || !isCenter) return;
+    if (pathname?.startsWith("/therapists/")) {
+      router.replace(`/centers/${provider.id}`);
+    }
+  }, [provider, isCenter, pathname, router]);
+
   const { data: session } = useSession();
   const currentUserId = typeof session?.user?.id === "number" ? session.user.id : 0;
 
-  if (isLoading) {
+  if (isLoading || (provider && isCenter)) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Button
-            variant="ghost"
-            onClick={() => router.back()}
-            className="mb-8"
-          >
+          <Button variant="ghost" onClick={() => router.back()} className="mb-8">
             <ArrowLeft className="w-4 h-4 ml-2" />
             العودة
           </Button>
@@ -65,7 +74,7 @@ export default function SpecialistProfile(): React.ReactNode {
     );
   }
 
-  if (error || !therapist) {
+  if (error || !therapist || !provider) {
     return (
       <section className="py-20 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-gray-50/50 to-white">
         <EmptyState
@@ -79,77 +88,52 @@ export default function SpecialistProfile(): React.ReactNode {
     );
   }
 
-
-
-  const schedule = therapist?.schedules?.[0];
-
   return (
     <>
       <Navbar variant="landing" />
-      {/* Breadcrumb Navigation - Reusable Component */}
       <BreadcrumbNav currentPage="الملف الشخصي" />
 
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* المحتوى الرئيسي */}
             <div className="lg:col-span-2">
-              {/* Profile Header - Reusable Component */}
-              <ProfileHeader therapist={therapist} />
+              <ProfileHeader provider={provider} isCenter={isCenter} />
 
               <Tabs
                 defaultValue="bio"
                 className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mt-4"
               >
                 <TabsList className="grid w-full grid-cols-2 mb-8">
-                  <TabsTrigger
-                    value="reviews"
-                    className="text-lg flex items-center gap-2"
-                  >
+                  <TabsTrigger value="reviews" className="text-lg flex items-center gap-2">
                     <Star className="w-5 h-5" />
-                    التقييمات  
+                    التقييمات
                   </TabsTrigger>
 
-                  <TabsTrigger
-                    value="bio"
-                    className="text-lg flex items-center gap-2"
-                  >
+                  <TabsTrigger value="bio" className="text-lg flex items-center gap-2">
                     <BookOpen className="w-5 h-5" />
-                    السيرة الذاتية
+                    {isCenter ? "نبذة عن المركز" : "السيرة الذاتية"}
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="bio" className="mt-0 text-right">
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {/* Services Pricing - Reusable Component */}
-                      <ServicesPricing services={therapist.services} />
+                      <ServicesPricing services={provider.services} />
 
-                      {/* Profile Details - Reusable Component */}
                       <ProfileDetails
-                        specialties={therapist.specialties || []}
-                        universityName={
-                          therapist.therapist_details?.university_name ?? ""
-                        }
-                        graduationYear={
-                          therapist.therapist_details?.graduation_year ?? ""
-                        }
-                        experienceYears={
-                          therapist.therapist_details?.experience_years || 0
-                        }
-                        medicalSpecialty={
-                          therapist.therapist_details?.medical_specialties?.name
-                        }
+                        specialties={provider.specialties || []}
+                        universityName={provider.details.universityName}
+                        graduationYear={provider.details.graduationYear}
+                        experienceYears={provider.experienceYears || 0}
                       />
                     </div>
 
                     <div>
                       <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                        نبذة عن المختص
+                        {isCenter ? "نبذة عن المركز" : "نبذة عن المختص"}
                       </h3>
                       <p className="text-gray-600 leading-relaxed text-lg">
-                        {therapist.therapist_details?.bio ||
-                          "لا توجد معلومات متاحة حالياً."}
+                        {provider.bio || "لا توجد معلومات متاحة حالياً."}
                       </p>
                     </div>
                   </div>
@@ -157,83 +141,63 @@ export default function SpecialistProfile(): React.ReactNode {
 
                 <TabsContent value="reviews" className="mt-0 text-right">
                   <div className="space-y-6" ref={reviewsTabRef}>
-                    {/* عرض متوسط التقييمات */}
                     <div className="bg-white p-6 rounded-2xl shadow-sm border">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-4">
                           <div className="text-center">
                             <div className="text-4xl font-bold text-gray-800">
-                              {typeof therapist.average_rating === 'number' 
-                                ? therapist.average_rating.toFixed(1)
-                                : '0.0'}
+                              {provider.rating.toFixed(1)}
                             </div>
                             <div className="text-gray-500">من 5.0</div>
                           </div>
                           <div>
                             <div className="flex items-center gap-1">
-                              {/* عرض النجوم */}
                               {[...Array(5)].map((_, i) => (
                                 <Star
                                   key={i}
                                   className={`w-6 h-6 ${
-                                    i < Math.floor(therapist.average_rating || 0)
+                                    i < Math.floor(provider.rating)
                                       ? "fill-yellow-400 text-yellow-400"
                                       : "fill-gray-200 text-gray-200"
                                   }`}
                                 />
                               ))}
                             </div>
-                            <div className="text-gray-600 mt-1">
-                              ({therapist.total_reviews || 0} تقييم)
-                            </div>
+                            <div className="text-gray-600 mt-1">({provider.reviewsCount} تقييم)</div>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Reviews Section */}
                     <ReviewsSection
                       reviewerId={currentUserId}
-                      revieweeId={therapist.id}
+                      revieweeId={provider.id}
                       revieweeType="customer"
-                      revieweeName={therapist.full_name}
+                      revieweeName={provider.name}
                       showTriggerButton={true}
                       triggerButtonText="اكتب تقييمك"
                       onReviewSubmitted={(data) => {
                         console.log("تم إرسال التقييم:", data);
-                        // يمكنك هنا:
-                        // 1. إعادة تحميل بيانات المختص
-                        // 2. تحديث حالة التقييمات
-                        // 3. إظهار رسالة نجاح
                       }}
-                      onReviewError={(error) => {
-                        console.error("خطأ في إرسال التقييم:", error);
-                        // يمكنك هنا إظهار رسالة خطأ للمستخدم
+                      onReviewError={(submitError) => {
+                        console.error("خطأ في إرسال التقييم:", submitError);
                       }}
                     />
-
-                    {/* قائمة التقييمات الحالية */}
-                    {/* يمكنك إضافة مكون منفصل لعرض التقييمات هنا */}
-                    {/* <ReviewList revieweeId={therapist.id} revieweeType="program" /> */}
                   </div>
                 </TabsContent>
               </Tabs>
             </div>
 
-            {/* الشريط الجانبي */}
             <div className="lg:col-span-1">
               <div className="sticky top-8 space-y-6">
-                {/* Booking & Schedule Card */}
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
-                      اختر موعد الجلسة
+                      {isCenter ? "اختر موعد الخدمة" : "اختر موعد الجلسة"}
                     </h3>
 
-                    {/* Schedule Card - Reusable Component */}
-                    <ScheduleCard schedule={schedule} />
+                    <ScheduleCard schedule={provider.schedule} />
 
-                    {/* أزرار الحجز والتقييم */}
                     <div className="my-6">
                       <ConsultationDialog
                         showProfileButton={false}
@@ -251,14 +215,11 @@ export default function SpecialistProfile(): React.ReactNode {
                           therapist_details: therapist.therapist_details,
                           email: therapist.email || "",
                           phone: therapist.phone || "",
-                          bio: therapist.therapist_details?.bio || "",
-                          experience_years:
-                            therapist.therapist_details?.experience_years || 0,
+                          bio: provider.bio,
+                          experience_years: provider.experienceYears,
                         }}
                       />
 
-                      {/* زر التقييم في الشريط الجانبي */}
-                      {/* يمكن إزالته أو الاحتفاظ به للوصول السريع */}
                       <div className="mt-2">
                         <Button
                           onClick={() => {
@@ -275,12 +236,7 @@ export default function SpecialistProfile(): React.ReactNode {
                   </div>
                 </div>
 
-                {/* Certifications Card - Reusable Component */}
-                <CertificationsCard
-                  countriesCertified={
-                    therapist.therapist_details?.countries_certified
-                  }
-                />
+                <CertificationsCard countriesCertified={provider.details.countriesCertified} />
               </div>
             </div>
           </div>

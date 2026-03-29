@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Star } from "lucide-react";
+import { BookOpen, Edit, Star } from "lucide-react";
 import { ConsultationDialog } from "@/features/service-provider/ui/ConsultationDialog";
 import { useFetcher } from "@/hooks/useFetcher";
 import ProfileHeader from "./profile/ProfileHeader";
@@ -25,6 +26,8 @@ export default function SpecialistProfile(): React.ReactNode {
   const router = useRouter();
   const reviewsTabRef = useRef<HTMLDivElement>(null);
 
+  const [activeTab, setActiveTab] = useState("bio");
+
   const { data: rawProvider, isLoading, error } = useFetcher<ServiceProvider | null>(
     ["providerProfile", params.id],
     params.id ? `/api/customer/${params.id}` : null
@@ -44,6 +47,13 @@ export default function SpecialistProfile(): React.ReactNode {
       router.replace(`/centers/${params.id}`);
     }
   }, [rawProvider, pathname, params.id, router]);
+
+  const scrollToReviews = () => {
+    setActiveTab("reviews");
+    setTimeout(() => {
+      reviewsTabRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  };
 
   if (isLoading) {
     return (
@@ -91,7 +101,8 @@ export default function SpecialistProfile(): React.ReactNode {
               <ProfileHeader provider={provider} />
 
               <Tabs
-                defaultValue="bio"
+                value={activeTab}
+                onValueChange={setActiveTab}
                 className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mt-4"
               >
                 <TabsList className="grid w-full grid-cols-2 mb-8">
@@ -111,13 +122,7 @@ export default function SpecialistProfile(): React.ReactNode {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <ServicesPricing provider={provider} />
 
-                      <ProfileDetails
-                        specialties={provider.specialties || []}
-                        universityName={rawProvider.therapist_details?.university_name ?? ""}
-                        graduationYear={rawProvider.therapist_details?.graduation_year ?? ""}
-                        experienceYears={provider.experienceYears || 0}
-                        medicalSpecialty={rawProvider.therapist_details?.medical_specialties?.name}
-                      />
+                      <ProfileDetails provider={provider} />
                     </div>
 
                     <div>
@@ -178,7 +183,7 @@ export default function SpecialistProfile(): React.ReactNode {
 
                     <ScheduleCard provider={provider} />
 
-                    <div className="my-6">
+                    <div className="my-6 space-y-3">
                       <ConsultationDialog
                         showProfileButton={false}
                         buttonClassName="px-8"
@@ -193,6 +198,16 @@ export default function SpecialistProfile(): React.ReactNode {
                           type_account: provider.type,
                         }}
                       />
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={scrollToReviews}
+                        className="w-full border-[#32A88D]/40 text-[#2a8a7a] hover:bg-[#32A88D]/10"
+                      >
+                        <Edit className="w-4 h-4 ml-2" />
+                        اكتب تقييم
+                      </Button>
                     </div>
                   </div>
                 </div>

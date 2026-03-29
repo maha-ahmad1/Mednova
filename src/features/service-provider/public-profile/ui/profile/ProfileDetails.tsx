@@ -1,30 +1,18 @@
 import { Badge } from "@/components/ui/badge";
+import type { NormalizedProvider } from "@/utils/normalizeProvider";
 
 interface ProfileDetailsProps {
-  specialties: Array<{ id: number; name: string }>;
-  universityName: string;
-  graduationYear: string;
-  experienceYears: number;
-  medicalSpecialty?: string;
+  provider: NormalizedProvider;
 }
 
-export default function ProfileDetails({
-  specialties,
-  universityName,
-  graduationYear,
-  experienceYears,
-  medicalSpecialty,
-}: ProfileDetailsProps) {
+export default function ProfileDetails({ provider }: ProfileDetailsProps) {
   return (
     <div className="space-y-4 text-right" dir="rtl">
-      {/* Specialties */}
       <div className="flex items-start gap-3">
-        <span className="text-gray-500 text-sm whitespace-nowrap">
-          التخصصات:
-        </span>
+        <span className="text-gray-500 text-sm whitespace-nowrap">التخصصات:</span>
         <div className="flex flex-wrap gap-2">
-          {specialties?.length > 0 ? (
-            specialties.map((specialty) => (
+          {provider.specialties?.length > 0 ? (
+            provider.specialties.map((specialty) => (
               <Badge
                 key={specialty.id}
                 className="bg-[#32A88D]/10 text-[#32A88D] px-3 py-1.5 text-sm"
@@ -34,41 +22,18 @@ export default function ProfileDetails({
             ))
           ) : (
             <Badge className="bg-[#32A88D]/10 text-[#32A88D] px-3 py-1.5 text-sm">
-              {medicalSpecialty || "غير محدد"}
+              غير محدد
             </Badge>
           )}
         </div>
       </div>
 
-      {/* University */}
-      <div className="flex gap-2">
-        <span className="text-gray-500 text-sm whitespace-nowrap">
-          الجامعة:
-        </span>
-        <span className="text-gray-800">
-          {universityName || "غير محدد"}
-        </span>
-      </div>
-
-      {/* Graduation Year */}
-      <div className="flex gap-2">
-        <span className="text-gray-500 text-sm whitespace-nowrap">
-          سنة التخرج:
-        </span>
-        <span className="text-gray-800">
-          {graduationYear || "غير محدد"}
-        </span>
-      </div>
-
-      {/* Experience */}
-      <div className="flex gap-2">
-        <span className="text-gray-500 text-sm whitespace-nowrap">
-          سنوات الخبرة:
-        </span>
-        <span className="text-gray-800">
-          {experienceYears} سنوات
-        </span>
-      </div>
+      {provider.details.map((detail) => (
+        <div className="flex gap-2" key={detail.label}>
+          <span className="text-gray-500 text-sm whitespace-nowrap">{detail.label}:</span>
+          <span className="text-gray-800">{detail.value}</span>
+        </div>
+      ))}
     </div>
   );
 }

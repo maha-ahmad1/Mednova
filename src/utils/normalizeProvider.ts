@@ -17,7 +17,7 @@ export type NormalizedProvider = {
   experienceYears: number;
   specialties: Array<{ id: number; name: string }>;
   services: ProviderService[];
-  schedule?: ServiceProvider["schedules"] extends Array<infer T> ? T : never;
+  schedule?: NonNullable<ServiceProvider["schedules"]>[number];
   rating: number;
   reviewsCount: number;
   location: {

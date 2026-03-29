@@ -107,7 +107,7 @@ export default function SpecialistProfile(): React.ReactNode {
                     className="text-lg flex items-center gap-2"
                   >
                     <Star className="w-5 h-5" />
-                    التقييمات
+                    التقييمات  
                   </TabsTrigger>
 
                   <TabsTrigger

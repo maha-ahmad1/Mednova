@@ -146,17 +146,36 @@ export function CenterFormStep1({
 // }, [status, session, methods]);
 
 
-useEffect(() => {
-    if (status === "authenticated" && session?.user) {
-      if (!getValues("full_name")) setValue("full_name", session.user.full_name || "");
-      if (!getValues("email")) setValue("email", session.user.email || "");
-      if (!getValues("phone")) {
-        const parsed = parsePhoneNumber(session.user.phone);
-        setValue("phone", parsed.localNumber);
-      }
-    }
-  }, [session, status, setValue, getValues]);
+// useEffect(() => {
+//     if (status === "authenticated" && session?.user) {
+//       if (!getValues("full_name")) setValue("full_name", session.user.full_name || "");
+//       if (!getValues("email")) setValue("email", session.user.email || "");
+//       if (!getValues("phone")) {
+//         const parsed = parsePhoneNumber(session.user.phone);
+//         setValue("phone", parsed.localNumber);
+//       }
+//     }
+//   }, [session, status, setValue, getValues]);
 
+
+
+useEffect(() => {
+  if (status === "authenticated" && session?.user) {
+    const parsed = parsePhoneNumber(session.user.phone);
+
+    methods.reset({
+      full_name: session.user.full_name || "",
+      email: session.user.email || "",
+      phone: parsed.localNumber,
+      gender: undefined,
+      formatted_address: "",
+      year_establishment: "",
+      birth_date: "",
+      image: undefined,
+      name_center: "",
+    });
+  }
+}, [session?.user?.id]);
 
   if (status === "loading") {
     return (

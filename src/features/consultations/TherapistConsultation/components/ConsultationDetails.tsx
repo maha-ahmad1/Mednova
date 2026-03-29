@@ -4,27 +4,22 @@ import type React from "react";
 import type { ConsultationRequest } from "@/types/consultation";
 import {
   User,
-  Mail,
-  Phone,
   ChevronLeft,
   MessageCircle,
-  Info,
   Video as VideoIcon,
   ExternalLink,
   RefreshCw,
   Calendar,
-  Clock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { getStatusBadge, getTypeIcon } from "@/lib/consultation-helpers";
 import ConsultationActions from "./ConsultationActions";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react"; // أضف useEffect
-import ChatInterface from "@/features/chat/ui/ChatInterface";
+import { useEffect, useCallback } from "react"; // أضف useEffect
 import { useConsultationStore } from "@/store/consultationStore";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 import { getStatusBadge, getTypeIcon } from "@/features/consultations/utils/consultation-helpers";
 
 // دالة مساعدة لتنسيق التاريخ والوقت
@@ -78,8 +73,6 @@ export default function ConsultationDetails({
   userRole,
 }: ConsultationDetailsProps) {
   const { data: session } = useSession();
-  const [activeTab, setActiveTab] = useState<"details" | "chat">("details");
-
   // ✅ احصل على أحدث نسخة من الـ store
   const { requests } = useConsultationStore();
   const storeRequest = requests.find((r) => r.id === initialRequest.id);
@@ -93,13 +86,9 @@ export default function ConsultationDetails({
   // ✅ معلومات تاريخ الحجز
   const appointmentInfo = formatAppointmentDateTime(displayRequest);
 
-  // ✅ استخدم حالة الـ store، ليس الـ API
-  const canShowChat = ["accepted", "active", "completed"].includes(
-    displayRequest.status
-  );
 
   // ✅ ✅ ✅ **الجزء الأهم:** اكتشاف إذا كان الرابط من البوشر
-  const isZoomLinkFromPusher = () => {
+  const isZoomLinkFromPusher = useCallback(() => {
     if (!storeRequest) return false;
 
     // ✅ ✅ ✅ **التصحيح:** قارن بين الـ store والـ API الأصلي
@@ -115,7 +104,7 @@ export default function ConsultationDetails({
 
     // ✅ الرابط من البوشر إذا كان موجوداً في الـ store ولكن ليس في الـ API
     return hasLinkInStore && !hasLinkInAPI;
-  };
+  }, [storeRequest, initialRequest.video_room_link]);
 
   // ✅ وظيفة التحقق من ظهور زر الزوم
 const shouldShowZoomButton = () => {
@@ -150,7 +139,7 @@ const shouldShowZoomButton = () => {
       storeStatus: storeRequest?.status,
       appointment: displayRequest.data?.appointment,
     });
-  }, [displayRequest, storeRequest]);
+  }, [displayRequest, storeRequest, isZoomLinkFromPusher, initialRequest.status]);
 
   const renderDetailsContent = () => (
     <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-200px)]">
@@ -271,7 +260,7 @@ const shouldShowZoomButton = () => {
                 label="الاسم الكامل"
                 value={consultant.full_name}
               />
-              <InfoCard
+              {/* <InfoCard
                 icon={Mail}
                 label="البريد الإلكتروني"
                 value={consultant.email}
@@ -280,7 +269,7 @@ const shouldShowZoomButton = () => {
                 icon={Phone}
                 label="رقم الهاتف"
                 value={consultant.phone}
-              />
+              /> */}
             </div>
           </div>
         </>
@@ -358,12 +347,11 @@ const shouldShowZoomButton = () => {
       {displayRequest.type === "chat" &&
         ["accepted", "active"].includes(displayRequest.status) && (
           <div className="mb-6 sm:mb-8">
-            <Button
-              onClick={() => setActiveTab("chat")}
-              className="w-full bg-[#32A88D] hover:bg-[#2a8a7a] text-white py-3"
-            >
-              <MessageCircle className="w-5 h-5 ml-2" />
-              الانتقال إلى المحادثة
+            <Button asChild className="w-full bg-[#32A88D] hover:bg-[#2a8a7a] text-white py-3">
+              <Link href="/profile/chat">
+                <MessageCircle className="w-5 h-5 ml-2" />
+                فتح المحادثة
+              </Link>
             </Button>
           </div>
         )}
@@ -376,64 +364,6 @@ const shouldShowZoomButton = () => {
       />
     </div>
   );
-
-  const renderChatContent = () => {
-    if (!canShowChat) {
-      return (
-        <div className="p-8 text-center h-full flex items-center justify-center">
-          <div>
-            <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">
-              المحادثة غير متاحة
-            </h3>
-            <p className="text-gray-500 text-sm">
-              {displayRequest.status === "pending"
-                ? "يجب قبول الاستشارة أولاً لبدء المحادثة"
-                : displayRequest.status === "cancelled"
-                ? "تم رفض هذه الاستشارة"
-                : "لا يمكن الوصول إلى المحادثة في الوقت الحالي"}
-            </p>
-            <Button
-              onClick={() => setActiveTab("details")}
-              variant="outline"
-              className="mt-4"
-            >
-              العودة إلى التفاصيل
-            </Button>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <ChatInterface
-        chatRequest={{
-          id: displayRequest.id,
-          patient_id: displayRequest.data.patient.id,
-          consultant_id: displayRequest.data.consultant.id,
-          consultant_type: displayRequest.data.consultant_type,
-          status: displayRequest.status,
-          first_patient_message_at:
-            displayRequest.data.first_patient_message_at,
-          first_consultant_message_at:
-            displayRequest.data.first_consultant_reply_at,
-          patient_message_count: displayRequest.data.patient_message_count,
-          consultant_message_count:
-            displayRequest.data.consultant_message_count,
-          max_messages_for_patient:
-            displayRequest.data.max_messages_for_patient,
-          created_at: displayRequest.created_at,
-          updated_at: displayRequest.updated_at,
-          consultant_full_name: displayRequest.data.consultant.full_name,
-          patient_full_name: displayRequest.data.patient.full_name,
-          patient_image: displayRequest.data.patient.image,
-          consultant_image: displayRequest.data.consultant.image,
-          // video_room_link: displayRequest.video_room_link,
-        }}
-        onBack={() => setActiveTab("details")}
-      />
-    );
-  };
 
   return (
     <div className={`lg:col-span-2 ${isMobile ? "block" : "block"}`} dir="rtl">
@@ -465,48 +395,10 @@ const shouldShowZoomButton = () => {
            
             </div>
           </div>
-
-          {displayRequest.type === "chat" && canShowChat && (
-            <Tabs
-              value={activeTab}
-              onValueChange={(value) =>
-                setActiveTab(value as "details" | "chat")
-              }
-              className="mt-4"
-            >
-              <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1 rounded-lg">
-                <TabsTrigger
-                  value="details"
-                  className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-[#32A88D] transition-all"
-                >
-                  <Info className="w-4 h-4" />
-                  التفاصيل
-                </TabsTrigger>
-                <TabsTrigger
-                  value="chat"
-                  className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-[#32A88D] transition-all"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  المحادثة
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          )}
         </CardHeader>
 
         <CardContent className="flex-1 p-0 overflow-hidden">
-          {canShowChat ? (
-            <Tabs value={activeTab} className="h-full">
-              <TabsContent value="details" className="m-0 h-full">
-                {renderDetailsContent()}
-              </TabsContent>
-              <TabsContent value="chat" className="m-0 h-full">
-                {renderChatContent()}
-              </TabsContent>
-            </Tabs>
-          ) : (
-            <div className="h-full">{renderDetailsContent()}</div>
-          )}
+          <div className="h-full">{renderDetailsContent()}</div>
         </CardContent>
       </Card>
     </div>

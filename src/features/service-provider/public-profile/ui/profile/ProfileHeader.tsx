@@ -1,15 +1,14 @@
 import Image from "next/image";
 import { Star, MapPin, University, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { ServiceProvider } from "@/features/service-provider/types/provider";
-
-
+import type { NormalizedProvider } from "@/utils/normalizeProvider";
 
 interface ProfileHeaderProps {
-  therapist: ServiceProvider;
+  provider: NormalizedProvider;
+  isCenter?: boolean;
 }
 
-export default function ProfileHeader({ therapist }: ProfileHeaderProps) {
+export default function ProfileHeader({ provider, isCenter = false }: ProfileHeaderProps) {
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, i) => (
       <Star
@@ -28,62 +27,53 @@ export default function ProfileHeader({ therapist }: ProfileHeaderProps) {
       <div className="p-6 border-b border-gray-100">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-6">
-            {/* Profile Image */}
             <div className="relative w-32 h-32 rounded-xl overflow-hidden border-4 border-gray-100">
               <Image
-                src={therapist.image || "/images/home/therapist.jpg"}
-                alt={therapist.full_name}
+                src={provider.image || "/images/home/therapist.jpg"}
+                alt={provider.name}
                 fill
                 className="object-cover"
                 sizes="(max-width: 128px) 100vw, 128px"
               />
             </div>
 
-            {/* Profile Info */}
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="xl:text-3xl text-lg font-bold text-gray-800">
-                  {therapist.full_name}
-                </h1>
+                <h1 className="xl:text-3xl text-lg font-bold text-gray-800">{provider.name}</h1>
               </div>
 
-              {/* Rating */}
-              {/* Rating */}
-<div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
-  <div className="flex items-center">
-    {renderStars(therapist.average_rating || 0)}
-  </div>
-  <span className="text-gray-600">
-    ({therapist.total_reviews || 0} تقييم)
-  </span>
-</div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+                <div className="flex items-center">{renderStars(provider.rating || 0)}</div>
+                <span className="text-gray-600">({provider.reviewsCount || 0} تقييم)</span>
+              </div>
 
-{/* Specialties */}
-<div className="flex flex-col sm:flex-row flex-wrap gap-2 mb-4">
-  {therapist.specialties?.map((specialty) => (
-    <Badge key={specialty.id} variant="outline" className="bg-gray-50 px-3 py-1">
-      {specialty.name}
-    </Badge>
-  ))}
-</div>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-2 mb-4">
+                {provider.specialties?.map((specialty) => (
+                  <Badge key={specialty.id} variant="outline" className="bg-gray-50 px-3 py-1">
+                    {specialty.name}
+                  </Badge>
+                ))}
+              </div>
 
-{/* Stats */}
-<div className="flex flex-col sm:flex-row sm:items-center gap-4 text-gray-600">
-  <div className="flex items-center gap-2">
-    <MapPin className="w-4 h-4" />
-    <span>{therapist.location_details?.city || "غير محدد"}</span>
-  </div>
-  <div className="flex items-center gap-2">
-    <University className="w-4 h-4" />
-    <span>{therapist.therapist_details?.university_name || "غير محدد"}</span>
-  </div>
-  <div className="flex items-center gap-2">
-    <Clock className="w-4 h-4" />
-    <span>{therapist.therapist_details?.experience_years || 0} سنوات خبرة</span>
-  </div>
-</div>
-
-             </div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-gray-600">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  <span>{provider.location.city || "غير محدد"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <University className="w-4 h-4" />
+                  <span>
+                    {isCenter ? "مركز إعادة تأهيل" : provider.details.universityName || "غير محدد"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>
+                    {isCenter ? "مقدم خدمات تأهيلية" : `${provider.experienceYears || 0} سنوات خبرة`}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

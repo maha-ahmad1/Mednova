@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,6 +24,7 @@ import { normalizeProvider } from "@/utils/normalizeProvider";
 export default function SpecialistProfile(): React.ReactNode {
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   const reviewsTabRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -40,8 +41,10 @@ export default function SpecialistProfile(): React.ReactNode {
 
   useEffect(() => {
     if (!provider || !isCenter) return;
-    router.replace(`/centers/${provider.id}`);
-  }, [provider, isCenter, router]);
+    if (pathname?.startsWith("/therapists/")) {
+      router.replace(`/centers/${provider.id}`);
+    }
+  }, [provider, isCenter, pathname, router]);
 
   const { data: session } = useSession();
   const currentUserId = typeof session?.user?.id === "number" ? session.user.id : 0;

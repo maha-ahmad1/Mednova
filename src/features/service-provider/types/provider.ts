@@ -29,6 +29,9 @@ export type TherapistDetails = {
   license_authority: string;
   license_file: string | null;
   bio: string;
+  video_consultation_price?: string | number | null;
+  chat_consultation_price?: string | number | null;
+  currency?: string | null;
 };
 
 export type CenterDetails = {
@@ -46,6 +49,9 @@ export type CenterDetails = {
     id: number;
     name: string;
   }[];
+  video_consultation_price?: string | number | null;
+  chat_consultation_price?: string | number | null;
+  currency?: string | null;
 };
 
 // src/features/service-provider/types/index.ts

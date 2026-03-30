@@ -1,35 +1,16 @@
-import { ServiceProvider } from "@/features/service-provider/types/provider";
 import Image from "next/image";
+import type { NormalizedProvider } from "@/utils/normalizeProvider";
+
 interface ServicesPricingProps {
-  services?: ServiceProvider["services"];
+  provider: NormalizedProvider;
 }
 
-export default function ServicesPricing({ services }: ServicesPricingProps) {
-  const defaultServices = [
-    {
-      id: 1,
-      name: "استشارة نصية ",
-      description: "دردشة عبر المحادثة ",
-      price: 30,
-      //   duration: "30 دقيقة",
-    },
-    {
-      id: 2,
-      name: "جلسة فيديو",
-      description: " استشارة متكاملة عبر زووم",
-      price: 50,
-      duration: "60 دقيقة",
-    },
-  ];
-
-  const displayServices =
-    services && services.length > 0 ? services : defaultServices;
-
+export default function ServicesPricing({ provider }: ServicesPricingProps) {
   return (
     <div className="space-y-6 ">
       <h3 className="text-gray-500 text-sm mb-4"> :أسعار الجلسات </h3>
       <div className="space-y-4">
-        {displayServices.map((service) => (
+        {provider.services.map((service) => (
           <div
             key={service.id}
             className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
@@ -47,8 +28,7 @@ export default function ServicesPricing({ services }: ServicesPricingProps) {
                   className="w-6 h-6 translate-y-[1px] ml-1"
                   alt="OMR currency"
                 />
-                                <span>{service.price}</span>
-
+                <span>{service.price}</span>
               </div>
               <div className="text-sm text-gray-500">{service.duration}</div>
             </div>
@@ -56,7 +36,6 @@ export default function ServicesPricing({ services }: ServicesPricingProps) {
         ))}
       </div>
 
-      {/* VAT Notice */}
       <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
         <p className="text-sm text-blue-700 text-center">
           جميع الأسعار تشمل ضريبة القيمة المضافة ورسوم الخدمة

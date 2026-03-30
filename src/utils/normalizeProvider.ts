@@ -131,12 +131,17 @@ export function normalizeProvider(data: ServiceProvider): NormalizedProvider {
     bio: detailsSource?.bio || data.bio || "",
     experienceYears: isTherapist ? data.therapist_details?.experience_years ?? null : null,
     specialties:
-      data.specialties ||
-      data.medicalSpecialties?.map((specialty) => ({
-        id: specialty.id,
-        name: specialty.name,
-      })) ||
-      [],
+      data.specialties?.length
+        ? data.specialties
+        : data.therapist_details?.medical_specialties
+        ? [{
+            id: data.therapist_details.medical_specialties.id,
+            name: data.therapist_details.medical_specialties.name,
+          }]
+        : data.medicalSpecialties?.map((specialty) => ({
+            id: specialty.id,
+            name: specialty.name,
+          })) || [],
     services: hasApiPrices ? servicesFromApi : data.services || DEFAULT_SERVICES,
     schedule: data.schedules?.[0] || null,
     rating: toNumber(data.average_rating),

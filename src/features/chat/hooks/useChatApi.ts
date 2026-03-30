@@ -182,6 +182,17 @@ export const useSendMessage = () => {
       if (variables instanceof FormData) {
         const v = variables.get("chat_request_id");
         chatId = v ? Number(v) : null;
+      } else if (
+        variables &&
+        typeof variables === "object" &&
+        "formData" in variables
+      ) {
+        const wrapped = variables as {
+          formData: FormData;
+          chat_request_id?: number;
+        };
+        const v = wrapped.formData.get("chat_request_id");
+        chatId = wrapped.chat_request_id ?? (v ? Number(v) : null);
       } else {
         chatId = (variables as SendMessageData).chat_request_id;
       }
@@ -240,4 +251,3 @@ export const useMarkAsRead = () => {
     },
   });
 };
-

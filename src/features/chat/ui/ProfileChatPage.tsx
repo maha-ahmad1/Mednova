@@ -11,6 +11,7 @@ import { useConsultationStore } from "@/store/consultationStore";
 import { TimeZoneService } from "@/lib/timezone-service";
 import type { ConsultationRequest } from "@/types/consultation";
 import ConsultationChatPanel from "@/components/chat/ConsultationChatPanel";
+import { WithSkeleton } from "@/shared/ui/components/WithSkeleton";
 
 interface ApiResponse {
   success: boolean;
@@ -109,15 +110,14 @@ export default function ProfileChatPage() {
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-10 h-10 animate-spin text-[#32A88D]" />
-      </div>
-    );
-  }
+  const loadingSkeleton = (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <Loader2 className="w-10 h-10 animate-spin text-[#32A88D]" />
+    </div>
+  );
 
   return (
+    <WithSkeleton isLoading={isLoading} skeleton={loadingSkeleton}>
     <div className="w-full" dir="rtl">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         {(!isMobile || !selectedRequest) && (
@@ -199,5 +199,6 @@ export default function ProfileChatPage() {
         )}
       </div>
     </div>
+    </WithSkeleton>
   );
 }

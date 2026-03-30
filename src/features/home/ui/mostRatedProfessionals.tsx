@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ProviderCard } from "@/features/service-provider/ui/ProviderCard"; 
 import { ServiceProvider } from "@/features/service-provider/types/provider"; 
 import { EmptyState } from "@/shared/ui/components/EmptyState";
+import { WithSkeleton } from "@/shared/ui/components/WithSkeleton";
 
 type MedicalSpecialties = {
   id: number;
@@ -79,9 +80,7 @@ export default function MostRatedProfessionals() {
     };
   };
 
-  // حالة التحميل
-  if (isLoading) {
-    return (
+  const loadingSkeleton = (
       <section className="py-20 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-gray-50/50 to-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
@@ -105,7 +104,6 @@ export default function MostRatedProfessionals() {
         </div>
       </section>
     );
-  }
 
   if (error) {
     return (
@@ -122,6 +120,7 @@ export default function MostRatedProfessionals() {
   }
 
   return (
+    <WithSkeleton isLoading={isLoading} skeleton={loadingSkeleton}>
     <section className="py-20 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-gray-50/50 to-white">
       <div className="max-w-7xl mx-auto">
         {/* الهيدر */}
@@ -151,5 +150,6 @@ export default function MostRatedProfessionals() {
         </div>
       </div>
     </section>
+    </WithSkeleton>
   );
 }

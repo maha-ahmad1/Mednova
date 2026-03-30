@@ -19,6 +19,7 @@ import Navbar from "@/shared/ui/components/Navbar/Navbar";
 import { ReviewsSection } from "@/features/service-provider/public-profile/ui/reviews/ReviewsSection";
 import { useSession } from "next-auth/react";
 import { EmptyState } from "@/shared/ui/components/EmptyState";
+import { WithSkeleton } from "@/shared/ui/components/WithSkeleton";
 
 export default function SpecialistProfile(): React.ReactNode {
   const params = useParams();
@@ -36,8 +37,7 @@ export default function SpecialistProfile(): React.ReactNode {
   const { data: session } = useSession();
   const currentUserId = typeof session?.user?.id === "number" ? session.user.id : 0;
 
-  if (isLoading) {
-    return (
+  const loadingSkeleton = (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Button
@@ -63,7 +63,6 @@ export default function SpecialistProfile(): React.ReactNode {
         </div>
       </div>
     );
-  }
 
   if (error || !therapist) {
     return (
@@ -84,7 +83,8 @@ export default function SpecialistProfile(): React.ReactNode {
   const schedule = therapist?.schedules?.[0];
 
   return (
-    <>
+    <WithSkeleton isLoading={isLoading} skeleton={loadingSkeleton}>
+      <>
       <Navbar variant="landing" />
       {/* Breadcrumb Navigation - Reusable Component */}
       <BreadcrumbNav currentPage="الملف الشخصي" />
@@ -286,6 +286,7 @@ export default function SpecialistProfile(): React.ReactNode {
           </div>
         </div>
       </div>
-    </>
+      </>
+    </WithSkeleton>
   );
 }

@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFetcher } from "@/hooks/useFetcher";
 import type { AdminUserDetails } from "../types/user";
+import { WithSkeleton } from "@/shared/ui/components/WithSkeleton";
 
 interface UserDetailsReviewPageProps {
   userId: string;
@@ -123,15 +124,13 @@ export function UserDetailsReviewPage({ userId }: UserDetailsReviewPageProps) {
     return `https://www.google.com/maps?q=${user.location_details.latitude},${user.location_details.longitude}`;
   }, [user]);
 
-  if (isLoading) {
-    return (
+  const loadingSkeleton = (
       <div className="mx-auto w-full max-w-7xl space-y-4 p-6" dir="rtl">
         <Skeleton className="h-10 w-48" />
         <Skeleton className="h-48 w-full" />
         <Skeleton className="h-72 w-full" />
       </div>
     );
-  }
 
   if (isError || !user) {
     return (
@@ -153,7 +152,8 @@ export function UserDetailsReviewPage({ userId }: UserDetailsReviewPageProps) {
   const isCenter = user.type_account === "rehabilitation_center";
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-5 p-6" dir="rtl">
+    <WithSkeleton isLoading={isLoading} skeleton={loadingSkeleton}>
+      <div className="mx-auto w-full max-w-7xl space-y-5 p-6" dir="rtl">
       <div className="flex items-center justify-between">
         <div className="space-y-1 text-right">
           <h1 className="text-2xl font-semibold">مراجعة بيانات المستخدم</h1>
@@ -339,6 +339,7 @@ export function UserDetailsReviewPage({ userId }: UserDetailsReviewPageProps) {
           </DetailsSection>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </WithSkeleton>
   );
 }

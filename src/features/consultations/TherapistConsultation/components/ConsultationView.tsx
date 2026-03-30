@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import { useConsultationStore } from "@/store/consultationStore";
 import { useEchoNotifications } from '@/hooks/useEchoNotifications';
 import { TimeZoneService } from "@/lib/timezone-service";
+import { WithSkeleton } from "@/shared/ui/components/WithSkeleton";
 
 interface ConsultationViewProps {
   userType?: UserType;
@@ -99,20 +100,19 @@ export default function ConsultationView({}: ConsultationViewProps) {
     
     console.log("🔄 تم تحديث الطلب في الـ store:", updatedRequest);
   };
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-[#32A88D] mx-auto mb-4" />
-          <span className="text-gray-600 text-lg">
-            جاري تحميل طلبات الاستشارة...
-          </span>
-        </div>
+  const loadingSkeleton = (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <Loader2 className="w-12 h-12 animate-spin text-[#32A88D] mx-auto mb-4" />
+        <span className="text-gray-600 text-lg">
+          جاري تحميل طلبات الاستشارة...
+        </span>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
+  <WithSkeleton isLoading={isLoading} skeleton={loadingSkeleton}>
    <div className="w-full bg-gray-50 py-6 px-4 lg:pb-6 lg:pt-8" dir="rtl">
   <div className="max-w-7xl mx-auto">
     <div className="grid grid-cols-1 mx-auto max-w-5xl w-full gap-4 lg:grid-cols-3 sm:gap-6 lg:gap-8">
@@ -178,5 +178,6 @@ export default function ConsultationView({}: ConsultationViewProps) {
     </div>
   </div>
 </div>
+  </WithSkeleton>
   );
 }

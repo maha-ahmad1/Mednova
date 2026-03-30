@@ -352,6 +352,26 @@ export interface Notification {
   source: 'pusher' | 'api';
 }
 
+const getSemanticNotificationKey = (notification: Notification): string => {
+  const data = notification.data as Record<string, unknown>;
+  const consultationId = data?.consultation_id;
+  const status = data?.status;
+
+  if (
+    typeof consultationId === 'number' &&
+    typeof status === 'string' &&
+    notification.type.startsWith('consultation_')
+  ) {
+    return `${notification.type}:${consultationId}:${status}`;
+  }
+
+  if (notification.type === 'system') {
+    return `system:${notification.title}:${notification.message}`;
+  }
+
+  return `id:${notification.id}`;
+};
+
 interface NotificationStore {
   notifications: Notification[];
   unreadCount: number;
@@ -441,18 +461,31 @@ export const useNotificationStore = create<NotificationStore>()(
             .filter(n => n.source === 'pusher')
             .filter(n => new Date(n.createdAt) > oneDayAgo);
           
-          // استخدام Set لإزالة التكرارات بناءً على id
           const allNotifications = [
             ...apiNotifications,
             ...recentPusherNotifications
           ];
           
-          // 🔧 أبسط: استخدام Map لإزالة التكرارات مع الاحتفاظ بالأحدث
-          const notificationMap = new Map();
+          // إزالة التكرارات بمفتاح semantic ثابت (وليس id فقط)
+          const notificationMap = new Map<string, Notification>();
           allNotifications.forEach(notif => {
-            const existing = notificationMap.get(notif.id);
-            if (!existing || new Date(notif.createdAt) > new Date(existing.createdAt)) {
-              notificationMap.set(notif.id, notif);
+            const key = getSemanticNotificationKey(notif);
+            const existing = notificationMap.get(key);
+
+            if (!existing) {
+              notificationMap.set(key, notif);
+              return;
+            }
+
+            // تفضيل نسخة API للحفاظ على timestamp الصحيح بعد refresh
+            if (existing.source === 'pusher' && notif.source === 'api') {
+              notificationMap.set(key, notif);
+              return;
+            }
+
+            // خلاف ذلك احتفظ بالأحدث
+            if (new Date(notif.createdAt) > new Date(existing.createdAt)) {
+              notificationMap.set(key, notif);
             }
           });
           

@@ -56,6 +56,13 @@ export const fetchNotifications = async (
         });
       }
 
+      const maybeMessage = data?.message;
+      const normalizedMessage =
+        typeof maybeMessage === 'string' ? maybeMessage : String(maybeMessage ?? 'بدون رسالة');
+      if (normalizedType === 'system') {
+        return `system:إشعار نظام:${normalizedMessage}`;
+      }
+
       return `api_${notif.id}`;
     })(),
     type: notif.type.toLowerCase() as Notification['type'],

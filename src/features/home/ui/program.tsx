@@ -12,6 +12,7 @@ import Link from "next/link";
 import { ProgramCard } from "@/shared/ui/components/ProgramCard";
 import { EmptyState } from "@/shared/ui/components/EmptyState";
 import { Program } from "@/features/programs/types/program";
+import { WithSkeleton } from "@/shared/ui/components/WithSkeleton";
 
 export default function ProgramsSection() {
   const { data: session, status } = useSession();
@@ -68,9 +69,7 @@ const programs: Program[] = (data?.data || []).map((item: Program) => ({
   // }
 }));
 
-  // حالة التحميل
-  if (isLoading) {
-    return (
+  const loadingSkeleton = (
       <section className="py-20 bg-gradient-to-b from-gray-50/50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -98,7 +97,6 @@ const programs: Program[] = (data?.data || []).map((item: Program) => ({
         </div>
       </section>
     );
-  }
 
   // // حالة الخطأ
   // if (error) {
@@ -141,6 +139,7 @@ const programs: Program[] = (data?.data || []).map((item: Program) => ({
     );
   }
   return (
+    <WithSkeleton isLoading={isLoading} skeleton={loadingSkeleton}>
     <section className="py-20 bg-gradient-to-b from-gray-50/50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* الهيدر */}
@@ -205,5 +204,6 @@ const programs: Program[] = (data?.data || []).map((item: Program) => ({
         )}
       </div>
     </section>
+    </WithSkeleton>
   );
 }

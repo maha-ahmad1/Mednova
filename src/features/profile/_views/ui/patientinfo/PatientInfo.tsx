@@ -14,6 +14,7 @@ import type { PatientProfile } from "@/types/patient";
 import type { ZodTypeAny } from "zod";
 import { signIn } from "next-auth/react";
 import { buildFullPhoneNumber, parsePhoneNumber } from "@/lib/phone";
+import { WithSkeleton } from "@/shared/ui/components/WithSkeleton";
 
 export default function PatientInfo() {
   const { data: session } = useSession();
@@ -46,14 +47,12 @@ export default function PatientInfo() {
     }
   }, [data, editingCard]);
 
-  if (isLoading) {
-    return (
-      <div dir="rtl" className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-[#32A88D]" />
-        <span className="ml-3 text-gray-600">جارٍ تحميل بيانات المريض...</span>
-      </div>
-    );
-  }
+  const loadingSkeleton = (
+    <div dir="rtl" className="min-h-[60vh] flex items-center justify-center">
+      <Loader2 className="w-10 h-10 animate-spin text-[#32A88D]" />
+      <span className="ml-3 text-gray-600">جارٍ تحميل بيانات المريض...</span>
+    </div>
+  );
 
   if (isError) {
     toast.error(
@@ -192,6 +191,7 @@ export default function PatientInfo() {
   };
 
   return (
+    <WithSkeleton isLoading={isLoading} skeleton={loadingSkeleton}>
     <div className="container max-w-5xl mx-auto">
       <div dir="rtl" className="space-y-6">
         <PatientPersonal1Card
@@ -225,5 +225,6 @@ export default function PatientInfo() {
         {/* <PatienttLocationCard /> */}
       </div>
     </div>
+    </WithSkeleton>
   );
 }

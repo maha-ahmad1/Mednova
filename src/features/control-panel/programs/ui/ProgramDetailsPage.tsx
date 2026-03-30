@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProgramDetails } from "../hooks/useProgramDetails";
+import { WithSkeleton } from "@/shared/ui/components/WithSkeleton";
 
 interface ProgramDetailsPageProps {
   programId: string;
@@ -47,15 +48,13 @@ export function ProgramDetailsPage({ programId }: ProgramDetailsPageProps) {
     return `https://api.mednovacare.com${videoPath.startsWith("/") ? "" : "/"}${videoPath}`;
   };
 
-  if (isLoading) {
-    return (
+  const loadingSkeleton = (
       <div className="mx-auto w-full max-w-7xl space-y-4 p-6" dir="rtl">
         <Skeleton className="h-10 w-44" />
         <Skeleton className="h-56 w-full" />
         <Skeleton className="h-80 w-full" />
       </div>
     );
-  }
 
   if (isError || !program) {
     return (
@@ -73,7 +72,8 @@ export function ProgramDetailsPage({ programId }: ProgramDetailsPageProps) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-5 p-6" dir="rtl">
+    <WithSkeleton isLoading={isLoading} skeleton={loadingSkeleton}>
+      <div className="mx-auto w-full max-w-7xl space-y-5 p-6" dir="rtl">
       <div className="flex items-center justify-between">
         <div className="space-y-1 text-right">
           <h1 className="text-2xl font-semibold">تفاصيل البرنامج</h1>
@@ -157,6 +157,7 @@ export function ProgramDetailsPage({ programId }: ProgramDetailsPageProps) {
           )}
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </WithSkeleton>
   );
 }

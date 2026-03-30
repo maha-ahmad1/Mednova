@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProgramDetails } from "../hooks/useProgramDetails";
 import { ProgramForm } from "./components/ProgramForm";
+import { WithSkeleton } from "@/shared/ui/components/WithSkeleton";
 
 interface EditProgramPageProps {
   programId: string;
@@ -15,14 +16,12 @@ interface EditProgramPageProps {
 export function EditProgramPage({ programId }: EditProgramPageProps) {
   const { data: program, isLoading, isError } = useProgramDetails(programId);
 
-  if (isLoading) {
-    return (
+  const loadingSkeleton = (
       <div className="mx-auto w-full max-w-7xl space-y-4 p-6" dir="rtl">
         <Skeleton className="h-10 w-44" />
         <Skeleton className="h-64 w-full" />
       </div>
     );
-  }
 
   if (isError || !program) {
     return (
@@ -40,7 +39,8 @@ export function EditProgramPage({ programId }: EditProgramPageProps) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-5 p-6" dir="rtl">
+    <WithSkeleton isLoading={isLoading} skeleton={loadingSkeleton}>
+      <div className="mx-auto w-full max-w-7xl space-y-5 p-6" dir="rtl">
       <div className="flex items-center justify-between">
         <div className="space-y-1 text-right">
           <h1 className="text-2xl font-semibold">تحديث البرنامج</h1>
@@ -66,6 +66,7 @@ export function EditProgramPage({ programId }: EditProgramPageProps) {
         }}
         initialVideos={program.videos}
       />
-    </div>
+      </div>
+    </WithSkeleton>
   );
 }

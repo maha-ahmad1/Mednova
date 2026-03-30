@@ -7,6 +7,7 @@ import DateTimeSelector from "./components/DateTimeSelector/DateTimeSelector";
 import BookingButton from "./components/BookingButton/BookingButton";
 import BookingPageSkeleton from "./BookingPageSkeleton";
 import { useBookingLogic } from "./hooks/useBookingLogic";
+import { WithSkeleton } from "@/shared/ui/components/WithSkeleton";
 
 interface BookingPageProps {
   doctorId?: string;
@@ -16,11 +17,12 @@ interface BookingPageProps {
 export default function BookingPage({ doctorId, patientId }: BookingPageProps) {
   const logic = useBookingLogic({ doctorId, patientId });
 
-  if (logic.isPageLoading || logic.isLoadingProvider)
-    return <BookingPageSkeleton />;
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6 lg:px-12 xl:px-16">
+    <WithSkeleton
+      isLoading={logic.isPageLoading || logic.isLoadingProvider}
+      skeleton={<BookingPageSkeleton />}
+    >
+      <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6 lg:px-12 xl:px-16">
       <div className="max-w-7xl mx-auto">
         <BookingHeader consultantType={logic.providerType} />
 
@@ -66,6 +68,7 @@ export default function BookingPage({ doctorId, patientId }: BookingPageProps) {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </WithSkeleton>
   );
 }

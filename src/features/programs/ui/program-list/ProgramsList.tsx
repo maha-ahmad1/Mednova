@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { ProgramCard } from "@/shared/ui/components/ProgramCard";
+import { WithSkeleton } from "@/shared/ui/components/WithSkeleton";
 
 interface ProgramFilters {
   category: string;
@@ -128,15 +129,13 @@ export function ProgramsList(): React.ReactNode {
     filters.category !== "الكل" || 
     filters.rating !== "الكل";
 
-  if (isLoading) {
-    return (
+  const loadingSkeleton = (
       <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ProgramSkeleton count={6} />
         </div>
       </div>
     );
-  }
 
   if (error) {
     return (
@@ -154,6 +153,7 @@ export function ProgramsList(): React.ReactNode {
   }
 
   return (
+    <WithSkeleton isLoading={isLoading} skeleton={loadingSkeleton}>
     <div className="min-h-screen bg-gradient-to-b from-[#1F6069]/5 via-white to-white">
       <section className="pt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -417,5 +417,6 @@ export function ProgramsList(): React.ReactNode {
         )}
       </div>
     </div>
+    </WithSkeleton>
   );
 }

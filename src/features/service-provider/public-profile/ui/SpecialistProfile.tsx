@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,8 +22,6 @@ import { normalizeProvider } from "@/utils/normalizeProvider";
 
 export default function SpecialistProfile(): React.ReactNode {
   const params = useParams();
-  const pathname = usePathname();
-  const router = useRouter();
   const reviewsTabRef = useRef<HTMLDivElement>(null);
 
   const [activeTab, setActiveTab] = useState("bio");
@@ -36,17 +34,6 @@ export default function SpecialistProfile(): React.ReactNode {
   const provider = rawProvider ? normalizeProvider(rawProvider) : null;
   const { data: session } = useSession();
   const currentUserId = typeof session?.user?.id === "number" ? session.user.id : 0;
-
-  useEffect(() => {
-    if (!rawProvider || !params.id) return;
-
-    if (
-      rawProvider.type_account === "rehabilitation_center" &&
-      pathname?.startsWith("/therapists/")
-    ) {
-      router.replace(`/centers/${params.id}`);
-    }
-  }, [rawProvider, pathname, params.id, router]);
 
   const scrollToReviews = () => {
     setActiveTab("reviews");

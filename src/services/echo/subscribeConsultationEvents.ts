@@ -2,6 +2,7 @@ import type { MutableRefObject } from "react";
 import { toast } from "sonner";
 import type { Notification } from "@/store/notificationStore";
 import {
+  buildConsultationDedupKey,
   createConsultationMessageNotification,
   createConsultationNotification,
   type ConsultationMessageEvent,
@@ -35,7 +36,24 @@ const handleConsultationEvent = (
   eventType: "requested" | "updated",
   params: Omit<SubscribeConsultationEventsParams, "channel" | "setSubscribed" | "channelName">,
 ) => {
-  const eventKey = `${eventType}_${event.id}_${event.status}_${Date.now()}`;
+  const dedupeNotificationType: Notification["type"] =
+    eventType === "requested"
+      ? "consultation_requested"
+      : event.status === "accepted"
+        ? "consultation_accepted"
+        : event.status === "active"
+          ? "consultation_active"
+          : event.status === "completed"
+            ? "consultation_completed"
+            : event.status === "cancelled"
+              ? "consultation_cancelled"
+              : "consultation_updated";
+
+  const eventKey = buildConsultationDedupKey({
+    type: dedupeNotificationType,
+    consultationId: event.id,
+    status: event.status,
+  });
 
   if (!params.deduplicator.markIfNew(eventKey)) {
     return;

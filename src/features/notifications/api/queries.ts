@@ -13,6 +13,19 @@ import {
 } from '../constants';
 import { mapApiResponseToNotificationsPage } from './mapper';
 import { useFetcher } from '@/hooks/useFetcher';
+import { buildConsultationDedupKey } from '@/utils/notificationFactory';
+
+const extractConsultationStatus = (
+  type: string,
+  data: Record<string, unknown> | undefined,
+): string | null => {
+  const status = data?.status;
+  if (typeof status === 'string' && status.length > 0) return status;
+
+  const normalizedType = type.toLowerCase();
+  if (!normalizedType.startsWith('consultation_')) return null;
+  return normalizedType.replace('consultation_', '');
+};
 
 
 
@@ -25,7 +38,26 @@ export const fetchNotifications = async (
   }>>(NOTIFICATION_ENDPOINTS.LIST, { params });
 
   return response.data.data.notification.map((notif) => ({
-    id: `api_${notif.id}`,
+    id: (() => {
+      const data = notif.data as Record<string, unknown> | undefined;
+      const consultationId = data?.consultation_id;
+      const status = extractConsultationStatus(notif.type, data);
+      const normalizedType = notif.type.toLowerCase();
+
+      if (
+        typeof consultationId === 'number' &&
+        typeof status === 'string' &&
+        normalizedType.startsWith('consultation_')
+      ) {
+        return buildConsultationDedupKey({
+          type: normalizedType,
+          consultationId,
+          status,
+        });
+      }
+
+      return `api_${notif.id}`;
+    })(),
     type: notif.type.toLowerCase() as Notification['type'],
     title: 'إشعار ', 
     message: (() => {

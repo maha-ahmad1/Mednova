@@ -16,13 +16,33 @@ export type SystemNotificationEvent = {
   [key: string]: unknown;
 };
 
+export const buildConsultationDedupKey = ({
+  type,
+  consultationId,
+  status,
+}: {
+  type: string;
+  consultationId: number | string;
+  status: string;
+}): string => {
+  return `${type}:${consultationId}:${status}`;
+};
+
 export const createConsultationNotification = (
   event: ConsultationEvent,
   notificationType: Notification["type"],
   title: string,
 ): Notification => {
+  const consultationId = event.id;
+  const status = event.status;
+  const dedupeKey = buildConsultationDedupKey({
+    type: notificationType,
+    consultationId,
+    status,
+  });
+
   return {
-    id: `consultation_${event.id}_${notificationType}_${Date.now()}`,
+    id: dedupeKey,
     type: notificationType,
     title,
     message: event.message,

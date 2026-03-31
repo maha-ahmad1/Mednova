@@ -373,7 +373,7 @@ export function UsersManagementPage() {
                   <td className="px-4 py-3">
                     <UserActionsDropdown
                       isBlocked={user.isBlocked}
-                      showActivateSubscription={user.type === "Specialist" && !user.isSubscribed}
+                      showActivateSubscription={(user.type === "Specialist" || user.type === "Center") && !user.isSubscribed}
                       onViewDetails={() => router.push(`/control-panel/users/${user.id}`)}
                       onToggleBlock={() => openConfirmation({ kind: "toggle-block", userId: user.id })}
                       onActivateSubscription={() =>

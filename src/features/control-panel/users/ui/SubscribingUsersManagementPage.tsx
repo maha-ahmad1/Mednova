@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { ConfirmationModal } from "./components/ConfirmationModal";
 import { useSubscribingUsers } from "../hooks/useSubscribingUsers";
 import { useDeactivateSubscription } from "../hooks/useDeactivateSubscription";
@@ -12,6 +13,7 @@ import { UserActionsDropdown } from "./components/UserActionsDropdown";
 type PendingAction = { kind: "deactivate-subscription"; id: string; fullName: string } | null;
 
 const SKELETON_ROWS_COUNT = 10;
+const SUBSCRIBERS_PER_PAGE = 10;
 
 const getConfirmationCopy = (pendingAction: PendingAction) => {
   if (!pendingAction) {
@@ -31,7 +33,11 @@ const getConfirmationCopy = (pendingAction: PendingAction) => {
 
 export function SubscribingUsersManagementPage() {
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
-  const { users, isLoading, isFetching, isError } = useSubscribingUsers();
+  const [currentPage, setCurrentPage] = useState(1);
+  const { users, isLoading, isFetching, isError, pagination } = useSubscribingUsers(
+    currentPage,
+    SUBSCRIBERS_PER_PAGE,
+  );
   const { mutateAsync: deactivateSubscription, isPending: isDeactivatingSubscription } =
     useDeactivateSubscription();
 
@@ -153,6 +159,20 @@ export function SubscribingUsersManagementPage() {
         }}
         onConfirm={onConfirmAction}
         isConfirming={isDeactivatingSubscription}
+      />
+
+      <PaginationControls
+        currentPage={pagination?.current_page ?? currentPage}
+        lastPage={pagination?.last_page ?? 1}
+        total={pagination?.total}
+        isLoading={isLoading || isFetching}
+        onPageChange={(page) => {
+          if (page < 1 || page > (pagination?.last_page ?? 1)) {
+            return;
+          }
+
+          setCurrentPage(page);
+        }}
       />
     </div>
   );

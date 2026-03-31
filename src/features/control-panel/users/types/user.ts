@@ -47,15 +47,25 @@ export interface SubscribingUser {
   fullName: string;
   accountType: UserType;
   packageName: string;
+  packageType: string;
   startsAt: string;
   endsAt: string;
 }
 
 export interface SubscribingApiUser {
   id: number;
-  full_name: string;
-  type_account: SubscriptionApiAccountType;
-  package_name: string;
+  subscriber?: {
+    full_name: string;
+    type_account: SubscriptionApiAccountType;
+  };
+  package?: {
+    name: string;
+    type: string;
+  };
+  full_name?: string;
+  type_account?: SubscriptionApiAccountType;
+  package_name?: string;
+  package_type?: string;
   starts_at: string;
   ends_at: string;
 }

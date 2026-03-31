@@ -60,6 +60,7 @@ export function SubscribingUsersManagementPage() {
               <th className="px-4 py-3 font-medium text-right">الاسم</th>
               <th className="px-4 py-3 font-medium">نوع الحساب</th>
               <th className="px-4 py-3 font-medium">الباقة</th>
+              <th className="px-4 py-3 font-medium">نوع الباقة</th>
               <th className="px-4 py-3 font-medium">تاريخ البداية</th>
               <th className="px-4 py-3 font-medium">تاريخ الانتهاء</th>
               <th className="px-4 py-3 font-medium">الإجراءات</th>
@@ -86,6 +87,9 @@ export function SubscribingUsersManagementPage() {
                     <Skeleton className="h-4 w-28" />
                   </td>
                   <td className="px-4 py-3">
+                    <Skeleton className="h-4 w-28" />
+                  </td>
+                  <td className="px-4 py-3">
                     <Skeleton className="h-8 w-10" />
                   </td>
                 </tr>
@@ -93,7 +97,7 @@ export function SubscribingUsersManagementPage() {
 
             {!isLoading && !isFetching && isError && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-destructive">
+                <td colSpan={7} className="px-4 py-10 text-center text-destructive">
                   تعذر تحميل بيانات الاشتراكات. حاول مرة أخرى.
                 </td>
               </tr>
@@ -101,7 +105,7 @@ export function SubscribingUsersManagementPage() {
 
             {!isLoading && !isFetching && !isError && users.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
+                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
                   لا يوجد مستخدمون مشتركون حالياً.
                 </td>
               </tr>
@@ -117,6 +121,7 @@ export function SubscribingUsersManagementPage() {
                     <UserTypeBadge type={user.accountType} />
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">{user.packageName || "-"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{user.packageType || "-"}</td>
                   <td className="px-4 py-3 text-muted-foreground">{formatJoinDate(user.startsAt)}</td>
                   <td className="px-4 py-3 text-muted-foreground">{formatJoinDate(user.endsAt)}</td>
                   <td className="px-4 py-3">

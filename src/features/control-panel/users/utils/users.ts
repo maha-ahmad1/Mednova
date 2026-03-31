@@ -53,9 +53,12 @@ export const mapApiUserToAdminUser = (user: UsersApiUser): AdminUser => ({
 
 export const mapApiSubscribingUser = (user: SubscribingApiUser): SubscribingUser => ({
   id: String(user.id),
-  fullName: user.full_name,
-  accountType: mapAccountTypeToUserType(user.type_account),
-  packageName: user.package_name,
+  fullName: user.subscriber?.full_name ?? user.full_name ?? "-",
+  accountType: mapAccountTypeToUserType(
+    user.subscriber?.type_account ?? user.type_account ?? "patient",
+  ),
+  packageName: user.package?.name ?? user.package_name ?? "-",
+  packageType: user.package?.type ?? user.package_type ?? "-",
   startsAt: user.starts_at,
   endsAt: user.ends_at,
 });

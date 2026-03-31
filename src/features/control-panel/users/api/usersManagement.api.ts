@@ -40,8 +40,9 @@ export const deleteUser = async (axiosInstance: AxiosInstance, userId: string) =
 };
 
 export const activateSubscription = async (axiosInstance: AxiosInstance, userId: string) => {
-  const response = await axiosInstance.post<MutationApiResponse<SubscriptionErrorResponse>>(
+  const response = await axiosInstance.patch<MutationApiResponse<SubscriptionErrorResponse>>(
     `/api/control-panel/users/${userId}/temporary-subscription`,
+    {},
   );
 
   return response.data;

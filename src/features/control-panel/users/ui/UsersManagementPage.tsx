@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminUsers } from "../hooks/useAdminUsers";
 import { useDeleteUser } from "../hooks/useDeleteUser";
+import { useActivateSubscription } from "../hooks/useActivateSubscription";
 import { useUpdateUserStatus } from "../hooks/useUpdateUserStatus";
 import type { AdminUser, UserStatus, UsersFilters } from "../types/user";
 import { filterUsersByDate, formatJoinDate } from "../utils/users";
@@ -26,6 +27,7 @@ import { UsersTableFilters } from "./components/UsersTableFilters";
 type PendingAction =
   | { kind: "status"; userId: string; nextStatus: UserStatus }
   | { kind: "toggle-block"; userId: string }
+  | { kind: "activate-subscription"; userId: string }
   | { kind: "delete"; userId: string }
   | { kind: "bulk-approve"; userIds: string[] }
   | null;
@@ -92,6 +94,14 @@ const getConfirmationCopy = (pendingAction: PendingAction, users: AdminUser[]) =
     };
   }
 
+  if (pendingAction.kind === "activate-subscription") {
+    return {
+      title: "تفعيل الاشتراك",
+      description: "هل أنت متأكد أنك تريد تفعيل الاشتراك لهذا المستخدم؟",
+      confirmLabel: "تفعيل",
+    };
+  }
+
   return {
     title: "الموافقة على المستخدمين المحددين",
     description: `هل تريد الموافقة على ${pendingAction.userIds.length} مستخدم/مستخدمين محددين؟`,
@@ -113,6 +123,7 @@ export function UsersManagementPage() {
   );
   const { mutateAsync: updateUserStatus, isPending: isUpdatingStatus } = useUpdateUserStatus();
   const { mutateAsync: removeUser, isPending: isDeletingUser } = useDeleteUser();
+  const { mutateAsync: activateSubscription, isPending: isActivatingSubscription } = useActivateSubscription();
   const [overrides, setOverrides] = useState<Record<string, Partial<AdminUser>>>({});
 
   const rejectReasonForm = useForm<RejectReasonFormValues>({
@@ -213,6 +224,12 @@ export function UsersManagementPage() {
       case "delete": {
         await removeUser(pendingAction.userId);
         setSelectedRows((prev) => prev.filter((id) => id !== pendingAction.userId));
+        setPendingAction(null);
+        return;
+      }
+
+      case "activate-subscription": {
+        await activateSubscription(pendingAction.userId);
         setPendingAction(null);
         return;
       }
@@ -356,8 +373,12 @@ export function UsersManagementPage() {
                   <td className="px-4 py-3">
                     <UserActionsDropdown
                       isBlocked={user.isBlocked}
+                      showActivateSubscription={user.type === "Specialist" && !user.isSubscribed}
                       onViewDetails={() => router.push(`/control-panel/users/${user.id}`)}
                       onToggleBlock={() => openConfirmation({ kind: "toggle-block", userId: user.id })}
+                      onActivateSubscription={() =>
+                        openConfirmation({ kind: "activate-subscription", userId: user.id })
+                      }
                       onDelete={() => openConfirmation({ kind: "delete", userId: user.id })}
                     />
                   </td>
@@ -394,7 +415,7 @@ export function UsersManagementPage() {
         }}
         onConfirm={confirmAction}
         confirmDisabled={isRejectAction && !rejectReasonForm.formState.isValid}
-        isConfirming={isUpdatingStatus || isDeletingUser}
+        isConfirming={isUpdatingStatus || isDeletingUser || isActivatingSubscription}
       >
         {isRejectAction && (
           <Form {...rejectReasonForm}>

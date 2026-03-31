@@ -1,6 +1,8 @@
 import { format } from "date-fns";
 import type {
   AdminUser,
+  SubscribingApiUser,
+  SubscribingUser,
   UserStatus,
   UserType,
   UsersApiApprovalStatus,
@@ -13,6 +15,10 @@ const accountTypeMap: Record<UsersApiAccountType, UserType> = {
   patient: "Patient",
   therapist: "Specialist",
   rehabilitation_center: "Center",
+};
+
+export const mapAccountTypeToUserType = (accountType: UsersApiAccountType): UserType => {
+  return accountTypeMap[accountType];
 };
 
 const approvalStatusMap: Record<UsersApiApprovalStatus, UserStatus> = {
@@ -37,11 +43,21 @@ export const mapApiUserToAdminUser = (user: UsersApiUser): AdminUser => ({
   id: String(user.id),
   fullName: user.full_name,
   email: user.email,
-  type: accountTypeMap[user.type_account],
+  type: mapAccountTypeToUserType(user.type_account),
   status: approvalStatusMap[user.approval_status],
   isEmailVerified: Boolean(user.email_verified_at),
   isBlocked: false,
+  isSubscribed: Boolean(user.is_subscribed),
   createdAt: user.created_at ?? "",
+});
+
+export const mapApiSubscribingUser = (user: SubscribingApiUser): SubscribingUser => ({
+  id: String(user.id),
+  fullName: user.full_name,
+  accountType: mapAccountTypeToUserType(user.type_account),
+  packageName: user.package_name,
+  startsAt: user.starts_at,
+  endsAt: user.ends_at,
 });
 
 export const buildUsersQueryParams = (

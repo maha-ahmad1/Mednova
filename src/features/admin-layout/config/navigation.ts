@@ -47,6 +47,7 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
       { label: "جميع المستخدمين", href: "/control-panel/users" },
       { label: "المرضى", href: "/control-panel/users/patients" },
       { label: "المختصون", href: "/control-panel/users/specialists" },
+      { label: "المشتركون", href: "/control-panel/subscriptions" },
       { label: "المراكز", href: "/control-panel/users/centers" },
       { label: "طلبات معلقة", href: "/control-panel/users/pending-requests", badge: "8" },
     ],

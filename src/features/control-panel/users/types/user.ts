@@ -12,6 +12,7 @@ export interface AdminUser {
   status: UserStatus;
   isEmailVerified: boolean;
   isBlocked: boolean;
+  isSubscribed: boolean;
   createdAt: string;
 }
 
@@ -35,7 +36,28 @@ export interface UsersApiUser {
   type_account: UsersApiAccountType;
   approval_status: UsersApiApprovalStatus;
   email_verified_at: string | null;
+  is_subscribed?: boolean;
   created_at?: string;
+}
+
+export type SubscriptionApiAccountType = UsersApiAccountType;
+
+export interface SubscribingUser {
+  id: string;
+  fullName: string;
+  accountType: UserType;
+  packageName: string;
+  startsAt: string;
+  endsAt: string;
+}
+
+export interface SubscribingApiUser {
+  id: number;
+  full_name: string;
+  type_account: SubscriptionApiAccountType;
+  package_name: string;
+  starts_at: string;
+  ends_at: string;
 }
 
 export interface UsersApiResponse {

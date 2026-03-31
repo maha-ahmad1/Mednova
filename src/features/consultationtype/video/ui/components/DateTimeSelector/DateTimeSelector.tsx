@@ -10,7 +10,7 @@ interface Props {
   setSelectedTime: (t: string) => void
   timeZone?: string | undefined
   setTimeZone: (t?: string) => void
-  groupedSlots: { morning: string[]; afternoon: string[]; evening: string[] }
+  groupedSlots: { morning: string[]; evening: string[] }
   isLoadingSlots?: boolean
   availableSlotsLength?: number
   customerId?: number

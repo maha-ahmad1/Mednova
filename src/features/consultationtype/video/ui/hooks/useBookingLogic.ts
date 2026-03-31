@@ -42,7 +42,6 @@ export function useBookingLogic({
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [groupedSlots, setGroupedSlots] = useState({
     morning: [] as string[],
-    afternoon: [] as string[],
     evening: [] as string[],
   });
 
@@ -103,13 +102,13 @@ export function useBookingLogic({
       const validDate = ensureDate(date);
       if (!validDate) {
         console.error("تاريخ غير صحيح:", date);
-        setGroupedSlots({ morning: [], afternoon: [], evening: [] });
+        setGroupedSlots({ morning: [], evening: [] });
         return;
       }
 
       if (!effectiveDoctorId || !consultantType || !validDate) {
         console.error("بيانات غير كافية لتحميل الأوقات");
-        setGroupedSlots({ morning: [], afternoon: [], evening: [] });
+        setGroupedSlots({ morning: [], evening: [] });
         return;
       }
 
@@ -162,7 +161,7 @@ export function useBookingLogic({
           console.log("الأوقات المصنفة بنجاح");
         } else {
           console.warn("لا توجد أوقات متاحة لهذا اليوم");
-          setGroupedSlots({ morning: [], afternoon: [], evening: [] });
+          setGroupedSlots({ morning: [], evening: [] });
         }
       } catch (error: unknown) {
         console.error("خطأ في تحميل الأوقات المتاحة:", error);
@@ -178,7 +177,7 @@ export function useBookingLogic({
           console.error("تفاصيل الخطأ:", err.response?.data);
         }
 
-        setGroupedSlots({ morning: [], afternoon: [], evening: [] });
+        setGroupedSlots({ morning: [], evening: [] });
       } finally {
         setIsLoadingSlots(false);
       }
@@ -200,7 +199,7 @@ export function useBookingLogic({
       loadAvailableSlots(selectedDate, selectedTimeZone);
       setSelectedTime(""); // إعادة تعيين الوقت المحدد
     } else if (!selectedDate || !selectedTimeZone) {
-      setGroupedSlots({ morning: [], afternoon: [], evening: [] });
+      setGroupedSlots({ morning: [], evening: [] });
     }
   }, [selectedDate, selectedTimeZone, loadAvailableSlots]);
 
@@ -345,7 +344,6 @@ export function useBookingLogic({
   const availableSlotsLength = useMemo(
     () =>
       groupedSlots.morning.length +
-      groupedSlots.afternoon.length +
       groupedSlots.evening.length,
     [groupedSlots],
   );
@@ -354,7 +352,6 @@ export function useBookingLogic({
   const availableSlots = useMemo(
     () => [
       ...groupedSlots.morning,
-      ...groupedSlots.afternoon,
       ...groupedSlots.evening,
     ],
     [groupedSlots],

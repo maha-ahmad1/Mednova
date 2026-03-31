@@ -1,5 +1,7 @@
 import { format } from "date-fns";
-import type {  SubscribingApiUser,
+import type {
+  AdminUser,
+  SubscribingApiUser,
   SubscribingUser,
   UserStatus,
   UserType,

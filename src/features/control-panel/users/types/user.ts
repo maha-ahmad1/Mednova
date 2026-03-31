@@ -3,6 +3,7 @@ export type UserType = "Patient" | "Specialist" | "Center";
 export type UserStatus = "Pending" | "Approved" | "Rejected";
 
 export type UserVerificationFilter = "all" | "verified" | "unverified";
+export type UserSubscriptionFilter = "all" | "subscribed" | "unsubscribed";
 
 export interface AdminUser {
   id: string;
@@ -21,6 +22,7 @@ export interface UsersFilters {
   type: "all" | UserType;
   status: "all" | UserStatus;
   verification: UserVerificationFilter;
+  subscription: UserSubscriptionFilter;
   dateFrom: string;
   dateTo: string;
 }
@@ -45,6 +47,7 @@ export type SubscriptionApiAccountType = UsersApiAccountType;
 export interface SubscribingUser {
   id: string;
   fullName: string;
+  email: string;
   accountType: UserType;
   packageName: string;
   packageType: string;
@@ -56,6 +59,7 @@ export interface SubscribingApiUser {
   id: number;
   subscriber?: {
     full_name: string;
+    email: string;
     type_account: SubscriptionApiAccountType;
   };
   package?: {
@@ -63,6 +67,7 @@ export interface SubscribingApiUser {
     type: string;
   };
   full_name?: string;
+  email?: string;
   type_account?: SubscriptionApiAccountType;
   package_name?: string;
   package_type?: string;

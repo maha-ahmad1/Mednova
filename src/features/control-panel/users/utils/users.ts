@@ -54,6 +54,7 @@ export const mapApiUserToAdminUser = (user: UsersApiUser): AdminUser => ({
 export const mapApiSubscribingUser = (user: SubscribingApiUser): SubscribingUser => ({
   id: String(user.id),
   fullName: user.subscriber?.full_name ?? user.full_name ?? "-",
+  email: user.subscriber?.email ?? user.email ?? "-",
   accountType: mapAccountTypeToUserType(
     user.subscriber?.type_account ?? user.type_account ?? "patient",
   ),
@@ -100,6 +101,14 @@ export const filterUsersByDate = (
   filters: UsersFilters,
 ): AdminUser[] => {
   return users.filter((user) => {
+    const subscriptionMatches =
+      filters.subscription === "all" ||
+      (filters.subscription === "subscribed" ? user.isSubscribed : !user.isSubscribed);
+
+    if (!subscriptionMatches) {
+      return false;
+    }
+
     const createdAt = new Date(user.createdAt).getTime();
 
     if (Number.isNaN(createdAt)) {

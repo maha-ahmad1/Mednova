@@ -1,7 +1,13 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { UserStatus, UserType, UserVerificationFilter, UsersFilters } from "../../types/user";
+import type {
+  UserStatus,
+  UserSubscriptionFilter,
+  UserType,
+  UserVerificationFilter,
+  UsersFilters,
+} from "../../types/user";
 
 interface UsersTableFiltersProps {
   filters: UsersFilters;
@@ -29,10 +35,16 @@ const verificationOptions: Array<{ label: string; value: UserVerificationFilter 
   { label: "غير موثق", value: "unverified" },
 ];
 
+const subscriptionOptions: Array<{ label: string; value: UserSubscriptionFilter }> = [
+  { label: "حالة الاشتراك", value: "all" },
+  { label: "مشترك", value: "subscribed" },
+  { label: "غير مشترك", value: "unsubscribed" },
+];
+
 
 export function UsersTableFilters({ filters, onChange }: UsersTableFiltersProps) {
   return (
-    <div className="grid gap-3 rounded-xl border bg-white p-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
+    <div className="grid gap-3 rounded-xl border bg-white p-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-6">
       {/* حقل البحث - يأخذ العرض الكامل على الموبايل، وعمودين على الشاشات المتوسطة، وعمودين على الكبيرة */}
       <div className="relative md:col-span-1 lg:col-span-2">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -90,6 +102,24 @@ export function UsersTableFilters({ filters, onChange }: UsersTableFiltersProps)
         </SelectTrigger>
         <SelectContent className="text-right" dir="rtl">
           {verificationOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Select
+        value={filters.subscription}
+        onValueChange={(value) =>
+          onChange({ ...filters, subscription: value as UserSubscriptionFilter })
+        }
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="حالة الاشتراك" />
+        </SelectTrigger>
+        <SelectContent className="text-right" dir="rtl">
+          {subscriptionOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
             </SelectItem>

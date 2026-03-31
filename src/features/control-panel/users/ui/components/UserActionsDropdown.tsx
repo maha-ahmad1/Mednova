@@ -13,6 +13,8 @@ interface UserActionsDropdownProps {
   onViewDetails?: () => void;
   onToggleBlock?: () => void;
   onActivateSubscription?: () => void;
+  activateSubscriptionLabel?: string;
+  activateSubscriptionDestructive?: boolean;
   onDeactivateSubscription?: () => void;
   onDelete?: () => void;
 }
@@ -23,6 +25,8 @@ export function UserActionsDropdown({
   onViewDetails,
   onToggleBlock,
   onActivateSubscription,
+  activateSubscriptionLabel = "تفعيل الاشتراك",
+  activateSubscriptionDestructive = false,
   onDeactivateSubscription,
   onDelete,
 }: UserActionsDropdownProps) {
@@ -50,12 +54,13 @@ export function UserActionsDropdown({
         ) : null}
         {showActivateSubscription && onActivateSubscription ? (
           <DropdownMenuItem
+            variant={activateSubscriptionDestructive ? "destructive" : "default"}
             onClick={onActivateSubscription}
             className="text-right cursor-pointer"
             dir="rtl"
           >
             <ShieldCheck className="h-4 w-4" />
-            تفعيل الاشتراك
+            {activateSubscriptionLabel}
           </DropdownMenuItem>
         ) : null}
         {onDeactivateSubscription ? (

@@ -1,7 +1,5 @@
 import { format } from "date-fns";
-import type {
-  AdminUser,
-  SubscribingApiUser,
+import type {  SubscribingApiUser,
   SubscribingUser,
   UserStatus,
   UserType,
@@ -47,7 +45,7 @@ export const mapApiUserToAdminUser = (user: UsersApiUser): AdminUser => ({
   status: approvalStatusMap[user.approval_status],
   isEmailVerified: Boolean(user.email_verified_at),
   isBlocked: false,
-  isSubscribed: Boolean(user.is_subscribed),
+  isSubscribed: user.account_status === "active",
   createdAt: user.created_at ?? "",
 });
 
@@ -77,6 +75,11 @@ export const buildUsersQueryParams = (
       : filters.verification === "unverified"
         ? { verified: 0 }
         : {}),
+    ...(filters.subscription === "subscribed"
+      ? { account_status: "active" }
+      : filters.subscription === "unsubscribed"
+        ? { account_status: "inactive" }
+        : {}),
     ...(pagination?.page ? { page: pagination.page } : {}),
     ...(pagination?.per_page ? { per_page: pagination.per_page } : {}),
   };
@@ -94,37 +97,4 @@ export const formatJoinDate = (value: string): string => {
   }
 
   return format(date, "MMM dd, yyyy");
-};
-
-export const filterUsersByDate = (
-  users: AdminUser[],
-  filters: UsersFilters,
-): AdminUser[] => {
-  return users.filter((user) => {
-    const subscriptionMatches =
-      filters.subscription === "all" ||
-      (filters.subscription === "subscribed" ? user.isSubscribed : !user.isSubscribed);
-
-    if (!subscriptionMatches) {
-      return false;
-    }
-
-    const createdAt = new Date(user.createdAt).getTime();
-
-    if (Number.isNaN(createdAt)) {
-      return !filters.dateFrom && !filters.dateTo;
-    }
-
-    const fromDate = filters.dateFrom
-      ? new Date(`${filters.dateFrom}T00:00:00`).getTime()
-      : undefined;
-    const toDate = filters.dateTo
-      ? new Date(`${filters.dateTo}T23:59:59`).getTime()
-      : undefined;
-
-    const matchesFrom = fromDate === undefined || createdAt >= fromDate;
-    const matchesTo = toDate === undefined || createdAt <= toDate;
-
-    return matchesFrom && matchesTo;
-  });
 };

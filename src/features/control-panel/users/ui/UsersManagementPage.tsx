@@ -16,7 +16,7 @@ import { useDeleteUser } from "../hooks/useDeleteUser";
 import { useActivateSubscription } from "../hooks/useActivateSubscription";
 import { useUpdateUserStatus } from "../hooks/useUpdateUserStatus";
 import type { AdminUser, UserStatus, UsersFilters } from "../types/user";
-import { filterUsersByDate, formatJoinDate } from "../utils/users";
+import { formatJoinDate } from "../utils/users";
 import { ConfirmationModal } from "./components/ConfirmationModal";
 import { EmailVerificationIndicator } from "./components/EmailVerificationIndicator";
 import { SubscriptionBadge } from "./components/SubscriptionBadge";
@@ -145,7 +145,7 @@ export function UsersManagementPage() {
     [fetchedUsers, overrides],
   );
 
-  const filteredUsers = useMemo(() => filterUsersByDate(users, filters), [users, filters]);
+  const filteredUsers = users;
 
   const allVisibleSelected =
     filteredUsers.length > 0 && filteredUsers.every((user) => selectedRows.includes(user.id));

@@ -38,6 +38,7 @@ export interface UsersApiUser {
   type_account: UsersApiAccountType;
   approval_status: UsersApiApprovalStatus;
   email_verified_at: string | null;
+  account_status?: "active" | "inactive" | string;
   is_subscribed?: boolean;
   created_at?: string;
 }

@@ -1,4 +1,5 @@
 import type { AxiosInstance } from "axios";
+import type { PaginationMeta } from "../types/user";
 
 export type UpdateUserApprovalStatus = "approved" | "rejected";
 
@@ -12,6 +13,10 @@ interface ApiResponse<T = unknown> {
   message: string;
   data: T;
   status: string;
+}
+
+interface PaginatedApiResponse<T = unknown> extends ApiResponse<T> {
+  pagination?: PaginationMeta;
 }
 
 export type MutationApiResponse<T = unknown> = ApiResponse<T>;
@@ -57,7 +62,7 @@ export const getSubscribingUsers = async <T>(
     type_account?: "therapist" | "rehabilitation_center";
   },
 ) => {
-  const response = await axiosInstance.get<MutationApiResponse<T>>(
+  const response = await axiosInstance.get<PaginatedApiResponse<T>>(
     "/api/control-panel/subscription/subscribing-users",
     { params },
   );

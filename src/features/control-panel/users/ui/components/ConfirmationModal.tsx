@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -49,7 +50,14 @@ export function ConfirmationModal({
             {cancelLabel}
           </Button>
           <Button onClick={onConfirm} disabled={confirmDisabled || isConfirming}>
-            {isConfirming ? "جاري التنفيذ..." : confirmLabel}
+            {isConfirming ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                جاري التنفيذ...
+              </>
+            ) : (
+              confirmLabel
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

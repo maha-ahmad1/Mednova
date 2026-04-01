@@ -13,11 +13,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminUsers } from "../hooks/useAdminUsers";
 import { useDeleteUser } from "../hooks/useDeleteUser";
+import { useActivateSubscription } from "../hooks/useActivateSubscription";
 import { useUpdateUserStatus } from "../hooks/useUpdateUserStatus";
 import type { AdminUser, UserStatus, UsersFilters } from "../types/user";
-import { filterUsersByDate, formatJoinDate } from "../utils/users";
+import { formatJoinDate } from "../utils/users";
 import { ConfirmationModal } from "./components/ConfirmationModal";
 import { EmailVerificationIndicator } from "./components/EmailVerificationIndicator";
+import { SubscriptionBadge } from "./components/SubscriptionBadge";
 import { StatusDropdown } from "./components/StatusDropdown";
 import { UserActionsDropdown } from "./components/UserActionsDropdown";
 import { UserTypeBadge } from "./components/UserTypeBadge";
@@ -26,6 +28,7 @@ import { UsersTableFilters } from "./components/UsersTableFilters";
 type PendingAction =
   | { kind: "status"; userId: string; nextStatus: UserStatus }
   | { kind: "toggle-block"; userId: string }
+  | { kind: "toggle-subscription"; userId: string; isSubscribed: boolean }
   | { kind: "delete"; userId: string }
   | { kind: "bulk-approve"; userIds: string[] }
   | null;
@@ -44,6 +47,7 @@ const initialFilters: UsersFilters = {
   type: "all",
   status: "all",
   verification: "all",
+  subscription: "all",
   dateFrom: "",
   dateTo: "",
 };
@@ -92,6 +96,16 @@ const getConfirmationCopy = (pendingAction: PendingAction, users: AdminUser[]) =
     };
   }
 
+  if (pendingAction.kind === "toggle-subscription") {
+    return {
+      title: pendingAction.isSubscribed ? "إلغاء الاشتراك" : "تفعيل الاشتراك",
+      description: pendingAction.isSubscribed
+        ? "هل أنت متأكد أنك تريد إلغاء اشتراك هذا المستخدم؟"
+        : "هل أنت متأكد أنك تريد تفعيل الاشتراك لهذا المستخدم؟",
+      confirmLabel: pendingAction.isSubscribed ? "إلغاء الاشتراك" : "تفعيل",
+    };
+  }
+
   return {
     title: "الموافقة على المستخدمين المحددين",
     description: `هل تريد الموافقة على ${pendingAction.userIds.length} مستخدم/مستخدمين محددين؟`,
@@ -113,6 +127,7 @@ export function UsersManagementPage() {
   );
   const { mutateAsync: updateUserStatus, isPending: isUpdatingStatus } = useUpdateUserStatus();
   const { mutateAsync: removeUser, isPending: isDeletingUser } = useDeleteUser();
+  const { mutateAsync: activateSubscription, isPending: isActivatingSubscription } = useActivateSubscription();
   const [overrides, setOverrides] = useState<Record<string, Partial<AdminUser>>>({});
 
   const rejectReasonForm = useForm<RejectReasonFormValues>({
@@ -130,7 +145,7 @@ export function UsersManagementPage() {
     [fetchedUsers, overrides],
   );
 
-  const filteredUsers = useMemo(() => filterUsersByDate(users, filters), [users, filters]);
+  const filteredUsers = users;
 
   const allVisibleSelected =
     filteredUsers.length > 0 && filteredUsers.every((user) => selectedRows.includes(user.id));
@@ -217,6 +232,19 @@ export function UsersManagementPage() {
         return;
       }
 
+      case "toggle-subscription": {
+        await activateSubscription(pendingAction.userId);
+        setOverrides((prev) => ({
+          ...prev,
+          [pendingAction.userId]: {
+            ...prev[pendingAction.userId],
+            isSubscribed: !pendingAction.isSubscribed,
+          },
+        }));
+        setPendingAction(null);
+        return;
+      }
+
       case "bulk-approve": {
         setOverrides((prev) => {
           const next = { ...prev };
@@ -280,6 +308,7 @@ export function UsersManagementPage() {
               <th className="px- py-3 font-medium ">نوع المستخدم</th>
               <th className="px-6 py-3 font-medium ">الحالة</th>
               <th className="px-4 py-3 font-medium">توثيق البريد</th>
+              <th className="px-4 py-3 font-medium">الاشتراك</th>
               <th className="px-4 py-3 font-medium">تاريخ الانضمام</th>
               <th className="px-4 py-3 font-medium">الإجراءات</th>
             </tr>
@@ -297,6 +326,7 @@ export function UsersManagementPage() {
                   <td className="px-4 py-3"><Skeleton className="h-6 w-24" /></td>
                   <td className="px-4 py-3"><Skeleton className="h-8 w-32" /></td>
                   <td className="px-4 py-3"><Skeleton className="h-6 w-20" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-6 w-24" /></td>
                   <td className="px-4 py-3"><Skeleton className="h-4 w-28" /></td>
                   <td className="px-4 py-3"><Skeleton className="h-8 w-10" /></td>
                 </tr>
@@ -304,7 +334,7 @@ export function UsersManagementPage() {
 
             {!isLoading && !isFetching && isError && (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-destructive">
+                <td colSpan={8} className="px-4 py-10 text-center text-destructive">
                   تعذر تحميل بيانات المستخدمين. حاول مرة أخرى.
                 </td>
               </tr>
@@ -312,7 +342,7 @@ export function UsersManagementPage() {
 
             {!isLoading && !isFetching && !isError && visibleUsers.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
+                <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">
                   No users found.
                 </td>
               </tr>
@@ -352,12 +382,21 @@ export function UsersManagementPage() {
                   <td className="px-4 py-3">
                     <EmailVerificationIndicator isVerified={user.isEmailVerified} />
                   </td>
+                  <td className="px-4 py-3">
+                    <SubscriptionBadge isSubscribed={user.isSubscribed} />
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground">{formatJoinDate(user.createdAt)}</td>
                   <td className="px-4 py-3">
                     <UserActionsDropdown
                       isBlocked={user.isBlocked}
+                      showActivateSubscription={user.type === "Specialist" || user.type === "Center"}
+                      activateSubscriptionLabel={user.isSubscribed ? "إلغاء الاشتراك" : "تفعيل الاشتراك"}
+                      activateSubscriptionDestructive={user.isSubscribed}
                       onViewDetails={() => router.push(`/control-panel/users/${user.id}`)}
                       onToggleBlock={() => openConfirmation({ kind: "toggle-block", userId: user.id })}
+                      onActivateSubscription={() =>
+                        openConfirmation({ kind: "toggle-subscription", userId: user.id, isSubscribed: user.isSubscribed })
+                      }
                       onDelete={() => openConfirmation({ kind: "delete", userId: user.id })}
                     />
                   </td>
@@ -394,7 +433,7 @@ export function UsersManagementPage() {
         }}
         onConfirm={confirmAction}
         confirmDisabled={isRejectAction && !rejectReasonForm.formState.isValid}
-        isConfirming={isUpdatingStatus || isDeletingUser}
+        isConfirming={isUpdatingStatus || isDeletingUser || isActivatingSubscription}
       >
         {isRejectAction && (
           <Form {...rejectReasonForm}>

@@ -50,7 +50,12 @@ export const activateSubscription = async (axiosInstance: AxiosInstance, userId:
 
 export const getSubscribingUsers = async <T>(
   axiosInstance: AxiosInstance,
-  params?: { page?: number; per_page?: number },
+  params?: {
+    page?: number;
+    per_page?: number;
+    search?: string;
+    type_account?: "therapist" | "rehabilitation_center";
+  },
 ) => {
   const response = await axiosInstance.get<MutationApiResponse<T>>(
     "/api/control-panel/subscription/subscribing-users",

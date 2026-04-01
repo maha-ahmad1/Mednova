@@ -1,5 +1,3 @@
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type {
   UserStatus,
@@ -8,6 +6,7 @@ import type {
   UserVerificationFilter,
   UsersFilters,
 } from "../../types/user";
+import { UsersSearchInput } from "./UsersSearchInput";
 
 interface UsersTableFiltersProps {
   filters: UsersFilters;
@@ -46,16 +45,10 @@ export function UsersTableFilters({ filters, onChange }: UsersTableFiltersProps)
   return (
     <div className="grid gap-3 rounded-xl border bg-white p-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-6">
       {/* حقل البحث - يأخذ العرض الكامل على الموبايل، وعمودين على الشاشات المتوسطة، وعمودين على الكبيرة */}
-      <div className="relative md:col-span-1 lg:col-span-2">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          value={filters.search}
-          onChange={(event) => onChange({ ...filters, search: event.target.value })}
-          placeholder="بحث بالاسم أو البريد الإلكتروني"
-          className="pl-10 w-full"
-          dir="rtl"
-        />
-      </div>
+      <UsersSearchInput
+        value={filters.search}
+        onChange={(value) => onChange({ ...filters, search: value })}
+      />
 
       {/* فلتر نوع المستخدم - عرض كامل على الموبايل */}
       <Select

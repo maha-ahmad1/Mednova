@@ -15,15 +15,30 @@ interface SubscribingUsersResponse {
   status: string;
 }
 
-export function useSubscribingUsers(page: number, perPage = 10) {
+interface SubscribingUsersFilters {
+  search: string;
+  type: "all" | "Specialist" | "Center";
+}
+
+export function useSubscribingUsers(
+  page: number,
+  perPage = 10,
+  filters: SubscribingUsersFilters = { search: "", type: "all" },
+) {
   const axiosInstance = useAxiosInstance();
 
   const query = useQuery<SubscribingUsersResponse, Error>({
-    queryKey: ["subscribing-users", { page, perPage }],
+    queryKey: ["subscribing-users", { page, perPage, ...filters }],
     queryFn: async () =>
       getSubscribingUsers<SubscribingApiUser[]>(axiosInstance, {
         page,
         per_page: perPage,
+        ...(filters.search.trim() ? { search: filters.search.trim() } : {}),
+        ...(filters.type === "Specialist"
+          ? { type_account: "therapist" as const }
+          : filters.type === "Center"
+            ? { type_account: "rehabilitation_center" as const }
+            : {}),
       }),
   });
 

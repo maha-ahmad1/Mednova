@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import type { AdminSidebarAction } from "@/features/admin-layout/config/navigation";
+import type { AdminSidebarAction } from "@/features/control-panel/admin-layout/config/navigation";
 
 interface SidebarItemProps {
   item: AdminSidebarAction;

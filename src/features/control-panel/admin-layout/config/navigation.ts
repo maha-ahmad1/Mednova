@@ -45,11 +45,11 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
     icon: Users,
     items: [
       { label: "جميع المستخدمين", href: "/control-panel/users" },
-      { label: "المرضى", href: "/control-panel/users/patients" },
-      { label: "المختصون", href: "/control-panel/users/specialists" },
+      // { label: "المرضى", href: "/control-panel/users/patients" },
+      // { label: "المختصون", href: "/control-panel/users/specialists" },
       { label: "المشتركون", href: "/control-panel/subscriptions" },
-      { label: "المراكز", href: "/control-panel/users/centers" },
-      { label: "طلبات معلقة", href: "/control-panel/users/pending-requests", badge: "8" },
+      // { label: "المراكز", href: "/control-panel/users/centers" },
+      // { label: "طلبات معلقة", href: "/control-panel/users/pending-requests", badge: "8" },
     ],
   },
   {

@@ -45,10 +45,11 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
     icon: Users,
     items: [
       { label: "جميع المستخدمين", href: "/control-panel/users" },
-      { label: "المرضى", href: "/control-panel/users/patients" },
-      { label: "المختصون", href: "/control-panel/users/specialists" },
-      { label: "المراكز", href: "/control-panel/users/centers" },
-      { label: "طلبات معلقة", href: "/control-panel/users/pending-requests", badge: "8" },
+      // { label: "المرضى", href: "/control-panel/users/patients" },
+      // { label: "المختصون", href: "/control-panel/users/specialists" },
+      { label: "المشتركون", href: "/control-panel/subscriptions" },
+      // { label: "المراكز", href: "/control-panel/users/centers" },
+      // { label: "طلبات معلقة", href: "/control-panel/users/pending-requests", badge: "8" },
     ],
   },
   {
@@ -57,8 +58,8 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
     icon: BookOpen,
     items: [
       { label: "جميع البرامج", href: "/control-panel/programs" },
-      { label: "البرامج المنشورة", href: "/control-panel/programs?status=published" },
-      { label: "البرامج غير الموافق عليها", href: "/control-panel/programs?is_approved=0" },
+      // { label: "البرامج المنشورة", href: "/control-panel/programs?status=published" },
+      // { label: "البرامج غير الموافق عليها", href: "/control-panel/programs?is_approved=0" },
     ],
   },
   {

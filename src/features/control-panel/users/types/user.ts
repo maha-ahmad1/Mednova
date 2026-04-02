@@ -3,6 +3,7 @@ export type UserType = "Patient" | "Specialist" | "Center";
 export type UserStatus = "Pending" | "Approved" | "Rejected";
 
 export type UserVerificationFilter = "all" | "verified" | "unverified";
+export type UserSubscriptionFilter = "all" | "subscribed" | "unsubscribed";
 
 export interface AdminUser {
   id: string;
@@ -12,6 +13,7 @@ export interface AdminUser {
   status: UserStatus;
   isEmailVerified: boolean;
   isBlocked: boolean;
+  isSubscribed: boolean;
   createdAt: string;
 }
 
@@ -20,6 +22,7 @@ export interface UsersFilters {
   type: "all" | UserType;
   status: "all" | UserStatus;
   verification: UserVerificationFilter;
+  subscription: UserSubscriptionFilter;
   dateFrom: string;
   dateTo: string;
 }
@@ -35,7 +38,42 @@ export interface UsersApiUser {
   type_account: UsersApiAccountType;
   approval_status: UsersApiApprovalStatus;
   email_verified_at: string | null;
+  account_status?: "active" | "inactive" | string;
+  is_subscribed?: boolean;
   created_at?: string;
+}
+
+export type SubscriptionApiAccountType = UsersApiAccountType;
+
+export interface SubscribingUser {
+  id: string;
+  fullName: string;
+  email: string;
+  accountType: UserType;
+  packageName: string;
+  packageType: string;
+  startsAt: string;
+  endsAt: string;
+}
+
+export interface SubscribingApiUser {
+  id: number;
+  subscriber?: {
+    full_name: string;
+    email: string;
+    type_account: SubscriptionApiAccountType;
+  };
+  package?: {
+    name: string;
+    type: string;
+  };
+  full_name?: string;
+  email?: string;
+  type_account?: SubscriptionApiAccountType;
+  package_name?: string;
+  package_type?: string;
+  starts_at: string;
+  ends_at: string;
 }
 
 export interface UsersApiResponse {

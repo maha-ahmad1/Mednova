@@ -2,7 +2,7 @@
 
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { AdminSidebarGroup as AdminSidebarGroupType } from "@/features/admin-layout/config/navigation";
+import type { AdminSidebarGroup as AdminSidebarGroupType } from "@/features/control-panel/admin-layout/config/navigation";
 import { SidebarSubItem } from "./SidebarSubItem";
 
 interface SidebarGroupProps {

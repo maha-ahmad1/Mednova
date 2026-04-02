@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { adminSidebarGroups } from "@/features/admin-layout/config/navigation";
-import { useAdminLogout } from "@/features/admin-auth/hooks/useAdminLogout";
+import { adminSidebarGroups } from "@/features/control-panel/admin-layout/config/navigation";
+import { useAdminLogout } from "@/features/control-panel/admin-auth/hooks/useAdminLogout";
 import { SidebarGroup } from "./SidebarGroup";
 
 interface AdminSidebarProps {

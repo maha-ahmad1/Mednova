@@ -8,16 +8,25 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminUsers } from "../hooks/useAdminUsers";
 import { useDeleteUser } from "../hooks/useDeleteUser";
+import { useActivateSubscription } from "../hooks/useActivateSubscription";
 import { useUpdateUserStatus } from "../hooks/useUpdateUserStatus";
 import type { AdminUser, UserStatus, UsersFilters } from "../types/user";
-import { filterUsersByDate, formatJoinDate } from "../utils/users";
+import { formatJoinDate } from "../utils/users";
 import { ConfirmationModal } from "./components/ConfirmationModal";
 import { EmailVerificationIndicator } from "./components/EmailVerificationIndicator";
+import { SubscriptionBadge } from "./components/SubscriptionBadge";
 import { StatusDropdown } from "./components/StatusDropdown";
 import { UserActionsDropdown } from "./components/UserActionsDropdown";
 import { UserTypeBadge } from "./components/UserTypeBadge";
@@ -26,6 +35,7 @@ import { UsersTableFilters } from "./components/UsersTableFilters";
 type PendingAction =
   | { kind: "status"; userId: string; nextStatus: UserStatus }
   | { kind: "toggle-block"; userId: string }
+  | { kind: "toggle-subscription"; userId: string; isSubscribed: boolean }
   | { kind: "delete"; userId: string }
   | { kind: "bulk-approve"; userIds: string[] }
   | null;
@@ -44,6 +54,7 @@ const initialFilters: UsersFilters = {
   type: "all",
   status: "all",
   verification: "all",
+  subscription: "all",
   dateFrom: "",
   dateTo: "",
 };
@@ -54,7 +65,10 @@ const rejectReasonSchema = z.object({
 
 type RejectReasonFormValues = z.infer<typeof rejectReasonSchema>;
 
-const getConfirmationCopy = (pendingAction: PendingAction, users: AdminUser[]) => {
+const getConfirmationCopy = (
+  pendingAction: PendingAction,
+  users: AdminUser[],
+) => {
   if (!pendingAction) {
     return {
       title: "",
@@ -87,8 +101,19 @@ const getConfirmationCopy = (pendingAction: PendingAction, users: AdminUser[]) =
   if (pendingAction.kind === "delete") {
     return {
       title: "حذف المستخدم",
-      description: "لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
+      description:
+        "لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
       confirmLabel: "حذف",
+    };
+  }
+
+  if (pendingAction.kind === "toggle-subscription") {
+    return {
+      title: pendingAction.isSubscribed ? "إلغاء الاشتراك" : "تفعيل الاشتراك",
+      description: pendingAction.isSubscribed
+        ? "هل أنت متأكد أنك تريد إلغاء اشتراك هذا المستخدم؟"
+        : "هل أنت متأكد أنك تريد تفعيل الاشتراك لهذا المستخدم؟",
+      confirmLabel: pendingAction.isSubscribed ? "إلغاء الاشتراك" : "تفعيل",
     };
   }
 
@@ -106,14 +131,24 @@ export function UsersManagementPage() {
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { users: fetchedUsers, isLoading, isFetching, isError, pagination } = useAdminUsers(
-    filters,
-    currentPage,
-    USERS_PER_PAGE,
-  );
-  const { mutateAsync: updateUserStatus, isPending: isUpdatingStatus } = useUpdateUserStatus();
-  const { mutateAsync: removeUser, isPending: isDeletingUser } = useDeleteUser();
-  const [overrides, setOverrides] = useState<Record<string, Partial<AdminUser>>>({});
+  const {
+    users: fetchedUsers,
+    isLoading,
+    isFetching,
+    isError,
+    pagination,
+  } = useAdminUsers(filters, currentPage, USERS_PER_PAGE);
+  const { mutateAsync: updateUserStatus, isPending: isUpdatingStatus } =
+    useUpdateUserStatus();
+  const { mutateAsync: removeUser, isPending: isDeletingUser } =
+    useDeleteUser();
+  const {
+    mutateAsync: activateSubscription,
+    isPending: isActivatingSubscription,
+  } = useActivateSubscription();
+  const [overrides, setOverrides] = useState<
+    Record<string, Partial<AdminUser>>
+  >({});
 
   const rejectReasonForm = useForm<RejectReasonFormValues>({
     resolver: zodResolver(rejectReasonSchema),
@@ -130,10 +165,11 @@ export function UsersManagementPage() {
     [fetchedUsers, overrides],
   );
 
-  const filteredUsers = useMemo(() => filterUsersByDate(users, filters), [users, filters]);
+  const filteredUsers = users;
 
   const allVisibleSelected =
-    filteredUsers.length > 0 && filteredUsers.every((user) => selectedRows.includes(user.id));
+    filteredUsers.length > 0 &&
+    filteredUsers.every((user) => selectedRows.includes(user.id));
 
   const openConfirmation = (action: PendingAction) => {
     setPendingAction(action);
@@ -144,7 +180,9 @@ export function UsersManagementPage() {
 
   const handleSelectAll = (checked: boolean | "indeterminate") => {
     if (!checked) {
-      setSelectedRows((prev) => prev.filter((id) => !filteredUsers.some((user) => user.id === id)));
+      setSelectedRows((prev) =>
+        prev.filter((id) => !filteredUsers.some((user) => user.id === id)),
+      );
       return;
     }
 
@@ -155,7 +193,10 @@ export function UsersManagementPage() {
     });
   };
 
-  const handleSelectRow = (userId: string, checked: boolean | "indeterminate") => {
+  const handleSelectRow = (
+    userId: string,
+    checked: boolean | "indeterminate",
+  ) => {
     setSelectedRows((prev) => {
       if (!checked) {
         return prev.filter((id) => id !== userId);
@@ -188,7 +229,8 @@ export function UsersManagementPage() {
 
         await updateUserStatus({
           userId: pendingAction.userId,
-          approvalStatus: pendingAction.nextStatus === "Approved" ? "approved" : "rejected",
+          approvalStatus:
+            pendingAction.nextStatus === "Approved" ? "approved" : "rejected",
           ...(reason ? { reason } : {}),
         });
 
@@ -212,7 +254,22 @@ export function UsersManagementPage() {
 
       case "delete": {
         await removeUser(pendingAction.userId);
-        setSelectedRows((prev) => prev.filter((id) => id !== pendingAction.userId));
+        setSelectedRows((prev) =>
+          prev.filter((id) => id !== pendingAction.userId),
+        );
+        setPendingAction(null);
+        return;
+      }
+
+      case "toggle-subscription": {
+        await activateSubscription(pendingAction.userId);
+        setOverrides((prev) => ({
+          ...prev,
+          [pendingAction.userId]: {
+            ...prev[pendingAction.userId],
+            isSubscribed: !pendingAction.isSubscribed,
+          },
+        }));
         setPendingAction(null);
         return;
       }
@@ -244,8 +301,12 @@ export function UsersManagementPage() {
   return (
     <div className="mx-auto w-full max-w-7xl space-y-5 p-6">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold text-foreground">إدارة المستخدمين</h1>
-        <p className="text-sm text-muted-foreground">إدارة حسابات المستخدمين، حالاتهم، وإجراءات الإشراف.</p>
+        <h1 className="text-2xl font-semibold text-foreground">
+          إدارة المستخدمين
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          إدارة حسابات المستخدمين، حالاتهم، وإجراءات الإشراف.
+        </p>
       </div>
 
       <UsersTableFilters
@@ -258,8 +319,14 @@ export function UsersManagementPage() {
 
       {selectedRows.length > 0 && (
         <div className="flex items-center justify-between rounded-lg border bg-white p-3">
-          <p className="text-sm text-muted-foreground">{selectedRows.length} selected</p>
-          <Button onClick={() => openConfirmation({ kind: "bulk-approve", userIds: selectedRows })}>
+          <p className="text-sm text-muted-foreground">
+            {selectedRows.length} selected
+          </p>
+          <Button
+            onClick={() =>
+              openConfirmation({ kind: "bulk-approve", userIds: selectedRows })
+            }
+          >
             Approve Selected
           </Button>
         </div>
@@ -280,6 +347,7 @@ export function UsersManagementPage() {
               <th className="px- py-3 font-medium ">نوع المستخدم</th>
               <th className="px-6 py-3 font-medium ">الحالة</th>
               <th className="px-4 py-3 font-medium">توثيق البريد</th>
+              <th className="px-4 py-3 font-medium">الاشتراك</th>
               <th className="px-4 py-3 font-medium">تاريخ الانضمام</th>
               <th className="px-4 py-3 font-medium">الإجراءات</th>
             </tr>
@@ -288,35 +356,62 @@ export function UsersManagementPage() {
           <tbody>
             {(isLoading || isFetching) &&
               Array.from({ length: SKELETON_ROWS_COUNT }).map((_, index) => (
-                <tr key={`users-skeleton-${index}`} className="border-t align-middle">
-                  <td className="px-4 py-3"><Skeleton className="h-4 w-4" /></td>
+                <tr
+                  key={`users-skeleton-${index}`}
+                  className="border-t align-middle"
+                >
+                  <td className="px-4 py-3">
+                    <Skeleton className="h-4 w-4" />
+                  </td>
                   <td className="px-4 py-3 text-right">
                     <Skeleton className="mb-2 h-4 w-32" />
                     <Skeleton className="h-3 w-40" />
                   </td>
-                  <td className="px-4 py-3"><Skeleton className="h-6 w-24" /></td>
-                  <td className="px-4 py-3"><Skeleton className="h-8 w-32" /></td>
-                  <td className="px-4 py-3"><Skeleton className="h-6 w-20" /></td>
-                  <td className="px-4 py-3"><Skeleton className="h-4 w-28" /></td>
-                  <td className="px-4 py-3"><Skeleton className="h-8 w-10" /></td>
+                  <td className="px-4 py-3">
+                    <Skeleton className="h-6 w-24" />
+                  </td>
+                  <td className="px-4 py-3">
+                    <Skeleton className="h-8 w-32" />
+                  </td>
+                  <td className="px-4 py-3">
+                    <Skeleton className="h-6 w-20" />
+                  </td>
+                  <td className="px-4 py-3">
+                    <Skeleton className="h-6 w-24" />
+                  </td>
+                  <td className="px-4 py-3">
+                    <Skeleton className="h-4 w-28" />
+                  </td>
+                  <td className="px-4 py-3">
+                    <Skeleton className="h-8 w-10" />
+                  </td>
                 </tr>
               ))}
 
             {!isLoading && !isFetching && isError && (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-destructive">
+                <td
+                  colSpan={8}
+                  className="px-4 py-10 text-center text-destructive"
+                >
                   تعذر تحميل بيانات المستخدمين. حاول مرة أخرى.
                 </td>
               </tr>
             )}
 
-            {!isLoading && !isFetching && !isError && visibleUsers.length === 0 && (
-              <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
-                  No users found.
-                </td>
-              </tr>
-            )}
+            {!isLoading &&
+              !isFetching &&
+              !isError &&
+              visibleUsers.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="px-4 py-10 text-center text-muted-foreground"
+                  >
+                    No users found.
+                  </td>
+                </tr>
+              )}
 
             {!isLoading &&
               !isFetching &&
@@ -326,13 +421,19 @@ export function UsersManagementPage() {
                   <td className="px-4 py-3">
                     <Checkbox
                       checked={selectedRows.includes(user.id)}
-                      onCheckedChange={(checked) => handleSelectRow(user.id, checked)}
+                      onCheckedChange={(checked) =>
+                        handleSelectRow(user.id, checked)
+                      }
                       aria-label={`Select ${user.fullName}`}
                     />
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <div className="font-medium text-foreground">{user.fullName}</div>
-                    <div className="text-xs text-muted-foreground">{user.email}</div>
+                    <div className="font-medium text-foreground">
+                      {user.fullName}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {user.email}
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <UserTypeBadge type={user.type} />
@@ -350,15 +451,47 @@ export function UsersManagementPage() {
                     />
                   </td>
                   <td className="px-4 py-3">
-                    <EmailVerificationIndicator isVerified={user.isEmailVerified} />
+                    <EmailVerificationIndicator
+                      isVerified={user.isEmailVerified}
+                    />
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">{formatJoinDate(user.createdAt)}</td>
+                  <td className="px-4 py-3">
+                    <SubscriptionBadge isSubscribed={user.isSubscribed} />
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {formatJoinDate(user.createdAt)}
+                  </td>
                   <td className="px-4 py-3">
                     <UserActionsDropdown
                       isBlocked={user.isBlocked}
-                      onViewDetails={() => router.push(`/control-panel/users/${user.id}`)}
-                      onToggleBlock={() => openConfirmation({ kind: "toggle-block", userId: user.id })}
-                      onDelete={() => openConfirmation({ kind: "delete", userId: user.id })}
+                      showActivateSubscription={
+                        (user.type === "Specialist" ||
+                          user.type === "Center") &&
+                        !user.isSubscribed
+                      }
+                      activateSubscriptionLabel={
+                        user.isSubscribed ? "إلغاء الاشتراك" : "تفعيل الاشتراك"
+                      }
+                      activateSubscriptionDestructive={user.isSubscribed}
+                      onViewDetails={() =>
+                        router.push(`/control-panel/users/${user.id}`)
+                      }
+                      onToggleBlock={() =>
+                        openConfirmation({
+                          kind: "toggle-block",
+                          userId: user.id,
+                        })
+                      }
+                      onActivateSubscription={() =>
+                        openConfirmation({
+                          kind: "toggle-subscription",
+                          userId: user.id,
+                          isSubscribed: user.isSubscribed,
+                        })
+                      }
+                      onDelete={() =>
+                        openConfirmation({ kind: "delete", userId: user.id })
+                      }
                     />
                   </td>
                 </tr>
@@ -394,7 +527,9 @@ export function UsersManagementPage() {
         }}
         onConfirm={confirmAction}
         confirmDisabled={isRejectAction && !rejectReasonForm.formState.isValid}
-        isConfirming={isUpdatingStatus || isDeletingUser}
+        isConfirming={
+          isUpdatingStatus || isDeletingUser || isActivatingSubscription
+        }
       >
         {isRejectAction && (
           <Form {...rejectReasonForm}>

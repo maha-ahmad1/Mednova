@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import type { AdminSidebarSubItem } from "@/features/admin-layout/config/navigation";
+import type { AdminSidebarSubItem } from "@/features/control-panel/admin-layout/config/navigation";
 
 interface SidebarSubItemProps {
   item: AdminSidebarSubItem;

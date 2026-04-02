@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAdminLogout } from "@/features/admin-auth/hooks/useAdminLogout";
+import { useAdminLogout } from "@/features/control-panel/admin-auth/hooks/useAdminLogout";
 
 export function ProfileDropdown() {
   const { logout } = useAdminLogout();

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { adminSidebarGroups } from "@/features/admin-layout/config/navigation";
+import { adminSidebarGroups } from "@/features/control-panel/admin-layout/config/navigation";
 import { AdminSidebar } from "./components/AdminSidebar";
 import { TopNavbar } from "./components/TopNavbar";
 

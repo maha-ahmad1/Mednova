@@ -1,17 +1,14 @@
 export const categorizeTimeSlots = (slots: string[]): {
   morning: string[];
-  afternoon: string[];
   evening: string[];
 } => {
   const morningSlots: string[] = [];
-  const afternoonSlots: string[] = [];
   const eveningSlots: string[] = [];
 
   slots.forEach((slot) => {
     try {
       const cleanSlot = slot.trim();
       
-      // محاولة استخراج الساعة والدقائق
       const timeMatch = cleanSlot.match(/(\d{1,2}):(\d{2})/);
       
       if (timeMatch) {
@@ -19,20 +16,21 @@ export const categorizeTimeSlots = (slots: string[]): {
         const minute = timeMatch[2];
         
         // تصنيف الوقت
-        if (hour >= 5 && hour < 12) {
+        if (hour >= 0 && hour < 12) {
           morningSlots.push(`${hour.toString().padStart(2, '0')}:${minute}`);
-        } else if (hour >= 12 && hour < 17) {
-          afternoonSlots.push(`${hour.toString().padStart(2, '0')}:${minute}`);
-        } else if (hour >= 17 || hour < 5) {
+        } else {
           eveningSlots.push(`${hour.toString().padStart(2, '0')}:${minute}`);
         }
       } else {
-        // إذا لم يكن بالتنسيق المتوقع، أضفه حسب الساعة إذا أمكن
+        // إذا لم يكن بالتنسيق المتوقع، أضفه حسب الدلالة النصية
         if (cleanSlot.toLowerCase().includes('morning') || cleanSlot.toLowerCase().includes('صباح')) {
           morningSlots.push(cleanSlot);
-        } else if (cleanSlot.toLowerCase().includes('afternoon') || cleanSlot.toLowerCase().includes('ظهر')) {
-          afternoonSlots.push(cleanSlot);
-        } else if (cleanSlot.toLowerCase().includes('evening') || cleanSlot.toLowerCase().includes('مساء')) {
+        } else if (
+          // cleanSlot.toLowerCase().includes('afternoon') ||
+          // cleanSlot.toLowerCase().includes('ظهر') ||
+          cleanSlot.toLowerCase().includes('evening') ||
+          cleanSlot.toLowerCase().includes('مساء')
+        ) {
           eveningSlots.push(cleanSlot);
         }
       }
@@ -53,7 +51,6 @@ export const categorizeTimeSlots = (slots: string[]): {
 
   return {
     morning: sortTimes(morningSlots),
-    afternoon: sortTimes(afternoonSlots),
     evening: sortTimes(eveningSlots),
   };
 };

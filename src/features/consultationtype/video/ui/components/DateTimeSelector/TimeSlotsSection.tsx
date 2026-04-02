@@ -6,7 +6,7 @@ interface Props {
   selectedDate?: Date
   selectedTime?: string
   setSelectedTime: (t: string) => void
-  groupedSlots: { morning: string[]; afternoon: string[]; evening: string[] }
+  groupedSlots: { morning: string[]; evening: string[] }
   isLoadingSlots?: boolean
   availableSlotsLength?: number
 }
@@ -57,15 +57,6 @@ export default function TimeSlotsSection({
         <TimeSlotGroup
           title="الفترة الصباحية"
           times={groupedSlots.morning}
-          selectedTime={selectedTime}
-          onSelect={setSelectedTime}
-        />
-      )}
-
-      {groupedSlots.afternoon.length > 0 && (
-        <TimeSlotGroup
-          title="بعد الظهر"
-          times={groupedSlots.afternoon}
           selectedTime={selectedTime}
           onSelect={setSelectedTime}
         />

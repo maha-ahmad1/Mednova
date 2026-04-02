@@ -1,6 +1,8 @@
 import { format } from "date-fns";
 import type {
   AdminUser,
+  SubscribingApiUser,
+  SubscribingUser,
   UserStatus,
   UserType,
   UsersApiApprovalStatus,
@@ -13,6 +15,10 @@ const accountTypeMap: Record<UsersApiAccountType, UserType> = {
   patient: "Patient",
   therapist: "Specialist",
   rehabilitation_center: "Center",
+};
+
+export const mapAccountTypeToUserType = (accountType: UsersApiAccountType): UserType => {
+  return accountTypeMap[accountType];
 };
 
 const approvalStatusMap: Record<UsersApiApprovalStatus, UserStatus> = {
@@ -37,11 +43,25 @@ export const mapApiUserToAdminUser = (user: UsersApiUser): AdminUser => ({
   id: String(user.id),
   fullName: user.full_name,
   email: user.email,
-  type: accountTypeMap[user.type_account],
+  type: mapAccountTypeToUserType(user.type_account),
   status: approvalStatusMap[user.approval_status],
   isEmailVerified: Boolean(user.email_verified_at),
   isBlocked: false,
+  isSubscribed: user.account_status === "active",
   createdAt: user.created_at ?? "",
+});
+
+export const mapApiSubscribingUser = (user: SubscribingApiUser): SubscribingUser => ({
+  id: String(user.id),
+  fullName: user.subscriber?.full_name ?? user.full_name ?? "-",
+  email: user.subscriber?.email ?? user.email ?? "-",
+  accountType: mapAccountTypeToUserType(
+    user.subscriber?.type_account ?? user.type_account ?? "patient",
+  ),
+  packageName: user.package?.name ?? user.package_name ?? "-",
+  packageType: user.package?.type ?? user.package_type ?? "-",
+  startsAt: user.starts_at,
+  endsAt: user.ends_at,
 });
 
 export const buildUsersQueryParams = (
@@ -56,6 +76,11 @@ export const buildUsersQueryParams = (
       ? { verified: 1 }
       : filters.verification === "unverified"
         ? { verified: 0 }
+        : {}),
+    ...(filters.subscription === "subscribed"
+      ? { account_status: "active" }
+      : filters.subscription === "unsubscribed"
+        ? { account_status: "inactive" }
         : {}),
     ...(pagination?.page ? { page: pagination.page } : {}),
     ...(pagination?.per_page ? { per_page: pagination.per_page } : {}),
@@ -74,29 +99,4 @@ export const formatJoinDate = (value: string): string => {
   }
 
   return format(date, "MMM dd, yyyy");
-};
-
-export const filterUsersByDate = (
-  users: AdminUser[],
-  filters: UsersFilters,
-): AdminUser[] => {
-  return users.filter((user) => {
-    const createdAt = new Date(user.createdAt).getTime();
-
-    if (Number.isNaN(createdAt)) {
-      return !filters.dateFrom && !filters.dateTo;
-    }
-
-    const fromDate = filters.dateFrom
-      ? new Date(`${filters.dateFrom}T00:00:00`).getTime()
-      : undefined;
-    const toDate = filters.dateTo
-      ? new Date(`${filters.dateTo}T23:59:59`).getTime()
-      : undefined;
-
-    const matchesFrom = fromDate === undefined || createdAt >= fromDate;
-    const matchesTo = toDate === undefined || createdAt <= toDate;
-
-    return matchesFrom && matchesTo;
-  });
 };

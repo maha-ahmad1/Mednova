@@ -35,7 +35,7 @@ const handleConsultationEvent = (
   eventType: "requested" | "updated",
   params: Omit<SubscribeConsultationEventsParams, "channel" | "setSubscribed" | "channelName">,
 ) => {
-  const eventKey = `${eventType}_${event.id}_${event.status}_${Date.now()}`;
+  const eventKey = `${eventType}_${event.id}_${event.status}`;
 
   if (!params.deduplicator.markIfNew(eventKey)) {
     return;

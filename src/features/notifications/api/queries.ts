@@ -14,7 +14,10 @@ import {
 import { mapApiResponseToNotificationsPage } from './mapper';
 import { useFetcher } from '@/hooks/useFetcher';
 
-
+const normalizeCreatedAt = (created_at?: string, createdAt?: string): string => {
+  const parsed = new Date(created_at || createdAt || new Date().toISOString());
+  return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+};
 
 export const fetchNotifications = async (
   axiosInstance: ReturnType<typeof useAxiosInstance>,
@@ -36,7 +39,7 @@ export const fetchNotifications = async (
     })(),
     data: notif.data || {},
     read: !!notif.read_at,
-    createdAt: notif.created_at || String(notif.id),
+    createdAt: normalizeCreatedAt(notif.created_at),
     source: 'api' as const,
   }));
 };

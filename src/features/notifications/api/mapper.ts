@@ -1,5 +1,10 @@
 import { Notification, NotificationType, ApiNotification, ApiResponse, NotificationsPageResult } from '../types';
 
+const normalizeCreatedAt = (created_at?: string, createdAt?: string): string => {
+  const parsed = new Date(created_at || createdAt || new Date().toISOString());
+  return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+};
+
 
 export const mapApiTypeToNotificationType = (type: string): NotificationType => {
   const typeMap: Record<string, NotificationType> = {
@@ -41,7 +46,7 @@ export const mapApiNotificationToNotification = (
   })(),
   data: (apiNotif.data as Record<string, unknown>) || {},
   read: !!apiNotif.read_at,
-  createdAt: apiNotif.created_at || String(apiNotif.id),
+  createdAt: normalizeCreatedAt(apiNotif.created_at),
   source: 'api',
 });
 

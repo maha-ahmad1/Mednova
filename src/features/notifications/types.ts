@@ -28,7 +28,7 @@ export interface Notification {
   data: Record<string, unknown>;
   read: boolean;
   createdAt: string;
-  source: 'api' | 'pusher';
+  source: string;
 }
 
 export type NotificationType = 
@@ -67,7 +67,7 @@ export interface NotificationItemProps {
   data: NotificationData;
   read: boolean;
   createdAt: string;
-  source: "api" | "pusher";
+  source: string;
   onMarkAsRead: (id: string) => void;
   getIcon: (type: NotificationType) => ReactNode;
   getColor: (type: NotificationType) => string;

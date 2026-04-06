@@ -1,5 +1,6 @@
 import ChatPage from "@/features/chat/ui/ChatPage";
 
+export const dynamic = 'force-dynamic';
 
 export default function Chat() {
   return (

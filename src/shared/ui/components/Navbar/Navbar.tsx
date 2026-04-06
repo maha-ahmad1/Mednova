@@ -8,6 +8,7 @@ import { Logo } from "@/shared/ui/components/Logo";
 import { AuthActions } from "./AuthActions";
 import MobileMenu from "./MobileMenu";
 import { DesktopNavLinks } from "./DesktopNavLinks";
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export interface NavbarProps {
   variant?: "landing" | "dashboard";
@@ -31,7 +32,7 @@ export default function Navbar({
           ${className}
         `}
       >
-        <div className="flex items-center gap-4 flex-1" dir="rtl">
+        <div className="flex items-center gap-4 flex-1">
           <Button
             variant="ghost"
             size="icon"
@@ -63,6 +64,7 @@ export default function Navbar({
           )}
         </div>
 
+        <LanguageSwitcher />
         <AuthActions />
       </header>
 

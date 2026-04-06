@@ -1,50 +1,20 @@
-import type React from "react";
-import type { Metadata } from "next";
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { Analytics } from "@vercel/analytics/next"
-import "./globals.css";
-import { Suspense } from "react";
-import { Cairo } from "next/font/google";
-import { Providers } from "../providers/QueryClientProvider";
-import { SessionProviderWrapper } from "@/providers/SessionProviderWrapper";
-import { Toaster } from "@/components/ui/sonner";
-import "leaflet/dist/leaflet.css";
-// import NavbarWrapper from "@/components/ui/NavbarWrapper";
-// import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
- import EchoProvider from "@/providers/ClientEchoWrapper";
-import { StoreDebugger } from "@/lib/StoreDebugger";
-
-const cairo = Cairo({
-  subsets: ["arabic"],
-  weight: ["400", "700"],
-  variable: "--font-cairo",
-});
-export const metadata: Metadata = {
-  title: "MEDNOVA - Medical Innovation",
-  description: "Medical Innovation",
-};
-
-export default async function RootLayout({
+import './globals.css';
+// Accept locale, dir, and messages as props from child layout
+export default function RootLayout({
   children,
-}: Readonly<{
+  locale = 'en',
+  dir = 'ltr',
+  messages
+}: {
   children: React.ReactNode;
-}>) {
+  locale?: string;
+  dir?: string;
+  messages: Record<string, string>
+}) {
   return (
-    <html lang="ar" dir="rtl">
-      <body className={cairo.variable}>
-        <Providers>
-          <SessionProviderWrapper>
-            <Suspense fallback={null}>
-              <EchoProvider>
-                <StoreDebugger />
-                <main className="min-h-screen">{children}</main>
-              </EchoProvider>
-              <Toaster richColors position="top-center" />
-            </Suspense>
-            <SpeedInsights />
-            <Analytics />
-          </SessionProviderWrapper>
-        </Providers>
+    <html lang={locale} dir={dir} suppressHydrationWarning>
+      <body dir={dir} suppressHydrationWarning>
+        {children}
       </body>
     </html>
   );

@@ -1,0 +1,119 @@
+{
+  "navbar": {
+    "search": "Search for user, appointment, or report...",
+    "settings": "Settings",
+    "help": "Help",
+    "logout": "Logout",
+    "login": "Login",
+    "home": "Home",
+    "specialists": "Specialists",
+    "programs": "Rehabilitation Programs",
+    "notification": "Notifications",
+    "devices": "Devices",
+    "smartGlove": "Smart Glove",
+    "language": "Language",
+    "en": "🇺🇸 English",
+    "ar": "🇸🇦 Arabic"
+  },
+  "specialists": {
+    "title": "Specialists & Centers",
+    "all": "All",
+    "searchLabel": "Search specialists",
+    "searchPlaceholder": "Type specialist name...",
+    "search": "Search by name or specialty...",
+    "notFound": "No specialists or centers match your search",
+    "filter": "Reset filters",
+    "noResultsTitle": "No results found",
+    "noResultsDesc": "No specialists match your search",
+    "viewProfile": "View profile"
+  },
+  "hero": {
+    "title": "Your recovery starts with Mednova",
+    "heading1": "Your comfort",
+    "heading2": "starts here",
+    "description": "Restore your health with top physiotherapy specialists",
+    "start": "Start now",
+    "learn": "Learn more",
+    "specialists": "Certified specialists",
+    "patients": "Recovered patients",
+    "satisfaction": "Satisfaction rate",
+    "chat": "Chat consultation",
+    "instant": "Instant reply",
+    "video": "Video consultation",
+    "face": "Face to face"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "tryAgain": "Try Again",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "pageNotFound": "404 - Page Not Found",
+    "pageNotFoundDesc": "The page you're looking for doesn't exist.",
+    "goHome": "Go Home"
+  },
+  "programs": {
+    "all": "All",
+    "sort": "Sort",
+    "searchLabel": "Search programs",
+    "searchPlaceholder": "Type program name...",
+    "activeFilters": "Active filters",
+    "clearAllFilters": "Clear filters",
+    "showingResults": "Showing {count} results",
+    "sortedBy": "Sorted by {sort}",
+    "noResultsTitle": "No results found",
+    "noResultsDesc": "No programs match your search",
+    "showAllPrograms": "Show all programs",
+    "programsTitle": "Rehabilitation Programs",
+    "programsDescription": "Browse the best rehabilitation programs",
+    "certifiedPrograms": "Certified programs",
+    "availablePrograms": "{count} available programs",
+    "viewDetails": "View details",
+    "sortOptions": {
+      "newest": "Newest",
+      "mostEnrolled": "Most enrolled",
+      "topRated": "Top rated",
+      "lowestPrice": "Lowest price",
+      "highestPrice": "Highest price"
+    },
+    "ratingOptions": {
+      "allRatings": "All ratings",
+      "fourAndUp": "4+ stars",
+      "threeAndUp": "3+ stars"
+    }
+  },
+  "whyMednova": {
+    "badge": "Why choose Mednova?",
+    "imageAlt": "Why Mednova image",
+    "title1": "The",
+    "brand": "Mednova",
+    "title2": "platform puts your care first",
+    "desc": "Mednova platform puts your care first, combining specialized physiotherapy with smart services designed for your comfort.",
+    "features": [
+      { "title": "Quick Booking", "desc": "Flexible and easy appointments" },
+      { "title": "Instant Consultations", "desc": "24/7 support available" },
+      { "title": "Smart Health File", "desc": "Comprehensive treatment tracking" },
+      { "title": "Specialized Expertise", "desc": "Top specialists in their fields" }
+    ]
+  },
+  "smartGlove": {
+    "badge": "Advanced medical technology",
+    "title": "Smart Glove from Mednova",
+    "desc": "A smart device to help you recover hand movement at home with ease and efficiency.",
+    "features": [
+      { "title": "Home Use", "desc": "No need to visit a center" },
+      { "title": "Real Results", "desc": "Gradual improvement" },
+      { "title": "Comfort & Efficiency", "desc": "Ergonomic design" },
+      { "title": "Smart Technology", "desc": "Latest innovations" }
+    ],
+    "cta": "Learn more about the smart glove"
+  }
+}

@@ -1,0 +1,31 @@
+import { HeroSection } from "@/features/auth/ui/HeroSection";
+import { Logo } from "@/shared/ui/components/Logo";
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+
+export default async function AuthLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const messages = await getMessages();
+
+  return (
+    <NextIntlClientProvider messages={messages}>
+      <div className="bg-white h-screen">
+        <div className="h-full grid lg:grid-cols-2 items-stretch gap-0">
+          <div className="flex flex-col items-center justify-center p-4 lg:p-8">
+            <div className="w-full max-w-md lg:max-w-lg">
+              <Logo />
+              {children}
+            </div>
+          </div>
+
+          <div className="hidden lg:block fixed inset-y-0 left-0 w-1/2 z-0">
+            <HeroSection />
+          </div>
+        </div>
+      </div>
+    </NextIntlClientProvider>
+  );
+}

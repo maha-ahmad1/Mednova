@@ -1,7 +1,10 @@
 "use client";
+
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export default function WhyMednova() {
+  const t = useTranslations("whyMednova");
   return (
     <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#32A88D]/5 via-white to-blue-50/30 overflow-hidden">
       {/* أشكال خلفية دائرية */}
@@ -15,16 +18,16 @@ export default function WhyMednova() {
             {/* شارة */}
             <div className="inline-flex items-center gap-2 bg-[#32A88D]/10 text-[#32A88D] px-4 py-2 rounded-full text-sm font-medium mb-6">
               <div className="w-2 h-2 bg-[#32A88D] rounded-full animate-pulse"></div>
-              <span>لماذا نختار مدنوفا؟</span>
+              <span>{t("badge")}</span>
             </div>
 
             {/* العنوان الرئيسي */}
             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight mb-6">
-              منصة{" "}
+              {t("title1")} {" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#32A88D] to-[#2a8a7a]">
-                مدنوفا
+                {t("brand")}
               </span>{" "}
-              تضع رعايتك في المقدمة
+              {t("title2")}
             </h2>
 
             {/* الخط الفاصل */}
@@ -32,51 +35,49 @@ export default function WhyMednova() {
 
             {/* الوصف */}
             <p className="text-lg text-gray-600 leading-8 mb-8 max-w-2xl mx-auto lg:mx-0">
-              منصة مدنوفا تضع رعايتك في المقدمة، فهي تجمع بين التخصص الدقيق في
-              العلاج الطبيعي والخدمات الذكية المصممة لراحتك، من الحجز السريع، إلى
-              الاستشارات الفورية، والملف الصحي الذكي، لتمنحك تجربة علاجية متكاملة
-              وسهلة في متناولك.
+              {t("desc")}
             </p>
 
             {/* نقاط مميزة */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto lg:mx-0">
+              {/* Feature 1 */}
               <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
                 <div className="w-10 h-10 bg-[#32A88D]/10 rounded-xl flex items-center justify-center flex-shrink-0">
                   <div className="w-4 h-4 bg-[#32A88D] rounded-full"></div>
                 </div>
                 <div className="text-right">
-                  <h4 className="font-bold text-gray-800 mb-1">حجز سريع</h4>
-                  <p className="text-sm text-gray-600">مواعيد مرنة وسهلة الحجز</p>
+                  <h4 className="font-bold text-gray-800 mb-1">{t("features.0.title")}</h4>
+                  <p className="text-sm text-gray-600">{t("features.0.desc")}</p>
                 </div>
               </div>
-
+              {/* Feature 2 */}
               <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
                 <div className="w-10 h-10 bg-[#32A88D]/10 rounded-xl flex items-center justify-center flex-shrink-0">
                   <div className="w-4 h-4 bg-[#32A88D] rounded-full"></div>
                 </div>
                 <div className="text-right">
-                  <h4 className="font-bold text-gray-800 mb-1">استشارات فورية</h4>
-                  <p className="text-sm text-gray-600">دعم متاح على مدار الساعة</p>
+                  <h4 className="font-bold text-gray-800 mb-1">{t("features.1.title")}</h4>
+                  <p className="text-sm text-gray-600">{t("features.1.desc")}</p>
                 </div>
               </div>
-
+              {/* Feature 3 */}
               <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
                 <div className="w-10 h-10 bg-[#32A88D]/10 rounded-xl flex items-center justify-center flex-shrink-0">
                   <div className="w-4 h-4 bg-[#32A88D] rounded-full"></div>
                 </div>
                 <div className="text-right">
-                  <h4 className="font-bold text-gray-800 mb-1">ملف صحي ذكي</h4>
-                  <p className="text-sm text-gray-600">تتبع شامل لمسار العلاج</p>
+                  <h4 className="font-bold text-gray-800 mb-1">{t("features.2.title")}</h4>
+                  <p className="text-sm text-gray-600">{t("features.2.desc")}</p>
                 </div>
               </div>
-
+              {/* Feature 4 */}
               <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
                 <div className="w-10 h-10 bg-[#32A88D]/10 rounded-xl flex items-center justify-center flex-shrink-0">
                   <div className="w-4 h-4 bg-[#32A88D] rounded-full"></div>
                 </div>
                 <div className="text-right">
-                  <h4 className="font-bold text-gray-800 mb-1">تخصص دقيق</h4>
-                  <p className="text-sm text-gray-600">أفضل المختصين في مجالاتهم</p>
+                  <h4 className="font-bold text-gray-800 mb-1">{t("features.3.title")}</h4>
+                  <p className="text-sm text-gray-600">{t("features.3.desc")}</p>
                 </div>
               </div>
             </div>
@@ -94,7 +95,7 @@ export default function WhyMednova() {
                   src={"/images/home/whyMednova.jpg"}
                   width={400}
                   height={500}
-                  alt="لماذا منصة مدنوفا"
+                  alt={t("imageAlt")}
                   className="w-full h-full object-cover"
                 />
                 

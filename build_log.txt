@@ -1,0 +1,16 @@
+
+> mednova@0.1.0 build
+> next build
+
+   ▲ Next.js 15.5.9
+   - Experiments (use with caution):
+     · clientTraceMetadata
+
+
+> Build error occurred
+[Error: EINVAL: invalid argument, readlink 'C:\Users\USER PC\OneDrive\Desktop\Mednova\.next\static\chunks\app\layout.js'] {
+  errno: -4071,
+  code: 'EINVAL',
+  syscall: 'readlink',
+  path: 'C:\\Users\\USER PC\\OneDrive\\Desktop\\Mednova\\.next\\static\\chunks\\app\\layout.js'
+}

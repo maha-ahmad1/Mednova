@@ -9,6 +9,7 @@ import { Program } from "@/features/programs/types/program";
 import { RatingBadge } from "@/shared/ui/components/RatingBadge";
 import { LockedContentOverlay } from "@/shared/ui/components/LockedContentOverlay";
 import { getProgramAccessState } from "@/features/programs/utils/access";
+import { useTranslations } from 'next-intl';
 // export interface ProgramCardData {
 //   id: number;
 //   title: string;
@@ -43,6 +44,7 @@ export function ProgramCard({
   showEnrollments = true,
   showStatus = true,
 }: ProgramCardProps) {
+  const t = useTranslations('programs');
   const imageUrl =
     program.cover_image || "/images/home/Sports-rehabilitation.jpg";
   const rating = Number(program.ratings_avg_rating) || 0;
@@ -56,8 +58,8 @@ export function ProgramCard({
         <LockedContentOverlay
           isLocked={isLocked}
           className="relative"
-          description="اشترك للوصول إلى البرنامج الكامل"
-          ctaLabel="اشترك"
+          description={t('subscribeFullAccess')}
+          ctaLabel={t('subscribeFullAccess').split(' ')[0]}
           ctaHref={`/programs/${program.id}`}
         >
           <Image
@@ -79,7 +81,7 @@ export function ProgramCard({
         {variant === "top-rated" ? (
           <div className="absolute top-4 left-4">
             <Badge className="bg-white/90 backdrop-blur-sm text-[#32A88D] px-3 py-1 rounded-full text-xs font-medium border border-[#32A88D]/20">
-              الأكثر طلباً
+              {t('topRequested')}
             </Badge>
           </div>
         ) : (
@@ -88,7 +90,7 @@ export function ProgramCard({
           program.is_approved === 1 && (
             <div className="absolute top-4 left-4">
               <Badge className="bg-emerald-400 text-[#0f3d35] px-3 py-1 rounded-full text-xs font-semibold">
-                متاح الآن
+                {t('availableNow')}
               </Badge>
             </div>
           )
@@ -125,7 +127,7 @@ export function ProgramCard({
           program.enrollments_count !== undefined && (
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
               <Clock className="w-4 h-4" />
-              <span>{program.enrollments_count} شخص مسجل</span>
+              <span>{t('registeredUsers', {count: program.enrollments_count})}</span>
             </div>
           )}
 
@@ -148,7 +150,7 @@ export function ProgramCard({
             <Link href={`/programs/${program.id}`}>
               <Button className="cursor-pointer bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-6 py-2 transition-all duration-300 shadow-lg hover:shadow-xl">
                 <Eye className="ml-2 w-4 h-4" />
-                عرض التفاصيل
+                {t('viewDetails')}
               </Button>
             </Link>
           </div>

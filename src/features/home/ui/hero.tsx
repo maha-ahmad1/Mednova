@@ -1,5 +1,5 @@
 "use client";
-
+import { useTranslations } from 'next-intl';
 import { Button } from "@/components/ui/button";
 import {
   MessageCircle,
@@ -14,7 +14,7 @@ import  Navbar  from "@/shared/ui/components/Navbar/Navbar";
 
 
 export default function Hero() {
-
+const t = useTranslations("hero");
   return (
     <>
           <Navbar variant="landing" />        
@@ -33,21 +33,20 @@ export default function Hero() {
             {/* شارة */}
             <div className="inline-flex items-center gap-2 bg-[#32A88D]/10 text-[#32A88D] px-4 py-2 rounded-full text-sm font-medium mb-6">
               <div className="w-2 h-2 bg-[#32A88D] rounded-full animate-pulse"></div>
-              <span>رحلتك للشفاء تبدأ بميدنوفا</span>
+              <span>{t("title")}</span>
             </div>
 
             {/* العنوان الرئيسي */}
             <h1 className="sm:text-4xl text-6xl md:text-5xl lg:text-6xl font-extrabold text-gray-800 leading-tight mb-6">
-              راحة جسدك{" "}
+              {t("heading1")}{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#32A88D] to-[#2a8a7a]">
-                تبدأ من هنا
+                {t("heading2")}
               </span>
             </h1>
 
             {/* الوصف */}
             <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto lg:mx-0 mb-16 leading-relaxed">
-              استعد صحتك وثقتك بنفسك بمساعدة أفضل أخصائي العلاج الطبيعي
-              والتأهيلي. رحلتك نحو التعافي تبدأ بخطوة واحدة مع فريقنا المتخصص.
+              {t("description")}
             </p>
 
             {/* أزرار الإجراء */}
@@ -58,7 +57,7 @@ export default function Hero() {
                 asChild
               >
                 <Link href="/specialists">
-                  ابدأ البحث الآن
+                  {t("start")}
                   <ArrowLeft className="mr-2 w-5 h-5" />
                 </Link>
               </Button>
@@ -69,7 +68,7 @@ export default function Hero() {
                   size="lg"
                   className="cursor-pointer border-[#32A88D] w-[40%] md:w-[80%] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-8 py-4 text-lg transition-all duration-300"
                 >
-                  تعرف أكثر
+                  {t("learn")}
                 </Button>
               </Link>
             </div>
@@ -78,15 +77,15 @@ export default function Hero() {
             <div className="grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0">
               <div className="text-center">
                 <div className="text-2xl font-bold text-[#32A88D]">500+</div>
-                <div className="text-sm text-gray-600">مختص معتمد</div>
+                <div className="text-sm text-gray-600">{t("specialists")}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-[#32A88D]">10K+</div>
-                <div className="text-sm text-gray-600">مريض شفي</div>
+                <div className="text-sm text-gray-600">{t("patients")}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-[#32A88D]">98%</div>
-                <div className="text-sm text-gray-600">رضا العملاء</div>
+                <div className="text-sm text-gray-600">{t("satisfaction")}</div>
               </div>
             </div>
           </div>
@@ -107,7 +106,6 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* العناصر العائمة */}
               <div className="absolute -top-4 -right-4 z-20">
                 <div className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 animate-float">
                   <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
@@ -115,9 +113,9 @@ export default function Hero() {
                   </div>
                   <div>
                     <div className="text-sm font-bold text-gray-800">
-                      استشارة نصية
+                      {t("chat")}
                     </div>
-                    <div className="text-xs text-gray-600">رد فوري</div>
+                    <div className="text-xs text-gray-600">{t("instant")}</div>
                   </div>
                 </div>
               </div>
@@ -132,9 +130,9 @@ export default function Hero() {
                   </div>
                   <div>
                     <div className="text-sm font-bold text-gray-800">
-                      استشارة فيديو
+                      {t("video")}
                     </div>
-                    <div className="text-xs text-gray-600">وجه لوجه</div>
+                    <div className="text-xs text-gray-600">{t("face")}</div>
                   </div>
                 </div>
               </div>

@@ -32,6 +32,18 @@ const resolveConsultationNotificationType = (
     return "consultation_accepted";
   }
 
+  if (event.status === "active") {
+    return "consultation_active";
+  }
+
+  if (event.status === "completed") {
+    return "consultation_completed";
+  }
+
+  if (event.status === "cancelled") {
+    return "consultation_cancelled";
+  }
+
   return notificationType;
 };
 
@@ -39,6 +51,7 @@ export const createConsultationNotification = (
   event: ConsultationEvent,
   notificationType: Notification["type"],
   title: string,
+  source: Notification["source"] = "pusher",
 ): Notification => {
   const resolvedType = resolveConsultationNotificationType(event, notificationType);
 
@@ -49,7 +62,7 @@ export const createConsultationNotification = (
     message: event.message,
     read: false,
     createdAt: normalizeCreatedAt(event.created_at || event.updated_at),
-    source: "pusher",
+    source,
     data: {
       consultation_id: event.id,
       patient_id: event.patient_id,
@@ -66,6 +79,7 @@ export const createConsultationNotification = (
 
 export const createConsultationMessageNotification = (
   event: ConsultationMessageEvent,
+  source: Notification["source"] = "pusher",
 ): Notification => {
   const msg =
     typeof event.message === "string" && event.message.length > 0
@@ -79,13 +93,14 @@ export const createConsultationMessageNotification = (
     message: msg,
     read: false,
     createdAt: normalizeCreatedAt(event.created_at || event.createdAt),
-    source: "pusher",
+    source,
     data: event as Notification["data"],
   };
 };
 
 export const createSystemNotification = (
   event: SystemNotificationEvent,
+  source: Notification["source"] = "pusher-system",
 ): Notification => {
   return {
     id: `system_${Date.now()}`,
@@ -94,18 +109,21 @@ export const createSystemNotification = (
     message: event.message,
     read: false,
     createdAt: normalizeCreatedAt(event.created_at || event.createdAt),
-    source: "pusher",
+    source,
     data: event as Notification["data"],
   };
 };
 
-export const createAccountStatusNotification = (event: {
-  status: string;
-  reason?: string;
-  message?: string;
-  created_at?: string;
-  createdAt?: string;
-}): Notification => {
+export const createAccountStatusNotification = (
+  event: {
+    status: string;
+    reason?: string;
+    message?: string;
+    created_at?: string;
+    createdAt?: string;
+  },
+  source: Notification["source"] = "pusher-customer",
+): Notification => {
   return {
     id: `account_${event.status}_${Date.now()}`,
     type: event.status === "approved" ? "account_approved" : "account_rejected",
@@ -117,7 +135,7 @@ export const createAccountStatusNotification = (event: {
         : "نأسف، لم يتم قبول حسابك"),
     read: false,
     createdAt: normalizeCreatedAt(event.created_at || event.createdAt),
-    source: "pusher",
+    source,
     data: event,
   };
 };

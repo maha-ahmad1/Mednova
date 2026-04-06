@@ -17,8 +17,17 @@ export const subscribeSystemEvents = ({
   addNotification,
 }: SubscribeSystemEventsParams): void => {
   publicChannel.listen("SystemNotification", (event: SystemNotificationEvent) => {
-    console.log("🔔 إشعار نظامي:", event);
-    const notification = createSystemNotification(event);
+    console.log("📡 EVENT RECEIVED", {
+      channel: "system",
+      eventType: "SystemNotification",
+      consultationId:
+        (event as { consultation_id?: number; id?: number })?.consultation_id ||
+        (event as { id?: number })?.id,
+      status: (event as { status?: string })?.status,
+      rawEvent: event,
+    });
+
+    const notification = createSystemNotification(event, "pusher-system");
     addNotification(notification);
 
     toast.info(event.message, {

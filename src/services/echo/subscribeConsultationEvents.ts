@@ -28,6 +28,8 @@ interface SubscribeConsultationEventsParams {
     markIfNew: (key: string) => boolean;
     removeAfter: (key: string, delayMs: number) => void;
   };
+  channelSource: Notification['source'];
+  channelLabel: 'patient' | 'consultant';
 }
 
 const handleConsultationEvent = (
@@ -41,11 +43,12 @@ const handleConsultationEvent = (
     return;
   }
 
-  console.log(`📨 استقبال حدث ${eventType}:`, {
-    id: event.id,
-    status: event.status,
-    type: event.consultation_type,
+  console.log("📡 EVENT RECEIVED", {
+    channel: params.channelLabel,
     eventType,
+    consultationId: event?.id,
+    status: event?.status,
+    rawEvent: event,
   });
 
   const existingRequest = params.requestsRef.current.find((r) => r.id === event.id);
@@ -67,6 +70,7 @@ const handleConsultationEvent = (
       event,
       "consultation_requested",
       "طلب استشارة جديد",
+      params.channelSource,
     );
     params.addNotification(notification);
 
@@ -110,7 +114,7 @@ const handleConsultationEvent = (
         break;
     }
 
-    const notification = createConsultationNotification(event, notificationType, title);
+    const notification = createConsultationNotification(event, notificationType, title, params.channelSource);
     params.addNotification(notification);
 
     toast.info(title, {
@@ -131,6 +135,8 @@ export const subscribeConsultationEvents = (
     updateRequest: params.updateRequest,
     addNotification: params.addNotification,
     deduplicator: params.deduplicator,
+    channelSource: params.channelSource,
+    channelLabel: params.channelLabel,
   };
 
   params.channel.listen("ConsultationRequestedBroadcast", (event) => {
@@ -143,8 +149,17 @@ export const subscribeConsultationEvents = (
 
   params.channel.listen("ConsultationMessageBroadcast", (event) => {
     console.log("💬 رسالة جديدة في الاستشارة:", event);
+    console.log("📡 EVENT RECEIVED", {
+      channel: params.channelLabel,
+      eventType: "message",
+      consultationId: (event as ConsultationMessageEvent)?.consultation_id,
+      status: (event as { status?: string })?.status,
+      rawEvent: event,
+    });
+
     const notification = createConsultationMessageNotification(
       event as ConsultationMessageEvent,
+      params.channelSource,
     );
     params.addNotification(notification);
   });

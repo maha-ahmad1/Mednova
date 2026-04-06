@@ -35,7 +35,7 @@ export interface Notification {
     | Record<string, unknown>;
   read: boolean;
   createdAt: string;
-  source: 'pusher' | 'api';
+  source: 'api' | 'pusher' | 'pusher-patient' | 'pusher-customer' | 'pusher-system' | string;
 }
 
 interface NotificationStore {
@@ -122,7 +122,23 @@ export const useNotificationStore = create<NotificationStore>()(
             createdAt: normalizeNotificationDate(notification.createdAt),
           };
 
+          console.log('➕ ADD NOTIFICATION', {
+            type: normalizedNotification.type,
+            consultationId: (normalizedNotification.data as { consultation_id?: number })?.consultation_id,
+            source: normalizedNotification.source,
+            id: normalizedNotification.id,
+          });
+
           const incomingKey = getNotificationKey(normalizedNotification);
+          const exists = state.notifications.some(
+            (n) => getNotificationKey(n) === incomingKey,
+          );
+
+          console.log('🔍 CHECK DUPLICATE', {
+            key: incomingKey,
+            exists,
+          });
+
           const existingIndex = state.notifications.findIndex(
             (n) => getNotificationKey(n) === incomingKey,
           );
@@ -209,7 +225,7 @@ export const useNotificationStore = create<NotificationStore>()(
           const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
           const recentPusherNotifications = state.notifications
-            .filter((n) => n.source === 'pusher')
+            .filter((n) => String(n.source).startsWith('pusher'))
             .filter((n) => new Date(normalizeNotificationDate(n.createdAt)) > oneDayAgo);
 
           const mergedNotifications = mergeByNotificationKeyKeepingNewest([
@@ -232,7 +248,7 @@ export const useNotificationStore = create<NotificationStore>()(
     {
       name: 'notifications-storage',
       partialize: (state) => ({
-        notifications: state.notifications.filter((n) => n.source === 'pusher'),
+        notifications: state.notifications.filter((n) => String(n.source).startsWith('pusher')),
         unreadCount: state.unreadCount,
         lastSyncTime: state.lastSyncTime,
       }),

@@ -58,7 +58,14 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
       console.log("📤 إرسال بيانات الاستشارة النصية:", payload);
 
       // إرسال البيانات إلى الـ API
-      await storeConsultationRequest(payload);
+      const consultationResponse = await storeConsultationRequest(payload);
+      const consultationRequestId = consultationResponse?.data?.id || consultationResponse?.id;
+      const chatPrice = Number(
+        provider?.therapist_details?.chat_consultation_price ??
+          provider?.center_details?.chat_consultation_price ??
+          provider?.chat_price ??
+          0,
+      );
 
       // حفظ معلومات الاستشارة في الـ store
       setConsultation({
@@ -69,6 +76,15 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
           provider.type_account === "therapist"
             ? "therapist"
             : "rehabilitation_center",
+        consultationRequestId: consultationRequestId
+          ? String(consultationRequestId)
+          : undefined,
+        amount: Number.isFinite(chatPrice) ? chatPrice : 0,
+        currency:
+          provider?.therapist_details?.currency ||
+          provider?.center_details?.currency ||
+          "SAR",
+        providerImage: provider?.image,
       });
 
       // إغلاق الـ Dialog
@@ -103,13 +119,15 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <div className={`flex ${showProfileButton ? 'flex-col xl:flex-row gap-3' : 'w-full'}`}>
+      <div
+        className={`flex ${showProfileButton ? "flex-col xl:flex-row gap-3" : "w-full"}`}
+      >
         {/* زر طلب استشارة */}
         <DialogTrigger asChild>
           <Button
             size="lg"
             className={`cursor-pointer w-full ${
-              showProfileButton ? 'xl:w-30' : ''
+              showProfileButton ? "xl:w-30" : ""
             } bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl py-4 transition-all duration-300 shadow-md hover:shadow-lg ${buttonClassName}`}
           >
             <span className="font-bold">طلب استشارة</span>
@@ -128,7 +146,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
           </Button>
         )}
       </div>
-      
+
       <DialogContent className="sm:max-w-md rounded-2xl">
         <DialogHeader>
           <div className="text-center">
@@ -155,7 +173,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
               </div>
               <span className="font-medium text-blue-700">استشارة نصية</span>
               <span className="text-xs text-blue-600 text-center">
-                محادثة فورية عبر النص
+                محادثة فورية مباشرة
               </span>
             </button>
 
@@ -170,7 +188,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
               </div>
               <span className="font-medium text-green-700">استشارة فيديو</span>
               <span className="text-xs text-green-600 text-center">
-                مكالمة فيديو مباشرة
+                موعد مسبق مجدول{" "}
               </span>
             </button>
           </div>

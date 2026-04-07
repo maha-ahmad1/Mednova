@@ -103,13 +103,15 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <div className={`flex ${showProfileButton ? 'flex-col xl:flex-row gap-3' : 'w-full'}`}>
+      <div
+        className={`flex ${showProfileButton ? "flex-col xl:flex-row gap-3" : "w-full"}`}
+      >
         {/* زر طلب استشارة */}
         <DialogTrigger asChild>
           <Button
             size="lg"
             className={`cursor-pointer w-full ${
-              showProfileButton ? 'xl:w-30' : ''
+              showProfileButton ? "xl:w-30" : ""
             } bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl py-4 transition-all duration-300 shadow-md hover:shadow-lg ${buttonClassName}`}
           >
             <span className="font-bold">طلب استشارة</span>
@@ -128,7 +130,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
           </Button>
         )}
       </div>
-      
+
       <DialogContent className="sm:max-w-md rounded-2xl">
         <DialogHeader>
           <div className="text-center">
@@ -155,7 +157,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
               </div>
               <span className="font-medium text-blue-700">استشارة نصية</span>
               <span className="text-xs text-blue-600 text-center">
-                محادثة فورية عبر النص
+                محادثة فورية مباشرة
               </span>
             </button>
 
@@ -170,7 +172,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
               </div>
               <span className="font-medium text-green-700">استشارة فيديو</span>
               <span className="text-xs text-green-600 text-center">
-                مكالمة فيديو مباشرة
+                موعد مسبق مجدول{" "}
               </span>
             </button>
           </div>

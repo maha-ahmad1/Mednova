@@ -58,7 +58,14 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
       console.log("📤 إرسال بيانات الاستشارة النصية:", payload);
 
       // إرسال البيانات إلى الـ API
-      await storeConsultationRequest(payload);
+      const consultationResponse = await storeConsultationRequest(payload);
+      const consultationRequestId = consultationResponse?.data?.id || consultationResponse?.id;
+      const chatPrice = Number(
+        provider?.therapist_details?.chat_consultation_price ??
+          provider?.center_details?.chat_consultation_price ??
+          provider?.chat_price ??
+          0,
+      );
 
       // حفظ معلومات الاستشارة في الـ store
       setConsultation({
@@ -69,6 +76,15 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
           provider.type_account === "therapist"
             ? "therapist"
             : "rehabilitation_center",
+        consultationRequestId: consultationRequestId
+          ? String(consultationRequestId)
+          : undefined,
+        amount: Number.isFinite(chatPrice) ? chatPrice : 0,
+        currency:
+          provider?.therapist_details?.currency ||
+          provider?.center_details?.currency ||
+          "SAR",
+        providerImage: provider?.image,
       });
 
       // إغلاق الـ Dialog

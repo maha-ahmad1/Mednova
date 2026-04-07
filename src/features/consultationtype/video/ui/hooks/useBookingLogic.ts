@@ -294,7 +294,15 @@ export function useBookingLogic({
         timezone: selectedTimeZone,
       });
 
-      await storeConsultationRequest(consultationData);
+      const consultationResponse = await storeConsultationRequest(consultationData);
+
+      const consultationRequestId = consultationResponse?.data?.id || consultationResponse?.id;
+      const videoPrice = Number(
+        provider?.therapist_details?.video_consultation_price ??
+          provider?.center_details?.video_consultation_price ??
+          provider?.video_price ??
+          0,
+      );
 
       setConsultation({
         providerId: effectiveDoctorId,
@@ -304,7 +312,15 @@ export function useBookingLogic({
         requestedDay: getEnglishDay(selectedDate),
         requestedTime: `${format(selectedDate, "yyyy-MM-dd")} ${selectedTime}`,
         appointmentType: "online",
-        
+        consultationRequestId: consultationRequestId
+          ? String(consultationRequestId)
+          : undefined,
+        amount: Number.isFinite(videoPrice) ? videoPrice : 0,
+        currency:
+          provider?.therapist_details?.currency ||
+          provider?.center_details?.currency ||
+          "SAR",
+        providerImage: provider?.image,
       });
 
       router.push("/payment");

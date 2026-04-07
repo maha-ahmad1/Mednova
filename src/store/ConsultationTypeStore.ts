@@ -4,8 +4,13 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 interface ConsultationData {
   providerId:  string;
   providerName: string;
+  providerImage?: string;
   consultationType: 'chat' | 'video';
   consultantType: 'therapist' | 'rehabilitation_center';
+  consultationRequestId?: string;
+  amount?: number;
+  platformFee?: number;
+  currency?: string;
   // Optional fields for video consultations
   requestedDay?: string;
   requestedTime?: string;

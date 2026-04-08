@@ -8,8 +8,13 @@ interface ConsultationData {
   consultationType: 'chat' | 'video';
   consultantType: 'therapist' | 'rehabilitation_center';
   consultationRequestId?: string;
-  amount?: number;
-  platformFee?: number;
+  financial?: {
+    consultationPrice: number;
+    gatewayCommissionRate: string;
+    gatewayCommissionAmount: number;
+    netAmount: number;
+  };
+  providerSpecializations?: string[];
   currency?: string;
   // Optional fields for video consultations
   requestedDay?: string;

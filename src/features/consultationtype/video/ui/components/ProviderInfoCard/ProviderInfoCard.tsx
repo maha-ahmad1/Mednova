@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { format } from "date-fns"
 import type { ServiceProvider } from "@/features/service-provider/types/provider"
+import { getProviderSpecializationLabel } from "@/features/service-provider/utils/provider-specializations"
 
 interface Props {
   provider?: ServiceProvider | null
@@ -23,15 +24,7 @@ export default function ProviderInfoCard({
   onBack,
   isLoading,
 }: Props) {
-  const getSpecialty = () => {
-    if (consultantType === "therapist") {
-      return provider?.therapist_details?.medical_specialties?.name || "تخصص المختص"
-    } else {
-      return provider?.center_details?.services?.[0]?.name || "خدمات تأهيلية"
-            //return provider?.services?.[0]?.name || "خدمات تأهيلية"
-
-    }
-  }
+  const getSpecialty = () => getProviderSpecializationLabel(provider, "تخصص المختص")
 
   const getAddress = () => provider?.location_details?.formatted_address || "عنوان غير محدد"
 

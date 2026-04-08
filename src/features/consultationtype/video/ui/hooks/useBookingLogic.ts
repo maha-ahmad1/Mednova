@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useConsultationTypeStore } from "@/store/ConsultationTypeStore";
 import { useConsultationRequestStore } from "@/features/home/hooks/useConsultationRequestStore";
+import { extractConsultationFinancial } from "@/features/consultations/utils/consultation-financial";
+import {
+  getProviderSpecializationLabel,
+  getProviderSpecializationNames,
+} from "@/features/service-provider/utils/provider-specializations";
 import { ar, enUS } from "date-fns/locale";
 import { format } from "date-fns";
 import { slotsApi, type CheckAvailableSlotsParams } from "@/app/api/slots";
@@ -297,12 +302,7 @@ export function useBookingLogic({
       const consultationResponse = await storeConsultationRequest(consultationData);
 
       const consultationRequestId = consultationResponse?.data?.id || consultationResponse?.id;
-      const videoPrice = Number(
-        provider?.therapist_details?.video_consultation_price ??
-          provider?.center_details?.video_consultation_price ??
-          provider?.video_price ??
-          0,
-      );
+      const financial = extractConsultationFinancial(consultationResponse);
 
       setConsultation({
         providerId: effectiveDoctorId,
@@ -315,11 +315,12 @@ export function useBookingLogic({
         consultationRequestId: consultationRequestId
           ? String(consultationRequestId)
           : undefined,
-        amount: Number.isFinite(videoPrice) ? videoPrice : 0,
+        financial,
+        providerSpecializations: getProviderSpecializationNames(provider),
         currency:
           provider?.therapist_details?.currency ||
           provider?.center_details?.currency ||
-          "SAR",
+          "OMR",
         providerImage: provider?.image,
       });
 
@@ -333,13 +334,8 @@ export function useBookingLogic({
     }
   };
 
-  const getSpecialty = () => {
-    if (consultantType === "therapist")
-      return (
-        provider?.therapist_details?.medical_specialties?.name || "تخصص المختص"
-      );
-    return provider?.center_details?.services?.[0]?.name || "خدمات تأهيلية";
-  };
+  const getSpecialty = () =>
+    getProviderSpecializationLabel(provider, "تخصص المختص");
 
   const getAddress = () =>
     provider?.location_details?.formatted_address || "عنوان غير محدد";

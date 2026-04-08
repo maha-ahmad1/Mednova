@@ -319,7 +319,7 @@ export function useBookingLogic({
         currency:
           provider?.therapist_details?.currency ||
           provider?.center_details?.currency ||
-          "SAR",
+          "OMR",
         providerImage: provider?.image,
       });
 

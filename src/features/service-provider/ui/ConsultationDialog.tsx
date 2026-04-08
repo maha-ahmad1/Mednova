@@ -83,7 +83,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
         currency:
           provider?.therapist_details?.currency ||
           provider?.center_details?.currency ||
-          "SAR",
+          "OMR",
         providerImage: provider?.image,
       });
 

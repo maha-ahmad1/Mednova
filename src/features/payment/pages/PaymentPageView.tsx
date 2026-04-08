@@ -237,7 +237,7 @@ export default function PaymentPageView() {
                   </div>
                 </div>
               </div>
-
+              
               {/* نظام الأمان المالي */}
               <div className="flex items-start gap-2.5 rounded-lg border border-amber-200/40 bg-amber-50/20 p-3 backdrop-blur-sm">
                 <div className="rounded-full bg-amber-100 p-1">

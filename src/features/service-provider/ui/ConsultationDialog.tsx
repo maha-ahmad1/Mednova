@@ -16,6 +16,8 @@ import { useConsultationRequestStore } from "@/features/home/hooks/useConsultati
 import { useConsultationTypeStore } from "@/store/ConsultationTypeStore";
 import { toast } from "sonner";
 import { ServiceProvider } from "../types/provider";
+import { extractConsultationFinancial } from "@/features/consultations/utils/consultation-financial";
+import { getProviderSpecializationNames } from "@/features/service-provider/utils/provider-specializations";
 
 interface ConsultationDialogProps {
   provider: ServiceProvider;
@@ -60,12 +62,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
       // إرسال البيانات إلى الـ API
       const consultationResponse = await storeConsultationRequest(payload);
       const consultationRequestId = consultationResponse?.data?.id || consultationResponse?.id;
-      const chatPrice = Number(
-        provider?.therapist_details?.chat_consultation_price ??
-          provider?.center_details?.chat_consultation_price ??
-          provider?.chat_price ??
-          0,
-      );
+      const financial = extractConsultationFinancial(consultationResponse);
 
       // حفظ معلومات الاستشارة في الـ store
       setConsultation({
@@ -79,7 +76,8 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
         consultationRequestId: consultationRequestId
           ? String(consultationRequestId)
           : undefined,
-        amount: Number.isFinite(chatPrice) ? chatPrice : 0,
+        financial,
+        providerSpecializations: getProviderSpecializationNames(provider),
         currency:
           provider?.therapist_details?.currency ||
           provider?.center_details?.currency ||

@@ -6,6 +6,7 @@ import { Star, MapPin, Banknote, Stethoscope } from "lucide-react";
 import { ServiceProvider } from "../types/provider";
 import { ConsultationDialog } from "./ConsultationDialog";
 import Link from "next/link";
+import { getProviderSpecializationNames } from "@/features/service-provider/utils/provider-specializations";
  
 interface ProviderCardProps {
   provider: ServiceProvider;
@@ -89,11 +90,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({ provider }) => {
     ? Number(provider.average_rating)
     : 0;
  
-  const specialtyNames = isTherapist
-    ? provider.therapist_details?.medical_specialties
-      ? [provider.therapist_details.medical_specialties.name]
-      : []
-    : provider.medicalSpecialties?.map((s) => s.name) ?? [];
+  const specialtyNames = getProviderSpecializationNames(provider);
  
   const toNumberValue = (
     value: string | number | null | undefined,

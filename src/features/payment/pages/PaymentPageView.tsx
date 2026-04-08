@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, CheckCircle2, Clock3, CreditCard, Loader2, ShieldCheck, Calendar, Clock, User, Banknote, Sparkles } from "lucide-react";
+import { AlertCircle, CheckCircle2, Clock3, CreditCard, Loader2, ShieldCheck, Calendar, Clock, User, Banknote, Sparkles, Stethoscope } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,6 @@ import Navbar from "@/shared/ui/components/Navbar/Navbar";
 import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
 import { useCreatePaymentLink } from "@/features/payment/hooks/useCreatePaymentLink";
 import { usePaymentStatus } from "@/features/payment/hooks/usePaymentStatus";
-
-const DEFAULT_PLATFORM_FEE = 0;
 
 export default function PaymentPageView() {
   const router = useRouter();
@@ -48,9 +46,10 @@ export default function PaymentPageView() {
     return null;
   }
 
-  const platformFee = currentConsultation.platformFee ?? DEFAULT_PLATFORM_FEE;
-  const amount = currentConsultation.amount ?? 0;
-  const total = amount + platformFee;
+  const financial = currentConsultation.financial;
+  const amount = financial?.consultationPrice ?? 0;
+  const platformFee = financial?.gatewayCommissionAmount ?? 0;
+  const total = financial?.netAmount ?? 0;
 
   const consultationTypeLabel =
     currentConsultation.consultationType === "chat" ? "استشارة نصية" : "استشارة فيديو";
@@ -177,6 +176,12 @@ export default function PaymentPageView() {
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {currentConsultation.consultantType === "therapist" ? "معالج نفسي" : "مركز تأهيلي"}
+                    </p>
+                    <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                      <Stethoscope className="h-3 w-3" />
+                      {currentConsultation.providerSpecializations?.length
+                        ? currentConsultation.providerSpecializations.join("، ")
+                        : "التخصص غير محدد"}
                     </p>
                   </div>
                 </div>

@@ -175,7 +175,7 @@ export default function PaymentPageView() {
                       <p className="text-base font-semibold">{currentConsultation.providerName}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {currentConsultation.consultantType === "therapist" ? "معالج نفسي" : "مركز تأهيلي"}
+                      {currentConsultation.consultantType === "therapist" ? "معالج " : "مركز تأهيلي"}
                     </p>
                     <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
                       <Stethoscope className="h-3 w-3" />
@@ -219,20 +219,20 @@ export default function PaymentPageView() {
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">قيمة الاستشارة</span>
                     <span className="font-medium tabular-nums">
-                      {amount.toFixed(2)} {currentConsultation.currency || "OMR"}
+                      {amount} {currentConsultation.currency || "OMR"}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">رسوم المنصة</span>
                     <span className="font-medium tabular-nums">
-                      {platformFee.toFixed(2)} {currentConsultation.currency || "OMR"}
+                      {platformFee} {currentConsultation.currency || "OMR"}
                     </span>
                   </div>
                   <Separator className="my-1.5" />
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold">الإجمالي</span>
                     <span className="text-base font-bold tabular-nums text-primary">
-                      {total.toFixed(2)} {currentConsultation.currency || "OMR"}
+                      {total} {currentConsultation.currency || "OMR"}
                     </span>
                   </div>
                 </div>

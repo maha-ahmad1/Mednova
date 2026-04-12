@@ -76,6 +76,14 @@ export const useEchoNotifications = (): void => {
     const accountChannel = echo.private(`customer.${userId}`);
     const publicChannel = echo.channel("notifications");
 
+    const consultationChannelSource =
+      role === "patient"
+        ? "pusher-patient"
+        : role === "therapist" || role === "rehabilitation_center"
+          ? "pusher"
+          : "pusher";
+    const consultationChannelLabel = role === "patient" ? "patient" : "consultant";
+
     subscribeConsultationEvents({
       channel,
       requestsRef,
@@ -86,7 +94,11 @@ export const useEchoNotifications = (): void => {
         subscribedRef.current = value;
       },
       channelName,
+      userId,
+      role: String(role),
       deduplicator,
+      channelSource: consultationChannelSource,
+      channelLabel: consultationChannelLabel,
     });
 
     subscribeAccountEvents({

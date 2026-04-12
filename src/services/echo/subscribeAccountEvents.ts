@@ -6,6 +6,8 @@ interface AccountStatusEvent {
   status: string;
   reason?: string;
   message?: string;
+  consultation_id?: number;
+  id?: number;
 }
 
 interface SubscribeAccountEventsParams {
@@ -36,10 +38,15 @@ export const subscribeAccountEvents = ({
   router,
 }: SubscribeAccountEventsParams): void => {
   accountChannel.listen(".account.status.updated", async (event: AccountStatusEvent) => {
-    console.log("📢 حدث تحديث حالة الحساب:", event);
-    console.log("🔥🔥🔥 حدث تحديث الحساب واصل:", event);
+    console.log("📡 EVENT RECEIVED", {
+      channel: "customer",
+      eventType: "account.status.updated",
+      consultationId: event?.consultation_id || event?.id,
+      status: event?.status,
+      rawEvent: event,
+    });
 
-    const notification = createAccountStatusNotification(event);
+    const notification = createAccountStatusNotification(event, "pusher-customer");
     addNotification(notification);
 
     if (event.status === "approved") {

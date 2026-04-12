@@ -1,6 +1,7 @@
 import type { MutableRefObject } from "react";
 import { toast } from "sonner";
 import type { Notification } from "@/store/notificationStore";
+import { useNotificationStore } from "@/store/notificationStore";
 import {
   createConsultationMessageNotification,
   createConsultationNotification,
@@ -24,102 +25,171 @@ interface SubscribeConsultationEventsParams {
   addNotification: (notification: Notification) => void;
   setSubscribed: (value: boolean) => void;
   channelName: string;
+  userId: number | string;
+  role: string;
   deduplicator: {
-    markIfNew: (key: string) => boolean;
+    markIfNew: (key: string, ttlMs?: number) => boolean;
     removeAfter: (key: string, delayMs: number) => void;
   };
+  channelSource: Notification["source"];
+  channelLabel: "patient" | "consultant";
 }
+
+type EventGuardResult = {
+  shouldProcess: boolean;
+  eventKey: string;
+  reason: string;
+};
+
+const buildNotificationKey = (notification: Notification): string => {
+  const consultationId = (notification.data as { consultation_id?: number })?.consultation_id;
+  return consultationId != null
+    ? `${notification.type}_${consultationId}`
+    : `${notification.type}_${notification.id}`;
+};
+
+const hasExistingNotification = (notification: Notification): boolean => {
+  const candidateKey = buildNotificationKey(notification);
+  return useNotificationStore
+    .getState()
+    .notifications.some((existing) => buildNotificationKey(existing) === candidateKey);
+};
+
+const evaluateEventGuard = (
+  params: Omit<SubscribeConsultationEventsParams, "channel" | "setSubscribed" | "channelName">,
+  event: ConsultationEvent,
+  eventType: "requested" | "updated",
+  notification: Notification,
+): EventGuardResult => {
+  const eventKey = `${params.userId}_${params.role}_${params.channelLabel}_${eventType}_${event.id}_${event.status}`;
+
+  const isNewEvent = params.deduplicator.markIfNew(eventKey);
+  if (!isNewEvent) {
+    return {
+      shouldProcess: false,
+      eventKey,
+      reason: "deduplicator(memory+storage)",
+    };
+  }
+
+  const existingRequest = params.requestsRef.current.find((r) => r.id === event.id);
+  const hasNotification = hasExistingNotification(notification);
+
+  if (existingRequest && existingRequest.status === event.status && hasNotification) {
+    return {
+      shouldProcess: false,
+      eventKey,
+      reason: "request+notification already in store",
+    };
+  }
+
+  return {
+    shouldProcess: true,
+    eventKey,
+    reason: "new event",
+  };
+};
 
 const handleConsultationEvent = (
   event: ConsultationEvent,
   eventType: "requested" | "updated",
   params: Omit<SubscribeConsultationEventsParams, "channel" | "setSubscribed" | "channelName">,
 ) => {
-  const eventKey = `${eventType}_${event.id}_${event.status}_${Date.now()}`;
+  let notificationType: Notification["type"] =
+    eventType === "requested" ? "consultation_requested" : "consultation_updated";
+  let title = eventType === "requested" ? "طلب استشارة جديد" : "تحديث حالة الاستشارة";
 
-  if (!params.deduplicator.markIfNew(eventKey)) {
+  if (event.status === "accepted") {
+    notificationType = "consultation_accepted";
+    title = "تم قبول طلب الاستشارة";
+  } else if (event.status === "active") {
+    notificationType = "consultation_active";
+    title = "تم تفعيل الاستشارة";
+  } else if (event.status === "completed") {
+    notificationType = "consultation_completed";
+    title = "تم إكمال الاستشارة";
+  } else if (event.status === "cancelled") {
+    notificationType = "consultation_cancelled";
+    title = "تم إلغاء الاستشارة";
+  }
+
+  const notification = createConsultationNotification(
+    event,
+    notificationType,
+    title,
+    params.channelSource,
+  );
+
+  console.log("📡 EVENT RECEIVED", {
+    channel: params.channelLabel,
+    source: params.channelSource,
+    userId: params.userId,
+    role: params.role,
+    eventType,
+    consultationId: event?.id,
+    status: event?.status,
+    rawEvent: event,
+  });
+
+  const guard = evaluateEventGuard(params, event, eventType, notification);
+  console.log("🧠 DEDUP DECISION", {
+    eventKey: guard.eventKey,
+    shouldProcess: guard.shouldProcess,
+    reason: guard.reason,
+  });
+
+  if (!guard.shouldProcess) {
+    console.log("⏭️ EVENT SKIPPED", {
+      eventKey: guard.eventKey,
+      reason: guard.reason,
+    });
     return;
   }
 
-  console.log(`📨 استقبال حدث ${eventType}:`, {
-    id: event.id,
-    status: event.status,
-    type: event.consultation_type,
-    eventType,
-  });
-
   const existingRequest = params.requestsRef.current.find((r) => r.id === event.id);
 
-  if (eventType === "requested") {
-    if (existingRequest) {
-      console.log("📝 تحديث طلب موجود:", event.id);
-      params.updateRequest(event.id, {
-        status: event.status,
-        updated_at: event.updated_at || new Date().toISOString(),
-        video_room_link: event.video_room_link || existingRequest.video_room_link,
-      });
-    } else {
-      console.log("➕ إضافة طلب جديد:", event.id);
-      params.addRequest(createConsultationRequest(event));
-    }
-
-    const notification = createConsultationNotification(
-      event,
-      "consultation_requested",
-      "طلب استشارة جديد",
-    );
-    params.addNotification(notification);
-
-    toast.info(event.message, {
-      duration: 5000,
-      position: "top-center",
+  if (!existingRequest) {
+    console.log("✅ REQUEST PROCESSED (add)", { requestId: event.id });
+    params.addRequest(createConsultationRequest(event));
+  } else if (event.status !== existingRequest.status || event.video_room_link !== existingRequest.video_room_link) {
+    console.log("✅ REQUEST PROCESSED (update)", {
+      requestId: event.id,
+      fromStatus: existingRequest.status,
+      toStatus: event.status,
     });
-  } else if (eventType === "updated") {
-    if (!existingRequest) {
-      console.log("⚠️ طلب غير موجود للتحديث، سيتم إضافه:", event.id);
-      params.addRequest(createConsultationRequest(event));
-    } else {
-      console.log("🔄 تحديث طلب موجود:", event.id);
-      params.updateRequest(event.id, {
-        status: event.status,
-        updated_at: event.updated_at || new Date().toISOString(),
-        video_room_link: event.video_room_link || existingRequest.video_room_link,
-        type: event.consultation_type || existingRequest.type,
-      });
-    }
 
-    let notificationType: Notification["type"] = "consultation_updated";
-    let title = "تحديث حالة الاستشارة";
-
-    switch (event.status) {
-      case "accepted":
-        notificationType = "consultation_accepted";
-        title = "تم قبول طلب الاستشارة";
-        break;
-      case "active":
-        notificationType = "consultation_active";
-        title = "تم تفعيل الاستشارة";
-        break;
-      case "completed":
-        notificationType = "consultation_completed";
-        title = "تم إكمال الاستشارة";
-        break;
-      case "cancelled":
-        notificationType = "consultation_cancelled";
-        title = "تم إلغاء الاستشارة";
-        break;
-    }
-
-    const notification = createConsultationNotification(event, notificationType, title);
-    params.addNotification(notification);
-
-    toast.info(title, {
-      duration: 5000,
-      position: "top-center",
+    params.updateRequest(event.id, {
+      status: event.status,
+      updated_at: event.updated_at || new Date().toISOString(),
+      video_room_link: event.video_room_link || existingRequest.video_room_link,
+      type: event.consultation_type || existingRequest.type,
+    });
+  } else {
+    console.log("⏭️ REQUEST MUTATION SKIPPED", {
+      requestId: event.id,
+      reason: "no meaningful request change",
     });
   }
 
-  params.deduplicator.removeAfter(eventKey, 10000);
+  if (hasExistingNotification(notification)) {
+    console.log("⏭️ NOTIFICATION MUTATION SKIPPED", {
+      key: buildNotificationKey(notification),
+      reason: "already exists in notification store",
+    });
+  } else {
+    console.log("✅ NOTIFICATION PROCESSED", {
+      key: buildNotificationKey(notification),
+      source: params.channelSource,
+    });
+    params.addNotification(notification);
+  }
+
+  toast.info(eventType === "requested" ? event.message : title, {
+    duration: 5000,
+    position: "top-center",
+  });
+
+  params.deduplicator.removeAfter(guard.eventKey, 10000);
 };
 
 export const subscribeConsultationEvents = (
@@ -131,6 +201,10 @@ export const subscribeConsultationEvents = (
     updateRequest: params.updateRequest,
     addNotification: params.addNotification,
     deduplicator: params.deduplicator,
+    channelSource: params.channelSource,
+    channelLabel: params.channelLabel,
+    userId: params.userId,
+    role: params.role,
   };
 
   params.channel.listen("ConsultationRequestedBroadcast", (event) => {
@@ -142,10 +216,34 @@ export const subscribeConsultationEvents = (
   });
 
   params.channel.listen("ConsultationMessageBroadcast", (event) => {
-    console.log("💬 رسالة جديدة في الاستشارة:", event);
+    console.log("📡 EVENT RECEIVED", {
+      channel: params.channelLabel,
+      source: params.channelSource,
+      userId: params.userId,
+      role: params.role,
+      eventType: "message",
+      consultationId: (event as ConsultationMessageEvent)?.consultation_id,
+      status: (event as { status?: string })?.status,
+      rawEvent: event,
+    });
+
     const notification = createConsultationMessageNotification(
       event as ConsultationMessageEvent,
+      params.channelSource,
     );
+
+    if (hasExistingNotification(notification)) {
+      console.log("⏭️ NOTIFICATION MUTATION SKIPPED", {
+        key: buildNotificationKey(notification),
+        reason: "already exists in notification store",
+      });
+      return;
+    }
+
+    console.log("✅ NOTIFICATION PROCESSED", {
+      key: buildNotificationKey(notification),
+      source: params.channelSource,
+    });
     params.addNotification(notification);
   });
 

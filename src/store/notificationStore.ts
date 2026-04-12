@@ -1,317 +1,3 @@
-// import { create } from 'zustand';
-// import { persist } from 'zustand/middleware';
-
-// export interface Notification {
-//   id: number;
-//   type: 'consultation_requested' | 'consultation_updated' | 'consultation_accepted' | 'consultation_cancelled' | 'consultation_active' | 'consultation_completed';
-//   title: string;
-//   message: string;
-//   data: {
-//     consultation_id: number;
-//     patient_id?: number;
-//     patient_name?: string;
-//     consultant_id?: number;
-//     consultant_name?: string;
-//     consultant_type?: string;
-//     consultation_type?: 'chat' | 'video';
-//     status?: string;
-//     video_room_link?: string;
-//     updated_at?: string;
-//   };
-//   read: boolean;
-//   createdAt: string;
-//   source: 'pusher' | 'api';
-// }
-
-// interface NotificationStore {
-//   notifications: Notification[];
-//   unreadCount: number;
-//   lastSyncTime: string | null;
-  
-//   // وظائف الـ Pusher
-//   addNotification: (notification: Omit<Notification, 'id' | 'read' | 'createdAt' | 'source'>) => void;
-//   markAsRead: (id: number) => void;
-//   markAllAsRead: () => void;
-//   removeNotification: (id: number) => void;
-//   clearNotifications: () => void;
-//   getNotifications: () => Notification[];
-  
-//   // وظائف التزامن
-//   syncWithApiNotifications: (apiNotifications: Notification[]) => void;
-//   updateLastSyncTime: () => void;
-// }
-
-// export const useNotificationStore = create<NotificationStore>()(
-//   persist(
-//     (set, get) => ({
-//       notifications: [],
-//       unreadCount: 0,
-//       lastSyncTime: null,
-
-//       addNotification: (notificationData) => {
-//         const id = Date.now();
-//         const newNotification: Notification = {
-//           ...notificationData,
-//           id,
-//           read: false,
-//           createdAt: new Date().toISOString(),
-//           source: 'pusher',
-//         };
-
-//         set((state) => ({
-//           notifications: [newNotification, ...state.notifications],
-//           unreadCount: state.unreadCount + 1,
-//         }));
-//       },
-
-//       markAsRead: (id) => {
-//         set((state) => ({
-//           notifications: state.notifications.map((notif) =>
-//             notif.id === id ? { ...notif, read: true } : notif
-//           ),
-//           unreadCount: Math.max(0, state.unreadCount - 1),
-//         }));
-//       },
-
-//       markAllAsRead: () => {
-//         set((state) => ({
-//           notifications: state.notifications.map((notif) => ({
-//             ...notif,
-//             read: true,
-//           })),
-//           unreadCount: 0,
-//         }));
-//       },
-
-//       removeNotification: (id) => {
-//         set((state) => {
-//           const notificationToRemove = state.notifications.find(n => n.id === id);
-//           return {
-//             notifications: state.notifications.filter((notif) => notif.id !== id),
-//             unreadCount: notificationToRemove && !notificationToRemove.read 
-//               ? Math.max(0, state.unreadCount - 1)
-//               : state.unreadCount,
-//           };
-//         });
-//       },
-
-//       clearNotifications: () => {
-//         set({ notifications: [], unreadCount: 0, lastSyncTime: null });
-//       },
-
-//       getNotifications: () => {
-//         return get().notifications;
-//       },
-
-//       syncWithApiNotifications: (apiNotifications: Notification[]) => {
-//         set((state) => {
-//           // فلترة إشعارات Pusher القديمة (أكثر من 24 ساعة)
-//           const now = new Date();
-//           const oneDayAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
-          
-//           const recentPusherNotifications = state.notifications
-//             .filter(n => n.source === 'pusher')
-//             .filter(n => new Date(n.createdAt) > oneDayAgo);
-          
-//           // إنشاء Map للإشعارات من الـ API للبحث السريع
-//           const apiNotificationMap = new Map(
-//             apiNotifications.map(n => [n.id, n])
-//           );
-          
-//           // دمج الإشعارات
-//           const allNotifications = [
-//             ...apiNotifications,
-//             ...recentPusherNotifications.filter(pusherNotif => 
-//               !apiNotificationMap.has(pusherNotif.id)
-//             )
-//           ]
-//             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-          
-//           // حساب غير المقروء
-//           const newUnreadCount = allNotifications.filter(n => !n.read).length;
-          
-//           return {
-//             notifications: allNotifications,
-//             unreadCount: newUnreadCount,
-//             lastSyncTime: new Date().toISOString(),
-//           };
-//         });
-//       },
-
-//       updateLastSyncTime: () => {
-//         set({ lastSyncTime: new Date().toISOString() });
-//       },
-//     }),
-//     {
-//       name: 'notifications-storage',
-//       partialize: (state) => ({
-//         notifications: state.notifications.filter(n => n.source === 'pusher'), // تخزين Pusher فقط
-//         unreadCount: state.unreadCount,
-//         lastSyncTime: state.lastSyncTime,
-//       }),
-//     }
-//   )
-// );
-
-
-
-// import { create } from 'zustand';
-// import { persist } from 'zustand/middleware';
-
-// export interface Notification {
-//   id: string; // تم تغيير من number إلى string
-//   type: 'consultation_requested' | 'consultation_updated' | 'consultation_accepted' | 'consultation_cancelled' | 'consultation_active' | 'consultation_completed';
-//   title: string;
-//   message: string;
-//   data: {
-//     consultation_id: number;
-//     patient_id?: number;
-//     patient_name?: string;
-//     consultant_id?: number;
-//     consultant_name?: string;
-//     consultant_type?: string;
-//     consultation_type?: 'chat' | 'video';
-//     status?: string;
-//     video_room_link?: string;
-//     updated_at?: string;
-//   };
-//   read: boolean;
-//   createdAt: string;
-//   source: 'pusher' | 'api';
-// }
-
-// interface NotificationStore {
-//   notifications: Notification[];
-//   unreadCount: number;
-//   lastSyncTime: string | null;
-  
-//   // وظائف الـ Pusher
-//   addNotification: (notification: Omit<Notification, 'id' | 'read' | 'createdAt' | 'source'>) => void;
-//   markAsRead: (id: string) => void; // تم تغيير من number إلى string
-//   markAllAsRead: () => void;
-//   removeNotification: (id: string) => void; // تم تغيير من number إلى string
-//   clearNotifications: () => void;
-//   getNotifications: () => Notification[];
-  
-//   // وظائف التزامن
-//   syncWithApiNotifications: (apiNotifications: Notification[]) => void;
-//   updateLastSyncTime: () => void;
-// }
-
-// export const useNotificationStore = create<NotificationStore>()(
-//   persist(
-//     (set, get) => ({
-//       notifications: [],
-//       unreadCount: 0,
-//       lastSyncTime: null,
-
-//       addNotification: (notificationData) => {
-//         // إنشاء ID فريد باستخدام timestamp ورقم عشوائي
-//         const uniqueId = `pusher_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-//         const newNotification: Notification = {
-//           ...notificationData,
-//           id: uniqueId, // استخدام ID فريد
-//           read: false,
-//           createdAt: new Date().toISOString(),
-//           source: 'pusher',
-//         };
-
-//         set((state) => ({
-//           notifications: [newNotification, ...state.notifications],
-//           unreadCount: state.unreadCount + 1,
-//         }));
-//       },
-
-//       markAsRead: (id) => {
-//         set((state) => ({
-//           notifications: state.notifications.map((notif) =>
-//             notif.id === id ? { ...notif, read: true } : notif
-//           ),
-//           unreadCount: Math.max(0, state.unreadCount - 1),
-//         }));
-//       },
-
-//       markAllAsRead: () => {
-//         set((state) => ({
-//           notifications: state.notifications.map((notif) => ({
-//             ...notif,
-//             read: true,
-//           })),
-//           unreadCount: 0,
-//         }));
-//       },
-
-//       removeNotification: (id) => {
-//         set((state) => {
-//           const notificationToRemove = state.notifications.find(n => n.id === id);
-//           return {
-//             notifications: state.notifications.filter((notif) => notif.id !== id),
-//             unreadCount: notificationToRemove && !notificationToRemove.read 
-//               ? Math.max(0, state.unreadCount - 1)
-//               : state.unreadCount,
-//           };
-//         });
-//       },
-
-//       clearNotifications: () => {
-//         set({ notifications: [], unreadCount: 0, lastSyncTime: null });
-//       },
-
-//       getNotifications: () => {
-//         return get().notifications;
-//       },
-
-//       syncWithApiNotifications: (apiNotifications: Notification[]) => {
-//         set((state) => {
-//           // فلترة إشعارات Pusher القديمة (أكثر من 24 ساعة)
-//           const now = new Date();
-//           const oneDayAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
-          
-//           const recentPusherNotifications = state.notifications
-//             .filter(n => n.source === 'pusher')
-//             .filter(n => new Date(n.createdAt) > oneDayAgo);
-          
-//           // إنشاء Map للإشعارات من الـ API للبحث السريع
-//           const apiNotificationMap = new Map(
-//             apiNotifications.map(n => [n.id, n])
-//           );
-          
-//           // دمج الإشعارات
-//           const allNotifications = [
-//             ...apiNotifications,
-//             ...recentPusherNotifications.filter(pusherNotif => 
-//               !apiNotificationMap.has(pusherNotif.id)
-//             )
-//           ]
-//             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-          
-//           // حساب غير المقروء
-//           const newUnreadCount = allNotifications.filter(n => !n.read).length;
-          
-//           return {
-//             notifications: allNotifications,
-//             unreadCount: newUnreadCount,
-//             lastSyncTime: new Date().toISOString(),
-//           };
-//         });
-//       },
-
-//       updateLastSyncTime: () => {
-//         set({ lastSyncTime: new Date().toISOString() });
-//       },
-//     }),
-//     {
-//       name: 'notifications-storage',
-//       partialize: (state) => ({
-//         notifications: state.notifications.filter(n => n.source === 'pusher'), // تخزين Pusher فقط
-//         unreadCount: state.unreadCount,
-//         lastSyncTime: state.lastSyncTime,
-//       }),
-//     }
-//   )
-// );
-
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -330,7 +16,7 @@ export interface Notification {
     | 'follow'
     | 'system'
     | 'alert'
-    | string; // fallback for any other custom types
+    | string;
   title: string;
   message: string;
   data:
@@ -349,24 +35,78 @@ export interface Notification {
     | Record<string, unknown>;
   read: boolean;
   createdAt: string;
-  source: 'pusher' | 'api';
+  source: 'api' | 'pusher' | 'pusher-patient' | 'pusher-customer' | 'pusher-system' | string;
 }
 
 interface NotificationStore {
   notifications: Notification[];
   unreadCount: number;
   lastSyncTime: string | null;
-  
-  addNotification: (notification: Notification) => void; // 🔧 بسيط: يقبل إشعاراً كاملاً
+
+  addNotification: (notification: Notification) => void;
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   removeNotification: (id: string) => void;
   clearNotifications: () => void;
   getNotifications: () => Notification[];
-  
+
   syncWithApiNotifications: (apiNotifications: Notification[]) => void;
   updateLastSyncTime: () => void;
 }
+
+const normalizeNotificationDate = (value?: string): string => {
+  if (!value) {
+    return new Date().toISOString();
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return new Date().toISOString();
+  }
+
+  return parsed.toISOString();
+};
+
+const getNotificationKey = (notification: Notification): string => {
+  const consultationId = (notification.data as { consultation_id?: number })?.consultation_id;
+  return consultationId != null
+    ? `${notification.type}_${consultationId}`
+    : `${notification.type}_${notification.id}`;
+};
+
+const mergeByNotificationKeyKeepingNewest = (
+  notifications: Notification[],
+): Notification[] => {
+  const notificationMap = new Map<string, Notification>();
+
+  notifications.forEach((notification) => {
+    const normalizedNotification = {
+      ...notification,
+      createdAt: normalizeNotificationDate(notification.createdAt),
+    };
+
+    const key = getNotificationKey(normalizedNotification);
+    const existing = notificationMap.get(key);
+
+    if (!existing) {
+      notificationMap.set(key, normalizedNotification);
+      return;
+    }
+
+    const existingTime = new Date(existing.createdAt).getTime();
+    const candidateTime = new Date(normalizedNotification.createdAt).getTime();
+
+    notificationMap.set(
+      key,
+      candidateTime >= existingTime ? normalizedNotification : existing,
+    );
+  });
+
+  return Array.from(notificationMap.values()).sort(
+    (a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
+};
 
 export const useNotificationStore = create<NotificationStore>()(
   persist(
@@ -375,30 +115,80 @@ export const useNotificationStore = create<NotificationStore>()(
       unreadCount: 0,
       lastSyncTime: null,
 
-      // 🔧 أبسط وأوضح: توقع أن يأتي ID فريد من الخارج
       addNotification: (notification) => {
         set((state) => {
-          // تأكد من عدم وجود تكرار
-          const exists = state.notifications.some(n => n.id === notification.id);
-          if (exists) {
-            console.warn('⚠️ إشعار مكرر تم تجاهله:', notification.id);
-            return state;
+          const normalizedNotification = {
+            ...notification,
+            createdAt: normalizeNotificationDate(notification.createdAt),
+          };
+
+          console.log('➕ ADD NOTIFICATION', {
+            type: normalizedNotification.type,
+            consultationId: (normalizedNotification.data as { consultation_id?: number })?.consultation_id,
+            source: normalizedNotification.source,
+            id: normalizedNotification.id,
+          });
+
+          const incomingKey = getNotificationKey(normalizedNotification);
+          const exists = state.notifications.some(
+            (n) => getNotificationKey(n) === incomingKey,
+          );
+
+          console.log('🔍 CHECK DUPLICATE', {
+            key: incomingKey,
+            exists,
+          });
+
+          const existingIndex = state.notifications.findIndex(
+            (n) => getNotificationKey(n) === incomingKey,
+          );
+
+          if (existingIndex >= 0) {
+            const existing = state.notifications[existingIndex];
+            const shouldReplace =
+              new Date(normalizedNotification.createdAt).getTime() >=
+              new Date(existing.createdAt).getTime();
+
+            if (!shouldReplace) {
+              return state;
+            }
+
+            const notifications = [...state.notifications];
+            notifications[existingIndex] = normalizedNotification;
+            notifications.sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+            );
+
+            return {
+              notifications,
+              unreadCount: notifications.filter((n) => !n.read).length,
+            };
           }
-          
+
+          const notifications = [normalizedNotification, ...state.notifications].sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          );
+
           return {
-            notifications: [notification, ...state.notifications],
-            unreadCount: notification.read ? state.unreadCount : state.unreadCount + 1,
+            notifications,
+            unreadCount: notifications.filter((n) => !n.read).length,
           };
         });
       },
 
       markAsRead: (id) => {
-        set((state) => ({
-          notifications: state.notifications.map((notif) =>
-            notif.id === id ? { ...notif, read: true } : notif
-          ),
-          unreadCount: Math.max(0, state.unreadCount - 1),
-        }));
+        set((state) => {
+          const notifications = state.notifications.map((notif) =>
+            notif.id === id ? { ...notif, read: true } : notif,
+          );
+
+          return {
+            notifications,
+            unreadCount: notifications.filter((n) => !n.read).length,
+          };
+        });
       },
 
       markAllAsRead: () => {
@@ -413,12 +203,10 @@ export const useNotificationStore = create<NotificationStore>()(
 
       removeNotification: (id) => {
         set((state) => {
-          const notificationToRemove = state.notifications.find(n => n.id === id);
+          const notifications = state.notifications.filter((notif) => notif.id !== id);
           return {
-            notifications: state.notifications.filter((notif) => notif.id !== id),
-            unreadCount: notificationToRemove && !notificationToRemove.read 
-              ? Math.max(0, state.unreadCount - 1)
-              : state.unreadCount,
+            notifications,
+            unreadCount: notifications.filter((n) => !n.read).length,
           };
         });
       },
@@ -433,37 +221,21 @@ export const useNotificationStore = create<NotificationStore>()(
 
       syncWithApiNotifications: (apiNotifications) => {
         set((state) => {
-          // فلترة إشعارات Pusher القديمة (أكثر من 24 ساعة)
           const now = new Date();
-          const oneDayAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
-          
+          const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
           const recentPusherNotifications = state.notifications
-            .filter(n => n.source === 'pusher')
-            .filter(n => new Date(n.createdAt) > oneDayAgo);
-          
-          // استخدام Set لإزالة التكرارات بناءً على id
-          const allNotifications = [
+            .filter((n) => String(n.source).startsWith('pusher'))
+            .filter((n) => new Date(normalizeNotificationDate(n.createdAt)) > oneDayAgo);
+
+          const mergedNotifications = mergeByNotificationKeyKeepingNewest([
             ...apiNotifications,
-            ...recentPusherNotifications
-          ];
-          
-          // 🔧 أبسط: استخدام Map لإزالة التكرارات مع الاحتفاظ بالأحدث
-          const notificationMap = new Map();
-          allNotifications.forEach(notif => {
-            const existing = notificationMap.get(notif.id);
-            if (!existing || new Date(notif.createdAt) > new Date(existing.createdAt)) {
-              notificationMap.set(notif.id, notif);
-            }
-          });
-          
-          const uniqueNotifications = Array.from(notificationMap.values())
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-          
-          const newUnreadCount = uniqueNotifications.filter(n => !n.read).length;
-          
+            ...recentPusherNotifications,
+          ]);
+
           return {
-            notifications: uniqueNotifications,
-            unreadCount: newUnreadCount,
+            notifications: mergedNotifications,
+            unreadCount: mergedNotifications.filter((n) => !n.read).length,
             lastSyncTime: new Date().toISOString(),
           };
         });
@@ -476,10 +248,10 @@ export const useNotificationStore = create<NotificationStore>()(
     {
       name: 'notifications-storage',
       partialize: (state) => ({
-        notifications: state.notifications.filter(n => n.source === 'pusher'),
+        notifications: state.notifications.filter((n) => String(n.source).startsWith('pusher')),
         unreadCount: state.unreadCount,
         lastSyncTime: state.lastSyncTime,
       }),
-    }
-  )
+    },
+  ),
 );

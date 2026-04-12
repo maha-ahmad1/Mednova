@@ -6,6 +6,7 @@ export type ConsultationMessageEvent = {
   message?: string;
   sender_id?: number;
   created_at?: string;
+  createdAt?: string;
   [key: string]: unknown;
 };
 
@@ -13,22 +14,55 @@ export type SystemNotificationEvent = {
   title?: string;
   message: string;
   level?: string;
+  created_at?: string;
+  createdAt?: string;
   [key: string]: unknown;
+};
+
+const normalizeCreatedAt = (value?: string): string => {
+  const parsed = new Date(value || new Date().toISOString());
+  return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+};
+
+const resolveConsultationNotificationType = (
+  event: ConsultationEvent,
+  notificationType: Notification["type"],
+): Notification["type"] => {
+  if (event.status === "accepted") {
+    return "consultation_accepted";
+  }
+
+  if (event.status === "active") {
+    return "consultation_active";
+  }
+
+  if (event.status === "completed") {
+    return "consultation_completed";
+  }
+
+  if (event.status === "cancelled") {
+    return "consultation_cancelled";
+  }
+
+  return notificationType;
 };
 
 export const createConsultationNotification = (
   event: ConsultationEvent,
   notificationType: Notification["type"],
   title: string,
+  source: Notification["source"] = "pusher",
 ): Notification => {
+  const resolvedType = resolveConsultationNotificationType(event, notificationType);
+
   return {
-    id: `consultation_${event.id}_${notificationType}_${Date.now()}`,
-    type: notificationType,
+    id: `consultation_${event.id}_${resolvedType}_${Date.now()}`,
+    type: resolvedType,
     title,
     message: event.message,
     read: false,
-    createdAt: new Date().toISOString(),
-    source: "pusher",
+    createdAt: normalizeCreatedAt(event.created_at || event.updated_at),
+    source,
     data: {
       consultation_id: event.id,
       patient_id: event.patient_id,
@@ -45,6 +79,7 @@ export const createConsultationNotification = (
 
 export const createConsultationMessageNotification = (
   event: ConsultationMessageEvent,
+  source: Notification["source"] = "pusher",
 ): Notification => {
   const msg =
     typeof event.message === "string" && event.message.length > 0
@@ -57,14 +92,15 @@ export const createConsultationMessageNotification = (
     title: "رسالة جديدة",
     message: msg,
     read: false,
-    createdAt: new Date().toISOString(),
-    source: "pusher",
+    createdAt: normalizeCreatedAt(event.created_at || event.createdAt),
+    source,
     data: event as Notification["data"],
   };
 };
 
 export const createSystemNotification = (
   event: SystemNotificationEvent,
+  source: Notification["source"] = "pusher-system",
 ): Notification => {
   return {
     id: `system_${Date.now()}`,
@@ -72,17 +108,22 @@ export const createSystemNotification = (
     title: event.title || "إشعار نظام",
     message: event.message,
     read: false,
-    createdAt: new Date().toISOString(),
-    source: "pusher",
+    createdAt: normalizeCreatedAt(event.created_at || event.createdAt),
+    source,
     data: event as Notification["data"],
   };
 };
 
-export const createAccountStatusNotification = (event: {
-  status: string;
-  reason?: string;
-  message?: string;
-}): Notification => {
+export const createAccountStatusNotification = (
+  event: {
+    status: string;
+    reason?: string;
+    message?: string;
+    created_at?: string;
+    createdAt?: string;
+  },
+  source: Notification["source"] = "pusher-customer",
+): Notification => {
   return {
     id: `account_${event.status}_${Date.now()}`,
     type: event.status === "approved" ? "account_approved" : "account_rejected",
@@ -93,8 +134,8 @@ export const createAccountStatusNotification = (event: {
         ? "تهانينا! تم قبول حسابك"
         : "نأسف، لم يتم قبول حسابك"),
     read: false,
-    createdAt: new Date().toISOString(),
-    source: "pusher",
+    createdAt: normalizeCreatedAt(event.created_at || event.createdAt),
+    source,
     data: event,
   };
 };

@@ -19,6 +19,7 @@ import { ChevronDown, Menu,
 import { NavLinks } from "./NavLinks";
 import MobileMenu from "./MobileMenu";
 import { useSession, signOut } from "next-auth/react";
+import { resetDeduplicator } from "@/utils/persistentDeduplicator";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { NotificationDropdown } from "@/features/notifications/components/NotificationDropdown";
@@ -143,7 +144,10 @@ export default function Navbar() {
                      <DropdownMenuItem
                        className="pl-5.5 flex items-center gap-2  py-2 rounded-md
                       bg-gray-100/60 text-gray-700 transition"
-                       onClick={() => signOut()}
+                       onClick={() => {
+          resetDeduplicator();
+          signOut();
+        }}
                      >
                        <span className="text-sm text-gray-700">تسجيل الخروج</span>
                        <LogOut className="w-4 h-4 text-gray-900" />

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useFetcher } from "@/hooks/useFetcher";
 import { useConsultationStore } from "@/store/consultationStore";
+import { useEchoNotifications } from "@/hooks/useEchoNotifications";
 import { TimeZoneService } from "@/lib/timezone-service";
 import type { ConsultationRequest } from "@/types/consultation";
 import ConsultationChatPanel from "@/components/chat/ConsultationChatPanel";
@@ -42,7 +43,8 @@ export default function ProfileChatPage() {
   const [selectedRequest, setSelectedRequest] =
     useState<ConsultationRequest | null>(null);
 
-  const { requests, setRequests } = useConsultationStore();
+  const { requests, hydrateRequests } = useConsultationStore();
+  const { markApiEventsAsProcessed } = useEchoNotifications();
 
   const { data, isLoading } = useFetcher<ApiResponse>(
     ["consultations", "chat-page"],
@@ -56,17 +58,19 @@ export default function ProfileChatPage() {
 
   useEffect(() => {
     if (Array.isArray(data?.data)) {
-      setRequests(data.data);
+      hydrateRequests(data.data);
+      markApiEventsAsProcessed(data.data.map((c) => ({ id: c.id, status: c.status })));
       return;
     }
 
     if (Array.isArray(data)) {
-      setRequests(data);
+      hydrateRequests(data);
+      markApiEventsAsProcessed(data.map((c) => ({ id: c.id, status: c.status })));
       return;
     }
 
-    setRequests([]);
-  }, [data, setRequests]);
+    hydrateRequests([]);
+  }, [data, hydrateRequests, markApiEventsAsProcessed]);
 
   useEffect(() => {
     const checkScreenSize = () => setIsMobile(window.innerWidth < 1024);

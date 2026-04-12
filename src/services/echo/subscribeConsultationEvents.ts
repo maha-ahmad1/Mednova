@@ -25,19 +25,33 @@ interface SubscribeConsultationEventsParams {
   setSubscribed: (value: boolean) => void;
   channelName: string;
   deduplicator: {
-    markIfNew: (key: string) => boolean;
+    markIfNew: (key: string, ttlMs?: number) => boolean;
     removeAfter: (key: string, delayMs: number) => void;
   };
 }
+
+const STATUS_WEIGHT: Record<ConsultationRequest["status"], number> = {
+  pending: 1,
+  accepted: 2,
+  active: 3,
+  completed: 4,
+  cancelled: 4,
+};
+
+const shouldApplyIncomingStatus = (
+  existingStatus: ConsultationRequest["status"],
+  incomingStatus: ConsultationRequest["status"],
+): boolean => STATUS_WEIGHT[incomingStatus] >= STATUS_WEIGHT[existingStatus];
 
 const handleConsultationEvent = (
   event: ConsultationEvent,
   eventType: "requested" | "updated",
   params: Omit<SubscribeConsultationEventsParams, "channel" | "setSubscribed" | "channelName">,
 ) => {
-  const eventKey = `${eventType}_${event.id}_${event.status}_${Date.now()}`;
+  const eventKey = `consult_${eventType}_${event.id}_${event.status}`;
 
-  if (!params.deduplicator.markIfNew(eventKey)) {
+  if (!params.deduplicator.markIfNew(eventKey, 60_000)) {
+    console.debug("[dedup] skipped consultation lifecycle event", { eventKey });
     return;
   }
 
@@ -52,12 +66,20 @@ const handleConsultationEvent = (
 
   if (eventType === "requested") {
     if (existingRequest) {
-      console.log("📝 تحديث طلب موجود:", event.id);
-      params.updateRequest(event.id, {
-        status: event.status,
-        updated_at: event.updated_at || new Date().toISOString(),
-        video_room_link: event.video_room_link || existingRequest.video_room_link,
-      });
+      if (shouldApplyIncomingStatus(existingRequest.status, event.status)) {
+        console.log("📝 تحديث طلب موجود:", event.id);
+        params.updateRequest(event.id, {
+          status: event.status,
+          updated_at: event.updated_at || new Date().toISOString(),
+          video_room_link: event.video_room_link || existingRequest.video_room_link,
+        });
+      } else {
+        console.debug("[status-guard] ignored stale requested event", {
+          id: event.id,
+          existingStatus: existingRequest.status,
+          incomingStatus: event.status,
+        });
+      }
     } else {
       console.log("➕ إضافة طلب جديد:", event.id);
       params.addRequest(createConsultationRequest(event));
@@ -78,13 +100,19 @@ const handleConsultationEvent = (
     if (!existingRequest) {
       console.log("⚠️ طلب غير موجود للتحديث، سيتم إضافه:", event.id);
       params.addRequest(createConsultationRequest(event));
-    } else {
+    } else if (shouldApplyIncomingStatus(existingRequest.status, event.status)) {
       console.log("🔄 تحديث طلب موجود:", event.id);
       params.updateRequest(event.id, {
         status: event.status,
         updated_at: event.updated_at || new Date().toISOString(),
         video_room_link: event.video_room_link || existingRequest.video_room_link,
         type: event.consultation_type || existingRequest.type,
+      });
+    } else {
+      console.debug("[status-guard] ignored stale updated event", {
+        id: event.id,
+        existingStatus: existingRequest.status,
+        incomingStatus: event.status,
       });
     }
 
@@ -118,8 +146,6 @@ const handleConsultationEvent = (
       position: "top-center",
     });
   }
-
-  params.deduplicator.removeAfter(eventKey, 10000);
 };
 
 export const subscribeConsultationEvents = (
@@ -142,11 +168,20 @@ export const subscribeConsultationEvents = (
   });
 
   params.channel.listen("ConsultationMessageBroadcast", (event) => {
+    const consultationMessage = event as ConsultationMessageEvent;
+    const eventKey = `consult_message_${consultationMessage.consultation_id}_${
+      consultationMessage.message_id ?? consultationMessage.id ?? "unknown"
+    }`;
+
+    if (!params.deduplicator.markIfNew(eventKey, 60_000)) {
+      console.debug("[dedup] skipped consultation message event", { eventKey });
+      return;
+    }
+
     console.log("💬 رسالة جديدة في الاستشارة:", event);
-    const notification = createConsultationMessageNotification(
-      event as ConsultationMessageEvent,
-    );
+    const notification = createConsultationMessageNotification(consultationMessage);
     params.addNotification(notification);
+    params.deduplicator.removeAfter(eventKey, 60_000);
   });
 
   params.channel.subscribed(() => {

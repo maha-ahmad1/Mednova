@@ -36,11 +36,12 @@ export default function ConsultationView({}: ConsultationViewProps) {
     }
   );
 
-  const { requests, setRequests, updateRequest } = useConsultationStore();
+  const { requests, hydrateRequests, updateRequest } = useConsultationStore();
   const [selectedRequest, setSelectedRequest] = useState<ConsultationRequest | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   const { data: session } = useSession();
+  const { markApiEventsAsProcessed } = useEchoNotifications();
 
   useEffect(() => {
     const userTimezone = TimeZoneService.detectUserTimeZone();
@@ -57,13 +58,15 @@ export default function ConsultationView({}: ConsultationViewProps) {
 
   useEffect(() => {
     if (Array.isArray(data?.data)) {
-      setRequests(data.data);
+      hydrateRequests(data.data);
+      markApiEventsAsProcessed(data.data.map((c) => ({ id: c.id, status: c.status })));
     } else if (Array.isArray(data)) {
-      setRequests(data);
+      hydrateRequests(data);
+      markApiEventsAsProcessed(data.map((c) => ({ id: c.id, status: c.status })));
     } else {
-      setRequests([]);
+      hydrateRequests([]);
     }
-  }, [data, setRequests]);
+  }, [data, hydrateRequests, markApiEventsAsProcessed]);
 
   useEffect(() => {
     if (error) {

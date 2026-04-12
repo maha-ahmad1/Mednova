@@ -10,10 +10,24 @@ export type ConsultationMessageEvent = {
 };
 
 export type SystemNotificationEvent = {
+  id?: number | string;
   title?: string;
   message: string;
   level?: string;
+  created_at?: string;
   [key: string]: unknown;
+};
+
+export const buildConsultationDedupKey = ({
+  type,
+  consultationId,
+  status,
+}: {
+  type: string;
+  consultationId: number | string;
+  status: string;
+}): string => {
+  return `${type}:${consultationId}:${status}`;
 };
 
 export const createConsultationNotification = (
@@ -21,13 +35,21 @@ export const createConsultationNotification = (
   notificationType: Notification["type"],
   title: string,
 ): Notification => {
+  const consultationId = event.id;
+  const status = event.status;
+  const dedupeKey = buildConsultationDedupKey({
+    type: notificationType,
+    consultationId,
+    status,
+  });
+
   return {
-    id: `consultation_${event.id}_${notificationType}_${Date.now()}`,
+    id: dedupeKey,
     type: notificationType,
     title,
     message: event.message,
     read: false,
-    createdAt: new Date().toISOString(),
+    createdAt: event.updated_at || event.created_at || new Date().toISOString(),
     source: "pusher",
     data: {
       consultation_id: event.id,
@@ -66,13 +88,18 @@ export const createConsultationMessageNotification = (
 export const createSystemNotification = (
   event: SystemNotificationEvent,
 ): Notification => {
+  const stableSystemId =
+    event.id != null
+      ? `system:${String(event.id)}`
+      : `system:${event.title || "إشعار نظام"}:${event.message}`;
+
   return {
-    id: `system_${Date.now()}`,
+    id: stableSystemId,
     type: "system",
     title: event.title || "إشعار نظام",
     message: event.message,
     read: false,
-    createdAt: new Date().toISOString(),
+    createdAt: event.created_at || new Date().toISOString(),
     source: "pusher",
     data: event as Notification["data"],
   };

@@ -1,4 +1,17 @@
 import { Notification, NotificationType, ApiNotification, ApiResponse, NotificationsPageResult } from '../types';
+import { buildConsultationDedupKey } from '@/utils/notificationFactory';
+
+const extractConsultationStatus = (
+  type: string,
+  data: Record<string, unknown> | undefined,
+): string | null => {
+  const status = data?.status;
+  if (typeof status === 'string' && status.length > 0) return status;
+
+  const normalizedType = type.toLowerCase();
+  if (!normalizedType.startsWith('consultation_')) return null;
+  return normalizedType.replace('consultation_', '');
+};
 
 
 export const mapApiTypeToNotificationType = (type: string): NotificationType => {
@@ -30,7 +43,33 @@ export const getNotificationTitle = (type: string): string => {
 export const mapApiNotificationToNotification = (
   apiNotif: ApiNotification
 ): Notification => ({
-  id: `api_${apiNotif.id}`,
+  id: (() => {
+    const data = apiNotif.data as Record<string, unknown> | undefined;
+    const consultationId = data?.consultation_id;
+    const status = extractConsultationStatus(apiNotif.type, data);
+    const normalizedType = apiNotif.type.toLowerCase();
+
+    if (
+      typeof consultationId === 'number' &&
+      typeof status === 'string' &&
+      normalizedType.startsWith('consultation_')
+    ) {
+      return buildConsultationDedupKey({
+        type: normalizedType,
+        consultationId,
+        status,
+      });
+    }
+
+    const maybeMessage = data?.message;
+    const normalizedMessage =
+      typeof maybeMessage === 'string' ? maybeMessage : String(maybeMessage ?? 'بدون رسالة');
+    if (normalizedType === 'system') {
+      return `system:إشعار نظام:${normalizedMessage}`;
+    }
+
+    return `api_${apiNotif.id}`;
+  })(),
   type: mapApiTypeToNotificationType(apiNotif.type),
   title: getNotificationTitle(apiNotif.type),
   message: (() => {

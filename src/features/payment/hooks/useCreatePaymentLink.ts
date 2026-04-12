@@ -8,7 +8,7 @@ export type ConsultationPaymentType = "chat" | "video";
 interface CreatePaymentLinkInput {
   type: ConsultationPaymentType;
   consultationId: string | number;
-  amount: number;
+  // amount: number;
   payment_method: "card";
   card_type: "domestic";
 }

@@ -94,6 +94,8 @@ export const useEchoNotifications = (): void => {
         subscribedRef.current = value;
       },
       channelName,
+      userId,
+      role: String(role),
       deduplicator,
       channelSource: consultationChannelSource,
       channelLabel: consultationChannelLabel,

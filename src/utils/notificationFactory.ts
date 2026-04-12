@@ -21,8 +21,9 @@ export const createConsultationNotification = (
   notificationType: Notification["type"],
   title: string,
 ): Notification => {
+  const eventTimestamp = event.updated_at || event.created_at || "no-ts";
   return {
-    id: `consultation_${event.id}_${notificationType}_${Date.now()}`,
+    id: `consultation_${event.id}_${notificationType}_${event.status}_${eventTimestamp}`,
     type: notificationType,
     title,
     message: event.message,
@@ -51,8 +52,9 @@ export const createConsultationMessageNotification = (
       ? event.message
       : "لديك رسالة جديدة في الاستشارة";
 
+  const eventTimestamp = event.created_at || "no-ts";
   return {
-    id: `message_${event.consultation_id}_${Date.now()}`,
+    id: `message_${event.consultation_id}_${event.sender_id || "unknown"}_${eventTimestamp}`,
     type: "consultation_message",
     title: "رسالة جديدة",
     message: msg,
@@ -66,8 +68,9 @@ export const createConsultationMessageNotification = (
 export const createSystemNotification = (
   event: SystemNotificationEvent,
 ): Notification => {
+  const normalizedMessage = event.message?.trim() || "no-message";
   return {
-    id: `system_${Date.now()}`,
+    id: `system_${normalizedMessage.slice(0, 64)}`,
     type: "system",
     title: event.title || "إشعار نظام",
     message: event.message,
@@ -83,8 +86,9 @@ export const createAccountStatusNotification = (event: {
   reason?: string;
   message?: string;
 }): Notification => {
+  const normalizedReason = event.reason?.trim() || "no-reason";
   return {
-    id: `account_${event.status}_${Date.now()}`,
+    id: `account_${event.status}_${normalizedReason.slice(0, 64)}`,
     type: event.status === "approved" ? "account_approved" : "account_rejected",
     title: event.status === "approved" ? "تم قبول حسابك" : "تم رفض حسابك",
     message:

@@ -35,7 +35,8 @@ const handleConsultationEvent = (
   eventType: "requested" | "updated",
   params: Omit<SubscribeConsultationEventsParams, "channel" | "setSubscribed" | "channelName">,
 ) => {
-  const eventKey = `${eventType}_${event.id}_${event.status}_${Date.now()}`;
+  const eventTimestamp = event.updated_at || event.created_at || "no-ts";
+  const eventKey = `consultation:${eventType}:${event.id}:${event.status}:${eventTimestamp}`;
 
   if (!params.deduplicator.markIfNew(eventKey)) {
     return;

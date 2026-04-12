@@ -21,6 +21,7 @@ export const useEchoNotifications = (): void => {
   const updateRequest = useConsultationStore((state) => state.updateRequest);
   const requests = useConsultationStore((state) => state.requests);
   const addNotification = useNotificationStore((state) => state.addNotification);
+  const clearNotifications = useNotificationStore((state) => state.clearNotifications);
 
   useEffect(() => {
     pathnameRef.current = pathname;
@@ -34,16 +35,30 @@ export const useEchoNotifications = (): void => {
   const echoRef = useRef<ReturnType<typeof getEcho> | null>(null);
   const subscribedRef = useRef(false);
   const channelNameRef = useRef<string>("");
-  const deduplicator = useEventDeduplicator();
+  const dedupScope = session?.user?.id && (session.user.type_account || session.role)
+    ? `${session.user.id}:${session.user.type_account || session.role}`
+    : "anonymous";
+  const deduplicator = useEventDeduplicator(dedupScope);
+  const lastIdentityRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!session?.accessToken || !session?.user?.id) {
       console.log("⏳ انتظار بيانات الجلسة...");
+      lastIdentityRef.current = null;
+      clearNotifications();
+      deduplicator.clear();
       return;
     }
 
     const userId = session.user.id;
     const role = session.user.type_account || session.role;
+    const identityKey = `${userId}:${role}`;
+
+    if (lastIdentityRef.current && lastIdentityRef.current !== identityKey) {
+      clearNotifications();
+      deduplicator.clear();
+    }
+    lastIdentityRef.current = identityKey;
 
     let channelName = "";
     if (role === "patient") {
@@ -118,6 +133,7 @@ export const useEchoNotifications = (): void => {
     addRequest,
     updateRequest,
     addNotification,
+    clearNotifications,
     router,
     update,
     deduplicator,

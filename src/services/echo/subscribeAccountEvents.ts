@@ -39,7 +39,10 @@ export const subscribeAccountEvents = ({
     console.log("📢 حدث تحديث حالة الحساب:", event);
     console.log("🔥🔥🔥 حدث تحديث الحساب واصل:", event);
 
-    const notification = createAccountStatusNotification(event);
+    const notification = createAccountStatusNotification({
+      ...event,
+      user_id: userId,
+    });
     addNotification(notification);
 
     if (event.status === "approved") {

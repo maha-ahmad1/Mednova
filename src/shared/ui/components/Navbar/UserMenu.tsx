@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import { resetDeduplicator } from "@/utils/persistentDeduplicator";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -74,7 +75,10 @@ export function UserMenu() {
 
         <div className="h-px bg-gray-200 my-1" />
 
-        <DropdownMenuItem onClick={() => signOut()} className="flex gap-2">
+        <DropdownMenuItem onClick={() => {
+          resetDeduplicator();
+          signOut();
+        }} className="flex gap-2">
           <span className="flex-1 text-sm">تسجيل الخروج</span>
           <LogOut className="w-4 h-4" />
         </DropdownMenuItem>

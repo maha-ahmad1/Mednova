@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { getEcho } from "@/lib/echo";
@@ -10,8 +10,18 @@ import { subscribeConsultationEvents } from "@/services/echo/subscribeConsultati
 import { subscribeAccountEvents } from "@/services/echo/subscribeAccountEvents";
 import { subscribeSystemEvents } from "@/services/echo/subscribeSystemEvents";
 import { useEventDeduplicator } from "@/utils/createEventDeduplicator";
+import { resetDeduplicator } from "@/utils/persistentDeduplicator";
 
-export const useEchoNotifications = (): void => {
+interface ApiConsultationEvent {
+  id: number;
+  status: string;
+}
+
+interface UseEchoNotificationsResult {
+  markApiEventsAsProcessed: (events: ApiConsultationEvent[]) => void;
+}
+
+export const useEchoNotifications = (): UseEchoNotificationsResult => {
   const { data: session, update } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -34,7 +44,27 @@ export const useEchoNotifications = (): void => {
   const echoRef = useRef<ReturnType<typeof getEcho> | null>(null);
   const subscribedRef = useRef(false);
   const channelNameRef = useRef<string>("");
+  const prevUserIdRef = useRef<number | string | undefined>(undefined);
   const deduplicator = useEventDeduplicator();
+
+  const markApiEventsAsProcessed = useCallback(
+    (events: ApiConsultationEvent[]) => {
+      if (!events.length) {
+        return;
+      }
+
+      const keys = events.flatMap((event) => [
+        `consult_requested_${event.id}_${event.status}`,
+        `consult_updated_${event.id}_${event.status}`,
+      ]);
+
+      deduplicator.markBulk(keys, 60_000);
+      console.debug("[dedup] pre-marked consultation events from API hydration", {
+        count: keys.length,
+      });
+    },
+    [deduplicator],
+  );
 
   useEffect(() => {
     if (!session?.accessToken || !session?.user?.id) {
@@ -44,6 +74,12 @@ export const useEchoNotifications = (): void => {
 
     const userId = session.user.id;
     const role = session.user.type_account || session.role;
+
+    if (prevUserIdRef.current && prevUserIdRef.current !== userId) {
+      console.log("🔄 تبديل المستخدم، إعادة تعيين deduplicator");
+      resetDeduplicator();
+    }
+    prevUserIdRef.current = userId;
 
     let channelName = "";
     if (role === "patient") {
@@ -110,16 +146,9 @@ export const useEchoNotifications = (): void => {
         echoRef.current.leave("notifications");
         echoRef.current.leave(`customer.${userId}`);
         subscribedRef.current = false;
-        deduplicator.clear();
       }
     };
-  }, [
-    session,
-    addRequest,
-    updateRequest,
-    addNotification,
-    router,
-    update,
-    deduplicator,
-  ]);
+  }, [session, addRequest, updateRequest, addNotification, router, update, deduplicator]);
+
+  return { markApiEventsAsProcessed };
 };

@@ -30,11 +30,52 @@ interface SubscribeConsultationEventsParams {
   };
 }
 
+const consultationEventCounters = new Map<string, number>();
+const rawPayloadPrinted = new Set<string>();
+
+const incrementConsultationCounter = (channelName: string, eventType: string): number => {
+  const counterKey = `${channelName}:${eventType}`;
+  const next = (consultationEventCounters.get(counterKey) || 0) + 1;
+  consultationEventCounters.set(counterKey, next);
+  return next;
+};
+
 const handleConsultationEvent = (
   event: ConsultationEvent,
   eventType: "requested" | "updated",
-  params: Omit<SubscribeConsultationEventsParams, "channel" | "setSubscribed" | "channelName">,
+  params: Omit<SubscribeConsultationEventsParams, "channel" | "setSubscribed">,
 ) => {
+  const counter = incrementConsultationCounter(params.channelName, eventType);
+  const payload = event as unknown as Record<string, unknown>;
+  console.log("🧪 [TRACE][ConsultationEvent] incoming", {
+    timestamp: new Date().toISOString(),
+    channelName: params.channelName,
+    localCounter: counter,
+    eventType,
+    id: event.id,
+    status: event.status,
+    type: payload.type ?? event.consultation_type,
+    consultation_type: event.consultation_type,
+    created_at: event.created_at,
+    updated_at: event.updated_at,
+    uuid: payload.uuid,
+    broadcast_id: payload.broadcast_id,
+    event_uuid: payload.event_uuid,
+    notification_id: payload.notification_id,
+  });
+
+  const rawPayloadKey = `${params.channelName}:${eventType}:${event.id}`;
+  if (params.channelName.startsWith("patient.") && !rawPayloadPrinted.has(rawPayloadKey)) {
+    rawPayloadPrinted.add(rawPayloadKey);
+    console.log("🧪 [TRACE][ConsultationEvent] raw-payload (patient once)", {
+      timestamp: new Date().toISOString(),
+      channelName: params.channelName,
+      eventType,
+      localCounter: counter,
+      payload: event,
+    });
+  }
+
   const eventTimestamp = event.updated_at || event.created_at || "no-ts";
   const eventKey = `consultation:${eventType}:${event.id}:${event.status}:${eventTimestamp}`;
   const debugTimestamp = new Date().toISOString();
@@ -164,6 +205,7 @@ export const subscribeConsultationEvents = (
     updateRequest: params.updateRequest,
     addNotification: params.addNotification,
     deduplicator: params.deduplicator,
+    channelName: params.channelName,
   };
 
   params.channel.listen("ConsultationRequestedBroadcast", (event) => {

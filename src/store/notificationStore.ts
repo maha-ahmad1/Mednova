@@ -396,10 +396,19 @@ export const useNotificationStore = create<NotificationStore>()(
         set((state) => {
           const dedupKey = getNotificationDedupKey(notification);
           const stackTrace = new Error("Notification add source").stack;
+          const payload = notification.data as Record<string, unknown>;
           console.debug("[EchoDebug][Store] addNotification-called", {
             timestamp: new Date().toISOString(),
             dedupKey,
             source: notification.source,
+            notificationId: notification.id,
+            notificationType: notification.type,
+            notificationMessage: notification.message,
+            consultationId: payload?.consultation_id,
+            createdAt: notification.createdAt,
+            created_at: payload?.created_at,
+            payloadTimestamp: payload?.timestamp,
+            rawPayloadSource: payload,
             notification,
             stackTrace,
           });

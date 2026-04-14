@@ -183,7 +183,6 @@ export const useEchoNotifications = (): void => {
         echoRef.current.leave("notifications");
         echoRef.current.leave(`customer.${userId}`);
         subscribedRef.current = false;
-        deduplicator.clear();
       }
       console.debug(`[EchoDebug][${instanceId}] cleanup-end`, {
         timestamp: new Date().toISOString(),

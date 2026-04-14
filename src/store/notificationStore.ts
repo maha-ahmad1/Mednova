@@ -374,12 +374,11 @@ const normalize = (value: unknown): string =>
 const getNotificationDedupKey = (notification: Notification): string => {
   const payload = notification.data as Record<string, unknown>;
   const consultationId = payload?.consultation_id;
-  const status = normalize(payload?.status);
   const type = normalize(notification.type);
   const message = normalize(notification.message).slice(0, 80);
 
   if (typeof consultationId === "number") {
-    return `consultation:${consultationId}:${type}:${status}:${message}`;
+    return `consultation:${consultationId}:${type}:${message}`;
   }
 
   return `generic:${type}:${message}`;
@@ -400,6 +399,7 @@ export const useNotificationStore = create<NotificationStore>()(
           console.debug("[EchoDebug][Store] addNotification-called", {
             timestamp: new Date().toISOString(),
             dedupKey,
+            source: notification.source,
             notification,
             stackTrace,
           });

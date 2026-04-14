@@ -124,6 +124,10 @@ export const useEchoNotifications = (): void => {
     const channel = echo.private(channelName);
     const accountChannel = echo.private(`customer.${userId}`);
     const publicChannel = echo.channel("notifications");
+    console.log("🧷 [TRACE] Echo subscription ATTACHED", {
+      channel: channelName,
+      timestamp: new Date().toISOString()
+    });
     console.debug(`[EchoDebug][${instanceIdRef.current}] subscribe-channel`, {
       timestamp: new Date().toISOString(),
       userId,
@@ -173,6 +177,7 @@ export const useEchoNotifications = (): void => {
 
     return () => {
       console.log("🧹 تنظيف Echo (unmount)");
+      console.log("🧹 [TRACE] Echo cleanup executed");
       console.debug(`[EchoDebug][${instanceId}] cleanup-start`, {
         timestamp: new Date().toISOString(),
         userId,

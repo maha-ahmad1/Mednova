@@ -62,6 +62,11 @@ const handleConsultationEvent = (
       });
     } else {
       console.log("➕ إضافة طلب جديد:", event.id);
+      console.log("🔥 [TRACE] addRequest CALLED FROM EVENT", {
+        event,
+        timestamp: new Date().toISOString()
+      });
+      console.trace("CALL STACK");
       params.addRequest(createConsultationRequest(event));
     }
 
@@ -87,6 +92,11 @@ const handleConsultationEvent = (
   } else if (eventType === "updated") {
     if (!existingRequest) {
       console.log("⚠️ طلب غير موجود للتحديث، سيتم إضافه:", event.id);
+      console.log("🔥 [TRACE] addRequest CALLED FROM EVENT", {
+        event,
+        timestamp: new Date().toISOString()
+      });
+      console.trace("CALL STACK");
       params.addRequest(createConsultationRequest(event));
     } else {
       console.log("🔄 تحديث طلب موجود:", event.id);

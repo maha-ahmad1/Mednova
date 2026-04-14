@@ -76,6 +76,11 @@ export const useConsultationStore = create<ConsultationState>((set, get) => ({
   },
   
   addRequest: (request) => {
+    console.log("📌 [TRACE] addRequest EXECUTED", {
+      id: request?.id,
+      timestamp: new Date().toISOString()
+    });
+    console.trace("STORE CALL STACK");
     const state = get();
     const exists = state.requests.find(r => r.id === request.id);
     

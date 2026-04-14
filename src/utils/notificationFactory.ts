@@ -22,13 +22,14 @@ export const createConsultationNotification = (
   title: string,
 ): Notification => {
   const eventTimestamp = event.updated_at || event.created_at || "no-ts";
+  const serverCreatedAt = event.created_at || event.updated_at || new Date().toISOString();
   const mapped: Notification = {
     id: `consultation_${event.id}_${notificationType}_${event.status}_${eventTimestamp}`,
     type: notificationType,
     title,
     message: event.message,
     read: false,
-    createdAt: new Date().toISOString(),
+    createdAt: serverCreatedAt,
     source: "pusher",
     data: {
       consultation_id: event.id,

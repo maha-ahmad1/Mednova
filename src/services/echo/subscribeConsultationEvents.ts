@@ -40,6 +40,39 @@ const incrementConsultationCounter = (channelName: string, eventType: string): n
   return next;
 };
 
+const getConsultationNotificationMeta = (
+  status: ConsultationEvent["status"],
+): { type: Notification["type"]; title: string } => {
+  switch (status) {
+    case "accepted":
+      return {
+        type: "consultation_accepted",
+        title: "تم قبول طلب الاستشارة",
+      };
+    case "active":
+      return {
+        type: "consultation_active",
+        title: "تم تفعيل الاستشارة",
+      };
+    case "completed":
+      return {
+        type: "consultation_completed",
+        title: "تم إكمال الاستشارة",
+      };
+    case "cancelled":
+      return {
+        type: "consultation_cancelled_by_consultant",
+        title: "تم إلغاء طلب الاستشارة",
+      };
+    case "pending":
+    default:
+      return {
+        type: "consultation_requested",
+        title: "طلب استشارة جديد",
+      };
+  }
+};
+
 const handleConsultationEvent = (
   event: ConsultationEvent,
   eventType: "requested" | "updated",
@@ -111,10 +144,11 @@ const handleConsultationEvent = (
       params.addRequest(createConsultationRequest(event));
     }
 
+    const notificationMeta = getConsultationNotificationMeta(event.status);
     const notification = createConsultationNotification(
       event,
-      "consultation_requested",
-      "طلب استشارة جديد",
+      notificationMeta.type,
+      notificationMeta.title,
     );
     console.debug("[EchoDebug][Consultation] addNotification", {
       timestamp: debugTimestamp,
@@ -149,29 +183,12 @@ const handleConsultationEvent = (
       });
     }
 
-    let notificationType: Notification["type"] = "consultation_updated";
-    let title = "تحديث حالة الاستشارة";
-
-    switch (event.status) {
-      case "accepted":
-        notificationType = "consultation_accepted";
-        title = "تم قبول طلب الاستشارة";
-        break;
-      case "active":
-        notificationType = "consultation_active";
-        title = "تم تفعيل الاستشارة";
-        break;
-      case "completed":
-        notificationType = "consultation_completed";
-        title = "تم إكمال الاستشارة";
-        break;
-      case "cancelled":
-        notificationType = "consultation_cancelled";
-        title = "تم إلغاء الاستشارة";
-        break;
-    }
-
-    const notification = createConsultationNotification(event, notificationType, title);
+    const notificationMeta = getConsultationNotificationMeta(event.status);
+    const notification = createConsultationNotification(
+      event,
+      notificationMeta.type,
+      notificationMeta.title,
+    );
     console.debug("[EchoDebug][Consultation] addNotification", {
       timestamp: debugTimestamp,
       eventType,
@@ -182,7 +199,7 @@ const handleConsultationEvent = (
     });
     params.addNotification(notification);
 
-    toast.info(title, {
+    toast.info(notificationMeta.title, {
       duration: 5000,
       position: "top-center",
     });

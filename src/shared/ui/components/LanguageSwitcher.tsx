@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,19 +17,11 @@ export function LanguageSwitcher() {
   const pathname = usePathname();
   const t = useTranslations("navbar");
 
- const switchLocale = (newLocale: string) => {
-  let newPath = pathname;
+  const switchLocale = (nextLocale: string) => {
+    if (nextLocale === locale) return;
+    router.replace(pathname, { locale: nextLocale });
+  };
 
-  // إذا المسار فيه لغة حالية
-  if (pathname.startsWith(`/${locale}`)) {
-    newPath = pathname.replace(`/${locale}`, `/${newLocale}`);
-  } else {
-    // إذا ما فيه لغة (مثل /)
-    newPath = `/${newLocale}${pathname}`;
-  }
-
-  router.push(newPath);
-};
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

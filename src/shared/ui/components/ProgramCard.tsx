@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Eye, Clock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Program } from "@/features/programs/types/program";
 import { RatingBadge } from "@/shared/ui/components/RatingBadge";
 import { LockedContentOverlay } from "@/shared/ui/components/LockedContentOverlay";

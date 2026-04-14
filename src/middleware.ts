@@ -2,8 +2,33 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-const locales = ["en", "ar"];
+const locales = ["en", "ar"] as const;
 const defaultLocale = "en";
+
+const LOCALE_HEADER = "x-locale";
+
+function nextWithLocale(req: NextRequest, locale: string) {
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set(LOCALE_HEADER, locale);
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+}
+
+/** Paths without locale prefix (e.g. /ar/login → /login) */
+function isAuthPublicPath(cleanPath: string): boolean {
+  const exactOrPrefix = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+    "/code-verification",
+    "/control-panel/login",
+  ];
+  return exactOrPrefix.some(
+    (p) => cleanPath === p || cleanPath.startsWith(`${p}/`)
+  );
+}
 
 interface TokenUser {
   id?: string;
@@ -12,7 +37,6 @@ interface TokenUser {
   isCompleted?: boolean;
   is_completed?: boolean;
   approval_status?: string;
-  
 }
 
 interface Token {
@@ -29,7 +53,11 @@ const isAdminToken = (token: Token | null): boolean => {
     return false;
   }
 
-  return token.role === "admin" || token.user?.type_account === "admin" || token.user?.role === "admin";
+  return (
+    token.role === "admin" ||
+    token.user?.type_account === "admin" ||
+    token.user?.role === "admin"
+  );
 };
 
 export async function middleware(req: NextRequest) {
@@ -41,26 +69,26 @@ export async function middleware(req: NextRequest) {
       pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
-  let locale = req.cookies.get("NEXT_LOCALE")?.value || defaultLocale;
-  // Extract locale from pathname if present
+  let locale: string = req.cookies.get("NEXT_LOCALE")?.value || defaultLocale;
   const pathnameLocale = pathname.match(/^\/(en|ar)(\/|$)/)?.[1];
   if (pathnameLocale) {
     locale = pathnameLocale;
   }
 
   if (!pathnameHasLocale) {
-    url.pathname = `/${locale}${pathname}`;
+    url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
     const response = NextResponse.redirect(url);
     response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
     return response;
   }
 
-  const cleanPathname = pathnameHasLocale
-    ? pathname.replace(/^\/(en|ar)/, "") || "/"
-    : pathname;
-  const publicPaths = ["/login", "/control-panel/login", "/api/auth", "/_next", "/favicon.ico", "/public", "/images"];
-  if (publicPaths.some((p) => pathname.startsWith(p))) {
-    return NextResponse.next();
+  const cleanPathname =
+    pathname.replace(/^\/(en|ar)/, "") || "/";
+
+  if (isAuthPublicPath(cleanPathname)) {
+    const res = nextWithLocale(req, locale);
+    res.cookies.set("NEXT_LOCALE", locale, { path: "/" });
+    return res;
   }
 
   const token = (await getToken({
@@ -73,17 +101,17 @@ export async function middleware(req: NextRequest) {
     cleanPathname.startsWith("/control-panel/programs")
   ) {
     if (!isAdminToken(token)) {
-      url.pathname = locale === "ar" ? "/ar/control-panel/login" : "/control-panel/login";
+      url.pathname = `/${locale}/control-panel/login`;
       const response = NextResponse.redirect(url);
       response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
       return response;
     }
 
-    return NextResponse.next();
+    return nextWithLocale(req, locale);
   }
 
   if (!token && cleanPathname.startsWith("/profile")) {
-    url.pathname = locale === "ar" ? "/ar/login" : "/login";
+    url.pathname = `/${locale}/login`;
     const response = NextResponse.redirect(url);
     response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
     return response;
@@ -101,16 +129,14 @@ export async function middleware(req: NextRequest) {
 
     if (!isCompleted) {
       if (!cleanPathname.startsWith("/profile/create")) {
-        url.pathname =
-          locale === "ar" ? "/ar/profile/create" : "/profile/create";
+        url.pathname = `/${locale}/profile/create`;
         const response = NextResponse.redirect(url);
         response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
         return response;
       }
     } else if (approval_status === "pending") {
       if (!cleanPathname.startsWith("/profile/pending")) {
-        url.pathname =
-          locale === "ar" ? "/ar/profile/pending" : "/profile/pending";
+        url.pathname = `/${locale}/profile/pending`;
         const response = NextResponse.redirect(url);
         response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
         return response;
@@ -120,18 +146,17 @@ export async function middleware(req: NextRequest) {
         cleanPathname.startsWith("/profile/create") ||
         cleanPathname.startsWith("/profile/pending")
       ) {
-        url.pathname = locale === "ar" ? "/ar/profile" : "/profile";
+        url.pathname = `/${locale}/profile`;
         const response = NextResponse.redirect(url);
         response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
         return response;
       }
     }
   }
-  return NextResponse.next();
+
+  return nextWithLocale(req, locale);
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next|images|favicon.ico).*)'
-  ]
+  matcher: ["/((?!api|_next|images|favicon.ico).*)"],
 };

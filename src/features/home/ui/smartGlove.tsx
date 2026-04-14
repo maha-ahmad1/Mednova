@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
 
 export default function SmartGlove() {
@@ -34,7 +34,7 @@ export default function SmartGlove() {
               {/* بطاقة عائمة 1 */}
               <div className={`absolute -bottom-6 ${isAr ? '-right-6' : '-left-6'} z-20`}>
                 <div className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 animate-float">
-                  <div className="text-right">
+                  <div className="text-start">
                     <div className="text-sm font-bold text-gray-800">{t("features.0.title")}</div>
                     <div className="text-xs text-gray-600">{t("features.0.desc")}</div>
                   </div>
@@ -44,7 +44,7 @@ export default function SmartGlove() {
           </div>
 
           {/* النص والمحتوى */}
-          <div className={`lg:col-span-7 ${isAr ? 'text-right' : 'text-left'}`}>
+          <div className="lg:col-span-7 text-start">
             <div className="inline-flex items-center gap-2 bg-[#32A88D]/10 text-[#32A88D] px-4 py-2 rounded-full text-sm font-medium mb-6">
               <div className="w-2 h-2 bg-[#32A88D] rounded-full animate-pulse"></div>
               <span>{t("badge")}</span>
@@ -63,7 +63,7 @@ export default function SmartGlove() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[0, 1, 2, 3].map((index) => (
                 <div key={index} className="flex items-start gap-3 p-4 rounded-2xl bg-white/50 backdrop-blur-sm border border-gray-100">
-                  <div className={`text-${isAr ? 'right' : 'left'}`}>
+                  <div className="text-start">
                     <h4 className="font-bold text-gray-800 mb-1">{t(`features.${index}.title`)}</h4>
                     <p className="text-sm text-gray-600">{t(`features.${index}.desc`)}</p>
                   </div>
@@ -71,7 +71,7 @@ export default function SmartGlove() {
               ))}
             </div>
 
-            <div className={`flex ${isAr ? 'justify-start' : 'justify-end'} mt-8`}>
+            <div className={`flex mt-8 ${isAr ? "justify-start" : "justify-end"}`}>
               <Link href="/smartgloves">
                 <button className="bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] text-white rounded-xl px-8 py-4 text-lg shadow-lg font-medium">
                   {t("cta")}

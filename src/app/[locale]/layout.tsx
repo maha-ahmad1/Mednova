@@ -44,7 +44,6 @@ import { notFound } from 'next/navigation';
 import { Providers } from '@/providers/QueryClientProvider';
 import { SessionProviderWrapper } from '@/providers/SessionProviderWrapper';
 
-// يمكنك تحديد اللغات المدعومة
 const locales = ['en', 'ar'];
 
 export default async function LocaleLayout({
@@ -62,19 +61,15 @@ export default async function LocaleLayout({
   }
 
   // الحصول على الرسائل من نفس مصدر getRequestConfig
-  const messages = await getMessages({locale} ); // 🔥 هذه هي الطريقة الصحيحة
+  const messages = await getMessages({locale} ); 
 
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={dir}>
-      <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <SessionProviderWrapper>
-            <Providers>{children}</Providers>
-          </SessionProviderWrapper>
-        </NextIntlClientProvider>
-      </body>
-    </html>
-  );
+  <NextIntlClientProvider locale={locale} messages={messages}>
+    <SessionProviderWrapper>
+      <Providers>{children}</Providers>
+    </SessionProviderWrapper>
+  </NextIntlClientProvider>
+);
 }

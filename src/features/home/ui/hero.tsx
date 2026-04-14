@@ -6,7 +6,7 @@ import {
   Video,
   ArrowLeft,
 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 
 // import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
@@ -29,7 +29,7 @@ const t = useTranslations("hero");
         {/* شريط التنقل */}
       {/* <Navbar variant="landing" />         */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-12 lg:py-20 sm:px-0 3xl:px-32">
-          <div className="lg:col-span-7 text-center lg:text-right">
+          <div className="lg:col-span-7 text-center lg:text-start">
             {/* شارة */}
             <div className="inline-flex items-center gap-2 bg-[#32A88D]/10 text-[#32A88D] px-4 py-2 rounded-full text-sm font-medium mb-6">
               <div className="w-2 h-2 bg-[#32A88D] rounded-full animate-pulse"></div>
@@ -76,15 +76,21 @@ const t = useTranslations("hero");
             {/* إحصائيات */}
             <div className="grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0">
               <div className="text-center">
-                <div className="text-2xl font-bold text-[#32A88D]">500+</div>
+                <div className="text-2xl font-bold text-[#32A88D]">
+                  {t("statSpecialistsValue")}
+                </div>
                 <div className="text-sm text-gray-600">{t("specialists")}</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-[#32A88D]">10K+</div>
+                <div className="text-2xl font-bold text-[#32A88D]">
+                  {t("statPatientsValue")}
+                </div>
                 <div className="text-sm text-gray-600">{t("patients")}</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-[#32A88D]">98%</div>
+                <div className="text-2xl font-bold text-[#32A88D]">
+                  {t("statSatisfactionValue")}
+                </div>
                 <div className="text-sm text-gray-600">{t("satisfaction")}</div>
               </div>
             </div>
@@ -98,7 +104,7 @@ const t = useTranslations("hero");
                 <div className="w-80 h-80 md:w-96 md:h-96 lg:w-[480px] lg:h-[480px] mx-auto">
                   <Image
                     src="/images/home/herosection.png"
-                    alt="طبيب مختص"
+                    alt={t("imageAlt")}
                     width={480}
                     height={480}
                     className="w-full h-full object-cover rounded-2xl shadow-2xl"

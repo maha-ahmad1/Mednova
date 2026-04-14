@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Logo } from "./Logo";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useTranslations, useLocale } from "next-intl";
@@ -30,7 +30,7 @@ export function Navbar({ variant = "default" }: { variant?: "default" | "landing
   const { data: session } = useSession();
   const t = useTranslations("navbar");
   const locale = useLocale(); // ✅ تم نقله هنا
-
+  
   return (
     <header className="sticky top-0 z-30 flex h-20 items-center gap-4 border-b bg-card px-12">
       <Button variant="ghost" size="icon" className="md:hidden">

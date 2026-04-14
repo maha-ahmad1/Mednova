@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ServiceProvider } from "../types/provider";
 import { ConsultationDialog } from "./ConsultationDialog";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 interface ProviderCardProps {
   provider: ServiceProvider;

@@ -1,21 +1,18 @@
-import './globals.css';
-// Accept locale, dir, and messages as props from child layout
-export default function RootLayout({
+import "./globals.css";
+import { headers } from "next/headers";
+
+export default async function RootLayout({
   children,
-  locale = 'en',
-  dir = 'ltr',
-  messages
 }: {
   children: React.ReactNode;
-  locale?: string;
-  dir?: string;
-  messages: Record<string, string>
 }) {
+  const headersList = await headers();
+  const locale = headersList.get("x-locale") ?? "en";
+  const dir = locale === "ar" ? "rtl" : "ltr";
+
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
-      <body dir={dir} suppressHydrationWarning>
-        {children}
-      </body>
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

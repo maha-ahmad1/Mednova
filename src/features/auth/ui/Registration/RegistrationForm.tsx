@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   registerUser,
   type RegistrationData,
@@ -16,7 +17,6 @@ import {
   FormPasswordInput,
   FormCheckbox,
   FormSubmitButton,
-  SocialLoginButton,
   FormAccountTypeSelector,
   FormPhoneInput,
 } from "@/shared/ui/forms";
@@ -31,36 +31,72 @@ import {
 import { User, Briefcase, Building2, Mail, Phone } from "lucide-react";
 import type { AxiosError } from "axios";
 
-const registrationSchema = z
-  .object({
-    full_name: z.string().min(1, "الاسم الكامل مطلوب"),
-    email: z.string().email("بريد إلكتروني غير صالح"),
-    phone: z.string().min(1, "رقم الهاتف مطلوب"),
-    password: z
-      .string()
-      .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
-        "يجب أن تحتوي كلمة المرور على حرف كبير وحرف صغير ورمز واحد على الأقل"
-      ),
-    password_confirmation: z.string().min(1, "تأكيد كلمة المرور مطلوب"),
-    type_account: z.enum(["patient", "therapist", "rehabilitation_center"]),
-    acceptTerms: z
-      .boolean()
-      .refine((val) => val === true, "يجب الموافقة على الشروط"),
-  })
-  .refine((data) => data.password === data.password_confirmation, {
-    message: "كلمات المرور غير متطابقة",
-    path: ["password_confirmation"],
-  });
+function createRegistrationSchema(t: (key: string) => string) {
+  return z
+    .object({
+      full_name: z.string().min(1, t("register.validation.fullNameRequired")),
+      email: z.string().email(t("register.validation.invalidEmail")),
+      phone: z.string().min(1, t("register.validation.phoneRequired")),
+      password: z
+        .string()
+        .min(6, t("register.validation.passwordMin"))
+        .regex(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
+          t("register.validation.passwordPattern"),
+        ),
+      password_confirmation: z
+        .string()
+        .min(1, t("register.validation.confirmRequired")),
+      type_account: z.enum(["patient", "therapist", "rehabilitation_center"]),
+      acceptTerms: z.boolean().refine((val) => val === true, {
+        message: t("register.validation.acceptTerms"),
+      }),
+    })
+    .refine((data) => data.password === data.password_confirmation, {
+      message: t("register.validation.passwordsMismatch"),
+      path: ["password_confirmation"],
+    });
+}
 
-type RegistrationFormData = z.infer<typeof registrationSchema>;
+type RegistrationFormData = z.infer<
+  ReturnType<typeof createRegistrationSchema>
+>;
 
-// ---------------- Registration Form ----------------
 export function RegistrationForm() {
+  const locale = useLocale();
+  return <RegistrationFormInner key={locale} />;
+}
+
+function RegistrationFormInner() {
   const [countryCode, setCountryCode] = useState("+968");
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations("Auth");
+  const isRtl = locale === "ar";
+
+  const registrationSchema = useMemo(() => createRegistrationSchema(t), [t]);
+
+  const accountTypeOptions = useMemo(
+    () => [
+      {
+        value: "patient" as const,
+        label: t("register.accountTypePatient"),
+        icon: User,
+      },
+      {
+        value: "therapist" as const,
+        label: t("register.accountTypeTherapist"),
+        icon: Briefcase,
+      },
+      {
+        value: "rehabilitation_center" as const,
+        label: t("register.accountTypeCenter"),
+        icon: Building2,
+      },
+    ],
+    [t],
+  );
 
   const methods = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
@@ -78,10 +114,10 @@ export function RegistrationForm() {
     mutationFn: (data: RegistrationData) => registerUser(data),
     onSuccess: (data) => {
       if (data.success) router.push("/login");
-      else setServerError(data.message || "حدث خطأ غير متوقع");
+      else setServerError(data.message || t("register.errors.unexpected"));
     },
     onError: (
-      error: AxiosError<{ message?: string; data?: Record<string, string> }>
+      error: AxiosError<{ message?: string; data?: Record<string, string> }>,
     ) => {
       if (error.response?.data) {
         const backendErrors = error.response.data.data || {};
@@ -97,8 +133,9 @@ export function RegistrationForm() {
           Object.keys(backendErrors).length === 0
         )
           setServerError(error.response.data.message);
-      } else if (error.request) setServerError("لا يوجد اتصال بالخادم");
-      else setServerError("حدث خطأ غير متوقع");
+      } else if (error.request)
+        setServerError(t("register.errors.noConnection"));
+      else setServerError(t("register.errors.unexpected"));
     },
   });
 
@@ -109,157 +146,127 @@ export function RegistrationForm() {
 
   return (
     <Card className="w-full h-full flex flex-col justify-center border-0 shadow-none bg-transparent">
-      <CardHeader className="space-y-2" dir="rtl">
+      <CardHeader className="space-y-2" dir={isRtl ? "rtl" : "ltr"}>
         <CardTitle className="text-2xl font-bold text-foreground">
-          إنشاء حساب جديد
+          {t("register.title")}
         </CardTitle>
         <CardDescription className="text-md">
-          قم بإدخال بياناتك للانضمام الى منصة ميدنوفا
+          {t("register.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 flex-1 flex flex-col justify-center mt-[-30px]">
         <FormProvider {...methods}>
           <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
             {serverError && (
-              <div className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-right text-sm">
+              <div
+                className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-sm"
+                dir={isRtl ? "rtl" : "ltr"}
+              >
                 {serverError}
               </div>
             )}
 
-            {/* Full Name */}
             <FormInput
-              label="الاسم الكامل"
-              placeholder="أدخل اسمك الكامل"
+              label={t("register.fullName")}
+              placeholder={t("register.fullNamePlaceholder")}
               icon={User}
-              iconPosition="right"
-              rtl
+              iconPosition={isRtl ? "right" : "left"}
+              rtl={isRtl}
               error={errors.full_name?.message}
               {...methods.register("full_name")}
             />
 
-            {/* Email */}
             <FormInput
-              label="البريد الإلكتروني"
+              label={t("register.email")}
               type="email"
-              placeholder="example@email.com"
+              placeholder={t("register.emailPlaceholder")}
               icon={Mail}
-              iconPosition="right"
-              rtl
+              iconPosition={isRtl ? "right" : "left"}
+              rtl={isRtl}
               error={errors.email?.message}
               {...methods.register("email")}
             />
 
-            {/* Phone */}
             <Controller
               name="phone"
               control={methods.control}
               render={({ field }) => (
                 <FormPhoneInput
-                  label="رقم الهاتف"
-                  placeholder="0000 0000"
+                  label={t("register.phone")}
+                  placeholder={t("register.phonePlaceholder")}
                   icon={Phone}
-                  iconPosition="right"
-                  // rtl
+                  iconPosition={isRtl ? "right" : "left"}
                   countryCodeValue={countryCode}
                   onCountryCodeChange={setCountryCode}
                   error={errors.phone?.message}
+                  rtl={isRtl}
                   {...field}
                 />
               )}
             />
 
-            {/* Passwords */}
             <FormPasswordInput
-              label="كلمة المرور"
-              placeholder="أدخل كلمة المرور"
-              rtl
+              label={t("register.password")}
+              placeholder={t("register.passwordPlaceholder")}
+              rtl={isRtl}
               error={errors.password?.message}
               {...methods.register("password")}
             />
             <FormPasswordInput
-              label="تأكيد كلمة المرور"
-              placeholder="تأكيد كلمة المرور"
-              rtl
+              label={t("register.confirmPassword")}
+              placeholder={t("register.confirmPasswordPlaceholder")}
+              rtl={isRtl}
               error={errors.password_confirmation?.message}
               {...methods.register("password_confirmation")}
             />
 
-            {/* Account Type */}
             <Controller
               name="type_account"
               control={methods.control}
               render={({ field }) => (
                 <FormAccountTypeSelector
-                  label="نوع الحساب"
-                  options={[
-                    { value: "patient", label: "مريض", icon: User },
-                    { value: "therapist", label: "مختص", icon: Briefcase },
-                    {
-                      value: "rehabilitation_center",
-                      label: "مركز تأهيلي",
-                      icon: Building2,
-                    },
-                  ]}
+                  label={t("register.accountType")}
+                  options={accountTypeOptions}
                   value={field.value}
                   onChange={field.onChange}
-                  rtl
+                  rtl={isRtl}
                 />
               )}
             />
 
-            {/* Accept Terms */}
             <FormCheckbox
               id="terms"
-              rtl
+              rtl={isRtl}
               error={errors.acceptTerms?.message}
-              label={
-                <>
-                  أوافق على{" "}
+              label={t.rich("register.acceptTerms", {
+                terms: (chunks) => (
                   <a href="#" className="text-[#32A88D] hover:underline">
-                    الشروط والأحكام
-                  </a>{" "}
-                  و{" "}
-                  <a href="#" className="text-[#32A88D] hover:underline">
-                    سياسة الخصوصية
+                    {chunks}
                   </a>
-                </>
-              }
+                ),
+                privacy: (chunks) => (
+                  <a href="#" className="text-[#32A88D] hover:underline">
+                    {chunks}
+                  </a>
+                ),
+              })}
               {...methods.register("acceptTerms")}
             />
 
-            {/* Submit */}
             <FormSubmitButton
               isLoading={mutation.isPending}
-              loadingText="جاري الإنشاء..."
+              loadingText={t("register.submitLoading")}
               size="lg"
-              
             >
-              إنشاء حساب
+              {t("register.submit")}
             </FormSubmitButton>
           </form>
         </FormProvider>
 
-        {/* Social Login */}
-        {/* <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-border" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-[13px]">أو من خلال</span>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-8">
-          <SocialLoginButton provider="google" />
-          <SocialLoginButton provider="facebook" />
-        </div> */}
-
-        {/* Login Link */}
-        <div>
-          <span className="text-[#4B5563] text-md cursor-default">
-            لديك حساب بالفعل؟
-          </span>{" "}
+        <div dir={isRtl ? "rtl" : "ltr"}>
+          <span className="text-[#4B5563] text-md">{t("register.hasAccount")} </span>
           <Link href="/login" className="text-[#32A88D] hover:underline">
-            تسجيل دخول
+            {t("register.login")}
           </Link>
         </div>
       </CardContent>

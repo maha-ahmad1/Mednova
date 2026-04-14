@@ -1,12 +1,12 @@
 "use client";
-
-import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import * as z from "zod";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Mail } from "lucide-react";
 import axios from "axios";
 import { signIn } from "next-auth/react";
@@ -23,12 +23,9 @@ import {
   FormInput,
   FormPasswordInput,
   FormSubmitButton,
-  SocialLoginButton,
 } from "@/shared/ui/forms";
 import { loginUser, type LoginData } from "@/features/auth/api/authApi";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
-import { toast } from "sonner";
 
 type BackendErrorResponse = {
   success: boolean;
@@ -37,26 +34,39 @@ type BackendErrorResponse = {
   status?: string;
 };
 
-const loginSchema = z.object({
-  email: z.string().email("بريد إلكتروني غير صالح"),
-  password: z
-    .string()
-    .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
-      "يجب أن تحتوي كلمة المرور على حرف كبير وحرف صغير ورمز واحد على الأقل",
-    ),
-  remember: z.boolean().optional(),
-});
+function createLoginSchema(
+  t: (key: string) => string,
+) {
+  return z.object({
+    email: z.string().email(t("validation.invalidEmail")),
+    password: z
+      .string()
+      .min(6, t("validation.passwordMin"))
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
+        t("validation.passwordPattern"),
+      ),
+    remember: z.boolean().optional(),
+  });
+}
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormData = z.infer<ReturnType<typeof createLoginSchema>>;
 
 export function LoginForm() {
+  const locale = useLocale();
+  return <LoginFormInner key={locale} />;
+}
+
+function LoginFormInner() {
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { data: session } = useSession();
+  const locale = useLocale();
+  const t = useTranslations("login");
+  const isRtl = locale === "ar";
+  const loginSchema = useMemo(() => createLoginSchema(t), [t]);
   console.log("session " + session?.role);
 
   const {
@@ -74,19 +84,18 @@ export function LoginForm() {
 
     if (message) {
       if (message === "verified") {
-        setSuccessMessage("تم التحقق من البريد الإلكتروني بنجاح 🎉"); // استخدام setSuccessMessage بدل toast
+        setSuccessMessage(t("successVerified"));
       }
 
       if (message === "already_verified") {
-        setSuccessMessage("تم التحقق من البريد مسبقاً");
+        setSuccessMessage(t("successAlreadyVerified"));
       }
 
-      // تنظيف الرابط بدون إعادة تحميل
       const url = new URL(window.location.href);
       url.searchParams.delete("message");
       window.history.replaceState({}, "", url.toString());
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   const mutation = useMutation({
     mutationFn: (data: LoginData) => loginUser(data),
@@ -150,12 +159,11 @@ export function LoginForm() {
         else if (backendData?.message) {
           setServerError(backendData.message);
         }
-        // ✅ معالجة الحالة الرابعة: خطأ غير متوقع
         else {
-          setServerError("حدث خطأ غير متوقع");
+          setServerError(t("errors.unexpected"));
         }
       } else {
-        setServerError("حدث خطأ غير متوقع");
+        setServerError(t("errors.unexpected"));
       }
     },
   });
@@ -222,49 +230,55 @@ export function LoginForm() {
 
   return (
     <Card className="w-full h-full flex flex-col justify-center border-0 shadow-none bg-transparent">
-      <CardHeader className="space-y-2" dir="rtl">
+      <CardHeader className="space-y-2" dir={isRtl ? "rtl" : "ltr"}>
         <CardTitle className="text-2xl font-bold text-foreground">
-          تسجيل الدخول
+          {t("title")}
         </CardTitle>
-        <CardDescription className="text-md">
-          قم بإدخال بياناتك للانضمام إلى منصة ميدنوفا
-        </CardDescription>
+        <CardDescription className="text-md">{t("description")}</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6 flex-1 flex flex-col justify-center mt-[-30px]">
         <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
           {successMessage && (
-            <div className="bg-green-100 text-green-700 border border-green-300 p-3 rounded text-right text-sm">
+            <div
+              className="bg-green-100 text-green-700 border border-green-300 p-3 rounded text-sm"
+              dir={isRtl ? "rtl" : "ltr"}
+            >
               {successMessage}
             </div>
           )}
           {serverError && (
-            <div className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-right text-sm">
+            <div
+              className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-sm"
+              dir={isRtl ? "rtl" : "ltr"}
+            >
               {serverError}
             </div>
           )}
 
           <FormInput
-            label="البريد الإلكتروني"
+            label={t("email")}
             type="email"
-            placeholder="example@email.com"
+            placeholder={t("emailPlaceholder")}
             icon={Mail}
-            iconPosition="right"
-            rtl
+            iconPosition={isRtl ? "right" : "left"}
+            rtl={isRtl}
             error={errors.email?.message}
             {...register("email")}
           />
 
           <FormPasswordInput
-            label="كلمة المرور"
-            placeholder="أدخل كلمة المرور"
-            rtl
+            label={t("password")}
+            placeholder={t("passwordPlaceholder")}
+            rtl={isRtl}
             error={errors.password?.message}
             {...register("password")}
           />
 
-          {/* ✅ Remember me & Forgot password */}
-          <div className="flex items-start gap-2" dir="rtl">
+          <div
+            className="flex items-start gap-2"
+            dir={isRtl ? "rtl" : "ltr"}
+          >
             <input
               type="checkbox"
               id="terms"
@@ -273,24 +287,24 @@ export function LoginForm() {
             />
             <div className="flex justify-between w-full">
               <Label htmlFor="terms" className="text-sm text-muted-foreground ">
-                تذكرني
+                {t("rememberMe")}
               </Label>
               <Link
                 href="/forgot-password"
                 className="text-sm text-[#32A88D] cursor-pointer"
               >
-                نسيت كلمة المرور؟
+                {t("forgotPassword")}
               </Link>
             </div>
           </div>
 
           <FormSubmitButton
             isLoading={mutation.isPending}
-            loadingText="جاري تسجيل الدخول..."
+            loadingText={t("loading")}
             size="lg"
             className="cursor-pointer"
           >
-            تسجيل الدخول
+            {t("button")}
           </FormSubmitButton>
         </form>
 
@@ -315,15 +329,14 @@ export function LoginForm() {
           />
         </div> */}
 
-        <div>
-          <a href="#" className="text-[#4B5563] text-md cursor-default">
-            ليس لديك حساب؟
-          </a>{" "}
+        <div dir={isRtl ? "rtl" : "ltr"}>
+          <span className="text-[#4B5563] text-md">{t("noAccount")} </span>
           <Link href="/register" className="text-[#32A88D] hover:underline">
-            أنشئ حسابك الآن
+            {t("registerNow")}
           </Link>
         </div>
       </CardContent>
     </Card>
   );
 }
+

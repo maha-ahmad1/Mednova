@@ -14,7 +14,7 @@ export default function WhyMednova() {
       <div className="relative z-10 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* النص والمحتوى */}
-          <div className="lg:col-span-7 text-center lg:text-right">
+          <div className="lg:col-span-7 text-center lg:text-start">
             {/* شارة */}
             <div className="inline-flex items-center gap-2 bg-[#32A88D]/10 text-[#32A88D] px-4 py-2 rounded-full text-sm font-medium mb-6">
               <div className="w-2 h-2 bg-[#32A88D] rounded-full animate-pulse"></div>
@@ -34,7 +34,7 @@ export default function WhyMednova() {
             <div className="w-20 h-1.5 bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] rounded-full mb-8 mx-auto lg:mx-0"></div>
 
             {/* الوصف */}
-            <p className="text-lg text-gray-600 leading-8 mb-8 max-w-2xl mx-auto lg:mx-0">
+            <p className="text-lg text-gray-600 leading-8 mb-8 max-w-2xl mx-auto lg:mx-0 text-pretty">
               {t("desc")}
             </p>
 
@@ -45,7 +45,7 @@ export default function WhyMednova() {
                 <div className="w-10 h-10 bg-[#32A88D]/10 rounded-xl flex items-center justify-center flex-shrink-0">
                   <div className="w-4 h-4 bg-[#32A88D] rounded-full"></div>
                 </div>
-                <div className="text-right">
+                <div className="text-start">
                   <h4 className="font-bold text-gray-800 mb-1">{t("features.0.title")}</h4>
                   <p className="text-sm text-gray-600">{t("features.0.desc")}</p>
                 </div>
@@ -55,7 +55,7 @@ export default function WhyMednova() {
                 <div className="w-10 h-10 bg-[#32A88D]/10 rounded-xl flex items-center justify-center flex-shrink-0">
                   <div className="w-4 h-4 bg-[#32A88D] rounded-full"></div>
                 </div>
-                <div className="text-right">
+                <div className="text-start">
                   <h4 className="font-bold text-gray-800 mb-1">{t("features.1.title")}</h4>
                   <p className="text-sm text-gray-600">{t("features.1.desc")}</p>
                 </div>
@@ -65,7 +65,7 @@ export default function WhyMednova() {
                 <div className="w-10 h-10 bg-[#32A88D]/10 rounded-xl flex items-center justify-center flex-shrink-0">
                   <div className="w-4 h-4 bg-[#32A88D] rounded-full"></div>
                 </div>
-                <div className="text-right">
+                <div className="text-start">
                   <h4 className="font-bold text-gray-800 mb-1">{t("features.2.title")}</h4>
                   <p className="text-sm text-gray-600">{t("features.2.desc")}</p>
                 </div>
@@ -75,7 +75,7 @@ export default function WhyMednova() {
                 <div className="w-10 h-10 bg-[#32A88D]/10 rounded-xl flex items-center justify-center flex-shrink-0">
                   <div className="w-4 h-4 bg-[#32A88D] rounded-full"></div>
                 </div>
-                <div className="text-right">
+                <div className="text-start">
                   <h4 className="font-bold text-gray-800 mb-1">{t("features.3.title")}</h4>
                   <p className="text-sm text-gray-600">{t("features.3.desc")}</p>
                 </div>

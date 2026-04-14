@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -34,17 +35,19 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
   onClearFilters,
   specialties,
 }) => {
+  const t = useTranslations("specialists");
+
   return (
     <div className="lg:col-span-1">
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-6">
         {/* Filter Header */}
         <div className="flex items-center gap-2 mb-6 pb-4 border-b border-gray-200">
           <FilterIcon className="w-5 h-5 text-[#32A88D]" />
-          <h3 className="text-lg font-semibold text-gray-800">الفلاتر</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{t("filtersTitle")}</h3>
         </div>
         {/* Type Filter */}
         <div className="mb-6">
-          <h4 className="text-sm font-medium text-gray-700 mb-3">النوع</h4>
+          <h4 className="text-sm font-medium text-gray-700 mb-3">{t("type")}</h4>
           <div className="space-y-2">
             <button
               onClick={() => onTabChange("all")}
@@ -54,7 +57,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              الكل
+              {t("all")}
             </button>
             <button
               onClick={() => onTabChange("therapist")}
@@ -64,7 +67,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              المختصون
+              {t("therapists")}
             </button>
             <button
               onClick={() => onTabChange("center")}
@@ -74,19 +77,19 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              المراكز التأهيلية
+              {t("centers")}
             </button>
           </div>
         </div>
         {/* Specialties Filter */}
         <div className="mb-6">
-          <h4 className="text-sm font-medium text-gray-700 mb-3">التخصصات</h4>
+          <h4 className="text-sm font-medium text-gray-700 mb-3">{t("specialties")}</h4>
           <Select
             value={filters.specialty}
             onValueChange={(value) => onFilterChange("specialty", value)}
           >
             <SelectTrigger className="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#32A88D]">
-              <SelectValue placeholder="اختر التخصص" />
+              <SelectValue placeholder={t("selectSpecialty")} />
             </SelectTrigger>
             <SelectContent className="rounded-lg">
               {specialties.map((specialty) => (
@@ -100,7 +103,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
         {/* Location Filters */}
         {/* <div className="space-y-4">
           <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-2">الدولة</h4>
+            <h4 className="text-sm font-medium text-gray-700 mb-2">{t("country")}</h4>
             <div className="relative">
               <MapPinIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
@@ -136,7 +139,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
               }}
             >
               <SelectTrigger className="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#32A88D]">
-                <SelectValue placeholder="اختر الدولة" />
+                <SelectValue placeholder={t("selectCountry")} />
               </SelectTrigger>
               <SelectContent className="rounded-lg">
                 {countries.map((c) => (
@@ -149,14 +152,14 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
           </div>
           {/* City Filter */}
           <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-2">المدينة</h4>
+            <h4 className="text-sm font-medium text-gray-700 mb-2">{t("city")}</h4>
             <Select
               value={filters.city}
               onValueChange={(value) => onFilterChange("city", value)}
               disabled={!filters.country} // تعطيل اختيار المدينة إذا لم تُختَر الدولة
             >
               <SelectTrigger className="w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#32A88D]">
-                <SelectValue placeholder="اختر المدينة" />
+                <SelectValue placeholder={t("selectCity")} />
               </SelectTrigger>
               <SelectContent className="rounded-lg">
                 {countries
@@ -177,7 +180,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
           onClick={onClearFilters}
           className="w-full mt-6 border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-lg"
         >
-          مسح الكل
+          {t("filter")}
         </Button>
       </div>
     </div>

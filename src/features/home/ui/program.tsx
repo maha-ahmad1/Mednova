@@ -7,7 +7,7 @@ import { Award, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 // import { ProgramCard, type ProgramCardData } from "@/components/common/ProgramCard";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ProgramCard } from "@/shared/ui/components/ProgramCard";
 import { EmptyState } from "@/shared/ui/components/EmptyState";
 import { Program } from "@/features/programs/types/program";

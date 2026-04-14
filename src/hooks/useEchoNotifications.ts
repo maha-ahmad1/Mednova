@@ -12,7 +12,7 @@ import { subscribeSystemEvents } from "@/services/echo/subscribeSystemEvents";
 import { useEventDeduplicator } from "@/utils/createEventDeduplicator";
 
 export const useEchoNotifications = (): void => {
-  const { data: session, update } = useSession();
+  const { data: session, update, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const pathnameRef = useRef(pathname);
@@ -42,8 +42,13 @@ export const useEchoNotifications = (): void => {
   const lastIdentityRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!session?.accessToken || !session?.user?.id) {
-      console.log("⏳ انتظار بيانات الجلسة...");
+    if (status === "loading") {
+      console.log("⏳ الجلسة قيد التحميل - تخطي التهيئة مؤقتاً");
+      return;
+    }
+
+    if (status === "unauthenticated" || !session?.accessToken || !session?.user?.id) {
+      console.log("🧹 جلسة غير مصادق عليها - تنظيف الإشعارات");
       lastIdentityRef.current = null;
       clearNotifications();
       deduplicator.clear();
@@ -135,6 +140,7 @@ export const useEchoNotifications = (): void => {
     addNotification,
     clearNotifications,
     router,
+    status,
     update,
     deduplicator,
   ]);

@@ -40,10 +40,36 @@ export const useEchoNotifications = (): void => {
     : "anonymous";
   const deduplicator = useEventDeduplicator(dedupScope);
   const lastIdentityRef = useRef<string | null>(null);
+  const instanceIdRef = useRef<string>(
+    `echo-hook-${Math.random().toString(36).slice(2, 10)}`
+  );
 
   useEffect(() => {
+    console.debug(`[EchoDebug][${instanceIdRef.current}] session-status-change`, {
+      timestamp: new Date().toISOString(),
+      status,
+      userId: session?.user?.id,
+      role: session?.user?.type_account || session?.role,
+      hasAccessToken: !!session?.accessToken,
+    });
+  }, [status, session?.user?.id, session?.user?.type_account, session?.role, session?.accessToken]);
+
+  useEffect(() => {
+    const instanceId = instanceIdRef.current;
+    console.debug(`[EchoDebug][${instanceIdRef.current}] effect-start`, {
+      timestamp: new Date().toISOString(),
+      status,
+      userId: session?.user?.id,
+      role: session?.user?.type_account || session?.role,
+      path: pathnameRef.current,
+      dedupScope,
+    });
+
     if (status === "loading") {
       console.log("⏳ الجلسة قيد التحميل - تخطي التهيئة مؤقتاً");
+      console.debug(`[EchoDebug][${instanceIdRef.current}] effect-end-loading`, {
+        timestamp: new Date().toISOString(),
+      });
       return;
     }
 
@@ -52,6 +78,9 @@ export const useEchoNotifications = (): void => {
       lastIdentityRef.current = null;
       clearNotifications();
       deduplicator.clear();
+      console.debug(`[EchoDebug][${instanceIdRef.current}] effect-end-unauthenticated`, {
+        timestamp: new Date().toISOString(),
+      });
       return;
     }
 
@@ -95,6 +124,24 @@ export const useEchoNotifications = (): void => {
     const channel = echo.private(channelName);
     const accountChannel = echo.private(`customer.${userId}`);
     const publicChannel = echo.channel("notifications");
+    console.debug(`[EchoDebug][${instanceIdRef.current}] subscribe-channel`, {
+      timestamp: new Date().toISOString(),
+      userId,
+      channelType: "consultation-private",
+      channelName,
+    });
+    console.debug(`[EchoDebug][${instanceIdRef.current}] subscribe-channel`, {
+      timestamp: new Date().toISOString(),
+      userId,
+      channelType: "account-private",
+      channelName: `customer.${userId}`,
+    });
+    console.debug(`[EchoDebug][${instanceIdRef.current}] subscribe-channel`, {
+      timestamp: new Date().toISOString(),
+      userId,
+      channelType: "system-public",
+      channelName: "notifications",
+    });
 
     subscribeConsultationEvents({
       channel,
@@ -116,6 +163,7 @@ export const useEchoNotifications = (): void => {
       updateSession: update,
       sessionUser: session?.user,
       router,
+      instanceId,
     });
 
     subscribeSystemEvents({
@@ -125,6 +173,11 @@ export const useEchoNotifications = (): void => {
 
     return () => {
       console.log("🧹 تنظيف Echo (unmount)");
+      console.debug(`[EchoDebug][${instanceId}] cleanup-start`, {
+        timestamp: new Date().toISOString(),
+        userId,
+        channelName: channelNameRef.current,
+      });
       if (echoRef.current && channelNameRef.current) {
         echoRef.current.leave(channelNameRef.current);
         echoRef.current.leave("notifications");
@@ -132,6 +185,10 @@ export const useEchoNotifications = (): void => {
         subscribedRef.current = false;
         deduplicator.clear();
       }
+      console.debug(`[EchoDebug][${instanceId}] cleanup-end`, {
+        timestamp: new Date().toISOString(),
+        userId,
+      });
     };
   }, [
     session,
@@ -139,6 +196,7 @@ export const useEchoNotifications = (): void => {
     updateRequest,
     addNotification,
     clearNotifications,
+    dedupScope,
     router,
     status,
     update,

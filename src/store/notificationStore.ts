@@ -396,6 +396,13 @@ export const useNotificationStore = create<NotificationStore>()(
       addNotification: (notification) => {
         set((state) => {
           const dedupKey = getNotificationDedupKey(notification);
+          const stackTrace = new Error("Notification add source").stack;
+          console.debug("[EchoDebug][Store] addNotification-called", {
+            timestamp: new Date().toISOString(),
+            dedupKey,
+            notification,
+            stackTrace,
+          });
 
           const duplicateByFingerprint = state.notifications.some(
             (item) => getNotificationDedupKey(item) === dedupKey

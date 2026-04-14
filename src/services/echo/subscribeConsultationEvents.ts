@@ -37,6 +37,7 @@ const handleConsultationEvent = (
 ) => {
   const eventTimestamp = event.updated_at || event.created_at || "no-ts";
   const eventKey = `consultation:${eventType}:${event.id}:${event.status}:${eventTimestamp}`;
+  const debugTimestamp = new Date().toISOString();
 
   if (!params.deduplicator.markIfNew(eventKey)) {
     return;
@@ -69,6 +70,14 @@ const handleConsultationEvent = (
       "consultation_requested",
       "طلب استشارة جديد",
     );
+    console.debug("[EchoDebug][Consultation] addNotification", {
+      timestamp: debugTimestamp,
+      eventType,
+      consultationId: event.id,
+      userId: event.patient_id,
+      eventKey,
+      notificationId: notification.id,
+    });
     params.addNotification(notification);
 
     toast.info(event.message, {
@@ -112,6 +121,14 @@ const handleConsultationEvent = (
     }
 
     const notification = createConsultationNotification(event, notificationType, title);
+    console.debug("[EchoDebug][Consultation] addNotification", {
+      timestamp: debugTimestamp,
+      eventType,
+      consultationId: event.id,
+      userId: event.patient_id,
+      eventKey,
+      notificationId: notification.id,
+    });
     params.addNotification(notification);
 
     toast.info(title, {
@@ -126,6 +143,11 @@ const handleConsultationEvent = (
 export const subscribeConsultationEvents = (
   params: SubscribeConsultationEventsParams,
 ): void => {
+  console.debug("[EchoDebug][Consultation] attach-listener", {
+    timestamp: new Date().toISOString(),
+    eventType: "ConsultationRequestedBroadcast",
+    channelName: params.channelName,
+  });
   const baseParams = {
     requestsRef: params.requestsRef,
     addRequest: params.addRequest,
@@ -138,15 +160,33 @@ export const subscribeConsultationEvents = (
     handleConsultationEvent(event as ConsultationEvent, "requested", baseParams);
   });
 
+  console.debug("[EchoDebug][Consultation] attach-listener", {
+    timestamp: new Date().toISOString(),
+    eventType: "ConsultationUpdatedBroadcast",
+    channelName: params.channelName,
+  });
   params.channel.listen("ConsultationUpdatedBroadcast", (event) => {
     handleConsultationEvent(event as ConsultationEvent, "updated", baseParams);
   });
 
+  console.debug("[EchoDebug][Consultation] attach-listener", {
+    timestamp: new Date().toISOString(),
+    eventType: "ConsultationMessageBroadcast",
+    channelName: params.channelName,
+  });
   params.channel.listen("ConsultationMessageBroadcast", (event) => {
     console.log("💬 رسالة جديدة في الاستشارة:", event);
     const notification = createConsultationMessageNotification(
       event as ConsultationMessageEvent,
     );
+    const messageEvent = event as ConsultationMessageEvent;
+    console.debug("[EchoDebug][Consultation] addNotification", {
+      timestamp: new Date().toISOString(),
+      eventType: "message",
+      consultationId: messageEvent.consultation_id,
+      userId: messageEvent.sender_id,
+      notificationId: notification.id,
+    });
     params.addNotification(notification);
   });
 

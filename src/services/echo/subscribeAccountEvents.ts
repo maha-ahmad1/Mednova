@@ -25,6 +25,7 @@ interface SubscribeAccountEventsParams {
     replace: (href: string) => void;
     refresh: () => void;
   };
+  instanceId?: string;
 }
 
 export const subscribeAccountEvents = ({
@@ -34,12 +35,26 @@ export const subscribeAccountEvents = ({
   updateSession,
   sessionUser,
   router,
+  instanceId,
 }: SubscribeAccountEventsParams): void => {
+  console.debug("[EchoDebug][Account] attach-listener", {
+    timestamp: new Date().toISOString(),
+    eventType: ".account.status.updated",
+    userId,
+    instanceId,
+  });
   accountChannel.listen(".account.status.updated", async (event: AccountStatusEvent) => {
     console.log("📢 حدث تحديث حالة الحساب:", event);
     console.log("🔥🔥🔥 حدث تحديث الحساب واصل:", event);
 
     const notification = createAccountStatusNotification(event);
+    console.debug("[EchoDebug][Account] addNotification", {
+      timestamp: new Date().toISOString(),
+      userId,
+      eventType: `.account.status.updated:${event.status}`,
+      notificationId: notification.id,
+      instanceId,
+    });
     addNotification(notification);
 
     if (event.status === "approved") {

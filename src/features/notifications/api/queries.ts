@@ -13,6 +13,7 @@ import {
 } from '../constants';
 import { mapApiResponseToNotificationsPage } from './mapper';
 import { useFetcher } from '@/hooks/useFetcher';
+import { getNotificationTitleByType } from "../utils/notificationTitles";
 
 
 
@@ -28,7 +29,7 @@ export const fetchNotifications = async (
     const mapped = {
       id: `api_${notif.id}`,
       type: notif.type.toLowerCase() as Notification['type'],
-      title: 'إشعار ', 
+      title: getNotificationTitleByType(notif.type),
       message: (() => {
         const maybeMessage = (notif.data as Record<string, unknown> | undefined)?.message;
         if (typeof maybeMessage === 'string') return maybeMessage;

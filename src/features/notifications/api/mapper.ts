@@ -1,4 +1,5 @@
 import { Notification, NotificationType, ApiNotification, ApiResponse, NotificationsPageResult } from '../types';
+import { getNotificationTitleByType } from "../utils/notificationTitles";
 
 
 export const mapApiTypeToNotificationType = (type: string): NotificationType => {
@@ -15,16 +16,7 @@ export const mapApiTypeToNotificationType = (type: string): NotificationType => 
 };
 
 export const getNotificationTitle = (type: string): string => {
-  const titleMap: Record<string, string> = {
-    'MESSAGE': 'رسالة جديدة',
-    'COMMENT': 'تعليق جديد',
-    'LIKE': 'إعجاب جديد',
-    'FOLLOW': 'متابعة جديدة',
-    'SYSTEM': 'إشعار نظام',
-    'ALERT': 'تنبيه',
-  };
-  
-  return titleMap[type.toUpperCase()] || 'إشعار ';
+  return getNotificationTitleByType(type);
 };
 
 export const mapApiNotificationToNotification = (

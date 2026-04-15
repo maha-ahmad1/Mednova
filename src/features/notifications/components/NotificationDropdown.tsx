@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +38,33 @@ export function NotificationDropdown() {
 
   const recentNotifications = notifications.slice(0, 20);
   const hasNotifications = recentNotifications.length > 0;
+
+  useEffect(() => {
+    const toDedupKey = (notification: typeof recentNotifications[number]) => {
+      const payload = notification.data as Record<string, unknown>;
+      const consultationId = payload?.consultation_id;
+      const type = String(notification.type || "").trim().toLowerCase();
+      const message = String(notification.message || "").trim().toLowerCase().slice(0, 80);
+      return typeof consultationId === "number"
+        ? `consultation:${consultationId}:${type}:${message}`
+        : `generic:${type}:${message}`;
+    };
+
+    console.log("🧪 [TRACE][Notifications][UI][Dropdown Rendered]", {
+      timestamp: new Date().toISOString(),
+      total: recentNotifications.length,
+      notifications: recentNotifications.map((n) => ({
+        id: n.id,
+        source: n.source,
+        type: n.type,
+        message: n.message,
+        consultation_id: (n.data as Record<string, unknown>)?.consultation_id,
+        createdAt: n.createdAt,
+        dedupKey: toDedupKey(n),
+        reactKey: n.id,
+      })),
+    });
+  }, [recentNotifications]);
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>

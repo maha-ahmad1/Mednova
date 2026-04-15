@@ -4,15 +4,12 @@ import { useEffect } from "react";
 import { Clock, FileCheck, Shield } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useEchoNotifications } from "@/hooks/useEchoNotifications";
 
 
 
 export default function PendingProfilePage() {
   const router = useRouter();
   const { data: session } = useSession();
-
-  useEchoNotifications(); // تفعيل الإشعارات
 
   useEffect(() => {
     const approvalStatus = session?.approval_status ?? session?.user?.approval_status;

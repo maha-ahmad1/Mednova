@@ -3,7 +3,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, MessageCircle, ChevronLeft, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -69,6 +69,24 @@ export default function ConsultationList({
     }
   }
   const uniqueRequests = Array.from(uniqueRequestsMap.values());
+
+  useEffect(() => {
+    const mapped = uniqueRequests.map((r) => ({
+      id: r.id,
+      status: r.status,
+      type: r.type,
+    }));
+    const keys = uniqueRequests.map((r) => String(r.id));
+    console.log("🧪 [TRACE][ConsultationList][Render]", {
+      timestamp: new Date().toISOString(),
+      userRole,
+      requestsLength: uniqueRequests.length,
+      requests: mapped,
+      reactKeys: keys,
+      reactKeyExpression: "key={request.id}",
+    });
+  }, [uniqueRequests, userRole]);
+
   return (
     <div
       className={`lg:col-span-1 ${
@@ -253,7 +271,6 @@ export default function ConsultationList({
     </div>
   );
 }
-
 
 
 

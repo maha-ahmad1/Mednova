@@ -1,7 +1,7 @@
 // app/notifications/page.tsx
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { cn } from "@/lib/utils";
 import { useNotifications } from "@/features/notifications/hooks/useNotifications";
@@ -276,6 +276,33 @@ export default function NotificationsPage() {
       return notification.type === filter;
     });
   }, [notifications, filter]);
+
+  useEffect(() => {
+    const toDedupKey = (notification: AppNotification) => {
+      const payload = notification.data as Record<string, unknown>;
+      const consultationId = payload?.consultation_id;
+      const type = String(notification.type || "").trim().toLowerCase();
+      const message = String(notification.message || "").trim().toLowerCase().slice(0, 80);
+      return typeof consultationId === "number"
+        ? `consultation:${consultationId}:${type}:${message}`
+        : `generic:${type}:${message}`;
+    };
+
+    console.log("🧪 [TRACE][Notifications][UI][Page Rendered]", {
+      timestamp: new Date().toISOString(),
+      total: filteredNotifications.length,
+      notifications: filteredNotifications.map((n) => ({
+        id: n.id,
+        source: n.source,
+        type: n.type,
+        message: n.message,
+        consultation_id: (n.data as Record<string, unknown>)?.consultation_id,
+        createdAt: n.createdAt,
+        dedupKey: toDedupKey(n),
+        reactKey: n.id,
+      })),
+    });
+  }, [filteredNotifications]);
   // تحقق من هذا console.log
   console.log("Filtered notifications:", {
     count: filteredNotifications.length,

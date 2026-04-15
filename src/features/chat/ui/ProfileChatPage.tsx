@@ -10,7 +10,7 @@ import { useFetcher } from "@/hooks/useFetcher";
 import { useConsultationStore } from "@/store/consultationStore";
 import { TimeZoneService } from "@/lib/timezone-service";
 import type { ConsultationRequest } from "@/types/consultation";
-import ConsultationChatPanel from "@/components/chat/ConsultationChatPanel";
+import ConsultationChatPanel from "@/features/chat/ui/ConsultationChatPanel";
 
 interface ApiResponse {
   success: boolean;
@@ -56,15 +56,36 @@ export default function ProfileChatPage() {
 
   useEffect(() => {
     if (Array.isArray(data?.data)) {
+      console.log("🧪 [TRACE][ProfileChatPage] API hydration -> setRequests(data.data)", {
+        timestamp: new Date().toISOString(),
+        total: data.data.length,
+        ids: data.data.map((item) => ({
+          id: item?.id,
+          idType: typeof item?.id,
+          status: item?.status,
+        })),
+      });
       setRequests(data.data);
       return;
     }
 
     if (Array.isArray(data)) {
+      console.log("🧪 [TRACE][ProfileChatPage] API hydration -> setRequests(data)", {
+        timestamp: new Date().toISOString(),
+        total: data.length,
+        ids: data.map((item) => ({
+          id: item?.id,
+          idType: typeof item?.id,
+          status: item?.status,
+        })),
+      });
       setRequests(data);
       return;
     }
 
+    console.log("🧪 [TRACE][ProfileChatPage] API hydration -> setRequests([])", {
+      timestamp: new Date().toISOString(),
+    });
     setRequests([]);
   }, [data, setRequests]);
 

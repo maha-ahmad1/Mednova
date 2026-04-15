@@ -13,6 +13,7 @@ import {
 } from '../constants';
 import { mapApiResponseToNotificationsPage } from './mapper';
 import { useFetcher } from '@/hooks/useFetcher';
+import { getNotificationTitleByType } from "../utils/notificationTitles";
 
 
 
@@ -24,21 +25,31 @@ export const fetchNotifications = async (
     notification: ApiNotification[];
   }>>(NOTIFICATION_ENDPOINTS.LIST, { params });
 
-  return response.data.data.notification.map((notif) => ({
-    id: `api_${notif.id}`,
-    type: notif.type.toLowerCase() as Notification['type'],
-    title: 'إشعار ', 
-    message: (() => {
-      const maybeMessage = (notif.data as Record<string, unknown> | undefined)?.message;
-      if (typeof maybeMessage === 'string') return maybeMessage;
-      if (maybeMessage == null) return 'بدون رسالة';
-      return String(maybeMessage);
-    })(),
-    data: notif.data || {},
-    read: !!notif.read_at,
-    createdAt: notif.created_at || String(notif.id),
-    source: 'api' as const,
-  }));
+  return response.data.data.notification.map((notif) => {
+    const mapped = {
+      id: `api_${notif.id}`,
+      type: notif.type.toLowerCase() as Notification['type'],
+      title: getNotificationTitleByType(notif.type),
+      message: (() => {
+        const maybeMessage = (notif.data as Record<string, unknown> | undefined)?.message;
+        if (typeof maybeMessage === 'string') return maybeMessage;
+        if (maybeMessage == null) return 'بدون رسالة';
+        return String(maybeMessage);
+      })(),
+      data: notif.data || {},
+      read: !!notif.read_at,
+      createdAt: notif.created_at || String(notif.id),
+      source: 'api' as const,
+    };
+
+    console.log("🧪 [TRACE][Notifications][API Mapper][queries.fetchNotifications]", {
+      timestamp: new Date().toISOString(),
+      raw: notif,
+      mapped,
+    });
+
+    return mapped;
+  });
 };
 
 export const fetchNotificationsPage = async (

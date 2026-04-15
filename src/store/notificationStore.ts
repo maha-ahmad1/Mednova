@@ -368,6 +368,22 @@ interface NotificationStore {
   updateLastSyncTime: () => void;
 }
 
+const normalize = (value: unknown): string =>
+  typeof value === "string" ? value.trim().toLowerCase() : "";
+
+const getNotificationDedupKey = (notification: Notification): string => {
+  const payload = notification.data as Record<string, unknown>;
+  const consultationId = payload?.consultation_id;
+  const type = normalize(notification.type);
+  const message = normalize(notification.message).slice(0, 80);
+
+  if (typeof consultationId === "number") {
+    return `consultation:${consultationId}:${type}:${message}`;
+  }
+
+  return `generic:${type}:${message}`;
+};
+
 export const useNotificationStore = create<NotificationStore>()(
   persist(
     (set, get) => ({
@@ -378,12 +394,41 @@ export const useNotificationStore = create<NotificationStore>()(
       // 🔧 أبسط وأوضح: توقع أن يأتي ID فريد من الخارج
       addNotification: (notification) => {
         set((state) => {
+          const dedupKey = getNotificationDedupKey(notification);
+          const stackTrace = new Error("Notification add source").stack;
+          const payload = notification.data as Record<string, unknown>;
+          console.debug("[EchoDebug][Store] addNotification-called", {
+            timestamp: new Date().toISOString(),
+            dedupKey,
+            source: notification.source,
+            notificationId: notification.id,
+            notificationType: notification.type,
+            notificationMessage: notification.message,
+            consultationId: payload?.consultation_id,
+            createdAt: notification.createdAt,
+            created_at: payload?.created_at,
+            payloadTimestamp: payload?.timestamp,
+            rawPayloadSource: payload,
+            notification,
+            stackTrace,
+          });
+
+          const duplicateByFingerprint = state.notifications.some(
+            (item) => getNotificationDedupKey(item) === dedupKey
+          );
+          if (duplicateByFingerprint) {
+            console.debug(`[Dedup] DROP ${dedupKey} notification-fingerprint`);
+            return state;
+          }
+
           // تأكد من عدم وجود تكرار
           const exists = state.notifications.some(n => n.id === notification.id);
           if (exists) {
+            console.debug(`[Dedup] DROP ${notification.id} notification-id`);
             console.warn('⚠️ إشعار مكرر تم تجاهله:', notification.id);
             return state;
           }
+          console.debug(`[Dedup] PASS ${dedupKey} notification-new`);
           
           return {
             notifications: [notification, ...state.notifications],
@@ -441,18 +486,23 @@ export const useNotificationStore = create<NotificationStore>()(
             .filter(n => n.source === 'pusher')
             .filter(n => new Date(n.createdAt) > oneDayAgo);
           
-          // استخدام Set لإزالة التكرارات بناءً على id
+          // استخدام دمج API + Pusher مع dedup fingerprint
           const allNotifications = [
             ...apiNotifications,
             ...recentPusherNotifications
           ];
           
-          // 🔧 أبسط: استخدام Map لإزالة التكرارات مع الاحتفاظ بالأحدث
-          const notificationMap = new Map();
+          // 🔧 إزالة التكرارات بالـ fingerprint مع الاحتفاظ بالأحدث
+          const notificationMap = new Map<string, Notification>();
           allNotifications.forEach(notif => {
-            const existing = notificationMap.get(notif.id);
+            const dedupKey = getNotificationDedupKey(notif);
+            const existing = notificationMap.get(dedupKey);
+
             if (!existing || new Date(notif.createdAt) > new Date(existing.createdAt)) {
-              notificationMap.set(notif.id, notif);
+              notificationMap.set(dedupKey, notif);
+              console.debug(`[Dedup] PASS ${dedupKey} api-sync-keep`);
+            } else {
+              console.debug(`[Dedup] DROP ${dedupKey} api-sync-older`);
             }
           });
           

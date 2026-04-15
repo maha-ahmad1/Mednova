@@ -71,12 +71,35 @@ interface ConsultationState {
 export const useConsultationStore = create<ConsultationState>((set, get) => ({
   requests: [],
   setRequests: (requests) => {
+    console.log("🧪 [TRACE][ConsultationStore] setRequests CALLED", {
+      timestamp: new Date().toISOString(),
+      total: requests.length,
+      ids: requests.map((r) => ({
+        id: r?.id,
+        idType: typeof r?.id,
+        status: r?.status,
+      })),
+    });
     console.log("🔄 تحديث جميع الطلبات:", requests);
     set({ requests });
   },
   
   addRequest: (request) => {
+    console.log("📌 [TRACE] addRequest EXECUTED", {
+      id: request?.id,
+      timestamp: new Date().toISOString()
+    });
+    console.trace("STORE CALL STACK");
     const state = get();
+    console.log("🧪 [TRACE][ConsultationStore] addRequest PRE-CHECK", {
+      incomingId: request?.id,
+      incomingIdType: typeof request?.id,
+      existingIds: state.requests.map((r) => ({
+        id: r.id,
+        idType: typeof r.id,
+        status: r.status,
+      })),
+    });
     const exists = state.requests.find(r => r.id === request.id);
     
     if (exists) {

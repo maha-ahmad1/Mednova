@@ -57,10 +57,31 @@ export default function ConsultationView({}: ConsultationViewProps) {
 
   useEffect(() => {
     if (Array.isArray(data?.data)) {
+      console.log("🧪 [TRACE][ConsultationView] API hydration -> setRequests(data.data)", {
+        timestamp: new Date().toISOString(),
+        total: data.data.length,
+        ids: data.data.map((item) => ({
+          id: item?.id,
+          idType: typeof item?.id,
+          status: item?.status,
+        })),
+      });
       setRequests(data.data);
     } else if (Array.isArray(data)) {
+      console.log("🧪 [TRACE][ConsultationView] API hydration -> setRequests(data)", {
+        timestamp: new Date().toISOString(),
+        total: data.length,
+        ids: data.map((item) => ({
+          id: item?.id,
+          idType: typeof item?.id,
+          status: item?.status,
+        })),
+      });
       setRequests(data);
     } else {
+      console.log("🧪 [TRACE][ConsultationView] API hydration -> setRequests([])", {
+        timestamp: new Date().toISOString(),
+      });
       setRequests([]);
     }
   }, [data, setRequests]);

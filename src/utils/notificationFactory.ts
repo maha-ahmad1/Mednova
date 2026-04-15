@@ -21,13 +21,15 @@ export const createConsultationNotification = (
   notificationType: Notification["type"],
   title: string,
 ): Notification => {
-  return {
-    id: `consultation_${event.id}_${notificationType}_${Date.now()}`,
+  const eventTimestamp = event.updated_at || event.created_at || "no-ts";
+  const serverCreatedAt = event.created_at || event.updated_at || new Date().toISOString();
+  const mapped: Notification = {
+    id: `consultation_${event.id}_${notificationType}_${event.status}_${eventTimestamp}`,
     type: notificationType,
     title,
     message: event.message,
     read: false,
-    createdAt: new Date().toISOString(),
+    createdAt: serverCreatedAt,
     source: "pusher",
     data: {
       consultation_id: event.id,
@@ -41,6 +43,12 @@ export const createConsultationNotification = (
       video_room_link: event.video_room_link,
     },
   };
+  console.log("🧪 [TRACE][Notifications][Pusher Factory][createConsultationNotification]", {
+    timestamp: new Date().toISOString(),
+    rawEvent: event,
+    mappedNotification: mapped,
+  });
+  return mapped;
 };
 
 export const createConsultationMessageNotification = (
@@ -51,8 +59,9 @@ export const createConsultationMessageNotification = (
       ? event.message
       : "لديك رسالة جديدة في الاستشارة";
 
-  return {
-    id: `message_${event.consultation_id}_${Date.now()}`,
+  const eventTimestamp = event.created_at || "no-ts";
+  const mapped: Notification = {
+    id: `message_${event.consultation_id}_${event.sender_id || "unknown"}_${eventTimestamp}`,
     type: "consultation_message",
     title: "رسالة جديدة",
     message: msg,
@@ -61,13 +70,20 @@ export const createConsultationMessageNotification = (
     source: "pusher",
     data: event as Notification["data"],
   };
+  console.log("🧪 [TRACE][Notifications][Pusher Factory][createConsultationMessageNotification]", {
+    timestamp: new Date().toISOString(),
+    rawEvent: event,
+    mappedNotification: mapped,
+  });
+  return mapped;
 };
 
 export const createSystemNotification = (
   event: SystemNotificationEvent,
 ): Notification => {
-  return {
-    id: `system_${Date.now()}`,
+  const normalizedMessage = event.message?.trim() || "no-message";
+  const mapped: Notification = {
+    id: `system_${normalizedMessage.slice(0, 64)}`,
     type: "system",
     title: event.title || "إشعار نظام",
     message: event.message,
@@ -76,6 +92,12 @@ export const createSystemNotification = (
     source: "pusher",
     data: event as Notification["data"],
   };
+  console.log("🧪 [TRACE][Notifications][Pusher Factory][createSystemNotification]", {
+    timestamp: new Date().toISOString(),
+    rawEvent: event,
+    mappedNotification: mapped,
+  });
+  return mapped;
 };
 
 export const createAccountStatusNotification = (event: {
@@ -83,8 +105,9 @@ export const createAccountStatusNotification = (event: {
   reason?: string;
   message?: string;
 }): Notification => {
-  return {
-    id: `account_${event.status}_${Date.now()}`,
+  const normalizedReason = event.reason?.trim() || "no-reason";
+  const mapped: Notification = {
+    id: `account_${event.status}_${normalizedReason.slice(0, 64)}`,
     type: event.status === "approved" ? "account_approved" : "account_rejected",
     title: event.status === "approved" ? "تم قبول حسابك" : "تم رفض حسابك",
     message:
@@ -97,4 +120,10 @@ export const createAccountStatusNotification = (event: {
     source: "pusher",
     data: event,
   };
+  console.log("🧪 [TRACE][Notifications][Pusher Factory][createAccountStatusNotification]", {
+    timestamp: new Date().toISOString(),
+    rawEvent: event,
+    mappedNotification: mapped,
+  });
+  return mapped;
 };

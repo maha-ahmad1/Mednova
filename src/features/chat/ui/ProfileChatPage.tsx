@@ -10,7 +10,7 @@ import { useFetcher } from "@/hooks/useFetcher";
 import { useConsultationStore } from "@/store/consultationStore";
 import { TimeZoneService } from "@/lib/timezone-service";
 import type { ConsultationRequest } from "@/types/consultation";
-import ConsultationChatPanel from "@/components/chat/ConsultationChatPanel";
+import ConsultationChatPanel from "@/features/chat/ui/ConsultationChatPanel";
 
 interface ApiResponse {
   success: boolean;

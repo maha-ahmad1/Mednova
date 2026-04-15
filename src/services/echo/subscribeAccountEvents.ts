@@ -69,7 +69,7 @@ export const subscribeAccountEvents = ({
         return;
       }
 
-      router.replace("/profile");
+      // router.replace("/profile");
     }
 
     if (event.status === "rejected") {

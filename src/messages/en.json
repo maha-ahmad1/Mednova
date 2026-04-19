@@ -1,0 +1,404 @@
+{
+  "navbar": {
+    "search": "Search for user, appointment, or report...",
+    "settings": "Settings",
+    "help": "Help",
+    "logout": "Logout",
+    "login": "Login",
+    "home": "Home",
+    "specialists": "Specialists",
+    "programs": "Rehabilitation Programs",
+    "notification": "Notifications",
+    "devices": "Devices",
+    "smartGlove": "Smart Glove",
+    "language": "Language",
+    "en": "🇺🇸 English",
+    "ar": "🇸🇦 Arabic"
+  },
+  "specialists": {
+    "title": "Specialists & Centers",
+    "all": "All",
+    "searchLabel": "Search specialists",
+    "searchPlaceholder": "Type specialist name...",
+    "search": "Search by name or specialty...",
+    "notFound": "No specialists or centers match your search",
+    "filter": "Reset filters",
+    "noResultsTitle": "No results found",
+    "noResultsDesc": "No specialists match your search",
+    "viewProfile": "View profile"
+  },
+  "hero": {
+    "title": "Your recovery starts with Mednova",
+    "heading1": "Your comfort",
+    "heading2": "starts here",
+    "description": "Restore your health with top physiotherapy specialists",
+    "start": "Start now",
+    "learn": "Learn more",
+    "specialists": "Certified specialists",
+    "patients": "Recovered patients",
+    "satisfaction": "Satisfaction rate",
+    "statSpecialistsValue": "500+",
+    "statPatientsValue": "10K+",
+    "statSatisfactionValue": "98%",
+    "imageAlt": "Specialist providing care",
+    "chat": "Chat consultation",
+    "instant": "Instant reply",
+    "video": "Video consultation",
+    "face": "Face to face"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "tryAgain": "Try Again",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "pageNotFound": "404 - Page Not Found",
+    "pageNotFoundDesc": "The page you're looking for doesn't exist.",
+    "goHome": "Go Home"
+  },
+  "programs": {
+    "all": "All",
+    "sort": "Sort",
+    "searchLabel": "Search programs",
+    "searchPlaceholder": "Type program name...",
+    "activeFilters": "Active filters",
+    "clearAllFilters": "Clear filters",
+    "showingResults": "Showing {count} results",
+    "sortedBy": "Sorted by {sort}",
+    "noResultsTitle": "No results found",
+    "noResultsDesc": "No programs match your search",
+    "showAllPrograms": "Show all programs",
+    "programsTitle": "Rehabilitation Programs",
+    "programsDescription": "Browse the best rehabilitation programs",
+    "certifiedPrograms": "Certified programs",
+    "availablePrograms": "{count} available programs",
+    "viewDetails": "View details",
+    "subscribeFullAccess": "Subscribe for full access",
+    "topRequested": "Top requested",
+    "availableNow": "Available now",
+    "registeredUsers": "{count} enrolled",
+    "sortOptions": {
+      "newest": "Newest",
+      "mostEnrolled": "Most enrolled",
+      "topRated": "Top rated",
+      "lowestPrice": "Lowest price",
+      "highestPrice": "Highest price"
+    },
+    "ratingOptions": {
+      "allRatings": "All ratings",
+      "fourAndUp": "4+ stars",
+      "threeAndUp": "3+ stars"
+    },
+    "errorTitle": "Something went wrong",
+    "errorDesc": "We couldn’t load rehabilitation programs. Please try again.",
+    "tryAgain": "Try again",
+    "mostRequested": "Most requested",
+    "popularTitle": "Popular rehabilitation programs",
+    "description": "Discover programs most chosen by patients and start your recovery journey.",
+    "noProgramsAvailable": "No programs available yet",
+    "comingSoon": "New programs will appear here soon.",
+    "viewAll": "View all programs"
+  },
+  "homeTherapists": {
+    "badge": "Featured professionals",
+    "title": "Top-rated specialists",
+    "subtitle": "Choose from certified experts with strong experience and excellent ratings.",
+    "errorTitle": "Something went wrong",
+    "errorDesc": "We couldn’t load specialist data."
+  },
+  "homeServices": {
+    "badge": "Complete care",
+    "titleBefore": "Our",
+    "titleHighlight": "featured services",
+    "description": "Integrated, innovative physiotherapy services tailored to your needs, using the latest technology and top specialists.",
+    "iconAltSuffix": "service icon",
+    "cards": [
+      {
+        "title": "Smart booking",
+        "details": "Book in a few easy steps with a smart system that helps you pick the right specialist and time with flexibility."
+      },
+      {
+        "title": "Instant consultation",
+        "details": "Get physiotherapy guidance from qualified specialists whenever you need quick support or advice."
+      },
+      {
+        "title": "Educational videos",
+        "details": "Specialized exercise videos and correct techniques to support recovery and home follow-up."
+      },
+      {
+        "title": "Health record",
+        "details": "A smart record of your condition and progress, with ongoing input from specialists to improve outcomes."
+      },
+      {
+        "title": "Ongoing follow-up",
+        "details": "Stay connected with your care team with a flexible plan tailored to your needs."
+      },
+      {
+        "title": "Near you",
+        "details": "We connect you with nearby rehab centers and physiotherapists so you can start recovery in the right place."
+      }
+    ]
+  },
+  "footer": {
+    "logoAlt": "Mednova logo",
+    "tagline": "Mednova is a leading health technology company transforming rehabilitation through human-centered digital solutions that support recovery and quality of life.",
+    "location": "Muscat, Oman",
+    "quickLinks": "Quick links",
+    "linkHome": "Home",
+    "linkSpecialists": "Specialists",
+    "linkPrograms": "Rehabilitation programs",
+    "linkSmartGlove": "Smart glove",
+    "support": "Support",
+    "contactUs": "Contact us",
+    "legal": "Legal",
+    "terms": "Terms & conditions",
+    "followUs": "Follow us",
+    "ctaContact": "Contact us",
+    "copyright": "© 2026 Mednova. All rights reserved.",
+    "availability": "Here for you around the clock"
+  },
+  "login": {
+    "title": "Login",
+    "description": "Enter your details to join the Mednova platform",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "button": "Sign in",
+    "loading": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "registerNow": "Create your account now",
+    "successVerified": "Your email has been verified successfully 🎉",
+    "successAlreadyVerified": "Your email was already verified",
+    "validation": {
+      "invalidEmail": "Invalid email address",
+      "passwordMin": "Password must be at least 6 characters",
+      "passwordPattern": "Password must contain at least one uppercase letter, one lowercase letter, and one symbol"
+    },
+    "errors": {
+      "unexpected": "An unexpected error occurred"
+    }
+  },
+  "Auth": {
+    "register": {
+      "title": "Create account",
+      "description": "Enter your details to join the Mednova platform",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Enter your full name",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "phone": "Phone number",
+      "phonePlaceholder": "0000 0000",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "accountType": "Account type",
+      "accountTypePatient": "Patient",
+      "accountTypeTherapist": "Specialist",
+      "accountTypeCenter": "Rehab center",
+      "acceptTerms": "I agree to the <terms>Terms and conditions</terms> and <privacy>Privacy policy</privacy>.",
+      "submit": "Create account",
+      "submitLoading": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "login": "Sign in",
+      "validation": {
+        "fullNameRequired": "Full name is required",
+        "invalidEmail": "Invalid email address",
+        "phoneRequired": "Phone number is required",
+        "passwordMin": "Password must be at least 6 characters",
+        "passwordPattern": "Password must contain at least one uppercase letter, one lowercase letter, and one symbol",
+        "confirmRequired": "Please confirm your password",
+        "acceptTerms": "You must accept the terms",
+        "passwordsMismatch": "Passwords do not match"
+      },
+      "errors": {
+        "unexpected": "An unexpected error occurred",
+        "noConnection": "Could not reach the server"
+      }
+    }
+  },
+  "whyMednova": {
+    "badge": "Why choose Mednova?",
+    "imageAlt": "Why Mednova image",
+    "title1": "The",
+    "brand": "Mednova",
+    "title2": "platform puts your care first",
+    "desc": "Mednova platform puts your care first, combining specialized physiotherapy with smart services designed for your comfort.",
+    "features": [
+      { "title": "Quick Booking", "desc": "Flexible and easy appointments" },
+      { "title": "Instant Consultations", "desc": "24/7 support available" },
+      { "title": "Smart Health File", "desc": "Comprehensive treatment tracking" },
+      { "title": "Specialized Expertise", "desc": "Top specialists in their fields" }
+    ]
+  },
+  "smartGlove": {
+    "badge": "Advanced medical technology",
+    "title": "Smart Glove from Mednova",
+    "desc": "A smart device to help you recover hand movement at home with ease and efficiency.",
+    "features": [
+      { "title": "Home Use", "desc": "No need to visit a center" },
+      { "title": "Real Results", "desc": "Gradual improvement" },
+      { "title": "Comfort & Efficiency", "desc": "Ergonomic design" },
+      { "title": "Smart Technology", "desc": "Latest innovations" }
+    ],
+    "cta": "Learn more about the smart glove"
+  },
+  "smartGlovesPage": {
+    "breadcrumb": "Smart Glove",
+    "hero": {
+      "badge": "Advanced medical technology",
+      "title": "The smart medical glove from",
+      "brand": "Mednova",
+      "description": "An advanced rehabilitation device designed to restore hand movement in a practical, smart, and customizable way. It supports patients after stroke, hemiplegia, muscle atrophy, seniors, and children—at centers or at home.",
+      "ctaLearn": "Learn more about our services",
+      "ctaVideo": "Watch video",
+      "trust1": "12-month warranty",
+      "trust2": "Free training",
+      "trust3": "24/7 support"
+    },
+    "imageAlt": "Mednova smart glove",
+    "floatSmart": "Smart",
+    "floatSmartDesc": "Advanced technology",
+    "floatHome": "At home",
+    "floatHomeDesc": "Easy to use",
+    "stats": [
+      { "value": "95%", "label": "Customer satisfaction" },
+      { "value": "+500", "label": "Patients rehabilitated" },
+      { "value": "+85%", "label": "Improved mobility" },
+      { "value": "24/7", "label": "Technical support" }
+    ],
+    "howItWorks": {
+      "badge": "How it works",
+      "title": "How does the smart glove work?",
+      "subtitle": "An integrated system combining smart hardware and a digital platform for rehabilitation."
+    },
+    "howItWorksSteps": [
+      {
+        "title": "Initial assessment",
+        "description": "Assess the patient and define the right therapy plan."
+      },
+      {
+        "title": "Glove setup",
+        "description": "Program the glove for the patient through the digital platform."
+      },
+      {
+        "title": "Therapy sessions",
+        "description": "Run tailored exercises with precise control of each finger."
+      },
+      {
+        "title": "Follow-up & tuning",
+        "description": "Track progress and adjust the program based on treatment response."
+      }
+    ],
+    "platform": {
+      "badge": "Smart technology",
+      "titleBefore": "",
+      "titleHighlight": "Mednova",
+      "titleAfter": " digital platform",
+      "description": "A complete system linking the smart glove, patient, and therapist with smart analytics and detailed reports.",
+      "features": [
+        {
+          "title": "Therapy program tuning",
+          "description": "Specialists configure programs according to each patient’s condition."
+        },
+        {
+          "title": "Motor progress tracking",
+          "description": "Monitor and analyze progress in real time with rich detail."
+        },
+        {
+          "title": "AI-powered reports",
+          "description": "Analyze data and deliver smart recommendations for therapy."
+        }
+      ]
+    },
+    "dashboard": {
+      "title": "Patient dashboard",
+      "activeBadge": "Active",
+      "progress": [
+        { "label": "Weekly therapy progress", "value": "75%", "width": "75%" },
+        { "label": "Grip strength", "value": "+40%", "width": "60%" },
+        { "label": "Finger flexibility", "value": "+65%", "width": "65%" }
+      ],
+      "miniStats": [
+        { "value": "12", "label": "Sessions completed" },
+        { "value": "24", "label": "Therapy hours" },
+        { "value": "85%", "label": "Customer satisfaction" }
+      ]
+    },
+    "benefitsSection": {
+      "badge": "Benefits & features",
+      "title": "Benefits of the smart glove",
+      "subtitle": "An integrated system that supports everyone involved in care."
+    },
+    "benefits": [
+      {
+        "title": "For the patient",
+        "items": [
+          "Gradual, structured rehabilitation",
+          "Home therapy option",
+          "Saves time and effort",
+          "Ongoing follow-up with specialists",
+          "Measurable, tangible results"
+        ]
+      },
+      {
+        "title": "For the therapist",
+        "items": [
+          "Remote monitoring and adjustments",
+          "Accurate, detailed reports",
+          "More efficient session time",
+          "Follow several patients at once",
+          "Data analysis with artificial intelligence"
+        ]
+      },
+      {
+        "title": "For medical centers",
+        "items": [
+          "Higher quality rehabilitation services",
+          "Serve more patients",
+          "Lower operating costs",
+          "Technology leadership and competitiveness",
+          "Integrated tracking and evaluation"
+        ]
+      }
+    ],
+    "faqSection": {
+      "badge": "Support",
+      "title": "Frequently asked questions",
+      "subtitle": "Answers to the most common questions about the smart glove."
+    },
+    "faq": [
+      {
+        "question": "What is the Mednova smart glove?",
+        "answer": "An advanced rehabilitation device that restores hand movement for patients with weakness or paralysis from stroke, hemiplegia, muscle atrophy, or aging."
+      },
+      {
+        "question": "Can the glove be used at home?",
+        "answer": "Yes. It is designed for home use with remote follow-up through the Mednova digital platform."
+      },
+      {
+        "question": "How is the therapy program customized?",
+        "answer": "Specialists configure rehabilitation programs on the platform—movement angles, exercise intensity, and session length are tailored to each patient."
+      },
+      {
+        "question": "How effective is the glove?",
+        "answer": "Studies show notable hand mobility gains with consistent use; progress is tracked live and analyzed with AI."
+      },
+      {
+        "question": "Is the glove suitable for children?",
+        "answer": "Yes. Multiple sizes fit all ages, with programs designed specifically for children."
+      }
+    ]
+  }
+}

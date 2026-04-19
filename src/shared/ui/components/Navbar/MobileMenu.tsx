@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/shared/ui/components/Logo";
 import { X, ChevronDown, Search } from "lucide-react";
 import { NavLinks, NavLink } from "./NavLinks";
+import { useTranslations } from 'next-intl';
 import { Input } from "@/components/ui/input";
 
 interface MobileMenuProps {
@@ -19,6 +20,7 @@ export default function MobileMenu({
   onClose, 
   variant = "landing" 
 }: MobileMenuProps) {
+  const t = useTranslations('navbar');
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
 
   const toggleDropdown = (id: number) => {
@@ -72,14 +74,13 @@ export default function MobileMenu({
                       onClick={() => toggleDropdown(link.id)}
                       className="flex items-center justify-between w-full p-4 text-gray-700 hover:text-[#32A88D] cursor-pointer"
                     >
-                      <span className="font-medium text-right">{link.title}</span>
+                      <span className="font-medium text-right">{t(link.titleKey)}</span>
                       <ChevronDown 
                         className={`w-4 h-4 transition-transform duration-200 ${
                           openDropdown === link.id ? "rotate-180" : ""
                         }`} 
                       />
                     </button>
-                    
                     {openDropdown === link.id && (
                       <div className="pr-4 pb-2 space-y-1">
                         {link.dropdown.map((item) => (
@@ -89,7 +90,7 @@ export default function MobileMenu({
                             className="block p-3 text-sm text-gray-600 hover:text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl transition-all duration-200 text-right"
                             onClick={onClose}
                           >
-                            {item.title}
+                            {t(item.titleKey)}
                           </Link>
                         ))}
                       </div>
@@ -101,7 +102,7 @@ export default function MobileMenu({
                     className="flex items-center p-4 text-gray-700 hover:text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl transition-all duration-200 font-medium text-right"
                     onClick={onClose}
                   >
-                    {link.title}
+                    {t(link.titleKey)}
                   </Link>
                 )}
               </div>

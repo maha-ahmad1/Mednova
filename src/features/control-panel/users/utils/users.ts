@@ -11,21 +11,30 @@ import type {
   UsersFilters,
 } from "../types/user";
 
-const accountTypeMap: Record<UsersApiAccountType, UserType> = {
-  patient: "Patient",
-  therapist: "Specialist",
-  rehabilitation_center: "Center",
-};
 
-export const mapAccountTypeToUserType = (accountType: UsersApiAccountType): UserType => {
-  return accountTypeMap[accountType];
-};
+import { getTranslations } from "next-intl/server";
 
-const approvalStatusMap: Record<UsersApiApprovalStatus, UserStatus> = {
-  pending: "Pending",
-  approved: "Approved",
-  rejected: "Rejected",
-};
+// Helper to get translated user type
+export async function getUserTypeLabel(type: UsersApiAccountType, locale: string) {
+  const t = await getTranslations({ locale, namespace: "users" });
+  switch (type) {
+    case "patient": return t("type.patient", { default: "Patient" });
+    case "therapist": return t("type.therapist", { default: "Specialist" });
+    case "rehabilitation_center": return t("type.center", { default: "Center" });
+    default: return type;
+  }
+}
+
+// Helper to get translated user status
+export async function getUserStatusLabel(status: UsersApiApprovalStatus, locale: string) {
+  const t = await getTranslations({ locale, namespace: "users" });
+  switch (status) {
+    case "pending": return t("status.pending", { default: "Pending" });
+    case "approved": return t("status.approved", { default: "Approved" });
+    case "rejected": return t("status.rejected", { default: "Rejected" });
+    default: return status;
+  }
+}
 
 const typeToApiMap: Record<Exclude<UsersFilters["type"], "all">, UsersApiAccountType> = {
   Patient: "patient",

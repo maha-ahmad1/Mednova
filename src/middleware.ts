@@ -1,6 +1,22 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { routing } from "@/i18n/routing";
+
+/** Paths without locale prefix (e.g. /ar/login → /login) */
+function isAuthPublicPath(cleanPath: string): boolean {
+  const exactOrPrefix = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+    "/code-verification",
+    "/control-panel/login",
+  ];
+  return exactOrPrefix.some(
+    (p) => cleanPath === p || cleanPath.startsWith(`${p}/`)
+  );
+}
 
 interface TokenUser {
   id?: string;
@@ -25,15 +41,40 @@ const isAdminToken = (token: Token | null): boolean => {
     return false;
   }
 
-  return token.role === "admin" || token.user?.type_account === "admin" || token.user?.role === "admin";
+  return (
+    token.role === "admin" ||
+    token.user?.type_account === "admin" ||
+    token.user?.role === "admin"
+  );
 };
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const pathname = req.nextUrl.pathname;
 
-  const publicPaths = ["/login", "/control-panel/login", "/api/auth", "/_next", "/favicon.ico", "/public"];
-  if (publicPaths.some((p) => pathname.startsWith(p))) {
+  const pathnameLocale = pathname.split("/")[1];
+  const hasLocale = routing.locales.includes(
+    pathnameLocale as typeof routing.locales[number]
+  );
+
+  const locale = hasLocale
+    ? pathnameLocale
+    : req.cookies.get("NEXT_LOCALE")?.value || routing.defaultLocale;
+
+  if (!hasLocale) {
+    url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
+    const response = NextResponse.redirect(url);
+    response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
+    return response;
+  }
+
+  const cleanPathname =
+    pathname.replace(
+      new RegExp(`^/(${routing.locales.join("|")})`),
+      ""
+    ) || "/";
+
+  if (isAuthPublicPath(cleanPathname)) {
     return NextResponse.next();
   }
 
@@ -42,43 +83,49 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   })) as Token | null;
 
-  if (pathname.startsWith("/control-panel/users") || pathname.startsWith("/control-panel/programs")) {
+  if (
+    cleanPathname.startsWith("/control-panel/users") ||
+    cleanPathname.startsWith("/control-panel/programs")
+  ) {
     if (!isAdminToken(token)) {
-
-      
-      url.pathname = "/control-panel/login";
+      url.pathname = `/${locale}/control-panel/login`;
       return NextResponse.redirect(url);
     }
 
     return NextResponse.next();
   }
 
-  if (!token && pathname.startsWith("/profile")) {
-    url.pathname = "/login";
+  if (!token && cleanPathname.startsWith("/profile")) {
+    url.pathname = `/${locale}/login`;
     return NextResponse.redirect(url);
   }
 
   if (token) {
     const isCompleted =
-      token.is_completed ?? token.isCompleted ?? token.user?.is_completed ?? token.user?.isCompleted ?? false;
-    const approval_status = token.approval_status ?? token.user?.approval_status ?? undefined;
+      token.is_completed ??
+      token.isCompleted ??
+      token.user?.is_completed ??
+      token.user?.isCompleted ??
+      false;
+    const approval_status =
+      token.approval_status ?? token.user?.approval_status;
 
     if (!isCompleted) {
-      if (!pathname.startsWith("/profile/create")) {
-        url.pathname = "/profile/create"; //يعدل مسار الـ URL object
-        return NextResponse.redirect(url); //يطلب من المتصفح يروح على الرابط الجديد
+      if (!cleanPathname.startsWith("/profile/create")) {
+        url.pathname = `/${locale}/profile/create`;
+        return NextResponse.redirect(url);
       }
     } else if (approval_status === "pending") {
-      if (!pathname.startsWith("/profile/pending")) {
-        url.pathname = "/profile/pending";
+      if (!cleanPathname.startsWith("/profile/pending")) {
+        url.pathname = `/${locale}/profile/pending`;
         return NextResponse.redirect(url);
       }
     } else if (approval_status === "approved") {
       if (
-        pathname.startsWith("/profile/create") ||
-        pathname.startsWith("/profile/pending")
+        cleanPathname.startsWith("/profile/create") ||
+        cleanPathname.startsWith("/profile/pending")
       ) {
-        url.pathname = "/profile";
+        url.pathname = `/${locale}/profile`;
         return NextResponse.redirect(url);
       }
     }
@@ -88,5 +135,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/control-panel/users/:path*", "/control-panel/programs/:path*"],
+  matcher: ["/((?!api|_next|images|favicon.ico).*)"],
 };

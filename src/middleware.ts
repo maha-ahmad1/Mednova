@@ -1,19 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-
-const locales = ["en", "ar"] as const;
-const defaultLocale = "en";
-
-const LOCALE_HEADER = "x-locale";
-
-function nextWithLocale(req: NextRequest, locale: string) {
-  const requestHeaders = new Headers(req.headers);
-  requestHeaders.set(LOCALE_HEADER, locale);
-  return NextResponse.next({
-    request: { headers: requestHeaders },
-  });
-}
+import { routing } from "@/i18n/routing";
 
 /** Paths without locale prefix (e.g. /ar/login → /login) */
 function isAuthPublicPath(cleanPath: string): boolean {
@@ -64,18 +52,16 @@ export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const pathname = req.nextUrl.pathname;
 
-  const pathnameHasLocale = locales.some(
-    (locale) =>
-      pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  const pathnameLocale = pathname.split("/")[1];
+  const hasLocale = routing.locales.includes(
+    pathnameLocale as typeof routing.locales[number]
   );
 
-  let locale: string = req.cookies.get("NEXT_LOCALE")?.value || defaultLocale;
-  const pathnameLocale = pathname.match(/^\/(en|ar)(\/|$)/)?.[1];
-  if (pathnameLocale) {
-    locale = pathnameLocale;
-  }
+  const locale = hasLocale
+    ? pathnameLocale
+    : req.cookies.get("NEXT_LOCALE")?.value || routing.defaultLocale;
 
-  if (!pathnameHasLocale) {
+  if (!hasLocale) {
     url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
     const response = NextResponse.redirect(url);
     response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
@@ -83,12 +69,13 @@ export async function middleware(req: NextRequest) {
   }
 
   const cleanPathname =
-    pathname.replace(/^\/(en|ar)/, "") || "/";
+    pathname.replace(
+      new RegExp(`^/(${routing.locales.join("|")})`),
+      ""
+    ) || "/";
 
   if (isAuthPublicPath(cleanPathname)) {
-    const res = nextWithLocale(req, locale);
-    res.cookies.set("NEXT_LOCALE", locale, { path: "/" });
-    return res;
+    return NextResponse.next();
   }
 
   const token = (await getToken({
@@ -102,19 +89,15 @@ export async function middleware(req: NextRequest) {
   ) {
     if (!isAdminToken(token)) {
       url.pathname = `/${locale}/control-panel/login`;
-      const response = NextResponse.redirect(url);
-      response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
-      return response;
+      return NextResponse.redirect(url);
     }
 
-    return nextWithLocale(req, locale);
+    return NextResponse.next();
   }
 
   if (!token && cleanPathname.startsWith("/profile")) {
     url.pathname = `/${locale}/login`;
-    const response = NextResponse.redirect(url);
-    response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
-    return response;
+    return NextResponse.redirect(url);
   }
 
   if (token) {
@@ -130,16 +113,12 @@ export async function middleware(req: NextRequest) {
     if (!isCompleted) {
       if (!cleanPathname.startsWith("/profile/create")) {
         url.pathname = `/${locale}/profile/create`;
-        const response = NextResponse.redirect(url);
-        response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
-        return response;
+        return NextResponse.redirect(url);
       }
     } else if (approval_status === "pending") {
       if (!cleanPathname.startsWith("/profile/pending")) {
         url.pathname = `/${locale}/profile/pending`;
-        const response = NextResponse.redirect(url);
-        response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
-        return response;
+        return NextResponse.redirect(url);
       }
     } else if (approval_status === "approved") {
       if (
@@ -147,14 +126,12 @@ export async function middleware(req: NextRequest) {
         cleanPathname.startsWith("/profile/pending")
       ) {
         url.pathname = `/${locale}/profile`;
-        const response = NextResponse.redirect(url);
-        response.cookies.set("NEXT_LOCALE", locale, { path: "/" });
-        return response;
+        return NextResponse.redirect(url);
       }
     }
   }
 
-  return nextWithLocale(req, locale);
+  return NextResponse.next();
 }
 
 export const config = {

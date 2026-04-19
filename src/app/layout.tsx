@@ -1,18 +1,51 @@
+import type React from "react";
+import type { Metadata } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
-import { headers } from "next/headers";
+import { Suspense } from "react";
+import { Cairo } from "next/font/google";
+import { Providers } from "../providers/QueryClientProvider";
+import { SessionProviderWrapper } from "@/providers/SessionProviderWrapper";
+import { Toaster } from "@/components/ui/sonner";
+import "leaflet/dist/leaflet.css";
+// import NavbarWrapper from "@/components/ui/NavbarWrapper";
+// import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
+ import EchoProvider from "@/providers/ClientEchoWrapper";
+import { StoreDebugger } from "@/lib/StoreDebugger";
+
+const cairo = Cairo({
+  subsets: ["arabic"],
+  weight: ["400", "700"],
+  variable: "--font-cairo",
+});
+export const metadata: Metadata = {
+  title: "MEDNOVA - Medical Innovation",
+  description: "Medical Innovation",
+};
 
 export default async function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
-  const headersList = await headers();
-  const locale = headersList.get("x-locale") ?? "en";
-  const dir = locale === "ar" ? "rtl" : "ltr";
-
+}>) {
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning>
-      <body suppressHydrationWarning>{children}</body>
+    <html suppressHydrationWarning>
+      <body className={cairo.variable}>
+        <Providers>
+          <SessionProviderWrapper>
+            <Suspense fallback={null}>
+              <EchoProvider>
+                <StoreDebugger />
+                <main className="min-h-screen">{children}</main>
+              </EchoProvider>
+              <Toaster richColors position="top-center" />
+            </Suspense>
+            <SpeedInsights />
+            <Analytics />
+          </SessionProviderWrapper>
+        </Providers>
+      </body>
     </html>
   );
 }

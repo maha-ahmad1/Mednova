@@ -6,14 +6,12 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   images: {
+    domains: ["via.placeholder.com"],
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "**",
-      },
-      {
         protocol: "https",
-        hostname: "**",
+        hostname: "api.mednovacare.com",
+        pathname: "/**",
       },
     ],
   },
@@ -24,6 +22,8 @@ const sentryConfig = withSentryConfig(nextConfig, {
   project: "javascript-nextjs",
   silent: !process.env.CI,
   tunnelRoute: "/monitoring",
+  widenClientFileUpload: true,
+
   webpack: {
     automaticVercelMonitors: true,
     treeshake: {

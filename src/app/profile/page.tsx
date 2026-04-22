@@ -4,6 +4,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import PatientProfile from "./_views/patient/ProfileView"
 import TherapistProfile from "./_views/therapist/ProfileView"
 import CenterProfile from "./_views/center/ProfileView"
+import { normalizeMenuRole, resolveSessionRole } from "@/lib/auth/roles"
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions)
@@ -19,8 +20,7 @@ console.log("Session in ProfilePage:", session);
   // }
 //console.log("isCompleted page:", isCompleted);
 
-  const role = session.role || session.user?.type_account
-  console.log("role: " + role)
+  const role = normalizeMenuRole(resolveSessionRole(session))
 
   switch (role) {
     case "patient":

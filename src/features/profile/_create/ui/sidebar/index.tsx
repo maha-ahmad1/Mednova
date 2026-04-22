@@ -10,6 +10,7 @@ import { useFetcher } from "@/hooks/useFetcher";
 import { useEffect, useState } from "react";
 import { type UserType } from "@/features/profile/_views/hooks/useUpdateProfileImage";
 import { useProfileImageStore } from "@/store/useProfileImageStore";
+import { normalizeMenuRole, normalizeUserRole, resolveSessionRole } from "@/lib/auth/roles";
 
 
 type TherapistProfile = {
@@ -39,10 +40,11 @@ export function Sidebar() {
   const [image, setImage] = useState<string | null>(null);
   // const { setUser } = useUserStore();
 
-  const userType: UserType = (session?.user?.role as UserType) || "patient";
+  const resolvedRole = resolveSessionRole(session);
+  const userType: UserType = normalizeUserRole(resolvedRole) ?? "patient";
   const userId = session?.user?.id;
-  const menuItems =
-    sidebarMenus[userType as keyof typeof sidebarMenus] || sidebarMenus.patient;
+  const menuRole = normalizeMenuRole(resolvedRole) ?? "patient";
+  const menuItems = sidebarMenus[menuRole];
 
   const {
     data: profileData,

@@ -10,6 +10,7 @@ import type {
   WalletSummary,
   WalletTransaction,
 } from "../types";
+import { normalizeWalletRole, resolveSessionRole } from "@/lib/auth/roles";
 
 const DEFAULT_PER_PAGE = 15;
 const MAX_PER_PAGE = 50;
@@ -29,13 +30,8 @@ export const useWalletData = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(DEFAULT_PER_PAGE);
 
-  const role = session?.user?.role;
-  const walletRole: WalletRole | null =
-    role === "patient"
-      ? "patient"
-      : role === "therapist" || role === "rehabilitation_center"
-      ? "consultant"
-      : null;
+  const role = resolveSessionRole(session);
+  const walletRole: WalletRole | null = normalizeWalletRole(role);
 
   const paginationParams = useMemo(
     () => ({ page, per_page: clampPerPage(perPage) }),

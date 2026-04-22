@@ -14,7 +14,7 @@ function isAuthPublicPath(cleanPath: string): boolean {
     "/control-panel/login",
   ];
   return exactOrPrefix.some(
-    (p) => cleanPath === p || cleanPath.startsWith(`${p}/`)
+    (p) => cleanPath === p || cleanPath.startsWith(`${p}/`),
   );
 }
 
@@ -54,7 +54,7 @@ export async function middleware(req: NextRequest) {
 
   const pathnameLocale = pathname.split("/")[1];
   const hasLocale = routing.locales.includes(
-    pathnameLocale as typeof routing.locales[number]
+    pathnameLocale as (typeof routing.locales)[number],
   );
 
   const locale = hasLocale
@@ -69,10 +69,7 @@ export async function middleware(req: NextRequest) {
   }
 
   const cleanPathname =
-    pathname.replace(
-      new RegExp(`^/(${routing.locales.join("|")})`),
-      ""
-    ) || "/";
+    pathname.replace(new RegExp(`^/(${routing.locales.join("|")})`), "") || "/";
 
   if (isAuthPublicPath(cleanPathname)) {
     return NextResponse.next();
@@ -83,17 +80,14 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   })) as Token | null;
 
-  if (
-    cleanPathname.startsWith("/control-panel/users") ||
-    cleanPathname.startsWith("/control-panel/programs")
-  ) {
-    if (!isAdminToken(token)) {
-      url.pathname = `/${locale}/control-panel/login`;
-      return NextResponse.redirect(url);
-    }
-
-    return NextResponse.next();
+ if (cleanPathname.startsWith("/control-panel")) {
+  if (!isAdminToken(token)) {
+    url.pathname = `/${locale}/control-panel/login`;
+    return NextResponse.redirect(url);
   }
+
+  return NextResponse.next();
+}
 
   if (!token && cleanPathname.startsWith("/profile")) {
     url.pathname = `/${locale}/login`;

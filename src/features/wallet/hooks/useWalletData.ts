@@ -14,6 +14,11 @@ import type {
 const DEFAULT_PER_PAGE = 15;
 const MAX_PER_PAGE = 50;
 
+type WalletPaginationParams = {
+  page: number;
+  per_page: number;
+};
+
 const clampPerPage = (value: number): number => {
   if (!Number.isFinite(value) || value <= 0) return DEFAULT_PER_PAGE;
   return Math.min(value, MAX_PER_PAGE);
@@ -42,19 +47,19 @@ export const useWalletData = () => {
     walletRole ? `/api/financial/${walletRole}/wallet` : null
   );
 
-  const consultantTransactions = useFetcher<PaginatedResponse<WalletTransaction>>(
+  const consultantTransactions = useFetcher<PaginatedResponse<WalletTransaction>, WalletPaginationParams>(
     ["wallet-consultant-transactions"],
     walletRole === "consultant" ? "/api/financial/consultant/wallet/transactions" : null,
     { params: paginationParams, enabled: walletRole === "consultant" }
   );
 
-  const patientPayments = useFetcher<PaginatedResponse<WalletPayment>>(
+  const patientPayments = useFetcher<PaginatedResponse<WalletPayment>, WalletPaginationParams>(
     ["wallet-patient-payments"],
     walletRole === "patient" ? "/api/financial/patient/wallet/payments" : null,
     { params: paginationParams, enabled: walletRole === "patient" }
   );
 
-  const patientTransactions = useFetcher<PaginatedResponse<WalletTransaction>>(
+  const patientTransactions = useFetcher<PaginatedResponse<WalletTransaction>, WalletPaginationParams>(
     ["wallet-patient-transactions"],
     walletRole === "patient" ? "/api/financial/patient/wallet/transactions" : null,
     { params: paginationParams, enabled: walletRole === "patient" }

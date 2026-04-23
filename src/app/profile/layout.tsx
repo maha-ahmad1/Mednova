@@ -17,11 +17,9 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
-      {/* النافبار */}
       {!isCreatePage && !isPendingPage && <Navbar variant="dashboard" />}
 
       <div className="flex">
-        {/* السايدبار */}
         {!isCreatePage && !isPendingPage && (
           <div
             className="   fixed bottom-0 left-0 right-0 h-16

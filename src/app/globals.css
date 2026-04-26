@@ -187,3 +187,8 @@
   direction: ltr;
   unicode-bidi: embed;
 }
+
+.rtl {
+  direction: rtl;
+  unicode-bidi: embed;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { useProgramsQuery } from "../../hooks";
 import type { Program } from "../../types/program";
 import { ProgramSkeleton } from "./components/ProgramSkeleton";
@@ -35,16 +36,17 @@ const CATEGORIES = [
 ];
 
 export function ProgramsList(): React.ReactNode {
+  const t = useTranslations("programs");
   const { data, isLoading, error } = useProgramsQuery();
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [filters, setFilters] = useState<ProgramFilters>({
-    category: "الكل",
-    difficulty: "الكل",
-    sortBy: "الأحدث",
-    priceRange: "الكل",
-    rating: "الكل",
+    category: t("all"),
+    difficulty: t("all"),
+    sortBy: "newest",
+    priceRange: t("all"),
+    rating: t("all"),
   });
   const totalPrograms = data?.data?.length || 0;
   const publishedPrograms =
@@ -62,10 +64,10 @@ export function ProgramsList(): React.ReactNode {
         program.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         program.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesCategory = filters.category === "الكل";
+      const matchesCategory = filters.category === t("all");
 
       const matchesRating =
-        filters.rating === "الكل" ||
+        filters.rating === t("all") ||
         (filters.rating === "4+" && (program.ratings_avg_rating ?? 0) >= 4) ||
         (filters.rating === "3+" && (program.ratings_avg_rating ?? 0) >= 3);
 
@@ -75,15 +77,15 @@ export function ProgramsList(): React.ReactNode {
     // Sort programs
     filtered = [...filtered].sort((a: Program, b: Program) => {
       switch (filters.sortBy) {
-        case "الأكثر تسجيلاً":
+        case "mostEnrolled":
           return (b.enrollments_count || 0) - (a.enrollments_count || 0);
-        case "الأعلى تقييماً":
+        case "topRated":
           return (b.ratings_avg_rating || 0) - (a.ratings_avg_rating || 0);
-        case "الأحدث":
+        case "newest":
           return b.id - a.id;
-        case "الأقل سعراً":
+        case "lowestPrice":
           return a.price - b.price;
-        case "الأعلى سعراً":
+        case "highestPrice":
           return b.price - a.price;
         default:
           return 0;
@@ -101,32 +103,32 @@ export function ProgramsList(): React.ReactNode {
     setSearchQuery("");
     setViewMode("grid");
     setFilters({
-      category: "الكل",
-      difficulty: "الكل",
-      sortBy: "الأحدث",
-      priceRange: "الكل",
-      rating: "الكل",
+      category: t("all"),
+      difficulty: t("all"),
+      sortBy: "newest",
+      priceRange: t("all"),
+      rating: t("all"),
     });
   };
 
   const sortOptions = [
-    { value: "الأحدث", label: "الأحدث" },
-    { value: "الأكثر تسجيلاً", label: "الأكثر تسجيلاً" },
-    { value: "الأعلى تقييماً", label: "الأعلى تقييماً" },
-    { value: "الأقل سعراً", label: "الأقل سعراً" },
-    { value: "الأعلى سعراً", label: "الأعلى سعراً" },
+    { value: "newest", label: t("sortOptions.newest") },
+    { value: "mostEnrolled", label: t("sortOptions.mostEnrolled") },
+    { value: "topRated", label: t("sortOptions.topRated") },
+    { value: "lowestPrice", label: t("sortOptions.lowestPrice") },
+    { value: "highestPrice", label: t("sortOptions.highestPrice") },
   ];
 
   const ratingOptions = [
-    { value: "الكل", label: "جميع التقييمات" },
-    { value: "4+", label: "4 نجوم وأعلى" },
-    { value: "3+", label: "3 نجوم وأعلى" },
+    { value: t("all"), label: t("ratingOptions.allRatings") },
+    { value: "4+", label: t("ratingOptions.fourAndUp") },
+    { value: "3+", label: t("ratingOptions.threeAndUp") },
   ];
 
   const hasActiveFilters = 
     searchQuery || 
-    filters.category !== "الكل" || 
-    filters.rating !== "الكل";
+    filters.category !== t("all") || 
+    filters.rating !== t("all");
 
   if (isLoading) {
     return (
@@ -144,9 +146,9 @@ export function ProgramsList(): React.ReactNode {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="bg-red-50 border border-red-200 rounded-2xl p-8">
             <h3 className="text-xl font-semibold text-red-800 mb-2">
-              حدث خطأ في تحميل البرامج
+              {t("error")}
             </h3>
-            <p className="text-red-600">الرجاء المحاولة مرة أخرى لاحقاً</p>
+            <p className="text-red-600">{t("common.tryAgain")}</p>
           </div>
         </div>
       </div>
@@ -159,21 +161,20 @@ export function ProgramsList(): React.ReactNode {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center gap-3 text-sm text-[#1F6069]">
             <Badge className="bg-[#1F6069]/10 text-[#1F6069] rounded-full px-3 py-1 text-xs">
-              برامج تأهيلية معتمدة
+              {t("certifiedPrograms")}
             </Badge>
             <Badge className="bg-[#32A88D]/10 text-[#1F6069] rounded-full px-3 py-1 text-xs">
-              {publishedPrograms} برنامج متاح
+              {t("availablePrograms", { count: publishedPrograms })}
             </Badge>
           </div>
 
           <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
             <div className="space-y-4">
               <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                برامج Mednova التعليمية
+                {t("programsTitle")}
               </h1>
               <p className="text-base text-gray-600 leading-relaxed">
-                اكتشف برامج تأهيلية مصممة خصيصاً لتطوير مهاراتك المهنية، مع محتوى
-                عملي وتجارب تدريبية معتمدة من Mednova.
+                {t("programsDescription")}
               </p>
             </div>
 
@@ -202,12 +203,12 @@ export function ProgramsList(): React.ReactNode {
             {/* Search Bar */}
             <div className="lg:col-span-8">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                ابحث عن البرنامج المناسب لك
+                {t("searchLabel")}
               </label>
               <div className="relative">
                 <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
-                  placeholder="ابحث عن برنامج تأهيلي..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pr-12 rounded-xl border-gray-200 focus:border-[#32A88D] focus:ring-[#32A88D] h-12"
@@ -262,7 +263,7 @@ export function ProgramsList(): React.ReactNode {
             {/* Sort */}
             <div className="lg:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                الترتيب
+                {t("sort")}
               </label>
               <Select
                 value={filters.sortBy}
@@ -285,10 +286,10 @@ export function ProgramsList(): React.ReactNode {
           {/* Active Filters */}
           {hasActiveFilters && (
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <div className="text-sm text-gray-600">الفلاتر النشطة:</div>
+              <div className="text-sm text-gray-600">{t("activeFilters")}:</div>
               {searchQuery && (
                 <Badge variant="secondary" className="rounded-lg px-3 py-1.5">
-                  بحث: {searchQuery}
+                  {t("search")} {searchQuery}
                   <button
                     onClick={() => setSearchQuery("")}
                     className="mr-2 hover:text-red-500"
@@ -297,22 +298,22 @@ export function ProgramsList(): React.ReactNode {
                   </button>
                 </Badge>
               )}
-              {filters.category !== "الكل" && (
+              {filters.category !== t("all") && (
                 <Badge variant="secondary" className="rounded-lg px-3 py-1.5">
-                  تصنيف: {filters.category}
+                  {t("category")} {filters.category}
                   <button
-                    onClick={() => handleFilterChange("category", "الكل")}
+                    onClick={() => handleFilterChange("category", t("all"))}
                     className="mr-2 hover:text-red-500"
                   >
                     <X className="w-3 h-3" />
                   </button>
                 </Badge>
               )}
-              {filters.rating !== "الكل" && (
+              {filters.rating !== t("all") && (
                 <Badge variant="secondary" className="rounded-lg px-3 py-1.5">
-                  تقييم: {filters.rating === "4+" ? "4 نجوم وأعلى" : "3 نجوم وأعلى"}
+                  {t("rating")} {filters.rating === "4+" ? t("ratingOptions.fourAndUp") : t("ratingOptions.threeAndUp")}
                   <button
-                    onClick={() => handleFilterChange("rating", "الكل")}
+                    onClick={() => handleFilterChange("rating", t("all"))}
                     className="mr-2 hover:text-red-500"
                   >
                     <X className="w-3 h-3" />
@@ -325,7 +326,7 @@ export function ProgramsList(): React.ReactNode {
                 onClick={clearFilters}
                 className="text-gray-500 hover:text-gray-700"
               >
-                إزالة جميع الفلاتر
+                {t("clearAllFilters")}
               </Button>
             </div>
           )}
@@ -334,16 +335,11 @@ export function ProgramsList(): React.ReactNode {
         {/* Results Header */}
         <div className="flex justify-between items-center mb-6">
           <div className="text-gray-600">
-            عرض{" "}
-            <span className="font-bold text-[#32A88D]">
-              {filteredAndSortedPrograms.length}
-            </span>{" "}
-            برنامج
+            {t("showingResults", { count: filteredAndSortedPrograms.length })}
           </div>
           <div className="flex items-center gap-4">
             <div className="text-sm text-gray-500">
-              مرتبة حسب:{" "}
-              <span className="font-medium text-gray-700">{filters.sortBy}</span>
+              {t("sortedBy", { sort: sortOptions.find(o => o.value === filters.sortBy)?.label || filters.sortBy })}
             </div>
             <div className="flex border border-gray-200 rounded-xl overflow-hidden">
               <button
@@ -401,17 +397,16 @@ export function ProgramsList(): React.ReactNode {
           <div className="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
             <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              لم يتم العثور على برامج
+              {t("noResultsTitle")}
             </h3>
             <p className="text-gray-600 max-w-md mx-auto mb-6">
-              لا توجد برامج تطابق معايير البحث الخاصة بك. حاول تغيير الفلاتر أو
-              البحث بمصطلحات أخرى.
+              {t("noResultsDesc")}
             </p>
             <Button
               onClick={clearFilters}
               className="bg-[#32A88D] hover:bg-[#2a8a7a]"
             >
-              عرض جميع البرامج
+              {t("showAllPrograms")}
             </Button>
           </div>
         )}

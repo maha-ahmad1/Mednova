@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import { useFetcher } from "@/hooks/useFetcher";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProviderCard } from "@/features/service-provider/ui/ProviderCard"; 
@@ -30,6 +31,8 @@ type TypeItem = {
 };
 
 export default function MostRatedProfessionals() {
+  const t = useTranslations("homeTherapists");
+  const tPrograms = useTranslations("programs");
   const { data, isLoading, error } = useFetcher<TypeItem[]>(
     ["mostRatedProfessionals"],
     "/api/ratings/top-rated?typeServiceProvider=therapist"
@@ -112,9 +115,9 @@ export default function MostRatedProfessionals() {
       <section className="py-20 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-gray-50/50 to-white">
         <EmptyState
           type="error"
-          title="حدث خطأ"
-          description="تعذر تحميل بيانات المختصين"
-          actionText="إعادة المحاولة"
+          title={t("errorTitle")}
+          description={t("errorDesc")}
+          actionText={tPrograms("tryAgain")}
           onAction={() => window.location.reload()}
         />
       </section>
@@ -129,15 +132,14 @@ export default function MostRatedProfessionals() {
           <div className="inline-flex items-center gap-2 bg-[#32A88D]/10 px-6 py-2 rounded-full mb-4">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
             <span className="text-sm font-medium text-[#32A88D]">
-              المختصون المميزون
+              {t("badge")}
             </span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-            المختصون الأكثر تقييماً
+            {t("title")}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            اختر من بين أفضل المختصين المعتمدين ذوي الخبرة الواسعة والتقييمات
-            المرتفعة
+            {t("subtitle")}
           </p>
         </div>
 

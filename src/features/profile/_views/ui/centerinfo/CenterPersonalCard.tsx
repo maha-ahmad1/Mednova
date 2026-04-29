@@ -23,6 +23,7 @@ import { useUpdateCenter } from "@/features/profile/_views/hooks/useUpdateCenter
 import { centerSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
 import { buildFullPhoneNumber, parsePhoneNumber } from "@/lib/phone";
+import { formatDate } from "@/lib/utils/dateUtils";
 
 interface CenterPersonalCardProps {
   profile: CenterProfile;
@@ -179,11 +180,6 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
     </div>
   );
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "-";
-    return new Date(dateString).toLocaleDateString("ar-EG");
-  };
-
   return (
     <div className="bg-gradient-to-b from-[#32A88D]/10 to-white rounded-2xl shadow-sm border border-gray-100 p-6 pl-8 hover:shadow-xl transition-all duration-300">
       <div className="flex flex-col lg:flex-row gap-6">
@@ -270,7 +266,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                     value={
                       displayProfile.birth_date ? (
                         <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                          {formatDate(displayProfile.birth_date)}
+                          {formatDate(displayProfile.birth_date, {}, "ar-EG", "-")}
                         </Badge>
                       ) : (
                         "-"

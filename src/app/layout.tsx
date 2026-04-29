@@ -30,7 +30,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl">
+    <html suppressHydrationWarning>
       <body className={cairo.variable}>
         <Providers>
           <SessionProviderWrapper>

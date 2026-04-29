@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useSession } from "next-auth/react";
 import type { PatientProfile } from "@/types/patient";
 import { FormInput } from "@/shared/ui/forms";
+import { formatDate } from "@/lib/utils/dateUtils";
 
 interface Props {
   patient: PatientProfile;
@@ -39,11 +40,6 @@ export default function PatientPersonal1Card({
 
   const handleChange = (field: string, value: string | File) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "-";
-    return new Date(dateString).toLocaleDateString("ar-EG");
   };
 
   const FieldDisplay: React.FC<{
@@ -139,7 +135,7 @@ export default function PatientPersonal1Card({
             value={
               patient.birth_date ? (
                 <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                  {formatDate(patient.birth_date)}
+                  {formatDate(patient.birth_date, {}, "ar-EG", "-")}
                 </Badge>
               ) : (
                 "-"

@@ -1,11 +1,10 @@
 import { useFetcher } from "@/hooks/useFetcher";
-import type { WalletBalance } from "../types/wallet";
-
-const WALLET_ENDPOINT = "/api/financial/consultant/wallet";
+import type { ConsultantWallet } from "../types";
 
 export const useConsultantWallet = () => {
-  return useFetcher<WalletBalance>(
+  return useFetcher<ConsultantWallet>(
     ["financial", "consultant", "wallet"],
-    WALLET_ENDPOINT
+    "/api/financial/consultant/wallet",
+    { staleTime: 0.5 },
   );
 };

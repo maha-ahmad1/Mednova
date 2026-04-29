@@ -24,8 +24,17 @@
     "notFound": "No specialists or centers match your search",
     "filter": "Reset filters",
     "noResultsTitle": "No results found",
+    "filtersTitle": "Filters",
+    "type": "Type",
+    "therapists": "Therapists",
+    "centers": "Rehabilitation Centers",
+    "specialties": "Specialties",
     "noResultsDesc": "No specialists match your search",
-    "viewProfile": "View profile"
+    "viewProfile": "View profile",
+    "selectSpecialty": "Select specialty",
+    "selectCountry": "Select country",
+    "city": "City",
+    "selectCity": "Select city"
   },
   "hero": {
     "title": "Your recovery starts with Mednova",

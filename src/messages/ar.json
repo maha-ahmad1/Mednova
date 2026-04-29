@@ -30,7 +30,11 @@
     "filter": "إعادة تعيين الفلاتر",
     "noResultsTitle": "لم يتم العثور على نتائج",
     "noResultsDesc": "لا يوجد أخصائيون يطابقون بحثك",
-    "viewProfile": "عرض الملف الشخصي"
+    "viewProfile": "عرض الملف الشخصي",
+    "selectSpecialty": "اختر التخصص",
+    "selectCountry": "اختر الدولة",
+    "city": "المدينة",
+    "selectCity": "اختر المدينة"
   },
   "hero": {
     "title": "تعافيك يبدأ مع ميدنوفا",

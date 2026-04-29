@@ -1,1 +1,2 @@
-export * from "./wallet-overview";
+export * from "./consultant";
+export * from "./patient";

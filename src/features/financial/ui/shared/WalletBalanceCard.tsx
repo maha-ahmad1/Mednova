@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,6 +30,7 @@ export function WalletBalanceCard({
   onWithdraw,
   isLoading = false,
 }: WalletBalanceCardProps) {
+  const t = useTranslations("financial");
   if (isLoading) {
     return (
       <Card className="border-0 shadow-md">
@@ -86,7 +88,7 @@ export function WalletBalanceCard({
             onClick={onWithdraw}
             className="w-full bg-white text-[#32A88D] hover:bg-white/90 font-semibold text-xs h-8"
           >
-            اسحب الآن
+            {t("walletBalance.withdrawNow")}
           </Button>
         )}
       </CardContent>

@@ -15,7 +15,7 @@ import { useCallback } from "react";
 import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { useSession } from "next-auth/react";
-import { parsePhoneNumber } from "@/lib/phone";
+import { parsePhoneNumber } from "@/utils/phone";
 import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 
 const step1Schema = z.object({

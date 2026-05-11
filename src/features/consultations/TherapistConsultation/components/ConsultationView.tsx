@@ -11,7 +11,7 @@ import { useFetcher } from "@/hooks/useFetcher";
 import { useSession } from "next-auth/react";
 import { useConsultationStore } from "@/store/consultationStore";
 import { useEchoNotifications } from '@/hooks/useEchoNotifications';
-import { TimeZoneService } from "@/lib/timezone-service";
+import { TimeZoneService } from "@/utils/timezoneService";
 
 interface ConsultationViewProps {
   userType?: UserType;

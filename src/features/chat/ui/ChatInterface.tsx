@@ -12,7 +12,7 @@ import {
 } from "../hooks/useChatApi";
 import { useChatPusher } from "../hooks/useChatPusher";
 import type { ChatRequest, Message } from "@/types/chat";
-import { logger } from "@/lib/logger";
+import { logger } from "@/utils/logger";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { MessageBubble } from "./MessageBubble";
 import { ChatHeader } from "./ChatHeader";

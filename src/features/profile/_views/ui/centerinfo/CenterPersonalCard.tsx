@@ -22,8 +22,8 @@ import type { CenterProfile } from "@/types/center";
 import { useUpdateCenter } from "@/features/profile/_views/hooks/useUpdateCenter";
 import { centerSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
-import { buildFullPhoneNumber, parsePhoneNumber } from "@/lib/phone";
-import { formatDate } from "@/lib/utils/dateUtils";
+import { buildFullPhoneNumber, parsePhoneNumber } from "@/utils/phone";
+import { formatDate } from "@/utils/dateUtils";
 
 interface CenterPersonalCardProps {
   profile: CenterProfile;

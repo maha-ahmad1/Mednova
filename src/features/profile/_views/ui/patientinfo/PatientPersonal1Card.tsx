@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useSession } from "next-auth/react";
 import type { PatientProfile } from "@/types/patient";
 import { FormInput } from "@/shared/ui/forms";
-import { formatDate } from "@/lib/utils/dateUtils";
+import { formatDate } from "@/utils/dateUtils";
 
 interface Props {
   patient: PatientProfile;

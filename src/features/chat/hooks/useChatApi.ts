@@ -7,7 +7,7 @@ import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import type { Message, SendMessageData } from "@/types/chat";
 import type { AxiosError, AxiosProgressEvent } from "axios";
 import { toast } from "sonner";
-import { logger } from "@/lib/logger";
+import { logger } from "@/utils/logger";
 
 interface ApiErrorResponse {
   success: boolean;

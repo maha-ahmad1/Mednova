@@ -1,3 +1,8 @@
+import type { MedicalSpecialty } from "@/features/service-provider/types/provider";
+import type { TherapistDetails } from "@/types/therpist";
+
+export type { MedicalSpecialty, TherapistDetails };
+
 export type UserType = "Patient" | "Specialist" | "Center";
 
 export type UserStatus = "Pending" | "Approved" | "Rejected";
@@ -146,9 +151,9 @@ export interface AdminUserDetails {
   gender: string | null;
   patient_details: unknown;
   location_details: UserLocationDetails | null;
-  therapist_details: unknown;
+  therapist_details: TherapistDetails | null;
   center_details: UserCenterDetails | null;
-  medicalSpecialties: unknown[];
+  medicalSpecialties: MedicalSpecialty[];
   schedules: UserSchedule[];
   average_rating: number | null;
   total_reviews: number | null;

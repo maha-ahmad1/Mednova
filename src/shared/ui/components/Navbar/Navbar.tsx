@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ export default function Navbar({
   variant = "landing",
   className = "",
 }: NavbarProps) {
+  const t = useTranslations("navbar");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -54,11 +56,11 @@ export default function Navbar({
 
           {variant === "dashboard" && (
             <div className="relative w-full max-w-md">
-              <Search className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+              <Search className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2" />
               <Input
                 type="search"
-                placeholder="ابحث عن مستخدم، موعد، أو تقرير..."
-                className="w-full pr-10 text-right"
+                placeholder={t("searchPlaceholder")}
+                className="w-full pe-10 text-start"
               />
             </div>
           )}

@@ -5,7 +5,7 @@ import { getChatEcho } from "@/lib/echo";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { Message, PusherMessageEvent } from "@/types/chat";
-import { logger } from "@/lib/logger";
+import { logger } from "@/utils/logger";
 
 interface InfiniteData<T> {
   pages: T[];

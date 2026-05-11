@@ -1,16 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { usePatientTransactions } from "@/features/financial/hooks";
 import { CurrencyAmount, StatusBadge, EmptyWalletState } from "../../shared";
-import { formatDate } from "@/lib/utils/dateUtils";
+import { formatDate } from "@/utils/dateUtils";
 
 const PER_PAGE = 15;
 const SKELETON_ROWS = 8;
 
 export function PatientTransactionsTable() {
+  const t = useTranslations("financial");
   const [page, setPage] = useState(1);
 
   const {
@@ -29,11 +31,11 @@ export function PatientTransactionsTable() {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 text-right font-medium">العملية</th>
-              <th className="px-4 py-3 text-right font-medium">الاستشارة</th>
-              <th className="px-4 py-3 text-right font-medium">المبلغ</th>
-              <th className="px-4 py-3 text-right font-medium">الحالة</th>
-              <th className="px-4 py-3 text-right font-medium">التاريخ</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientTransactions.colOperation")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientTransactions.colConsultation")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientTransactions.colAmount")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientTransactions.colStatus")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientTransactions.colDate")}</th>
             </tr>
           </thead>
 
@@ -55,7 +57,7 @@ export function PatientTransactionsTable() {
             {!isLoading && !isFetching && isError && (
               <tr>
                 <td colSpan={5} className="px-4 py-10 text-center text-destructive">
-                  تعذر تحميل الحركات المالية. حاول مرة أخرى.
+                  {t("patientTransactions.loadError")}
                 </td>
               </tr>
             )}
@@ -64,8 +66,8 @@ export function PatientTransactionsTable() {
               <tr>
                 <td colSpan={5}>
                   <EmptyWalletState
-                    title="لا توجد حركات مالية"
-                    description="ستظهر هنا حركاتك المالية عند إجراء أي عمليات"
+                    title={t("patientTransactions.emptyTitle")}
+                    description={t("patientTransactions.emptyDescription")}
                   />
                 </td>
               </tr>
@@ -90,9 +92,9 @@ export function PatientTransactionsTable() {
                   <td className="px-4 py-3 text-muted-foreground">
                     {tx.consultation
                       ? tx.consultation.type === "chat"
-                        ? "دردشة"
-                        : "فيديو"
-                      : "غير مرتبط باستشارة"}
+                        ? t("shared.consultationType.chat")
+                        : t("shared.consultationType.video")
+                      : t("patientTransactions.notLinked")}
                   </td>
                   <td className="px-4 py-3">
                     <CurrencyAmount

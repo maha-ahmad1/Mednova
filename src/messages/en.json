@@ -1,6 +1,7 @@
 {
   "navbar": {
     "search": "Search for user, appointment, or report...",
+    "searchPlaceholder": "Search for a user, appointment, or report...",
     "settings": "Settings",
     "help": "Help",
     "logout": "Logout",
@@ -409,5 +410,118 @@
         "answer": "Yes. Multiple sizes fit all ages, with programs designed specifically for children."
       }
     ]
+  },
+  "financial": {
+    "shared": {
+      "periodWeek": "Week",
+      "periodMonth": "Month",
+      "periodQuarter": "Quarter",
+      "periodYear": "Year",
+      "chartWeek1": "Week 1",
+      "chartWeek2": "Week 2",
+      "chartWeek3": "Week 3",
+      "chartWeek4": "Week 4",
+      "withdrawalRequest": "Withdrawal Request",
+      "consultationType": {
+        "chat": "Chat",
+        "video": "Video"
+      }
+    },
+    "walletBalance": {
+      "withdrawNow": "Withdraw Now"
+    },
+    "emptyState": {
+      "defaultTitle": "No Data",
+      "defaultDescription": "No records to display at this time"
+    },
+    "statusBadge": {
+      "available": "Available",
+      "pending": "Pending",
+      "frozen": "Frozen",
+      "completed": "Completed",
+      "captured": "Completed",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    },
+    "consultant": {
+      "breadcrumb": "Consultant Dashboard › Financial Wallet",
+      "title": "Financial Wallet",
+      "exportStatement": "Export Statement",
+      "totalWallet": "Total Wallet",
+      "frozenBalance": "Frozen Balance",
+      "noFrozenAmounts": "No frozen amounts",
+      "pendingBalance": "Pending Balance",
+      "noPendingAmounts": "No amounts pending processing",
+      "withdrawableBalance": "Withdrawable Balance",
+      "avgSessionPrice": "Avg. Session Price",
+      "activeClients": "Active Clients",
+      "completedSessionsMonth": "Completed Sessions This Month",
+      "incomeTitle": "Income During Period",
+      "incomeSubtitle": "Session earnings comparison after commission deduction",
+      "noTransactionsTitle": "No Financial Transactions Yet",
+      "noTransactionsSubtitle": "Your earnings stats will appear here after your first paid session is completed."
+    },
+    "consultantTransactions": {
+      "sectionTitle": "Financial Transactions",
+      "colOperation": "Operation",
+      "colConsultation": "Consultation",
+      "colPatient": "Patient",
+      "colAmount": "Amount",
+      "colStatus": "Status",
+      "colDate": "Date",
+      "notLinked": "Not linked to a consultation",
+      "loadError": "Failed to load transactions. Please try again.",
+      "emptyTitle": "No Financial Transactions",
+      "emptyDescription": "Your transactions will appear here when you perform operations"
+    },
+    "patient": {
+      "breadcrumb": "My Account › Financial Wallet",
+      "title": "Financial Wallet",
+      "exportStatement": "Export Statement",
+      "totalWallet": "Total Wallet",
+      "availableBalance": "Available Balance",
+      "pendingWithdrawal": "Pending Withdrawal",
+      "noPendingWithdrawals": "No pending withdrawals",
+      "withdrawableBalance": "Withdrawable Balance",
+      "totalPayments": "Total Payments",
+      "paymentCount": "Payment Count",
+      "refundedAmounts": "Refunded Amounts",
+      "paymentsTitle": "Payments During Period",
+      "paymentsSubtitle": "Track your payments on the platform",
+      "noTransactionsTitle": "No Financial Transactions Yet",
+      "noTransactionsSubtitle": "Your stats and payments will appear here after your first consultation.",
+      "operationsLog": "Operations Log",
+      "tabPayments": "Payments",
+      "tabTransactions": "Financial Transactions"
+    },
+    "patientTransactions": {
+      "colOperation": "Operation",
+      "colConsultation": "Consultation",
+      "colAmount": "Amount",
+      "colStatus": "Status",
+      "colDate": "Date",
+      "notLinked": "Not linked to a consultation",
+      "loadError": "Failed to load transactions. Please try again.",
+      "emptyTitle": "No Financial Transactions",
+      "emptyDescription": "Your transactions will appear here when you perform operations"
+    },
+    "patientPayments": {
+      "colConsultation": "Consultation",
+      "colConsultant": "Consultant",
+      "colAmountPaid": "Amount Paid",
+      "colPaymentFees": "Payment Fees",
+      "colPaymentMethod": "Payment Method",
+      "colStatus": "Status",
+      "colRefund": "Refund",
+      "colDate": "Date",
+      "loadError": "Failed to load payments. Please try again.",
+      "emptyTitle": "No Payments",
+      "emptyDescription": "Your payments will appear here when you complete a consultation",
+      "methodVisa": "Visa",
+      "methodMastercard": "Mastercard",
+      "methodApplePay": "Apple Pay",
+      "methodThawani": "Thawani",
+      "methodMada": "Mada"
+    }
   }
 }

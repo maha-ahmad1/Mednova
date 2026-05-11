@@ -1,1 +1,1 @@
-export { formatDate, formatShortDate, formatFullDate } from "@/lib/utils/dateUtils";
+export { formatDate, formatShortDate, formatFullDate } from "@/utils/dateUtils";

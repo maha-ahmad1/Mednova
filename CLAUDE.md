@@ -2,6 +2,53 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Overview
+
+Mednova is a healthcare consultation platform that connects patients with medical specialists and therapists for remote consultations. It supports video and chat consultations, manages financial transactions (wallets, payouts) between patients and service providers, and handles provider profile management with public reviews. The platform is bilingual (Arabic default/RTL, English/LTR) with role-based access for patients, service providers, and admins.
+
+## API Conventions
+
+API functions live in `src/features/*/api/` and follow one of two patterns:
+
+**Standalone axios** (used in auth flows — `authApi.tsx`):
+```ts
+export const loginUser = async (data: LoginData) => {
+  const response = await api.post("/auth/login", data);
+  return response.data;
+};
+```
+
+**Dependency-injected axios** (used everywhere else — pass the `AxiosInstance` from `useAxiosInstance()`):
+```ts
+export const getConsultantWallet = async (
+  axios: AxiosInstance,
+): Promise<ApiEnvelope<ConsultantWallet>> => {
+  const res = await axios.get<ApiEnvelope<ConsultantWallet>>(
+    "/api/financial/consultant/wallet",
+  );
+  return res.data;
+};
+```
+
+- Response envelope shape: `{ success: boolean, message?: string, data: T }`
+- `useFetcher` unwraps one level — it returns `response.data.data` (the inner `T`), not the full envelope
+- Query params go in `{ params: { page, per_page } }`; `FormData` bodies need `{ headers: { "Content-Type": "multipart/form-data" } }`
+- Mutations handle errors via `axios.isAxiosError()` + `src/lib/backendFormErrors.ts` (`handleBackendFormError`) for 422 field errors; general errors go to a Sonner toast
+
+## Common Pitfalls
+
+**Locale-aware navigation** — always import `Link` and `useRouter` from `@/i18n/navigation`, not `next/link` or `next/navigation`. The app uses `localePrefix: "always"`, so bare hrefs like `"/profile/chat"` will drop the locale prefix and break routing.
+
+**`useFetcher` vs raw axios** — `useFetcher` extracts `response.data.data` (the inner payload). If you call an API function directly outside `useFetcher`, you get the full envelope (`{ success, data }`). Mixing the two causes type mismatches.
+
+**`useAxiosInstance()` is a hook** — it must be called inside a client component or custom hook, not in server components or outside the React tree. It creates a new Axios instance with the current session token on every call.
+
+**RTL classnames** — the default locale is Arabic (RTL). Spacing/directional utilities (`mr-`, `ml-`, `left-`, `right-`) need to be swapped for RTL. Prefer logical CSS equivalents (`ms-`, `me-`) or use `useLocale()` to conditionally apply classes.
+
+**`"use client"` boundary** — components using `useSession`, `useTranslations`, `useRouter`, `useAxiosInstance`, or any Zustand store must have `"use client"` at the top. Server components cannot call these hooks.
+
+**API base URL duplication** — `axiosInstance` base URL is `https://api.mednovacare.com` (no `/api` suffix), so feature API paths must include `/api/...`. The standalone auth axios instance at `authApi.tsx` already bakes `/api` into its base URL — don't double-prefix those calls.
+
 ## Commands
 
 ```bash
@@ -50,7 +97,7 @@ Shared/reusable UI goes in `src/shared/ui/`, base shadcn components in `src/comp
 
 1. **API functions** defined in `src/features/*/api/` using the axios instance
 2. **`useFetcher`** (`src/hooks/useFetcher.ts`) — generic React Query `useQuery` wrapper (5-minute stale time)
-3. **Mutations** use `useMutation` directly from React Query with error handling via `src/lib/handleFormErrors.ts`
+3. **Mutations** use `useMutation` directly from React Query with error handling via `src/lib/backendFormErrors.ts`
 
 Backend base URL: `https://api.mednovacare.com/api` (configured via `NEXT_PUBLIC_API_URL`)
 
@@ -65,7 +112,7 @@ Backend base URL: `https://api.mednovacare.com/api` (configured via `NEXT_PUBLIC
 
 ### Form Error Handling
 
-Backend returns 422 with field-level errors. Use `src/lib/handleFormErrors.ts` to map them to `react-hook-form`'s `setError()`. General errors go to a toast via Sonner.
+Backend returns 422 with field-level errors. Use `handleBackendFormError` from `src/lib/backendFormErrors.ts` — it fires a Sonner toast with a summary and calls an optional callback with per-field errors to pass to `setError()`.
 
 ## Coding Conventions
 

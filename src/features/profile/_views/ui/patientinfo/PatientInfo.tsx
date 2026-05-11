@@ -13,7 +13,7 @@ import PatientPersonal2Card from "./PatientPersonal2Card";
 import type { PatientProfile } from "@/types/patient";
 import type { ZodTypeAny } from "zod";
 import { signIn } from "next-auth/react";
-import { buildFullPhoneNumber, parsePhoneNumber } from "@/lib/phone";
+import { buildFullPhoneNumber, parsePhoneNumber } from "@/utils/phone";
 
 export default function PatientInfo() {
   const { data: session } = useSession();

@@ -19,7 +19,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { FormPhoneInput } from "@/shared/ui/forms";
-import { parsePhoneNumber } from "@/lib/phone";
+import { parsePhoneNumber } from "@/utils/phone";
 import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 
 

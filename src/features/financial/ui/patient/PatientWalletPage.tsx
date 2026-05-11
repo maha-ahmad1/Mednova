@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   DollarSign,
   Clock,
@@ -31,6 +32,7 @@ import { PatientTransactionsTable } from "./components/PatientTransactionsTable"
 type ActiveTab = "payments" | "transactions";
 
 export function PatientWalletPage() {
+  const t = useTranslations("financial");
   const [period, setPeriod] = useState("week");
   const [activeTab, setActiveTab] = useState<ActiveTab>("payments");
 
@@ -55,9 +57,9 @@ export function PatientWalletPage() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-xs text-muted-foreground mb-1">
-            حسابي &rsaquo; المحفظة المالية
+            {t("patient.breadcrumb")}
           </p>
-          <h1 className="text-2xl font-bold text-foreground">المحفظة المالية</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t("patient.title")}</h1>
         </div>
 
         <div className="flex gap-2 flex-wrap">
@@ -67,14 +69,14 @@ export function PatientWalletPage() {
             className="gap-1.5 border-border/60 text-muted-foreground"
           >
             <FileDown className="h-4 w-4" />
-            تصدير كشف حساب
+            {t("patient.exportStatement")}
           </Button>
           <Button
             size="sm"
             className="gap-1.5 bg-[#32A88D] hover:bg-[#2a9278] text-white"
           >
             <ArrowDownCircle className="h-4 w-4" />
-            طلب سحب
+            {t("shared.withdrawalRequest")}
           </Button>
         </div>
       </div>
@@ -82,7 +84,7 @@ export function PatientWalletPage() {
       {/* ── balance cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <WalletBalanceCard
-          label="إجمالي المحفظة"
+          label={t("patient.totalWallet")}
           amount={total}
           currency={currency}
           iconBg="bg-blue-100"
@@ -90,7 +92,7 @@ export function PatientWalletPage() {
           isLoading={walletLoading}
         />
         <WalletBalanceCard
-          label="الرصيد المتاح"
+          label={t("patient.availableBalance")}
           amount={available}
           currency={currency}
           iconBg="bg-emerald-100"
@@ -98,16 +100,16 @@ export function PatientWalletPage() {
           isLoading={walletLoading}
         />
         <WalletBalanceCard
-          label="قيد السحب"
+          label={t("patient.pendingWithdrawal")}
           amount={pendingWithdrawal}
           currency={currency}
           iconBg="bg-amber-100"
           icon={<Clock className="h-5 w-5 text-amber-600" />}
-          note="لا توجد مبالغ قيد السحب"
+          note={t("patient.noPendingWithdrawals")}
           isLoading={walletLoading}
         />
         <WalletBalanceCard
-          label="الرصيد القابل للسحب"
+          label={t("patient.withdrawableBalance")}
           amount={withdrawable}
           currency={currency}
           iconBg=""
@@ -125,20 +127,20 @@ export function PatientWalletPage() {
             <WalletStatCard
               icon={<DollarSign className="h-4 w-4 text-[#32A88D]" />}
               iconBg="bg-[#32A88D]/10"
-              label="إجمالي المدفوعات"
+              label={t("patient.totalPayments")}
               value="—"
               unit={currency}
             />
             <WalletStatCard
               icon={<Receipt className="h-4 w-4 text-violet-600" />}
               iconBg="bg-violet-100"
-              label="عدد المدفوعات"
+              label={t("patient.paymentCount")}
               value="—"
             />
             <WalletStatCard
               icon={<RefreshCcw className="h-4 w-4 text-sky-600" />}
               iconBg="bg-sky-100"
-              label="المبالغ المسترجعة"
+              label={t("patient.refundedAmounts")}
               value="—"
               unit={currency}
             />
@@ -152,27 +154,27 @@ export function PatientWalletPage() {
                 <div>
                   <p className="font-semibold text-foreground flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-[#32A88D]" />
-                    المدفوعات خلال الفترة
+                    {t("patient.paymentsTitle")}
                   </p>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
-                    متابعة مدفوعاتك داخل المنصة
+                    {t("patient.paymentsSubtitle")}
                   </p>
                 </div>
 
                 <Tabs value={period} onValueChange={setPeriod}>
                   <TabsList className="h-8 bg-gray-100 rounded-xl">
                     {[
-                      { value: "week", label: "أسبوع" },
-                      { value: "month", label: "شهر" },
-                      { value: "quarter", label: "ربع" },
-                      { value: "year", label: "سنة" },
-                    ].map((t) => (
+                      { value: "week", label: t("shared.periodWeek") },
+                      { value: "month", label: t("shared.periodMonth") },
+                      { value: "quarter", label: t("shared.periodQuarter") },
+                      { value: "year", label: t("shared.periodYear") },
+                    ].map((tab) => (
                       <TabsTrigger
-                        key={t.value}
-                        value={t.value}
+                        key={tab.value}
+                        value={tab.value}
                         className="text-xs h-7 px-3 rounded-lg data-[state=active]:bg-[#32A88D] data-[state=active]:text-white"
                       >
-                        {t.label}
+                        {tab.label}
                       </TabsTrigger>
                     ))}
                   </TabsList>
@@ -190,7 +192,12 @@ export function PatientWalletPage() {
                 <div className="flex-1">
                   <Sparkline />
                   <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
-                    {["أسبوع ١", "أسبوع ٢", "أسبوع ٣", "أسبوع ٤"].map((l) => (
+                    {[
+                      t("shared.chartWeek1"),
+                      t("shared.chartWeek2"),
+                      t("shared.chartWeek3"),
+                      t("shared.chartWeek4"),
+                    ].map((l) => (
                       <span key={l}>{l}</span>
                     ))}
                   </div>
@@ -204,15 +211,15 @@ export function PatientWalletPage() {
       {/* ── empty state banner (only after loading, no history) ── */}
       {showFreshUserBanner && (
         <FinancialEmptyInsight
-          title="لا توجد معاملات مالية بعد"
-          subtitle="ستظهر إحصائياتك ومدفوعاتك هنا فور إتمام أول استشارة."
+          title={t("patient.noTransactionsTitle")}
+          subtitle={t("patient.noTransactionsSubtitle")}
         />
       )}
 
       {/* ── operations table with tabs ── */}
       <div className="space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <h2 className="font-semibold text-foreground text-base">سجل العمليات</h2>
+          <h2 className="font-semibold text-foreground text-base">{t("patient.operationsLog")}</h2>
 
           <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
             <button
@@ -224,7 +231,7 @@ export function PatientWalletPage() {
               }`}
             >
               <Receipt className="h-3.5 w-3.5" />
-              المدفوعات
+              {t("patient.tabPayments")}
             </button>
             <button
               onClick={() => setActiveTab("transactions")}
@@ -235,7 +242,7 @@ export function PatientWalletPage() {
               }`}
             >
               <TrendingUp className="h-3.5 w-3.5" />
-              الحركات المالية
+              {t("patient.tabTransactions")}
             </button>
           </div>
         </div>

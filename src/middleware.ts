@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { routing } from "@/i18n/routing";
+import { isRestrictedForIncompleteProfile } from "@/lib/routeConfig";
 
 /** Paths without locale prefix (e.g. /ar/login → /login) */
 function isAuthPublicPath(cleanPath: string): boolean {
@@ -105,7 +106,11 @@ export async function middleware(req: NextRequest) {
       token.approval_status ?? token.user?.approval_status;
 
     if (!isCompleted) {
-      if (!cleanPathname.startsWith("/profile/create")) {
+      // Only block restricted pages — public/general pages stay accessible
+      if (
+        !cleanPathname.startsWith("/profile/create") &&
+        isRestrictedForIncompleteProfile(cleanPathname)
+      ) {
         url.pathname = `/${locale}/profile/create`;
         return NextResponse.redirect(url);
       }

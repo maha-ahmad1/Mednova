@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { IncompleteProfileBanner } from "@/shared/ui/components/IncompleteProfileBanner";
 
 export default async function LocaleLayout({
   children,
@@ -22,6 +23,7 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <div dir={dir} className="min-h-screen">
+        <IncompleteProfileBanner />
         {children}
       </div>
     </NextIntlClientProvider>

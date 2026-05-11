@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Globe, ChevronDown, Check, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { TimeZoneService, type TimeZoneOption } from "@/lib/timezone-service";
+import { TimeZoneService, type TimeZoneOption } from "@/utils/timezoneService";
 
 interface Props {
   selectedTimeZone: string;

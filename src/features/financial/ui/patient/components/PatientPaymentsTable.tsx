@@ -1,29 +1,31 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { usePatientPayments } from "@/features/financial/hooks";
 import { CurrencyAmount, StatusBadge, EmptyWalletState } from "../../shared";
-import { formatDate } from "@/lib/utils/dateUtils";
+import { formatDate } from "@/utils/dateUtils";
 
 const PER_PAGE = 15;
 const SKELETON_ROWS = 8;
 
-const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  visa: "Visa",
-  mastercard: "ماستركارد",
-  apple_pay: "Apple Pay",
-  th: "ثواني",
-  mada: "مدى",
-};
-
-function resolvePaymentMethod(method: string): string {
-  return PAYMENT_METHOD_LABELS[method.toLowerCase()] ?? method;
-}
-
 export function PatientPaymentsTable() {
+  const t = useTranslations("financial");
   const [page, setPage] = useState(1);
+
+  const PAYMENT_METHOD_LABELS: Record<string, string> = {
+    visa: t("patientPayments.methodVisa"),
+    mastercard: t("patientPayments.methodMastercard"),
+    apple_pay: t("patientPayments.methodApplePay"),
+    th: t("patientPayments.methodThawani"),
+    mada: t("patientPayments.methodMada"),
+  };
+
+  function resolvePaymentMethod(method: string): string {
+    return PAYMENT_METHOD_LABELS[method.toLowerCase()] ?? method;
+  }
 
   const {
     data: envelope,
@@ -41,14 +43,14 @@ export function PatientPaymentsTable() {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 text-right font-medium">الاستشارة</th>
-              <th className="px-4 py-3 text-right font-medium">المستشار</th>
-              <th className="px-4 py-3 text-right font-medium">المبلغ المدفوع</th>
-              <th className="px-4 py-3 text-right font-medium">رسوم الدفع</th>
-              <th className="px-4 py-3 text-right font-medium">طريقة الدفع</th>
-              <th className="px-4 py-3 text-right font-medium">الحالة</th>
-              <th className="px-4 py-3 text-right font-medium">الاسترجاع</th>
-              <th className="px-4 py-3 text-right font-medium">التاريخ</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colConsultation")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colConsultant")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colAmountPaid")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colPaymentFees")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colPaymentMethod")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colStatus")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colRefund")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colDate")}</th>
             </tr>
           </thead>
 
@@ -70,7 +72,7 @@ export function PatientPaymentsTable() {
             {!isLoading && !isFetching && isError && (
               <tr>
                 <td colSpan={8} className="px-4 py-10 text-center text-destructive">
-                  تعذر تحميل المدفوعات. حاول مرة أخرى.
+                  {t("patientPayments.loadError")}
                 </td>
               </tr>
             )}
@@ -79,8 +81,8 @@ export function PatientPaymentsTable() {
               <tr>
                 <td colSpan={8}>
                   <EmptyWalletState
-                    title="لا توجد مدفوعات"
-                    description="ستظهر هنا مدفوعاتك عند إتمام أي استشارة"
+                    title={t("patientPayments.emptyTitle")}
+                    description={t("patientPayments.emptyDescription")}
                   />
                 </td>
               </tr>
@@ -95,7 +97,9 @@ export function PatientPaymentsTable() {
                   className="border-t align-middle hover:bg-muted/20 transition-colors"
                 >
                   <td className="px-4 py-3 text-muted-foreground">
-                    {pay.consultation.type === "chat" ? "دردشة" : "فيديو"}
+                    {pay.consultation.type === "chat"
+                      ? t("shared.consultationType.chat")
+                      : t("shared.consultationType.video")}
                   </td>
                   <td className="px-4 py-3 font-medium text-foreground">
                     {pay.consultation.consultant_name}

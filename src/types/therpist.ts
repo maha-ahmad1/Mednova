@@ -1,3 +1,24 @@
+import type { MedicalSpecialty } from "@/features/service-provider/types/provider";
+
+export type { MedicalSpecialty };
+
+export type TherapistDetails = {
+  id: number;
+  medical_specialties: MedicalSpecialty | null;
+  experience_years: number | null;
+  university_name: string | null;
+  countries_certified: string | null;
+  graduation_year: string | null;
+  certificate_file: string | null;
+  license_number: string | null;
+  license_authority: string | null;
+  license_file: string | null;
+  bio: string | null;
+  video_consultation_price: string | null;
+  chat_consultation_price: string | null;
+  currency: string | null;
+};
+
 export type Schedule = {
   id?: string;
   day_of_week?: string[];

@@ -2,7 +2,7 @@ type ConsultationFinancialApi = {
   consultation_price?: unknown;
   gateway_commission_rate?: unknown;
   gateway_commission_amount?: unknown;
-  net_amount?: unknown;
+  gross_amount?: unknown;
 };
 
 export type ConsultationFinancial = {
@@ -40,6 +40,6 @@ export const extractConsultationFinancial = (
     consultationPrice: toNumber(financial?.consultation_price),
     gatewayCommissionRate: toRate(financial?.gateway_commission_rate),
     gatewayCommissionAmount: toNumber(financial?.gateway_commission_amount),
-    netAmount: toNumber(financial?.net_amount),
+    netAmount: toNumber(financial?.gross_amount),
   };
 };

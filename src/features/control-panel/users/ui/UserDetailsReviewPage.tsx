@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, type ReactNode } from "react";
-import { AlertTriangle, ArrowLeft, CheckCircle2, Mail, MapPin, Phone, ShieldCheck, User } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CheckCircle2, FileImage, FileText, Mail, MapPin, Phone, ShieldCheck, Stethoscope, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -51,6 +51,9 @@ const safeValue = (value: string | number | null | undefined) => {
 
   return String(value);
 };
+
+const formatPrice = (price: string | null | undefined) =>
+  price ? `${price} ريال عماني` : "—";
 
 const formatCompletion = (isCompleted: boolean) => (isCompleted ? 100 : 60);
 
@@ -109,6 +112,45 @@ function DetailsSection({ title, children, contentClassName }: { title: string; 
   );
 }
 
+function FileViewItem({ label, fileUrl, fileType }: { label: string; fileUrl: string | null; fileType: "image" | "pdf" }) {
+  return (
+    <div className="space-y-1 rounded-lg border border-border/70 bg-muted/20 p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      {fileUrl ? (
+        <a
+          href={fileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+        >
+          {fileType === "pdf" ? <FileText className="h-4 w-4" /> : <FileImage className="h-4 w-4" />}
+          فتح الملف
+        </a>
+      ) : (
+        <Badge variant="outline" className="gap-1 border-amber-200 bg-amber-50 text-amber-700">
+          <AlertTriangle className="h-3.5 w-3.5" />
+          الملف غير مرفوع
+        </Badge>
+      )}
+    </div>
+  );
+}
+
+function BioBlock({ bio, emptyText = "لم تتم إضافة نبذة بعد." }: { bio: string | null; emptyText?: string }) {
+  if (!bio) {
+    return (
+      <p className="rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
+        {emptyText}
+      </p>
+    );
+  }
+  return (
+    <div className="space-y-1 rounded-lg border border-border/70 bg-muted/20 p-4">
+      <p className="whitespace-pre-wrap break-words text-sm font-medium text-foreground">{bio}</p>
+    </div>
+  );
+}
+
 export function UserDetailsReviewPage({ userId }: UserDetailsReviewPageProps) {
   const { data: user, isLoading, isError } = useFetcher<AdminUserDetails>(
     ["admin-user-details", userId],
@@ -151,6 +193,7 @@ export function UserDetailsReviewPage({ userId }: UserDetailsReviewPageProps) {
 
   const approval = approvalStatusMap[user.approval_status] ?? approvalStatusMap.pending;
   const isCenter = user.type_account === "rehabilitation_center";
+  const isTherapist = user.type_account === "therapist";
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-5 p-6" dir="rtl">
@@ -211,9 +254,10 @@ export function UserDetailsReviewPage({ userId }: UserDetailsReviewPageProps) {
       <Tabs defaultValue="overview" dir="rtl" className="space-y-4">
         <TabsList className="h-auto w-full justify-start overflow-x-auto rounded-xl border bg-muted/40 p-1">
           <TabsTrigger value="overview" className="px-5 py-2">نظرة عامة</TabsTrigger>
-          <TabsTrigger value="location" className="px-5 py-2">بيانات الموقع</TabsTrigger>
+          {isTherapist && <TabsTrigger value="therapist" className="px-5 py-2">بيانات المختص</TabsTrigger>}
           {isCenter && <TabsTrigger value="center" className="px-5 py-2">بيانات المركز</TabsTrigger>}
           <TabsTrigger value="schedule" className="px-5 py-2">جدول العمل</TabsTrigger>
+          <TabsTrigger value="location" className="px-5 py-2">بيانات الموقع</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
@@ -271,35 +315,112 @@ export function UserDetailsReviewPage({ userId }: UserDetailsReviewPageProps) {
           </DetailsSection>
         </TabsContent>
 
-        {isCenter && (
-          <TabsContent value="center">
-            <DetailsSection title="بيانات المركز" contentClassName="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              <InfoItem label="اسم المركز" value={safeValue(user.center_details?.name_center)} />
-              <InfoItem label="سنة التأسيس" value={safeValue(user.center_details?.year_establishment)} />
-              <InfoItem label="رقم الترخيص" value={safeValue(user.center_details?.license_number)} />
-              <InfoItem label="جهة الترخيص" value={safeValue(user.center_details?.license_authority)} />
-              <InfoItem
-                label="السجل التجاري"
-                value={
-                  user.center_details?.has_commercial_registration
-                    ? safeValue(user.center_details?.commercial_registration_number)
-                    : "لا يوجد"
-                }
-              />
-              <InfoItem label="جهة السجل التجاري" value={safeValue(user.center_details?.commercial_registration_authority)} />
-              <InfoItem label="سعر الاستشارة المرئية" value={safeValue(user.center_details?.video_consultation_price)} />
-              <InfoItem label="سعر الاستشارة الكتابية" value={safeValue(user.center_details?.chat_consultation_price)} />
-              <InfoItem label="العملة" value={safeValue(user.center_details?.currency)} />
+        {isTherapist && (
+          <TabsContent value="therapist">
+            <div className="space-y-4">
+              <DetailsSection title="النبذة الشخصية" contentClassName="">
+                <BioBlock bio={user.therapist_details?.bio ?? null} />
+              </DetailsSection>
 
-              {!user.center_details?.license_file && (
-                <div className="md:col-span-2 lg:col-span-3">
+              <DetailsSection title="المعلومات المهنية والأسعار" contentClassName="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                <InfoItem label="التخصص" value={safeValue(user.therapist_details?.medical_specialties?.name)} />
+                <InfoItem
+                  label="سنوات الخبرة"
+                  value={
+                    user.therapist_details?.experience_years != null
+                      ? `${user.therapist_details.experience_years} سنة`
+                      : "—"
+                  }
+                />
+                <InfoItem label="الدول المعتمدة" value={safeValue(user.therapist_details?.countries_certified)} />
+                <InfoItem label="الجامعة" value={safeValue(user.therapist_details?.university_name)} />
+                <InfoItem label="سنة التخرج" value={safeValue(user.therapist_details?.graduation_year)} />
+                <InfoItem label="سعر الاستشارة المرئية" value={formatPrice(user.therapist_details?.video_consultation_price)} />
+                <InfoItem label="سعر الاستشارة الكتابية" value={formatPrice(user.therapist_details?.chat_consultation_price)} />
+              </DetailsSection>
+
+              <DetailsSection title="بيانات الترخيص والاعتماد" contentClassName="space-y-3">
+                <div className="grid gap-3 md:grid-cols-2">
+                  <InfoItem label="رقم الترخيص" value={safeValue(user.therapist_details?.license_number)} />
+                  <InfoItem label="جهة الترخيص" value={safeValue(user.therapist_details?.license_authority)} />
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <FileViewItem label="ملف الترخيص" fileUrl={user.therapist_details?.license_file ?? null} fileType="pdf" />
+                  <FileViewItem label="شهادة الاعتماد" fileUrl={user.therapist_details?.certificate_file ?? null} fileType="image" />
+                </div>
+                {(!user.therapist_details?.license_file || !user.therapist_details?.certificate_file) && (
                   <Badge variant="outline" className="gap-1 border-amber-200 bg-amber-50 text-amber-700">
                     <AlertTriangle className="h-3.5 w-3.5" />
-                    تنبيه: ملف الترخيص غير مرفوع
+                    تنبيه: بعض ملفات التوثيق غير مكتملة
                   </Badge>
+                )}
+              </DetailsSection>
+            </div>
+          </TabsContent>
+        )}
+
+        {isCenter && (
+          <TabsContent value="center">
+            <div className="space-y-4">
+              <DetailsSection title="نبذة عن المركز" contentClassName="">
+                <BioBlock bio={user.center_details?.bio ?? null} />
+              </DetailsSection>
+
+              <DetailsSection title="بيانات المركز والأسعار" contentClassName="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                <InfoItem label="اسم المركز" value={safeValue(user.center_details?.name_center)} />
+                <InfoItem label="سنة التأسيس" value={safeValue(user.center_details?.year_establishment)} />
+                <InfoItem label="سعر الاستشارة المرئية" value={formatPrice(user.center_details?.video_consultation_price)} />
+                <InfoItem label="سعر الاستشارة الكتابية" value={formatPrice(user.center_details?.chat_consultation_price)} />
+              </DetailsSection>
+
+              <DetailsSection title="بيانات الترخيص والاعتماد" contentClassName="space-y-3">
+                <div className="grid gap-3 md:grid-cols-2">
+                  <InfoItem label="رقم الترخيص" value={safeValue(user.center_details?.license_number)} />
+                  <InfoItem label="جهة الترخيص" value={safeValue(user.center_details?.license_authority)} />
                 </div>
-              )}
-            </DetailsSection>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <FileViewItem label="ملف الترخيص" fileUrl={user.center_details?.license_file ?? null} fileType="pdf" />
+                  <div className="hidden md:block" />
+                </div>
+              </DetailsSection>
+
+              <DetailsSection title="السجل التجاري" contentClassName="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                {user.center_details?.has_commercial_registration === 1 ? (
+                  <>
+                    <InfoItem label="رقم السجل التجاري" value={safeValue(user.center_details.commercial_registration_number)} />
+                    <InfoItem label="جهة السجل التجاري" value={safeValue(user.center_details.commercial_registration_authority)} />
+                    <div className="hidden lg:block" />
+                    <FileViewItem label="ملف السجل التجاري" fileUrl={user.center_details.commercial_registration_file ?? null} fileType="pdf" />
+                  </>
+                ) : (
+                  <p className="rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground md:col-span-2 lg:col-span-3">
+                    المركز لا يملك سجلًا تجاريًا.
+                  </p>
+                )}
+              </DetailsSection>
+
+              <DetailsSection title="التخصصات الطبية" contentClassName="">
+                {user.medicalSpecialties.length === 0 ? (
+                  <p className="rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
+                    لم يتم تحديد تخصصات للمركز.
+                  </p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {user.medicalSpecialties.map((specialty) => (
+                      <Badge
+                        key={specialty.id}
+                        variant="outline"
+                        className="gap-1.5 px-3 py-1.5 text-sm"
+                        title={specialty.description}
+                      >
+                        <Stethoscope className="h-3.5 w-3.5" />
+                        {specialty.name}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </DetailsSection>
+            </div>
           </TabsContent>
         )}
 

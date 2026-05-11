@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -11,11 +12,14 @@ interface EmptyWalletStateProps {
 }
 
 export function EmptyWalletState({
-  title = "لا توجد بيانات",
-  description = "لا توجد سجلات لعرضها في الوقت الحالي",
+  title,
+  description,
   icon,
   className,
 }: EmptyWalletStateProps) {
+  const t = useTranslations("financial");
+  const resolvedTitle = title ?? t("emptyState.defaultTitle");
+  const resolvedDescription = description ?? t("emptyState.defaultDescription");
   return (
     <div
       className={cn(
@@ -26,8 +30,8 @@ export function EmptyWalletState({
       <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-4">
         {icon ?? <Wallet className="w-7 h-7 text-muted-foreground" />}
       </div>
-      <p className="text-sm font-medium text-foreground mb-1">{title}</p>
-      <p className="text-xs text-muted-foreground max-w-xs">{description}</p>
+      <p className="text-sm font-medium text-foreground mb-1">{resolvedTitle}</p>
+      <p className="text-xs text-muted-foreground max-w-xs">{resolvedDescription}</p>
     </div>
   );
 }

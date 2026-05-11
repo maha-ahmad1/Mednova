@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Receipt } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
@@ -10,12 +11,13 @@ import {
   StatusBadge,
   EmptyWalletState,
 } from "../../shared";
-import { formatDate } from "@/lib/utils/dateUtils";
+import { formatDate } from "@/utils/dateUtils";
 
 const TRANSACTIONS_PER_PAGE = 15;
 const SKELETON_ROWS = 8;
 
 export function ConsultantTransactionsTable() {
+  const t = useTranslations("financial");
   const [page, setPage] = useState(1);
 
   const {
@@ -32,19 +34,19 @@ export function ConsultantTransactionsTable() {
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Receipt className="h-4 w-4 text-[#32A88D]" />
-        <h2 className="font-semibold text-foreground">الحركات المالية</h2>
+        <h2 className="font-semibold text-foreground">{t("consultantTransactions.sectionTitle")}</h2>
       </div>
 
       <div className="overflow-x-auto rounded-xl border bg-white">
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 text-right font-medium">العملية</th>
-              <th className="px-4 py-3 text-right font-medium">الاستشارة</th>
-              <th className="px-4 py-3 text-right font-medium">المريض</th>
-              <th className="px-4 py-3 text-right font-medium">المبلغ</th>
-              <th className="px-4 py-3 text-right font-medium">الحالة</th>
-              <th className="px-4 py-3 text-right font-medium">التاريخ</th>
+              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colOperation")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colConsultation")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colPatient")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colAmount")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colStatus")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colDate")}</th>
             </tr>
           </thead>
 
@@ -80,7 +82,7 @@ export function ConsultantTransactionsTable() {
                   colSpan={6}
                   className="px-4 py-10 text-center text-destructive"
                 >
-                  تعذر تحميل الحركات المالية. حاول مرة أخرى.
+                  {t("consultantTransactions.loadError")}
                 </td>
               </tr>
             )}
@@ -89,8 +91,8 @@ export function ConsultantTransactionsTable() {
               <tr>
                 <td colSpan={6}>
                   <EmptyWalletState
-                    title="لا توجد حركات مالية"
-                    description="ستظهر هنا حركاتك المالية عند إجراء أي عمليات"
+                    title={t("consultantTransactions.emptyTitle")}
+                    description={t("consultantTransactions.emptyDescription")}
                   />
                 </td>
               </tr>
@@ -115,12 +117,12 @@ export function ConsultantTransactionsTable() {
                   <td className="px-4 py-3 text-muted-foreground">
                     {tx.consultation
                       ? tx.consultation.type === "chat"
-                        ? "دردشة"
-                        : "فيديو"
+                        ? t("shared.consultationType.chat")
+                        : t("shared.consultationType.video")
                       : "—"}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
-                    {tx.consultation?.patient_name ?? "غير مرتبط باستشارة"}
+                    {tx.consultation?.patient_name ?? t("consultantTransactions.notLinked")}
                   </td>
                   <td className="px-4 py-3">
                     <CurrencyAmount

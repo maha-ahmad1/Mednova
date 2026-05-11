@@ -1,4 +1,3 @@
-// lib/logger.ts
 const isDevelopment = process.env.NODE_ENV === 'development';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const logger = {

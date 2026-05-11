@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   DollarSign,
   Lock,
@@ -26,6 +27,7 @@ import { Sparkline } from "../shared/Sparkline";
 import { ConsultantTransactionsTable } from "./components/ConsultantTransactionsTable";
 
 export function ConsultantWalletPage() {
+  const t = useTranslations("financial");
   const [period, setPeriod] = useState("week");
 
   const { data: wallet, isLoading: walletLoading } = useConsultantWallet();
@@ -49,9 +51,9 @@ export function ConsultantWalletPage() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-xs text-muted-foreground mb-1">
-            لوحة المستشار &rsaquo; المحفظة المالية
+            {t("consultant.breadcrumb")}
           </p>
-          <h1 className="text-2xl font-bold text-foreground">المحفظة المالية</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t("consultant.title")}</h1>
         </div>
 
         <div className="flex gap-2 flex-wrap">
@@ -61,14 +63,14 @@ export function ConsultantWalletPage() {
             className="gap-1.5 border-border/60 text-muted-foreground"
           >
             <FileDown className="h-4 w-4" />
-            تصدير كشف حساب
+            {t("consultant.exportStatement")}
           </Button>
           <Button
             size="sm"
             className="gap-1.5 bg-[#32A88D] hover:bg-[#2a9278] text-white"
           >
             <ArrowDownCircle className="h-4 w-4" />
-            طلب سحب
+            {t("shared.withdrawalRequest")}
           </Button>
         </div>
       </div>
@@ -76,7 +78,7 @@ export function ConsultantWalletPage() {
       {/* ── balance cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <WalletBalanceCard
-          label="إجمالي المحفظة"
+          label={t("consultant.totalWallet")}
           amount={total}
           currency={currency}
           iconBg="bg-blue-100"
@@ -84,25 +86,25 @@ export function ConsultantWalletPage() {
           isLoading={walletLoading}
         />
         <WalletBalanceCard
-          label="رصيد مجمد"
+          label={t("consultant.frozenBalance")}
           amount={frozen}
           currency={currency}
           iconBg="bg-purple-100"
           icon={<Lock className="h-5 w-5 text-purple-600" />}
-          note="لا توجد مبالغ مجمدة"
+          note={t("consultant.noFrozenAmounts")}
           isLoading={walletLoading}
         />
         <WalletBalanceCard
-          label="رصيد معلق"
+          label={t("consultant.pendingBalance")}
           amount={pending}
           currency={currency}
           iconBg="bg-amber-100"
           icon={<Clock className="h-5 w-5 text-amber-600" />}
-          note="لا توجد مبالغ قيد المعالجة"
+          note={t("consultant.noPendingAmounts")}
           isLoading={walletLoading}
         />
         <WalletBalanceCard
-          label="الرصيد المتاح للسحب"
+          label={t("consultant.withdrawableBalance")}
           amount={available}
           currency={currency}
           iconBg=""
@@ -120,20 +122,20 @@ export function ConsultantWalletPage() {
             <WalletStatCard
               icon={<DollarSign className="h-4 w-4 text-[#32A88D]" />}
               iconBg="bg-[#32A88D]/10"
-              label="متوسط سعر الجلسة"
+              label={t("consultant.avgSessionPrice")}
               value="—"
               unit={currency}
             />
             <WalletStatCard
               icon={<Users className="h-4 w-4 text-violet-600" />}
               iconBg="bg-violet-100"
-              label="عملاء نشطون"
+              label={t("consultant.activeClients")}
               value="—"
             />
             <WalletStatCard
               icon={<CheckCircle2 className="h-4 w-4 text-emerald-600" />}
               iconBg="bg-emerald-100"
-              label="جلسات مكتملة هذا الشهر"
+              label={t("consultant.completedSessionsMonth")}
               value="—"
             />
           </div>
@@ -146,27 +148,27 @@ export function ConsultantWalletPage() {
                 <div>
                   <p className="font-semibold text-foreground flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-[#32A88D]" />
-                    الدخل خلال الفترة
+                    {t("consultant.incomeTitle")}
                   </p>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
-                    مقارنة الأرباح من الجلسات بعد خصم العمولة
+                    {t("consultant.incomeSubtitle")}
                   </p>
                 </div>
 
                 <Tabs value={period} onValueChange={setPeriod}>
                   <TabsList className="h-8 bg-gray-100 rounded-xl">
                     {[
-                      { value: "week", label: "أسبوع" },
-                      { value: "month", label: "شهر" },
-                      { value: "quarter", label: "ربع" },
-                      { value: "year", label: "سنة" },
-                    ].map((t) => (
+                      { value: "week", label: t("shared.periodWeek") },
+                      { value: "month", label: t("shared.periodMonth") },
+                      { value: "quarter", label: t("shared.periodQuarter") },
+                      { value: "year", label: t("shared.periodYear") },
+                    ].map((tab) => (
                       <TabsTrigger
-                        key={t.value}
-                        value={t.value}
+                        key={tab.value}
+                        value={tab.value}
                         className="text-xs h-7 px-3 rounded-lg data-[state=active]:bg-[#32A88D] data-[state=active]:text-white"
                       >
-                        {t.label}
+                        {tab.label}
                       </TabsTrigger>
                     ))}
                   </TabsList>
@@ -184,7 +186,12 @@ export function ConsultantWalletPage() {
                 <div className="flex-1">
                   <Sparkline />
                   <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
-                    {["أسبوع ١", "أسبوع ٢", "أسبوع ٣", "أسبوع ٤"].map((l) => (
+                    {[
+                      t("shared.chartWeek1"),
+                      t("shared.chartWeek2"),
+                      t("shared.chartWeek3"),
+                      t("shared.chartWeek4"),
+                    ].map((l) => (
                       <span key={l}>{l}</span>
                     ))}
                   </div>
@@ -198,8 +205,8 @@ export function ConsultantWalletPage() {
       {/* ── empty state banner (only after loading, no history) ── */}
       {showFreshUserBanner && (
         <FinancialEmptyInsight
-          title="لا توجد حركات مالية بعد"
-          subtitle="ستظهر إحصائيات أرباحك هنا بعد اكتمال أول جلسة مدفوعة."
+          title={t("consultant.noTransactionsTitle")}
+          subtitle={t("consultant.noTransactionsSubtitle")}
         />
       )}
 

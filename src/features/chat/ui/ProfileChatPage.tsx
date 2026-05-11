@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useFetcher } from "@/hooks/useFetcher";
 import { useConsultationStore } from "@/store/consultationStore";
-import { TimeZoneService } from "@/lib/timezone-service";
+import { TimeZoneService } from "@/utils/timezoneService";
 import type { ConsultationRequest } from "@/types/consultation";
 import ConsultationChatPanel from "@/features/chat/ui/ConsultationChatPanel";
 

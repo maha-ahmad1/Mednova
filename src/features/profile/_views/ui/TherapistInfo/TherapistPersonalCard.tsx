@@ -18,7 +18,7 @@ import { TherapistFormValues } from "@/app/api/therapist";
 import { personalSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
 import Image from "next/image";
-import { buildFullPhoneNumber, parsePhoneNumber } from "@/lib/phone";
+import { buildFullPhoneNumber, parsePhoneNumber } from "@/utils/phone";
 
 interface TherapistPersonalCardProps {
   profile: TherapistProfile;

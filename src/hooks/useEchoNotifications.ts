@@ -9,7 +9,7 @@ import { useNotificationStore } from "@/store/notificationStore";
 import { subscribeConsultationEvents } from "@/services/echo/subscribeConsultationEvents";
 import { subscribeAccountEvents } from "@/services/echo/subscribeAccountEvents";
 import { subscribeSystemEvents } from "@/services/echo/subscribeSystemEvents";
-import { useEventDeduplicator } from "@/utils/createEventDeduplicator";
+import { useEventDeduplicator } from "@/hooks/useEventDeduplicator";
 
 export const useEchoNotifications = (): void => {
   const { data: session, update, status } = useSession();

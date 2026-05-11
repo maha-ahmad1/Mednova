@@ -1,6 +1,7 @@
 {
   "navbar": {
     "search": "ابحث عن مستخدم، موعد، أو تقرير...",
+    "searchPlaceholder": "ابحث عن مستخدم، موعد، أو تقرير...",
     "settings": "الإعدادات",
     "help": "المساعدة",
     "logout": "تسجيل الخروج",
@@ -410,5 +411,118 @@
         "answer": "نعم، القفاز مصمم بمقاسات مختلفة تناسب جميع الأعمار، مع برامج علاجية مخصصة للأطفال."
       }
     ]
+  },
+  "financial": {
+    "shared": {
+      "periodWeek": "أسبوع",
+      "periodMonth": "شهر",
+      "periodQuarter": "ربع",
+      "periodYear": "سنة",
+      "chartWeek1": "أسبوع ١",
+      "chartWeek2": "أسبوع ٢",
+      "chartWeek3": "أسبوع ٣",
+      "chartWeek4": "أسبوع ٤",
+      "withdrawalRequest": "طلب سحب",
+      "consultationType": {
+        "chat": "دردشة",
+        "video": "فيديو"
+      }
+    },
+    "walletBalance": {
+      "withdrawNow": "اسحب الآن"
+    },
+    "emptyState": {
+      "defaultTitle": "لا توجد بيانات",
+      "defaultDescription": "لا توجد سجلات لعرضها في الوقت الحالي"
+    },
+    "statusBadge": {
+      "available": "متاح",
+      "pending": "معلق",
+      "frozen": "مجمد",
+      "completed": "مكتمل",
+      "captured": "مكتمل",
+      "failed": "فشل",
+      "refunded": "مسترد"
+    },
+    "consultant": {
+      "breadcrumb": "لوحة المستشار › المحفظة المالية",
+      "title": "المحفظة المالية",
+      "exportStatement": "تصدير كشف حساب",
+      "totalWallet": "إجمالي المحفظة",
+      "frozenBalance": "رصيد مجمد",
+      "noFrozenAmounts": "لا توجد مبالغ مجمدة",
+      "pendingBalance": "رصيد معلق",
+      "noPendingAmounts": "لا توجد مبالغ قيد المعالجة",
+      "withdrawableBalance": "الرصيد المتاح للسحب",
+      "avgSessionPrice": "متوسط سعر الجلسة",
+      "activeClients": "عملاء نشطون",
+      "completedSessionsMonth": "جلسات مكتملة هذا الشهر",
+      "incomeTitle": "الدخل خلال الفترة",
+      "incomeSubtitle": "مقارنة الأرباح من الجلسات بعد خصم العمولة",
+      "noTransactionsTitle": "لا توجد حركات مالية بعد",
+      "noTransactionsSubtitle": "ستظهر إحصائيات أرباحك هنا بعد اكتمال أول جلسة مدفوعة."
+    },
+    "consultantTransactions": {
+      "sectionTitle": "الحركات المالية",
+      "colOperation": "العملية",
+      "colConsultation": "الاستشارة",
+      "colPatient": "المريض",
+      "colAmount": "المبلغ",
+      "colStatus": "الحالة",
+      "colDate": "التاريخ",
+      "notLinked": "غير مرتبط باستشارة",
+      "loadError": "تعذر تحميل الحركات المالية. حاول مرة أخرى.",
+      "emptyTitle": "لا توجد حركات مالية",
+      "emptyDescription": "ستظهر هنا حركاتك المالية عند إجراء أي عمليات"
+    },
+    "patient": {
+      "breadcrumb": "حسابي › المحفظة المالية",
+      "title": "المحفظة المالية",
+      "exportStatement": "تصدير كشف حساب",
+      "totalWallet": "إجمالي المحفظة",
+      "availableBalance": "الرصيد المتاح",
+      "pendingWithdrawal": "قيد السحب",
+      "noPendingWithdrawals": "لا توجد مبالغ قيد السحب",
+      "withdrawableBalance": "الرصيد القابل للسحب",
+      "totalPayments": "إجمالي المدفوعات",
+      "paymentCount": "عدد المدفوعات",
+      "refundedAmounts": "المبالغ المسترجعة",
+      "paymentsTitle": "المدفوعات خلال الفترة",
+      "paymentsSubtitle": "متابعة مدفوعاتك داخل المنصة",
+      "noTransactionsTitle": "لا توجد معاملات مالية بعد",
+      "noTransactionsSubtitle": "ستظهر إحصائياتك ومدفوعاتك هنا فور إتمام أول استشارة.",
+      "operationsLog": "سجل العمليات",
+      "tabPayments": "المدفوعات",
+      "tabTransactions": "الحركات المالية"
+    },
+    "patientTransactions": {
+      "colOperation": "العملية",
+      "colConsultation": "الاستشارة",
+      "colAmount": "المبلغ",
+      "colStatus": "الحالة",
+      "colDate": "التاريخ",
+      "notLinked": "غير مرتبط باستشارة",
+      "loadError": "تعذر تحميل الحركات المالية. حاول مرة أخرى.",
+      "emptyTitle": "لا توجد حركات مالية",
+      "emptyDescription": "ستظهر هنا حركاتك المالية عند إجراء أي عمليات"
+    },
+    "patientPayments": {
+      "colConsultation": "الاستشارة",
+      "colConsultant": "المستشار",
+      "colAmountPaid": "المبلغ المدفوع",
+      "colPaymentFees": "رسوم الدفع",
+      "colPaymentMethod": "طريقة الدفع",
+      "colStatus": "الحالة",
+      "colRefund": "الاسترجاع",
+      "colDate": "التاريخ",
+      "loadError": "تعذر تحميل المدفوعات. حاول مرة أخرى.",
+      "emptyTitle": "لا توجد مدفوعات",
+      "emptyDescription": "ستظهر هنا مدفوعاتك عند إتمام أي استشارة",
+      "methodVisa": "Visa",
+      "methodMastercard": "ماستركارد",
+      "methodApplePay": "Apple Pay",
+      "methodThawani": "ثواني",
+      "methodMada": "مدى"
+    }
   }
 }

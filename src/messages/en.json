@@ -1,4 +1,9 @@
 {
+  "incompleteProfileBanner": {
+    "message": "Complete your profile to activate your account and access all platform features",
+    "cta": "Complete Profile",
+    "dismiss": "Dismiss"
+  },
   "navbar": {
     "search": "Search for user, appointment, or report...",
     "searchPlaceholder": "Search for a user, appointment, or report...",

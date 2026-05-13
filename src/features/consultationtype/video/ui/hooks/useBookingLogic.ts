@@ -2,15 +2,11 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { useFetcher } from "@/hooks/useFetcher";
 import type { ServiceProvider } from "@/features/service-provider/types/provider";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { useConsultationTypeStore } from "@/store/ConsultationTypeStore";
 import { useConsultationRequestStore } from "@/features/home/hooks/useConsultationRequestStore";
-import { extractConsultationFinancial } from "@/features/consultations/utils/consultation-financial";
-import {
-  getProviderSpecializationLabel,
-  getProviderSpecializationNames,
-} from "@/features/service-provider/utils/provider-specializations";
+import { getProviderSpecializationLabel } from "@/features/service-provider/utils/provider-specializations";
 import { ar, enUS } from "date-fns/locale";
 import { format } from "date-fns";
 import { slotsApi, type CheckAvailableSlotsParams } from "@/app/api/slots";
@@ -36,7 +32,7 @@ export function useBookingLogic({
   doctorId?: string;
   patientId?: string;
 }) {
-  const { currentConsultation, clearConsultation, setConsultation } =
+  const { currentConsultation, clearConsultation } =
     useConsultationTypeStore();
   const effectiveDoctorId = doctorId || currentConsultation?.providerId;
 
@@ -302,29 +298,8 @@ export function useBookingLogic({
       const consultationResponse = await storeConsultationRequest(consultationData);
 
       const consultationRequestId = consultationResponse?.data?.id || consultationResponse?.id;
-      const financial = extractConsultationFinancial(consultationResponse);
 
-      setConsultation({
-        providerId: effectiveDoctorId,
-        providerName: provider?.full_name || "غير محدد",
-        consultationType: "video",
-        consultantType: consultantType,
-        requestedDay: getEnglishDay(selectedDate),
-        requestedTime: `${format(selectedDate, "yyyy-MM-dd")} ${selectedTime}`,
-        appointmentType: "online",
-        consultationRequestId: consultationRequestId
-          ? String(consultationRequestId)
-          : undefined,
-        financial,
-        providerSpecializations: getProviderSpecializationNames(provider),
-        currency:
-          provider?.therapist_details?.currency ||
-          provider?.center_details?.currency ||
-          "OMR",
-        providerImage: provider?.image,
-      });
-
-      router.push("/payment");
+      router.push(`/payment?consultation_id=${consultationRequestId}&type=video`);
 
       setSelectedTime("");
       setSelectedDate(undefined);

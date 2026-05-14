@@ -16,7 +16,6 @@ import { useConsultationRequestStore } from "@/features/home/hooks/useConsultati
 import { useConsultationTypeStore } from "@/store/ConsultationTypeStore";
 import { toast } from "sonner";
 import { ServiceProvider } from "../types/provider";
-import { getProviderSpecializationNames } from "@/features/service-provider/utils/provider-specializations";
 
 interface ConsultationDialogProps {
   provider: ServiceProvider;
@@ -77,8 +76,6 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
     // حفظ معلومات الاستشارة في الـ store للاستخدام في صفحة الحجز
     setConsultation({
       providerId: provider.id.toString(),
-      providerName: provider.full_name,
-      consultationType: "video",
       consultantType:
         provider.type_account === "therapist"
           ? "therapist"

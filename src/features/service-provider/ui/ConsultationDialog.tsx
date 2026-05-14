@@ -11,12 +11,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useConsultationRequestStore } from "@/features/home/hooks/useConsultationRequestStore";
 import { useConsultationTypeStore } from "@/store/ConsultationTypeStore";
 import { toast } from "sonner";
 import { ServiceProvider } from "../types/provider";
-import { extractConsultationFinancial } from "@/features/consultations/utils/consultation-financial";
 import { getProviderSpecializationNames } from "@/features/service-provider/utils/provider-specializations";
 
 interface ConsultationDialogProps {
@@ -62,34 +61,12 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
       // إرسال البيانات إلى الـ API
       const consultationResponse = await storeConsultationRequest(payload);
       const consultationRequestId = consultationResponse?.data?.id || consultationResponse?.id;
-      const financial = extractConsultationFinancial(consultationResponse);
-
-      // حفظ معلومات الاستشارة في الـ store
-      setConsultation({
-        providerId: provider.id.toString(),
-        providerName: provider.full_name,
-        consultationType: "chat",
-        consultantType:
-          provider.type_account === "therapist"
-            ? "therapist"
-            : "rehabilitation_center",
-        consultationRequestId: consultationRequestId
-          ? String(consultationRequestId)
-          : undefined,
-        financial,
-        providerSpecializations: getProviderSpecializationNames(provider),
-        currency:
-          provider?.therapist_details?.currency ||
-          provider?.center_details?.currency ||
-          "OMR",
-        providerImage: provider?.image,
-      });
 
       // إغلاق الـ Dialog
       setIsDialogOpen(false);
 
       // الانتقال إلى صفحة الدفع
-      router.push("/payment");
+      router.push(`/payment?consultation_id=${consultationRequestId}&type=chat`);
     } catch (error) {
       console.error("❌ خطأ في إرسال طلب الاستشارة النصية:", error);
       // toast.error سيتم عرضه من useConsultationRequestStore

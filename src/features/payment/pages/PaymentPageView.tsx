@@ -1,8 +1,13 @@
 "use client";
 
+// TODO Phase (E): Replace hardcoded Arabic strings with t() calls from useTranslations.
+// Keys to add: payment.invalidLink, payment.loadError, payment.notFound,
+// payment.suspended.*, payment.alreadyPaid.*, payment.viewConsultations, etc.
+
 import { useEffect, useMemo } from "react";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useRouter, Link } from "@/i18n/navigation";
 import {
   CheckCircle2,
   Clock,
@@ -12,21 +17,24 @@ import {
   Calendar,
   Lock,
   X,
-  User,
   Stethoscope,
   Sparkles,
-  Banknote,
+  MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useConsultationTypeStore } from "@/store/ConsultationTypeStore";
 import Navbar from "@/shared/ui/components/Navbar/Navbar";
 import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
 import { useCreatePaymentLink } from "@/features/payment/hooks/useCreatePaymentLink";
 import { usePaymentStatus } from "@/features/payment/hooks/usePaymentStatus";
+import { useFetcher } from "@/hooks/useFetcher";
+import {
+  type ConsultationDetails,
+  isPaid as isPaidStatus,
+} from "@/features/payment/types";
 import { cn } from "@/lib/utils";
 
 /* ─────────────────────────────────────────────
@@ -105,7 +113,23 @@ const StatusBanner = ({ status }: { status: PaymentStatusType }) => {
 export default function PaymentPageView() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { currentConsultation } = useConsultationTypeStore();
+  const consultationId = searchParams.get("consultation_id");
+  const type = searchParams.get("type") as "video" | "chat" | null;
+
+  const endpoint =
+    consultationId && type
+      ? `/api/consultation-request/consultant/${consultationId}/${type}`
+      : null;
+
+  const {
+    data: details,
+    isLoading,
+    error,
+  } = useFetcher<ConsultationDetails>(
+    ["consultation", "payment", consultationId, type],
+    endpoint,
+  );
+
   const createPaymentLinkMutation = useCreatePaymentLink();
 
   const isGatewayReturn = useMemo(
@@ -118,60 +142,160 @@ export default function PaymentPageView() {
 
   const { data: paymentStatusData, isLoading: isCheckingStatus } =
     usePaymentStatus({
-      consultationId: currentConsultation?.consultationRequestId,
+      consultationId: details?.id,
       enabled: isGatewayReturn,
     });
 
   useEffect(() => {
-    if (!currentConsultation) {
-      toast.error("لا توجد بيانات حجز لعرض الدفع");
+    if (!consultationId || !type) {
+      toast.error("رابط الدفع غير صحيح");
       router.replace("/");
     }
-  }, [currentConsultation, router]);
+  }, [consultationId, type, router]);
 
-  if (!currentConsultation) return null;
+  if (!consultationId || !type) return null;
 
-  const financial = currentConsultation.financial;
-  const amount = financial?.consultationPrice ?? 0;
-  const platformFee = financial?.gatewayCommissionAmount ?? 0;
-  const total = financial?.netAmount ?? 0;
-  const currency = currentConsultation.currency || "OMR";
+  // ── Loading ──────────────────────────────────────────────────
+  if (isLoading) {
+    return (
+      <>
+        <Navbar />
+        <div className="flex min-h-screen items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </>
+    );
+  }
+
+  // ── Network error ────────────────────────────────────────────
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <div className="flex min-h-screen items-center justify-center px-4">
+          <Card className="w-full max-w-sm overflow-hidden border-0 shadow-xl">
+            <CardContent className="space-y-4 p-6 text-center">
+              <X className="mx-auto h-12 w-12 text-rose-500" />
+              <p className="font-semibold">تعذر تحميل بيانات الحجز</p>
+              <Button
+                onClick={() => window.location.reload()}
+                variant="outline"
+                className="w-full"
+              >
+                إعادة المحاولة
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    );
+  }
+
+  // ── Not found ────────────────────────────────────────────────
+  if (!details) {
+    return (
+      <>
+        <Navbar />
+        <div className="flex min-h-screen items-center justify-center px-4">
+          <Card className="w-full max-w-sm overflow-hidden border-0 shadow-xl">
+            <CardContent className="p-6 text-center">
+              <p className="font-semibold">لم يتم العثور على بيانات الحجز</p>
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    );
+  }
+
+  const financialStatus = details.data.financial_status;
+
+  // ── Payment suspended ────────────────────────────────────────
+  if (financialStatus === "payment_suspended") {
+    return (
+      <>
+        <Navbar />
+        <BreadcrumbNav currentPage="ملخص الحجز والدفع" />
+        <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-primary/5 px-4 py-8">
+          <div className="relative z-10 mx-auto max-w-3xl" dir="rtl">
+            <Card className="overflow-hidden border-0 shadow-xl">
+              <CardContent className="space-y-4 p-6 text-center md:p-8">
+                <Clock className="mx-auto h-12 w-12 text-amber-500" />
+                <h2 className="text-lg font-bold">الموعد موقوف مؤقتاً</h2>
+                <p className="text-sm text-muted-foreground">
+                  تم إيقاف هذا الحجز مؤقتاً. للمساعدة، تواصل مع فريق الدعم.
+                </p>
+                <Button asChild>
+                  <a
+                    href="https://wa.me/96892349692"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MessageCircle className="ml-2 h-4 w-4" />
+                    التواصل مع الدعم
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // ── Already paid ─────────────────────────────────────────────
+  if (isPaidStatus(financialStatus)) {
+    return (
+      <>
+        <Navbar />
+        <BreadcrumbNav currentPage="ملخص الحجز والدفع" />
+        <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-primary/5 px-4 py-8">
+          <div className="relative z-10 mx-auto max-w-3xl" dir="rtl">
+            <Card className="overflow-hidden border-0 shadow-xl">
+              <CardContent className="space-y-4 p-6 text-center md:p-8">
+                <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-500" />
+                <h2 className="text-lg font-bold">تم الدفع بنجاح</h2>
+                <p className="text-sm text-muted-foreground">
+                  تم تأكيد حجزك بنجاح.
+                </p>
+                {/* TODO: deep-link to /profile/consultations/{type}/{id} once the
+                    consultation details page is built in a later phase. */}
+                <Button asChild variant="outline">
+                  <Link href="/profile/consultations">عرض الاستشارات</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // ── Normal payment UI (unpaid) ───────────────────────────────
+
+  const amount = details.financial.consultation_price;
+  const platformFee = details.financial.gateway_commission_amount;
+  const total = details.financial.gross_amount;
+  const currency = "OMR";
   const consultationTypeLabel =
-    currentConsultation.consultationType === "chat"
-      ? "استشارة نصية"
-      : "استشارة فيديو";
+    details.type === "chat" ? "استشارة نصية" : "استشارة فيديو";
 
   const rawStatus = paymentStatusData?.status ?? "pending";
   const paymentStatus: PaymentStatusType = isCheckingStatus
     ? "loading"
     : (rawStatus as PaymentStatusType);
 
-  const isPaid = paymentStatus === "paid";
-  const isPending = createPaymentLinkMutation.isPending;
+  const isPollingPaid = paymentStatus === "paid";
+  const isMutationPending = createPaymentLinkMutation.isPending;
 
   const handleStartPayment = async () => {
-    if (!currentConsultation.consultationRequestId) {
-      toast.error("تعذر إنشاء رابط الدفع. لم يتم العثور على رقم الاستشارة.");
-      return;
-    }
     try {
       const response = await createPaymentLinkMutation.mutateAsync({
-        type: currentConsultation.consultationType,
-        consultationId: currentConsultation.consultationRequestId,
-        // amount,
+        type: details.type,
+        consultationId: details.id,
         payment_method: "card",
         card_type: "domestic",
       });
 
-      // const checkoutUrl = response?.data?.checkout_url;
-      // const url = new URL(checkoutUrl);
-
-      // if (url.hostname !== "secure.amwalpay.com") {
-      //   throw new Error("Invalid payment URL");
-      // }
-      // window.location.href = checkoutUrl;
-
-      
       const checkoutUrl = response?.data?.checkout_url;
       if (!checkoutUrl) {
         throw new Error("Missing checkout URL");
@@ -201,16 +325,13 @@ export default function PaymentPageView() {
           {/* Main Booking Card */}
           <Card className="overflow-hidden border-0 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl">
             <CardContent className="space-y-6 p-6 md:p-8">
-              {/* Header with stepper */}
+              {/* Header */}
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/40 pb-4">
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-5 w-5 text-primary" />
                   <h1 className="text-lg font-bold">تأكيد الحجز والدفع</h1>
                 </div>
-                <Badge
-                  variant="secondary"
-                  className="bg-primary/10 text-primary"
-                >
+                <Badge variant="secondary" className="bg-primary/10 text-primary">
                   {consultationTypeLabel}
                 </Badge>
               </div>
@@ -222,10 +343,10 @@ export default function PaymentPageView() {
                   <div className="relative shrink-0">
                     <Image
                       src={
-                        currentConsultation.providerImage ||
+                        details.data.consultant.image ||
                         "/images/placeholder.svg"
                       }
-                      alt={currentConsultation.providerName}
+                      alt={details.data.consultant.full_name}
                       width={56}
                       height={56}
                       className="h-14 w-14 rounded-full border-2 border-white object-cover shadow-md"
@@ -235,53 +356,69 @@ export default function PaymentPageView() {
                     </span>
                   </div>
                   <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-base font-semibold">
-                        {currentConsultation.providerName}
-                      </p>
-                    </div>
+                    <p className="text-base font-semibold">
+                      {details.data.consultant.full_name}
+                    </p>
                     <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
                       <Stethoscope className="h-3 w-3" />
-                      {currentConsultation.providerSpecializations?.length
-                        ? currentConsultation.providerSpecializations.join("، ")
-                        : "اختصاصي معتمد"}
+                      اختصاصي معتمد
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Step 2: Appointment */}
-              <div className="space-y-3">
-                <StepIndicator step={2} label="تفاصيل الموعد" />
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/30 p-3">
-                    <div className="rounded-full bg-primary/10 p-2">
-                      <Calendar className="h-4 w-4 text-primary" />
+              {/* Step 2: Appointment / Consultation Type */}
+              {details.type === "video" ? (
+                <div className="space-y-3">
+                  <StepIndicator step={2} label="تفاصيل الموعد" />
+                  {/* TODO: replace with i18n key (t(`days.${day}`)) once day keys are
+                      added in a later phase. Current Arabic users will see "Friday" not "الجمعة". */}
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/30 p-3">
+                      <div className="rounded-full bg-primary/10 p-2">
+                        <Calendar className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-medium uppercase text-muted-foreground">
+                          التاريخ
+                        </p>
+                        <p className="text-sm font-semibold">
+                          {details.data.appointment.requested_day.charAt(0).toUpperCase() +
+                            details.data.appointment.requested_day.slice(1)}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[11px] font-medium uppercase text-muted-foreground">
-                        التاريخ
-                      </p>
-                      <p className="text-sm font-semibold">
-                        {currentConsultation.requestedDay || "غير محدد"}
-                      </p>
+                    <div className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/30 p-3">
+                      <div className="rounded-full bg-primary/10 p-2">
+                        <Clock className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-medium uppercase text-muted-foreground">
+                          الوقت
+                        </p>
+                        <p className="text-sm font-semibold">
+                          {details.data.appointment.requested_time}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/30 p-3">
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <StepIndicator step={2} label="نوع الاستشارة" />
+                  <div className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/30 p-4">
                     <div className="rounded-full bg-primary/10 p-2">
-                      <Clock className="h-4 w-4 text-primary" />
+                      <MessageCircle className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="text-[11px] font-medium uppercase text-muted-foreground">
-                        الوقت
-                      </p>
-                      <p className="text-sm font-semibold">
-                        {currentConsultation.requestedTime || "غير محدد"}
+                      <p className="text-sm font-semibold">محادثة فورية</p>
+                      <p className="text-xs text-muted-foreground">
+                        تبدأ بمجرد قبول المختص
                       </p>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Step 3: Cost Summary */}
               <div className="space-y-3">
@@ -337,16 +474,16 @@ export default function PaymentPageView() {
               <div className="space-y-4 pt-2">
                 <Button
                   onClick={handleStartPayment}
-                  disabled={isPending || isPaid}
+                  disabled={isMutationPending || isPollingPaid}
                   className="group relative w-full bg-gradient-to-r from-primary to-primary/90 py-6 text-base font-semibold shadow-md transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 disabled:opacity-70"
                 >
                   <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                  {isPending ? (
+                  {isMutationPending ? (
                     <>
                       <Loader2 className="ml-2 h-5 w-5 animate-spin" />
                       جاري إنشاء رابط الدفع...
                     </>
-                  ) : isPaid ? (
+                  ) : isPollingPaid ? (
                     <>
                       <CheckCircle2 className="ml-2 h-5 w-5" />
                       تم الدفع بنجاح

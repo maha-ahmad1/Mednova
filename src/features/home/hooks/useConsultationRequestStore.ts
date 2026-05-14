@@ -37,11 +37,11 @@ export const useConsultationRequestStore = (options?: UseConsultationRequestStor
 
     onSuccess: (data, variables) => {
       // رسالة نجاح مختلفة حسب نوع الاستشارة
-      if (variables.consultant_nature === 'chat') {
-        toast.success("تم بدء الاستشارة النصية بنجاح");
-      } else {
-        toast.success("تم حجز الموعد بنجاح");
-      }
+      // if (variables.consultant_nature === 'chat') {
+      //   toast.success("تم بدء الاستشارة النصية بنجاح");
+      // } else {
+      //   toast.success("تم حجز الموعد بنجاح");
+      // }
       
       // استدعاء onSuccess إذا كان موجوداً
       if (options?.onSuccess) {

@@ -4,7 +4,13 @@ import { useTranslations } from "next-intl";
 import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
 import { useConsultationDetails } from "@/features/consultations/details/hooks/useConsultationDetails";
+import FinancialStatusBanner from "@/features/consultations/details/ui/FinancialStatusBanner";
+import ConsultationHeader from "@/features/consultations/details/ui/sections/ConsultationHeader";
+import AppointmentInfoCard from "@/features/consultations/details/ui/sections/AppointmentInfoCard";
+import CostSummaryCard from "@/features/consultations/details/ui/sections/CostSummaryCard";
+import ConsultationActionsBar from "@/features/consultations/details/ui/sections/ConsultationActionsBar";
 
 interface ConsultationDetailsViewProps {
   id: string;
@@ -61,17 +67,36 @@ export default function ConsultationDetailsView({
     );
   }
 
+  const financialStatus = details.data.financial_status;
+
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
-      <Card className="border-0 shadow-xl">
-        <CardContent className="p-6">
-          <p className="text-sm text-muted-foreground">id: {details.id}</p>
-          <p className="text-sm text-muted-foreground">type: {details.type}</p>
-          <p className="text-sm text-muted-foreground">
-            financial_status: {details.data.financial_status}
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+    <>
+      <BreadcrumbNav currentPage={t("header.breadcrumb")} />
+
+      <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
+        <Card className="border-0 shadow-xl">
+          <CardContent className="space-y-6 p-6">
+            <ConsultationHeader details={details} financial={details.financial} />
+            <AppointmentInfoCard details={details} />
+          </CardContent>
+        </Card>
+
+        <FinancialStatusBanner
+          status={financialStatus}
+          financial={details.financial}
+          reviewDeadline={details.data.review_deadline}
+          releasedAt={details.data.released_at}
+        />
+
+        <CostSummaryCard financial={details.financial} />
+
+        <ConsultationActionsBar
+          consultationId={details.id}
+          consultationType={details.type}
+          financialStatus={financialStatus}
+          videoRoomLink={details.data.video_room_link}
+        />
+      </div>
+    </>
   );
 }

@@ -110,19 +110,36 @@ export interface ConsultationInnerData {
   session_duration_hours: number;
 }
 
-// ── Financial shape ───────────────────────────────────────────
+// ── Financial shapes ──────────────────────────────────────────
 
-/**
- * Patient-view financial fields. Backend returns this shape when called with a patient token.
- * Consultant-view shape (platform_commission_*, your_earning) is intentionally not modeled —
- * /payment is patient-only. If consultant view is added later, convert this to a discriminated
- * union or generic.
- */
-export interface ConsultationFinancial {
+/** Patient-view financial fields. Returned when the request is made with a patient token. */
+export interface PatientFinancial {
   consultation_price: string;
   gateway_commission_rate: string;
   gateway_commission_amount: string;
   gross_amount: string;
+}
+
+/** Consultant-view financial fields. Returned when the request is made with a consultant token. */
+export interface ConsultantFinancial {
+  consultation_price: string;
+  platform_commission_rate: string;
+  platform_commission_amount: string;
+  your_earning: string;
+}
+
+export type AnyConsultationFinancial = PatientFinancial | ConsultantFinancial;
+
+export function isPatientFinancial(
+  f: AnyConsultationFinancial,
+): f is PatientFinancial {
+  return "gross_amount" in f;
+}
+
+export function isConsultantFinancial(
+  f: AnyConsultationFinancial,
+): f is ConsultantFinancial {
+  return "your_earning" in f;
 }
 
 // ── Outer wrapper ─────────────────────────────────────────────
@@ -142,7 +159,7 @@ export interface ConsultationDetails {
   data: ConsultationInnerData;
   suspended_until: string | null;
   suspension_count: number;
-  financial: ConsultationFinancial;
+  financial: AnyConsultationFinancial;
   created_at: string;
   updated_at: string;
 }

@@ -17,3 +17,4 @@ export const getConsultationDetails = async (
   );
   return res.data;
 };
+

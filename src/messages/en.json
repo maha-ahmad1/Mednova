@@ -528,5 +528,79 @@
       "methodThawani": "Thawani",
       "methodMada": "Mada"
     }
+  },
+  "payment": {
+    "pageTitle": "Confirm Booking & Payment",
+    "breadcrumb": "Booking & Payment Summary",
+
+    "typeChat": "Text Consultation",
+    "typeVideo": "Video Consultation",
+
+    "step1Label": "Provider",
+    "step2VideoLabel": "Appointment Details",
+    "step2ChatLabel": "Consultation Type",
+    "step3Label": "Cost Summary",
+
+    "date": "Date",
+    "time": "Time",
+
+    "instantChat": "Instant Chat",
+    "instantChatDesc": "Starts as soon as the specialist accepts",
+
+    "verifiedSpecialist": "Verified Specialist",
+
+    "consultationPrice": "Consultation Fee",
+    "platformFee": "Platform Fee",
+    "totalAmount": "Total Amount",
+
+    "escrowTitle": "Guaranteed Financial Protection — Escrow System",
+    "escrowDesc": "At Mednova, we hold the payment until the session is successfully completed. Funds are released to the specialist 48 hours after the session ends, provided there are no disputes.",
+
+    "buttonCreatingLink": "Creating payment link...",
+    "buttonPaid": "Payment Successful",
+    "buttonPay": "Pay Securely — {total} {currency}",
+
+    "sslNote": "Data encrypted with SSL 256-bit — fully secure payment",
+    "agreeToTerms": "By paying, you agree to our",
+    "termsAnd": "and",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+
+    "invalidLink": "Invalid payment link",
+    "loadError": "Failed to load booking data",
+    "retry": "Try Again",
+    "notFound": "Booking data not found",
+    "paymentLinkError": "An error occurred while creating the payment link. Please try again.",
+
+    "banner": {
+      "loadingTitle": "Verifying Payment Status",
+      "loadingDesc": "Please wait a moment...",
+      "paidTitle": "Payment Successful",
+      "paidDesc": "Your booking is confirmed — you'll receive a confirmation shortly",
+      "failedTitle": "Payment Failed",
+      "failedDesc": "You can try again or use a different card",
+      "pendingTitle": "Processing Payment",
+      "pendingDesc": "Status will update automatically in a moment"
+    },
+
+    "suspended": {
+      "title": "Booking Temporarily Suspended",
+      "desc": "This booking has been temporarily suspended. For assistance, please contact support.",
+      "contactSupport": "Contact Support"
+    },
+
+    "alreadyPaid": {
+      "title": "Payment Successful",
+      "desc": "Your booking has been confirmed successfully.",
+      "viewConsultations": "View Consultations"
+    }
+  },
+  "consultations": {
+    "details": {
+      "loading": "Loading consultation details...",
+      "loadError": "Failed to load consultation details",
+      "notFound": "Consultation not found",
+      "retry": "Retry"
+    }
   }
 }

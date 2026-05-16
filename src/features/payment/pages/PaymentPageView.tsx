@@ -1,10 +1,7 @@
 "use client";
 
-// TODO Phase (E): Replace hardcoded Arabic strings with t() calls from useTranslations.
-// Keys to add: payment.invalidLink, payment.loadError, payment.notFound,
-// payment.suspended.*, payment.alreadyPaid.*, payment.viewConsultations, etc.
-
 import { useEffect, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useRouter, Link } from "@/i18n/navigation";
@@ -34,6 +31,7 @@ import { useFetcher } from "@/hooks/useFetcher";
 import {
   type ConsultationDetails,
   isPaid as isPaidStatus,
+  isPatientFinancial,
 } from "@/features/payment/types";
 import { cn } from "@/lib/utils";
 
@@ -57,32 +55,33 @@ function StepIndicator({ step, label }: { step: number; label: string }) {
 type PaymentStatusType = "pending" | "paid" | "failed" | "loading";
 
 const StatusBanner = ({ status }: { status: PaymentStatusType }) => {
+  const t = useTranslations("payment");
   const config = {
     loading: {
       icon: <Loader2 className="h-4 w-4 animate-spin text-primary" />,
-      title: "جاري التحقق من حالة الدفع",
-      desc: "يرجى الانتظار لحظة...",
+      title: t("banner.loadingTitle"),
+      desc: t("banner.loadingDesc"),
       bg: "from-blue-50/80 to-indigo-50/50",
       text: "text-blue-800",
     },
     paid: {
       icon: <CheckCircle2 className="h-4 w-4 text-emerald-700" />,
-      title: "تم الدفع بنجاح",
-      desc: "تم تأكيد حجزك — ستصلك رسالة تأكيد قريباً",
+      title: t("banner.paidTitle"),
+      desc: t("banner.paidDesc"),
       bg: "from-emerald-50/80 to-teal-50/50",
       text: "text-emerald-800",
     },
     failed: {
       icon: <X className="h-4 w-4 text-rose-700" />,
-      title: "فشلت عملية الدفع",
-      desc: "يمكنك المحاولة مجدداً أو استخدام بطاقة مختلفة",
+      title: t("banner.failedTitle"),
+      desc: t("banner.failedDesc"),
       bg: "from-rose-50/80 to-red-50/50",
       text: "text-rose-800",
     },
     pending: {
       icon: <Clock className="h-4 w-4 text-amber-700" />,
-      title: "العملية قيد المعالجة",
-      desc: "سيتم تحديث الحالة تلقائياً خلال لحظات",
+      title: t("banner.pendingTitle"),
+      desc: t("banner.pendingDesc"),
       bg: "from-amber-50/80 to-yellow-50/50",
       text: "text-amber-800",
     },
@@ -112,6 +111,7 @@ const StatusBanner = ({ status }: { status: PaymentStatusType }) => {
 
 export default function PaymentPageView() {
   const router = useRouter();
+  const t = useTranslations("payment");
   const searchParams = useSearchParams();
   const consultationId = searchParams.get("consultation_id");
   const type = searchParams.get("type") as "video" | "chat" | null;
@@ -148,10 +148,10 @@ export default function PaymentPageView() {
 
   useEffect(() => {
     if (!consultationId || !type) {
-      toast.error("رابط الدفع غير صحيح");
+      toast.error(t("invalidLink"));
       router.replace("/");
     }
-  }, [consultationId, type, router]);
+  }, [consultationId, type, router, t]);
 
   if (!consultationId || !type) return null;
 
@@ -176,13 +176,13 @@ export default function PaymentPageView() {
           <Card className="w-full max-w-sm overflow-hidden border-0 shadow-xl">
             <CardContent className="space-y-4 p-6 text-center">
               <X className="mx-auto h-12 w-12 text-rose-500" />
-              <p className="font-semibold">تعذر تحميل بيانات الحجز</p>
+              <p className="font-semibold">{t("loadError")}</p>
               <Button
                 onClick={() => window.location.reload()}
                 variant="outline"
                 className="w-full"
               >
-                إعادة المحاولة
+                {t("retry")}
               </Button>
             </CardContent>
           </Card>
@@ -199,7 +199,7 @@ export default function PaymentPageView() {
         <div className="flex min-h-screen items-center justify-center px-4">
           <Card className="w-full max-w-sm overflow-hidden border-0 shadow-xl">
             <CardContent className="p-6 text-center">
-              <p className="font-semibold">لم يتم العثور على بيانات الحجز</p>
+              <p className="font-semibold">{t("notFound")}</p>
             </CardContent>
           </Card>
         </div>
@@ -214,15 +214,15 @@ export default function PaymentPageView() {
     return (
       <>
         <Navbar />
-        <BreadcrumbNav currentPage="ملخص الحجز والدفع" />
+        <BreadcrumbNav currentPage={t("breadcrumb")} />
         <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-primary/5 px-4 py-8">
           <div className="relative z-10 mx-auto max-w-3xl" dir="rtl">
             <Card className="overflow-hidden border-0 shadow-xl">
               <CardContent className="space-y-4 p-6 text-center md:p-8">
                 <Clock className="mx-auto h-12 w-12 text-amber-500" />
-                <h2 className="text-lg font-bold">الموعد موقوف مؤقتاً</h2>
+                <h2 className="text-lg font-bold">{t("suspended.title")}</h2>
                 <p className="text-sm text-muted-foreground">
-                  تم إيقاف هذا الحجز مؤقتاً. للمساعدة، تواصل مع فريق الدعم.
+                  {t("suspended.desc")}
                 </p>
                 <Button asChild>
                   <a
@@ -231,7 +231,7 @@ export default function PaymentPageView() {
                     rel="noopener noreferrer"
                   >
                     <MessageCircle className="ml-2 h-4 w-4" />
-                    التواصل مع الدعم
+                    {t("suspended.contactSupport")}
                   </a>
                 </Button>
               </CardContent>
@@ -247,20 +247,20 @@ export default function PaymentPageView() {
     return (
       <>
         <Navbar />
-        <BreadcrumbNav currentPage="ملخص الحجز والدفع" />
+        <BreadcrumbNav currentPage={t("breadcrumb")} />
         <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-primary/5 px-4 py-8">
           <div className="relative z-10 mx-auto max-w-3xl" dir="rtl">
             <Card className="overflow-hidden border-0 shadow-xl">
               <CardContent className="space-y-4 p-6 text-center md:p-8">
                 <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-500" />
-                <h2 className="text-lg font-bold">تم الدفع بنجاح</h2>
+                <h2 className="text-lg font-bold">{t("alreadyPaid.title")}</h2>
                 <p className="text-sm text-muted-foreground">
-                  تم تأكيد حجزك بنجاح.
+                  {t("alreadyPaid.desc")}
                 </p>
                 {/* TODO: deep-link to /profile/consultations/{type}/{id} once the
                     consultation details page is built in a later phase. */}
                 <Button asChild variant="outline">
-                  <Link href="/profile/consultations">عرض الاستشارات</Link>
+                  <Link href="/profile/consultations">{t("alreadyPaid.viewConsultations")}</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -272,12 +272,13 @@ export default function PaymentPageView() {
 
   // ── Normal payment UI (unpaid) ───────────────────────────────
 
+  if (!isPatientFinancial(details.financial)) return null;
   const amount = details.financial.consultation_price;
   const platformFee = details.financial.gateway_commission_amount;
   const total = details.financial.gross_amount;
   const currency = "OMR";
   const consultationTypeLabel =
-    details.type === "chat" ? "استشارة نصية" : "استشارة فيديو";
+    details.type === "chat" ? t("typeChat") : t("typeVideo");
 
   const rawStatus = paymentStatusData?.status ?? "pending";
   const paymentStatus: PaymentStatusType = isCheckingStatus
@@ -304,14 +305,14 @@ export default function PaymentPageView() {
       window.location.href = checkoutUrl;
     } catch (error) {
       console.error("Payment link error", error);
-      toast.error("حدث خطأ أثناء إنشاء رابط الدفع. حاول مرة أخرى.");
+      toast.error(t("paymentLinkError"));
     }
   };
 
   return (
     <>
       <Navbar />
-      <BreadcrumbNav currentPage="ملخص الحجز والدفع" />
+      <BreadcrumbNav currentPage={t("breadcrumb")} />
 
       <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-primary/5 px-4 py-8">
         {/* Background decorative blobs */}
@@ -329,7 +330,7 @@ export default function PaymentPageView() {
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/40 pb-4">
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-5 w-5 text-primary" />
-                  <h1 className="text-lg font-bold">تأكيد الحجز والدفع</h1>
+                  <h1 className="text-lg font-bold">{t("pageTitle")}</h1>
                 </div>
                 <Badge variant="secondary" className="bg-primary/10 text-primary">
                   {consultationTypeLabel}
@@ -338,7 +339,7 @@ export default function PaymentPageView() {
 
               {/* Step 1: Provider */}
               <div className="space-y-3">
-                <StepIndicator step={1} label="المختص المحجوز" />
+                <StepIndicator step={1} label={t("step1Label")} />
                 <div className="flex items-center gap-4 rounded-xl border border-border/40 bg-card/30 p-4 transition-all hover:shadow-sm">
                   <div className="relative shrink-0">
                     <Image
@@ -361,7 +362,7 @@ export default function PaymentPageView() {
                     </p>
                     <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
                       <Stethoscope className="h-3 w-3" />
-                      اختصاصي معتمد
+                      {t("verifiedSpecialist")}
                     </p>
                   </div>
                 </div>
@@ -370,7 +371,7 @@ export default function PaymentPageView() {
               {/* Step 2: Appointment / Consultation Type */}
               {details.type === "video" ? (
                 <div className="space-y-3">
-                  <StepIndicator step={2} label="تفاصيل الموعد" />
+                  <StepIndicator step={2} label={t("step2VideoLabel")} />
                   {/* TODO: replace with i18n key (t(`days.${day}`)) once day keys are
                       added in a later phase. Current Arabic users will see "Friday" not "الجمعة". */}
                   <div className="grid gap-3 sm:grid-cols-2">
@@ -380,7 +381,7 @@ export default function PaymentPageView() {
                       </div>
                       <div>
                         <p className="text-[11px] font-medium uppercase text-muted-foreground">
-                          التاريخ
+                          {t("date")}
                         </p>
                         <p className="text-sm font-semibold">
                           {details.data.appointment.requested_day.charAt(0).toUpperCase() +
@@ -394,7 +395,7 @@ export default function PaymentPageView() {
                       </div>
                       <div>
                         <p className="text-[11px] font-medium uppercase text-muted-foreground">
-                          الوقت
+                          {t("time")}
                         </p>
                         <p className="text-sm font-semibold">
                           {details.data.appointment.requested_time}
@@ -405,15 +406,15 @@ export default function PaymentPageView() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <StepIndicator step={2} label="نوع الاستشارة" />
+                  <StepIndicator step={2} label={t("step2ChatLabel")} />
                   <div className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/30 p-4">
                     <div className="rounded-full bg-primary/10 p-2">
                       <MessageCircle className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold">محادثة فورية</p>
+                      <p className="text-sm font-semibold">{t("instantChat")}</p>
                       <p className="text-xs text-muted-foreground">
-                        تبدأ بمجرد قبول المختص
+                        {t("instantChatDesc")}
                       </p>
                     </div>
                   </div>
@@ -422,26 +423,26 @@ export default function PaymentPageView() {
 
               {/* Step 3: Cost Summary */}
               <div className="space-y-3">
-                <StepIndicator step={3} label="ملخص التكاليف" />
+                <StepIndicator step={3} label={t("step3Label")} />
                 <div className="rounded-xl border border-border/40 bg-card/30 p-4">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">
-                        قيمة الاستشارة
+                        {t("consultationPrice")}
                       </span>
                       <span className="font-medium tabular-nums">
                         {amount} {currency}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">رسوم المنصة</span>
+                      <span className="text-muted-foreground">{t("platformFee")}</span>
                       <span className="font-medium tabular-nums">
                         {platformFee} {currency}
                       </span>
                     </div>
                     <Separator className="my-2" />
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold">المبلغ الإجمالي</span>
+                      <span className="font-semibold">{t("totalAmount")}</span>
                       <div className="flex items-baseline gap-1">
                         <span className="text-2xl font-bold text-primary tabular-nums">
                           {total}
@@ -460,12 +461,11 @@ export default function PaymentPageView() {
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
                 <div>
                   <p className="flex items-center gap-1 text-sm font-semibold text-amber-900">
-                    حماية مالية مضمونة — نظام Escrow
+                    {t("escrowTitle")}
                     <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                   </p>
                   <p className="mt-1 text-xs leading-relaxed text-amber-800/80">
-                    في ميدنوفا، نحتفظ بالمبلغ حتى إتمام الجلسة بنجاح. يُحوَّل
-                    للمختص بعد ٤٨ ساعة من انتهاء الجلسة دون نزاعات.
+                    {t("escrowDesc")}
                   </p>
                 </div>
               </div>
@@ -481,34 +481,34 @@ export default function PaymentPageView() {
                   {isMutationPending ? (
                     <>
                       <Loader2 className="ml-2 h-5 w-5 animate-spin" />
-                      جاري إنشاء رابط الدفع...
+                      {t("buttonCreatingLink")}
                     </>
                   ) : isPollingPaid ? (
                     <>
                       <CheckCircle2 className="ml-2 h-5 w-5" />
-                      تم الدفع بنجاح
+                      {t("buttonPaid")}
                     </>
                   ) : (
                     <>
                       <CreditCard className="ml-2 h-5 w-5 transition-transform group-hover:scale-110" />
-                      الدفع الآمن — {total} {currency}
+                      {t("buttonPay", { total, currency })}
                     </>
                   )}
                 </Button>
 
                 <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                   <Lock className="h-3 w-3" />
-                  <span>بيانات مشفرة بـ SSL 256-bit — دفع آمن تماماً</span>
+                  <span>{t("sslNote")}</span>
                 </div>
 
                 <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
-                  بالدفع، أنت توافق على{" "}
+                  {t("agreeToTerms")}{" "}
                   <span className="cursor-pointer font-medium text-primary underline-offset-2 hover:underline">
-                    شروط الخدمة
+                    {t("terms")}
                   </span>{" "}
-                  و{" "}
+                  {t("termsAnd")}{" "}
                   <span className="cursor-pointer font-medium text-primary underline-offset-2 hover:underline">
-                    سياسة الخصوصية
+                    {t("privacy")}
                   </span>
                 </p>
               </div>

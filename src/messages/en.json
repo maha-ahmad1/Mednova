@@ -686,6 +686,9 @@
           "comingSoon": "Coming soon"
         }
       }
+    },
+    "list": {
+      "viewFinancialDetails": "View financial details"
     }
   }
 }

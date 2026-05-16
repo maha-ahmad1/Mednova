@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, MessageCircle, ChevronLeft, Clock } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Search, MessageCircle, ChevronLeft, Clock, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { ConsultationRequest } from "@/types/consultation";
 // import {
@@ -38,6 +39,7 @@ export default function ConsultationList({
 }: ConsultationListProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "video" | "chat">("all");
+  const t = useTranslations("consultations.list");
 
   const filteredRequests = requests.filter((request) => {
     if (request.status === "cancelled") {
@@ -236,6 +238,17 @@ export default function ConsultationList({
                                   <Link href="/profile/chat">فتح المحادثة</Link>
                                 </Button>
                               )}
+                            </div>
+
+                            <div className="flex flex-row-reverse mt-1.5">
+                              <Link
+                                href={`/profile/consultations/${request.type}/${request.id}`}
+                                className="text-xs text-primary hover:underline flex items-center gap-1 rtl:flex-row-reverse"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                {t("viewFinancialDetails")}
+                              </Link>
                             </div>
                           </div>
                         </div>

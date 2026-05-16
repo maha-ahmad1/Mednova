@@ -687,6 +687,9 @@
           "comingSoon": "قريباً"
         }
       }
+    },
+    "list": {
+      "viewFinancialDetails": "عرض التفاصيل المالية"
     }
   }
 }

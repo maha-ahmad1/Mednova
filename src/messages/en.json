@@ -593,6 +593,15 @@
       "title": "Payment Successful",
       "desc": "Your booking has been confirmed successfully.",
       "viewConsultations": "View Consultations"
+    },
+
+    "success": {
+      "title": "Payment Successful",
+      "subtitle": "Your booking has been confirmed successfully.",
+      "amountPaid": "Amount paid",
+      "redirectingIn": "You'll be redirected in {seconds} second(s)...",
+      "viewDetails": "View consultation details",
+      "goHome": "Back to home"
     }
   },
   "consultations": {

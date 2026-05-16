@@ -594,6 +594,15 @@
       "title": "تم الدفع بنجاح",
       "desc": "تم تأكيد حجزك بنجاح.",
       "viewConsultations": "عرض الاستشارات"
+    },
+
+    "success": {
+      "title": "تم الدفع بنجاح",
+      "subtitle": "تم تأكيد حجزك بنجاح",
+      "amountPaid": "المبلغ المدفوع",
+      "redirectingIn": "سيتم تحويلك خلال {seconds} ثوان...",
+      "viewDetails": "عرض تفاصيل الاستشارة",
+      "goHome": "العودة للرئيسية"
     }
   },
   "consultations": {

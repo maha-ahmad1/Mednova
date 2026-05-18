@@ -528,5 +528,167 @@
       "methodThawani": "Thawani",
       "methodMada": "Mada"
     }
+  },
+  "payment": {
+    "pageTitle": "Confirm Booking & Payment",
+    "breadcrumb": "Booking & Payment Summary",
+
+    "typeChat": "Text Consultation",
+    "typeVideo": "Video Consultation",
+
+    "step1Label": "Provider",
+    "step2VideoLabel": "Appointment Details",
+    "step2ChatLabel": "Consultation Type",
+    "step3Label": "Cost Summary",
+
+    "date": "Date",
+    "time": "Time",
+
+    "instantChat": "Instant Chat",
+    "instantChatDesc": "Starts as soon as the specialist accepts",
+
+    "verifiedSpecialist": "Verified Specialist",
+
+    "consultationPrice": "Consultation Fee",
+    "platformFee": "Platform Fee",
+    "totalAmount": "Total Amount",
+
+    "escrowTitle": "Guaranteed Financial Protection — Escrow System",
+    "escrowDesc": "At Mednova, we hold the payment until the session is successfully completed. Funds are released to the specialist 48 hours after the session ends, provided there are no disputes.",
+
+    "buttonCreatingLink": "Creating payment link...",
+    "buttonPaid": "Payment Successful",
+    "buttonPay": "Pay Securely — {total} {currency}",
+
+    "sslNote": "Data encrypted with SSL 256-bit — fully secure payment",
+    "agreeToTerms": "By paying, you agree to our",
+    "termsAnd": "and",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+
+    "invalidLink": "Invalid payment link",
+    "loadError": "Failed to load booking data",
+    "retry": "Try Again",
+    "notFound": "Booking data not found",
+    "paymentLinkError": "An error occurred while creating the payment link. Please try again.",
+
+    "banner": {
+      "loadingTitle": "Verifying Payment Status",
+      "loadingDesc": "Please wait a moment...",
+      "paidTitle": "Payment Successful",
+      "paidDesc": "Your booking is confirmed — you'll receive a confirmation shortly",
+      "failedTitle": "Payment Failed",
+      "failedDesc": "You can try again or use a different card",
+      "pendingTitle": "Processing Payment",
+      "pendingDesc": "Status will update automatically in a moment"
+    },
+
+    "suspended": {
+      "title": "Booking Temporarily Suspended",
+      "desc": "This booking has been temporarily suspended. For assistance, please contact support.",
+      "contactSupport": "Contact Support"
+    },
+
+    "alreadyPaid": {
+      "title": "Payment Successful",
+      "desc": "Your booking has been confirmed successfully.",
+      "viewConsultations": "View Consultations"
+    },
+
+    "success": {
+      "title": "Payment Successful",
+      "subtitle": "Your booking has been confirmed successfully.",
+      "amountPaid": "Amount paid",
+      "redirectingIn": "You'll be redirected in {seconds} second(s)...",
+      "viewDetails": "View consultation details",
+      "goHome": "Back to home"
+    }
+  },
+  "consultations": {
+    "details": {
+      "loading": "Loading consultation details...",
+      "loadError": "Failed to load consultation details",
+      "notFound": "Consultation not found",
+      "retry": "Retry",
+      "header": {
+        "breadcrumb": "Consultation Details",
+        "idBadge": "#{id}",
+        "typeVideo": "Video",
+        "typeChat": "Chat"
+      },
+      "appointment": {
+        "title": "Appointment Details",
+        "date": "Date",
+        "time": "Time",
+        "platform": "Platform",
+        "platformValue": "Zoom",
+        "location": "Location",
+        "locationOnline": "Online",
+        "instantChat": "Instant chat",
+        "instantChatDesc": "Session starts as soon as the specialist accepts"
+      },
+      "cost": {
+        "title": "Cost Summary",
+        "consultationPrice": "Consultation price",
+        "gatewayFee": "Service fee",
+        "totalAmount": "Total amount",
+        "platformFee": "Platform commission",
+        "yourEarning": "Your net earning",
+        "currency": "OMR"
+      },
+      "actions": {
+        "completePayment": "Complete payment",
+        "startZoom": "Start session via Zoom",
+        "zoomPending": "Waiting for session link",
+        "openChat": "Open chat",
+        "viewZoom": "View session via Zoom",
+        "cancel": "Cancel consultation",
+        "comingSoon": "Coming soon"
+      },
+      "banners": {
+        "held": {
+          "title": "Payment confirmed — your consultation is booked",
+          "descPatient": "Your session is secured. We'll release payment to your provider after the consultation.",
+          "descConsultant": "Waiting for the session to take place. Payment is held in escrow."
+        },
+        "reviewWindow": {
+          "title": "Review period in progress",
+          "descPatient": "Your session has ended. You have until {deadline} to raise a dispute.",
+          "descConsultantWithDeadline": "Your session has ended. Funds will be released after the review window closes ({deadline}).",
+          "descConsultant": "Your session has ended. Funds will be released after the review window closes."
+        },
+        "withdrawable": {
+          "title": "Your earnings are ready",
+          "desc": "The review period has passed. You can now withdraw your earnings."
+        },
+        "withdrawn": {
+          "title": "Earnings withdrawn",
+          "descWithDate": "Your earnings were successfully transferred on {date}.",
+          "desc": "Your earnings were successfully transferred."
+        },
+        "frozen": {
+          "title": "Account temporarily frozen",
+          "descPatient": "This consultation's funds are currently frozen. Please contact support.",
+          "descConsultant": "Your earnings for this consultation are frozen. Please contact support."
+        },
+        "refunded": {
+          "title": "Refund issued",
+          "desc": "Your payment has been refunded. Please allow 3–5 business days for it to appear."
+        },
+        "refundedInternal": {
+          "title": "Refund processed",
+          "desc": "The patient's payment has been refunded. No payout will be made for this consultation."
+        },
+        "actions": {
+          "openDispute": "Open a dispute",
+          "contactSupport": "Contact support",
+          "withdraw": "Withdraw earnings",
+          "comingSoon": "Coming soon"
+        }
+      }
+    },
+    "list": {
+      "viewFinancialDetails": "View financial details"
+    }
   }
 }

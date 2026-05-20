@@ -2,14 +2,17 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { CreditCard, Video, MessageCircle, XCircle } from "lucide-react";
+import { CreditCard, Video, MessageCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { FinancialStatus } from "@/features/payment/types";
+import type { FinancialStatus, ConsultationStatus, AnyConsultationFinancial } from "@/features/payment/types";
+import { isPatientFinancial } from "@/features/payment/types";
 
 interface ConsultationActionsBarProps {
   consultationId: number;
   consultationType: "video" | "chat";
   financialStatus: FinancialStatus;
+  status: ConsultationStatus;
+  financial: AnyConsultationFinancial;
   videoRoomLink: string | null;
 }
 
@@ -17,6 +20,8 @@ export default function ConsultationActionsBar({
   consultationId,
   consultationType,
   financialStatus,
+  status,
+  financial,
   videoRoomLink,
 }: ConsultationActionsBarProps) {
   const t = useTranslations("consultations.details.actions");
@@ -37,6 +42,29 @@ export default function ConsultationActionsBar({
   }
 
   if (financialStatus === "held") {
+    if (status === "pending") {
+      const isPatient = isPatientFinancial(financial);
+      return (
+        <div className="rounded-xl border border-amber-200/60 bg-amber-50/40 p-4">
+          <div className="flex items-start gap-3">
+            <Clock className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-amber-800">
+                {isPatient ? t("waitingForAccept.titlePatient") : t("waitingForAccept.titleConsultant")}
+              </p>
+              <p className="text-xs text-amber-700">
+                {isPatient ? t("waitingForAccept.descPatient") : t("waitingForAccept.descConsultant")}
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (!["accepted", "active"].includes(status)) {
+      return null;
+    }
+
     return (
       <div className="flex flex-wrap gap-3">
         {consultationType === "video" ? (
@@ -70,16 +98,6 @@ export default function ConsultationActionsBar({
             </Link>
           </Button>
         )}
-
-        <div className="flex flex-col items-start gap-0.5">
-          <Button disabled variant="outline" className="gap-2">
-            <XCircle className="h-4 w-4" />
-            {t("cancel")}
-          </Button>
-          <span className="text-xs text-muted-foreground opacity-70 text-center">
-            {t("comingSoon")}
-          </span>
-        </div>
       </div>
     );
   }
@@ -96,17 +114,17 @@ export default function ConsultationActionsBar({
                 rel="noopener noreferrer"
               >
                 <Video className="h-4 w-4" />
-                {t("viewZoom")}
+                {t("reviewZoom")}
               </a>
             </Button>
           ) : (
             <div className="flex flex-col items-start gap-0.5">
               <Button disabled variant="outline" className="gap-2">
                 <Video className="h-4 w-4" />
-                {t("viewZoom")}
+                {t("reviewZoom")}
               </Button>
               <span className="text-xs text-muted-foreground opacity-70">
-                {t("zoomPending")}
+                {t("zoomNotAvailable")}
               </span>
             </div>
           )
@@ -114,7 +132,7 @@ export default function ConsultationActionsBar({
           <Button asChild variant="outline" className="gap-2">
             <Link href="/profile/chat">
               <MessageCircle className="h-4 w-4" />
-              {t("openChat")}
+              {t("reviewChat")}
             </Link>
           </Button>
         )}

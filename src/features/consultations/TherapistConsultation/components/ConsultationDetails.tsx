@@ -345,7 +345,7 @@ const shouldShowZoomButton = () => {
       </div>
 
       {displayRequest.type === "chat" &&
-        ["accepted", "active"].includes(displayRequest.status) && (
+        ["accepted", "active", "completed"].includes(displayRequest.status) && (
           <div className="mb-6 sm:mb-8">
             <Button asChild className="w-full bg-[#32A88D] hover:bg-[#2a8a7a] text-white py-3">
               <Link href="/profile/chat">

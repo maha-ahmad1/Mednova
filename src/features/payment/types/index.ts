@@ -90,6 +90,15 @@ export interface ConsultationAppointment {
   type_appointment: string;
 }
 
+// ── Consultation lifecycle status ─────────────────────────────
+
+export type ConsultationStatus =
+  | "pending"
+  | "accepted"
+  | "active"
+  | "completed"
+  | "cancelled";
+
 // ── Inner data shape ──────────────────────────────────────────
 
 /** All business fields for a consultation — lives under ConsultationDetails.data. */
@@ -99,7 +108,7 @@ export interface ConsultationInnerData {
   consultant: ConsultationParty;
   consultant_type: string;
   appointment: ConsultationAppointment;
-  status: string;
+  status: ConsultationStatus;
   financial_status: FinancialStatus;
   review_deadline: string | null;
   released_at: string | null;

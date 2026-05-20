@@ -1,3 +1,5 @@
+import type { FinancialStatus } from "@/features/payment/types";
+
 export type ConsultationType = "video" | "chat"
 export type ConsultationStatus = "active" | "accepted" | "cancelled" | "completed" | "pending"
 export type UserType = "therapist" | "rehabilitation_center" | "patient" | "consultable"
@@ -23,6 +25,7 @@ export type ConsultationData = {
   consultant: User
   consultant_type: ConsultantType
   status: ConsultationStatus
+  financial_status?: FinancialStatus
   max_messages_for_patient: number | null
   patient_message_count: number
   consultant_message_count: number

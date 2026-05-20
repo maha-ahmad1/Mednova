@@ -132,7 +132,7 @@ export default function FinancialStatusBanner({
     t,
   });
 
-  const title = resolveTitle(status, t);
+  const title = resolveTitle(status, isPatient, t);
 
   const actionHandlers: Record<ActionKey, (() => void) | undefined> = {
     openDispute: onOpenDispute,
@@ -197,10 +197,10 @@ export default function FinancialStatusBanner({
 
 type TFn = ReturnType<typeof useTranslations<"consultations.details.banners">>;
 
-function resolveTitle(status: FinancialStatus, t: TFn): string {
+function resolveTitle(status: FinancialStatus, isPatient: boolean, t: TFn): string {
   switch (status) {
     case "held":
-      return t("held.title");
+      return isPatient ? t("held.titlePatient") : t("held.titleConsultant");
     case "review_window":
       return t("reviewWindow.title");
     case "withdrawable":

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useRouter, Link } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { format } from "date-fns";
 import { ar, enUS } from "date-fns/locale";
 import {
@@ -323,6 +323,12 @@ export default function PaymentPageView() {
     }
   }, [consultationId, type, router, t]);
 
+  useEffect(() => {
+    if (details && !isGatewayReturn && isPaidStatus(details.data.financial_status)) {
+      router.replace(`/profile/consultations/${details.type}/${details.id}`);
+    }
+  }, [details, isGatewayReturn, router]);
+
   if (!consultationId || !type) return null;
 
   // ── Loading ──────────────────────────────────────────────────
@@ -426,29 +432,19 @@ export default function PaymentPageView() {
     );
   }
 
-  // ── Already paid (direct visit, no gateway return) ───────────
-  if (isPaidStatus(financialStatus)) {
+  // ── Already paid (direct visit) → redirect to consultation ───
+  if (isPaidStatus(financialStatus) && !isGatewayReturn) {
     return (
       <>
         <Navbar />
         <BreadcrumbNav currentPage={t("breadcrumb")} />
-        <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-primary/5 px-4 py-8">
-          <div className="relative z-10 mx-auto max-w-3xl" dir="rtl">
-            <Card className="overflow-hidden border-0 shadow-xl">
-              <CardContent className="space-y-4 p-6 text-center md:p-8">
-                <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-500" />
-                <h2 className="text-lg font-bold">{t("alreadyPaid.title")}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {t("alreadyPaid.desc")}
-                </p>
-                <Button asChild variant="outline">
-                  <Link href={`/profile/consultations/${details.type}/${details.id}`}>
-                    {t("alreadyPaid.viewConsultations")}
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+        <div className="flex min-h-[60vh] items-center justify-center px-4">
+          <Card className="w-full max-w-sm border-0 shadow-md">
+            <CardContent className="space-y-4 p-6 text-center">
+              <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm font-medium">{t("redirectingPaid")}</p>
+            </CardContent>
+          </Card>
         </div>
       </>
     );

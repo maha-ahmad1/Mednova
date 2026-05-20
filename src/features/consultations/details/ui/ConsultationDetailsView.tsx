@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import ConsultationHeader from "@/features/consultations/details/ui/sections/Con
 import AppointmentInfoCard from "@/features/consultations/details/ui/sections/AppointmentInfoCard";
 import CostSummaryCard from "@/features/consultations/details/ui/sections/CostSummaryCard";
 import ConsultationActionsBar from "@/features/consultations/details/ui/sections/ConsultationActionsBar";
+import DisputeDialog from "@/features/consultations/details/ui/dialogs/DisputeDialog";
 
 interface ConsultationDetailsViewProps {
   id: string;
@@ -23,6 +25,7 @@ export default function ConsultationDetailsView({
 }: ConsultationDetailsViewProps) {
   const t = useTranslations("consultations.details");
   const { data: details, isLoading, error } = useConsultationDetails(id, type);
+  const [disputeOpen, setDisputeOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -86,6 +89,7 @@ export default function ConsultationDetailsView({
           financial={details.financial}
           reviewDeadline={details.data.review_deadline}
           releasedAt={details.data.released_at}
+          onOpenDispute={() => setDisputeOpen(true)}
         />
 
         <CostSummaryCard financial={details.financial} />
@@ -94,9 +98,18 @@ export default function ConsultationDetailsView({
           consultationId={details.id}
           consultationType={details.type}
           financialStatus={financialStatus}
+          status={details.data.status}
+          financial={details.financial}
           videoRoomLink={details.data.video_room_link}
         />
       </div>
+
+      <DisputeDialog
+        open={disputeOpen}
+        onOpenChange={setDisputeOpen}
+        consultationType={details.type}
+        queryId={id}
+      />
     </>
   );
 }

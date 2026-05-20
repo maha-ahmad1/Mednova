@@ -589,11 +589,7 @@
       "contactSupport": "Contact Support"
     },
 
-    "alreadyPaid": {
-      "title": "Payment Successful",
-      "desc": "Your booking has been confirmed successfully.",
-      "viewConsultations": "View Consultations"
-    },
+    "redirectingPaid": "This consultation is already paid. Redirecting...",
 
     "success": {
       "title": "Payment Successful",
@@ -640,16 +636,24 @@
         "completePayment": "Complete payment",
         "startZoom": "Start session via Zoom",
         "zoomPending": "Waiting for session link",
+        "zoomNotAvailable": "Session recording not available",
         "openChat": "Open chat",
-        "viewZoom": "View session via Zoom",
-        "cancel": "Cancel consultation",
+        "reviewZoom": "View session",
+        "reviewChat": "Open chat to review session",
+        "waitingForAccept": {
+          "titlePatient": "Payment confirmed — waiting for specialist to accept",
+          "descPatient": "Your payment was received. You'll be able to start the session once the specialist accepts your request.",
+          "titleConsultant": "Paid request awaiting your approval",
+          "descConsultant": "The patient has completed payment and funds are held in escrow. You can accept the request from the consultation requests page."
+        },
         "comingSoon": "Coming soon"
       },
       "banners": {
         "held": {
-          "title": "Payment confirmed — your consultation is booked",
-          "descPatient": "Your session is secured. We'll release payment to your provider after the consultation.",
-          "descConsultant": "Waiting for the session to take place. Payment is held in escrow."
+          "titlePatient": "Payment confirmed — your consultation is booked",
+          "titleConsultant": "Payment confirmed — request awaiting action",
+          "descPatient": "Your payment was received. We're holding the funds in escrow until the session is complete.",
+          "descConsultant": "The patient has completed payment. Funds are held in escrow until the session is complete."
         },
         "reviewWindow": {
           "title": "Review period in progress",
@@ -685,6 +689,23 @@
           "withdraw": "Withdraw earnings",
           "comingSoon": "Coming soon"
         }
+      }
+    },
+    "dispute": {
+      "dialog": {
+        "title": "Open a dispute",
+        "description": "Describe your reason clearly. Our team will review and respond within 48 hours.",
+        "reasonLabel": "Dispute reason",
+        "reasonPlaceholder": "Describe the issue in detail...",
+        "minChars": "Reason must be at least {count} characters",
+        "submit": "Submit dispute",
+        "cancel": "Cancel",
+        "submitting": "Submitting..."
+      },
+      "toast": {
+        "success": "Dispute opened successfully. Our team will review it shortly.",
+        "error": "Failed to open dispute. Please try again.",
+        "alreadyExists": "A dispute is already open for this consultation."
       }
     },
     "list": {

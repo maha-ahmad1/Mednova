@@ -8,7 +8,7 @@ import { usePatientPayments } from "@/features/financial/hooks";
 import { CurrencyAmount, StatusBadge, EmptyWalletState } from "../../shared";
 import { formatDate } from "@/utils/dateUtils";
 
-const PER_PAGE = 15;
+const PER_PAGE = 20;
 const SKELETON_ROWS = 8;
 
 export function PatientPaymentsTable() {

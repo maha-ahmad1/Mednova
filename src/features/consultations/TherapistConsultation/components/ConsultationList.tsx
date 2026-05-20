@@ -227,7 +227,7 @@ export default function ConsultationList({
                                 </span>
                               </div>
 
-                              {request.type === "chat" && (
+                              {request.type === "chat" && ["accepted", "active", "completed"].includes(request.status) && (
                                 <Button
                                   asChild
                                   variant="outline"

@@ -689,9 +689,8 @@
           "withdraw": "Withdraw earnings",
           "comingSoon": "Coming soon"
         }
-      }
-    },
-    "dispute": {
+      },
+        "dispute": {
       "dialog": {
         "title": "Open a dispute",
         "description": "Describe your reason clearly. Our team will review and respond within 48 hours.",
@@ -707,7 +706,9 @@
         "error": "Failed to open dispute. Please try again.",
         "alreadyExists": "A dispute is already open for this consultation."
       }
+    } 
     },
+  
     "list": {
       "viewFinancialDetails": "View financial details"
     }

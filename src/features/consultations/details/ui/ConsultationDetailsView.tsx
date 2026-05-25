@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,8 @@ export default function ConsultationDetailsView({
 }: ConsultationDetailsViewProps) {
   const t = useTranslations("consultations.details");
   const router = useRouter();
+  const { data: session } = useSession();
+  const isPatientRole = session?.role === "patient";
   const { data: details, isLoading, error } = useConsultationDetails(id, type);
   const [disputeOpen, setDisputeOpen] = useState(false);
   const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
@@ -107,6 +110,7 @@ export default function ConsultationDetailsView({
           releasedAt={details.data.released_at}
           onOpenDispute={() => setDisputeOpen(true)}
           onWithdraw={handleWithdraw}
+          viewerIsPatient={isPatientRole}
         />
 
         <CostSummaryCard financial={details.financial} />

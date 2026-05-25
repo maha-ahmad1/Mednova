@@ -100,6 +100,8 @@ interface FinancialStatusBannerProps {
   onOpenDispute?: () => void;
   onContactSupport?: () => void;
   onWithdraw?: () => void;
+  /** Pass true only when session.role === "patient" — hides the openDispute action for consultants */
+  viewerIsPatient?: boolean;
 }
 
 export default function FinancialStatusBanner({
@@ -110,6 +112,7 @@ export default function FinancialStatusBanner({
   onOpenDispute,
   onContactSupport,
   onWithdraw,
+  viewerIsPatient = false,
 }: FinancialStatusBannerProps) {
   const t = useTranslations("consultations.details.banners");
   const locale = useLocale();
@@ -140,6 +143,11 @@ export default function FinancialStatusBanner({
     withdraw: onWithdraw,
   };
 
+  // openDispute is patient-only — hide it entirely for consultants
+  const visibleActions = config.actions.filter(
+    (key) => key !== "openDispute" || viewerIsPatient,
+  );
+
   return (
     <Card className={cn("overflow-hidden border shadow-md", config.border)}>
       <CardContent
@@ -165,9 +173,9 @@ export default function FinancialStatusBanner({
             </div>
           </div>
 
-          {config.actions.length > 0 && (
+          {visibleActions.length > 0 && (
             <div className="flex flex-wrap gap-3">
-              {config.actions.map((key) => (
+              {visibleActions.map((key) => (
                 <div key={key} className="flex flex-col items-start gap-0.5">
                   <Button
                     disabled={!actionHandlers[key]}

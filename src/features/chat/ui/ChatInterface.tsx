@@ -97,6 +97,21 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
 
   const currentUserId = session?.user?.id;
   const isPatient = session?.role === "patient";
+
+  // ── Chat-input disabled state ────────────────────────────────
+  const ACTIVE_CHAT_STATUSES = ["accepted", "active"];
+  const canSend = ACTIVE_CHAT_STATUSES.includes(chatRequest.status);
+  const isQuotaExhausted =
+    isPatient &&
+    chatRequest.max_messages_for_patient !== null &&
+    chatRequest.patient_message_count >= chatRequest.max_messages_for_patient;
+  const isInputDisabled = !canSend || isQuotaExhausted;
+
+  const chatDisabledNotice: string | null = !canSend
+    ? "انتهت فترة المراجعة. لا يمكن إرسال رسائل جديدة."
+    : isQuotaExhausted
+      ? "لقد استنفذت رصيدك من الرسائل."
+      : null;
   const otherUser = useMemo(
     () =>
       isPatient
@@ -265,6 +280,8 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
   }, [allMessages, currentUserId, markAsReadMutation]);
 
   const handleSendMessage = async () => {
+    // UI guard — backend remains the final protection
+    if (isInputDisabled) return;
     if ((!newMessage.trim() && !selectedFile) || !currentUserId) return;
 
     setShouldFollowOutput(true);
@@ -479,21 +496,27 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
           )}
         </div>
 
-        <MessageInput
-          newMessage={newMessage}
-          setNewMessage={setNewMessage}
-          selectedFile={selectedFile}
-          selectedPreview={selectedPreview}
-          uploadProgress={uploadProgress}
-          showUploadMenu={showUploadMenu}
-          fileInputRef={fileInputRef}
-          onSendMessage={handleSendMessage}
-          onFileChange={handleFileChange}
-          onRemoveFile={handleRemoveFile}
-          onOpenFilePicker={openFilePicker}
-          onSetShowUploadMenu={setShowUploadMenu}
-          isSending={sendMessageMutation.isPending}
-        />
+        {chatDisabledNotice ? (
+          <div className="border-t bg-amber-50 px-4 py-4 text-center">
+            <p className="text-sm text-amber-700">{chatDisabledNotice}</p>
+          </div>
+        ) : (
+          <MessageInput
+            newMessage={newMessage}
+            setNewMessage={setNewMessage}
+            selectedFile={selectedFile}
+            selectedPreview={selectedPreview}
+            uploadProgress={uploadProgress}
+            showUploadMenu={showUploadMenu}
+            fileInputRef={fileInputRef}
+            onSendMessage={handleSendMessage}
+            onFileChange={handleFileChange}
+            onRemoveFile={handleRemoveFile}
+            onOpenFilePicker={openFilePicker}
+            onSetShowUploadMenu={setShowUploadMenu}
+            isSending={sendMessageMutation.isPending}
+          />
+        )}
       </CardContent>
     </Card>
   );

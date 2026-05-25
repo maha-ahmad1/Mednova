@@ -542,7 +542,7 @@
         "breadcrumb": "Financial Wallet › Bank Account",
         "title": "Add Bank Account",
         "subtitle": "This account will be used to transfer your earnings for withdrawal requests",
-        "infoBanner": "Your account ownership will be verified via OTP sent to your phone",
+        "infoBanner": "Your account ownership will be verified via an OTP sent to your registered email address.",
         "fieldBank": "Bank",
         "fieldBankPlaceholder": "e.g. Bank Muscat",
         "fieldCountry": "Country",
@@ -574,7 +574,7 @@
       "otp": {
         "breadcrumb": "Financial Wallet › Account Verification",
         "title": "Enter Verification Code",
-        "subtitle": "We sent a 6-digit code to your registered phone number",
+        "subtitle": "We sent a 6-digit code to your registered email address.",
         "confirmButton": "Confirm",
         "confirmingButton": "Verifying...",
         "resendPrompt": "Didn't receive the code?",

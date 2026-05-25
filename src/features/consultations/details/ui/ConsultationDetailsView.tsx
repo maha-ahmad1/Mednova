@@ -1,16 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
+import { useRouter } from "@/i18n/navigation";
 import { useConsultationDetails } from "@/features/consultations/details/hooks/useConsultationDetails";
 import FinancialStatusBanner from "@/features/consultations/details/ui/FinancialStatusBanner";
 import ConsultationHeader from "@/features/consultations/details/ui/sections/ConsultationHeader";
 import AppointmentInfoCard from "@/features/consultations/details/ui/sections/AppointmentInfoCard";
 import CostSummaryCard from "@/features/consultations/details/ui/sections/CostSummaryCard";
 import ConsultationActionsBar from "@/features/consultations/details/ui/sections/ConsultationActionsBar";
+import DisputeDialog from "@/features/consultations/details/ui/dialogs/DisputeDialog";
+import { useBankAccount } from "@/features/financial/withdraw/hooks/useBankAccount";
+import { useConsultantWallet } from "@/features/financial/hooks/useConsultantWallet";
+import { WithdrawRequestDialog } from "@/features/financial/withdraw/ui/WithdrawRequestDialog";
 
 interface ConsultationDetailsViewProps {
   id: string;
@@ -22,7 +28,20 @@ export default function ConsultationDetailsView({
   type,
 }: ConsultationDetailsViewProps) {
   const t = useTranslations("consultations.details");
+  const router = useRouter();
   const { data: details, isLoading, error } = useConsultationDetails(id, type);
+  const [disputeOpen, setDisputeOpen] = useState(false);
+  const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
+  const { data: bankAccount } = useBankAccount();
+  const { data: wallet } = useConsultantWallet();
+
+  const handleWithdraw = () => {
+    if (!bankAccount || !bankAccount.is_verified) {
+      router.push("/profile/financial/bank-account");
+      return;
+    }
+    setWithdrawDialogOpen(true);
+  };
 
   if (isLoading) {
     return (
@@ -86,6 +105,8 @@ export default function ConsultationDetailsView({
           financial={details.financial}
           reviewDeadline={details.data.review_deadline}
           releasedAt={details.data.released_at}
+          onOpenDispute={() => setDisputeOpen(true)}
+          onWithdraw={handleWithdraw}
         />
 
         <CostSummaryCard financial={details.financial} />
@@ -94,9 +115,27 @@ export default function ConsultationDetailsView({
           consultationId={details.id}
           consultationType={details.type}
           financialStatus={financialStatus}
+          status={details.data.status}
+          financial={details.financial}
           videoRoomLink={details.data.video_room_link}
         />
       </div>
+
+      <DisputeDialog
+        open={disputeOpen}
+        onOpenChange={setDisputeOpen}
+        consultationType={details.type}
+        queryId={id}
+      />
+
+      {wallet && bankAccount && (
+        <WithdrawRequestDialog
+          open={withdrawDialogOpen}
+          onOpenChange={setWithdrawDialogOpen}
+          wallet={wallet}
+          bankAccount={bankAccount}
+        />
+      )}
     </>
   );
 }

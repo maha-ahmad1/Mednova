@@ -143,7 +143,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({ provider }) => {
           width={400}
           height={300}
           alt={provider.full_name}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-55  group-hover:scale-105 transition-transform duration-500"
         />
  
         {/* الموقع */}

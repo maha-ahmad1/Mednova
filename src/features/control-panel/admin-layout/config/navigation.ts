@@ -71,6 +71,7 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
       { label: "المحافظ", href: "/coming-soon" },
       { label: "المدفوعات", href: "/coming-soon" },
       { label: "الإيرادات", href: "/coming-soon" },
+      { label: "النزاعات", href: "/control-panel/disputes" },
     ],
   },
   {

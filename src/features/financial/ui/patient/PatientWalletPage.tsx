@@ -7,7 +7,8 @@ import {
   Clock,
   Wallet,
   ArrowDownCircle,
-  FileDown,
+  Plus,
+  Eye,
   TrendingUp,
   Receipt,
   RefreshCcw,
@@ -16,7 +17,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "@/i18n/navigation";
 import { usePatientWallet, usePatientPayments } from "@/features/financial/hooks";
+import { useBankAccount } from "@/features/financial/withdraw/hooks/useBankAccount";
+import { WithdrawRequestDialog } from "@/features/financial/withdraw/ui/WithdrawRequestDialog";
 import {
   WalletBalanceCard,
   WalletStatCard,
@@ -27,18 +31,29 @@ import { Sparkline } from "../shared/Sparkline";
 // import { PatientTransactionsTable } from "./PatientTransactionsTable";
 import { PatientPaymentsTable } from "./components/PatientPaymentsTable";
 import { PatientTransactionsTable } from "./components/PatientTransactionsTable";
+import { WithdrawalsTable } from "@/features/financial/withdraw/ui/WithdrawalsTable";
 
-
-type ActiveTab = "payments" | "transactions";
+type ActiveTab = "payments" | "transactions" | "withdrawals";
 
 export function PatientWalletPage() {
   const t = useTranslations("financial");
+  const router = useRouter();
   const [period, setPeriod] = useState("week");
   const [activeTab, setActiveTab] = useState<ActiveTab>("payments");
+  const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
 
   const { data: wallet, isLoading: walletLoading } = usePatientWallet();
+  const { data: bankAccount } = useBankAccount();
   const { data: paymentsData, isLoading: isPaymentsLoading } =
     usePatientPayments(1, 15);
+
+  const handleWithdraw = () => {
+    if (!bankAccount || !bankAccount.is_verified) {
+      router.push("/profile/financial/bank-account");
+      return;
+    }
+    setWithdrawDialogOpen(true);
+  };
 
   const withdrawable = wallet?.withdrawable_balance ?? 0;
   const total = wallet?.total_balance ?? 0;
@@ -63,16 +78,30 @@ export function PatientWalletPage() {
         </div>
 
         <div className="flex gap-2 flex-wrap">
+          {!bankAccount ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 border-border/60 text-muted-foreground"
+              onClick={() => router.push("/profile/financial/bank-account")}
+            >
+              <Plus className="h-4 w-4" />
+              {t("shared.addBankAccount")}
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 border-border/60 text-muted-foreground"
+              onClick={() => router.push("/profile/financial/bank-account")}
+            >
+              <Eye className="h-4 w-4" />
+              {t("shared.viewBankAccount")}
+            </Button>
+          )}
           <Button
-            variant="outline"
             size="sm"
-            className="gap-1.5 border-border/60 text-muted-foreground"
-          >
-            <FileDown className="h-4 w-4" />
-            {t("patient.exportStatement")}
-          </Button>
-          <Button
-            size="sm"
+            onClick={handleWithdraw}
             className="gap-1.5 bg-[#32A88D] hover:bg-[#2a9278] text-white"
           >
             <ArrowDownCircle className="h-4 w-4" />
@@ -115,7 +144,7 @@ export function PatientWalletPage() {
           iconBg=""
           icon={<ArrowDownCircle className="h-5 w-5 text-white" />}
           highlight
-          onWithdraw={() => {}}
+          onWithdraw={handleWithdraw}
           isLoading={walletLoading}
         />
       </div>
@@ -244,12 +273,33 @@ export function PatientWalletPage() {
               <TrendingUp className="h-3.5 w-3.5" />
               {t("patient.tabTransactions")}
             </button>
+            <button
+              onClick={() => setActiveTab("withdrawals")}
+              className={`flex items-center gap-1.5 text-xs px-4 py-1.5 rounded-lg font-medium transition-colors ${
+                activeTab === "withdrawals"
+                  ? "bg-[#32A88D] text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <ArrowDownCircle className="h-3.5 w-3.5" />
+              {t("patient.tabWithdrawals")}
+            </button>
           </div>
         </div>
 
         {activeTab === "payments" && <PatientPaymentsTable />}
         {activeTab === "transactions" && <PatientTransactionsTable />}
+        {activeTab === "withdrawals" && <WithdrawalsTable />}
       </div>
+
+      {wallet && bankAccount && (
+        <WithdrawRequestDialog
+          open={withdrawDialogOpen}
+          onOpenChange={setWithdrawDialogOpen}
+          wallet={wallet}
+          bankAccount={bankAccount}
+        />
+      )}
     </div>
   );
 }

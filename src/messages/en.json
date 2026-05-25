@@ -427,6 +427,8 @@
       "chartWeek3": "Week 3",
       "chartWeek4": "Week 4",
       "withdrawalRequest": "Withdrawal Request",
+      "addBankAccount": "Add Bank Account",
+      "viewBankAccount": "Bank Account",
       "consultationType": {
         "chat": "Chat",
         "video": "Video"
@@ -446,7 +448,8 @@
       "completed": "Completed",
       "captured": "Completed",
       "failed": "Failed",
-      "refunded": "Refunded"
+      "refunded": "Refunded",
+      "cancelled": "Cancelled"
     },
     "consultant": {
       "breadcrumb": "Consultant Dashboard › Financial Wallet",
@@ -464,7 +467,12 @@
       "incomeTitle": "Income During Period",
       "incomeSubtitle": "Session earnings comparison after commission deduction",
       "noTransactionsTitle": "No Financial Transactions Yet",
-      "noTransactionsSubtitle": "Your earnings stats will appear here after your first paid session is completed."
+      "noTransactionsSubtitle": "Your earnings stats will appear here after your first paid session is completed.",
+      "operationsLog": "Operations Log",
+      "tabs": {
+        "transactions": "Transactions",
+        "withdrawals": "Withdrawals"
+      }
     },
     "consultantTransactions": {
       "sectionTitle": "Financial Transactions",
@@ -497,7 +505,8 @@
       "noTransactionsSubtitle": "Your stats and payments will appear here after your first consultation.",
       "operationsLog": "Operations Log",
       "tabPayments": "Payments",
-      "tabTransactions": "Financial Transactions"
+      "tabTransactions": "Financial Transactions",
+      "tabWithdrawals": "Withdrawals"
     },
     "patientTransactions": {
       "colOperation": "Operation",
@@ -527,6 +536,91 @@
       "methodApplePay": "Apple Pay",
       "methodThawani": "Thawani",
       "methodMada": "Mada"
+    },
+    "withdraw": {
+      "bankAccount": {
+        "breadcrumb": "Financial Wallet › Bank Account",
+        "title": "Add Bank Account",
+        "subtitle": "This account will be used to transfer your earnings for withdrawal requests",
+        "infoBanner": "Your account ownership will be verified via OTP sent to your phone",
+        "fieldBank": "Bank",
+        "fieldBankPlaceholder": "e.g. Bank Muscat",
+        "fieldCountry": "Country",
+        "fieldAccountHolder": "Account Holder Name",
+        "fieldAccountHolderPlaceholder": "e.g. Suleiman Mohammed Al-Rashidi",
+        "fieldAccountHolderHint": "Must match the name registered with the bank",
+        "fieldAccountNumber": "Account Number",
+        "fieldAccountNumberPlaceholder": "0123456789012",
+        "fieldIban": "IBAN Number",
+        "fieldIbanPlaceholder": "OM12 3478 7980 1234 5678 90",
+        "fieldIbanHint": "e.g. OM12 3478 7980 1234 5678 90 — must match bank records",
+        "fieldSwift": "SWIFT/BIC Code",
+        "fieldSwiftPlaceholder": "BMUSOMRX",
+        "submitButton": "Save & Confirm",
+        "cancelButton": "Cancel",
+        "savingButton": "Sending...",
+        "displayTitle": "Your Bank Account",
+        "displaySubtitle": "Account verified — you can now withdraw your earnings at any time",
+        "displayEdit": "Edit Account Details",
+        "displayEditHint": "Editing requires re-verification via OTP",
+        "displayDelete": "Delete Bank Account",
+        "displayDeleteHint": "You won't be able to withdraw until you add a new account",
+        "displayWithdraw": "Proceed to Withdrawal Request",
+        "emptyStateTitle": "No Bank Account Added",
+        "emptyStateDescription": "Add your bank account to withdraw your earnings",
+        "emptyStateButton": "Add Bank Account",
+        "backButton": "Cancel"
+      },
+      "otp": {
+        "breadcrumb": "Financial Wallet › Account Verification",
+        "title": "Enter Verification Code",
+        "subtitle": "We sent a 6-digit code to your registered phone number",
+        "confirmButton": "Confirm",
+        "confirmingButton": "Verifying...",
+        "resendPrompt": "Didn't receive the code?",
+        "resendButton": "Go back to resend",
+        "resendCooldown": "Resend ({seconds})"
+      },
+      "request": {
+        "title": "Withdrawal Request",
+        "subtitle": "Processing takes 1–3 business days",
+        "availableLabel": "Withdrawable Amount",
+        "bankLabel": "Withdrawal Method",
+        "bankType": "Bank",
+        "summaryAmount": "Amount",
+        "summaryFee": "Transfer Fee",
+        "summaryEta": "Expected Arrival",
+        "summaryEtaValue": "2 business days",
+        "summaryRecipient": "Recipient",
+        "confirmButton": "Confirm Withdrawal",
+        "cancelButton": "Cancel",
+        "confirmingButton": "Processing...",
+        "minimumWarning": "Minimum withdrawal amount is {amount}"
+      }
+    },
+    "withdrawals": {
+      "sectionTitle": "Withdrawals",
+      "filterAll": "All",
+      "filterPending": "Pending",
+      "filterCompleted": "Completed",
+      "filterCancelled": "Cancelled",
+      "colId": "#",
+      "colAmount": "Amount",
+      "colBankAccount": "Bank Account",
+      "colStatus": "Status",
+      "colDate": "Date",
+      "colActions": "Actions",
+      "cancelButton": "Cancel",
+      "loadError": "Failed to load withdrawals. Please try again.",
+      "emptyTitle": "No Withdrawals Yet",
+      "emptyDescription": "Your withdrawal history will appear here",
+      "cancelDialog": {
+        "title": "Cancel Withdrawal",
+        "description": "Are you sure you want to cancel the withdrawal of {amount} {currency}?",
+        "warning": "This action cannot be undone.",
+        "confirm": "Confirm Cancellation",
+        "back": "Go Back"
+      }
     }
   },
   "payment": {
@@ -589,11 +683,7 @@
       "contactSupport": "Contact Support"
     },
 
-    "alreadyPaid": {
-      "title": "Payment Successful",
-      "desc": "Your booking has been confirmed successfully.",
-      "viewConsultations": "View Consultations"
-    },
+    "redirectingPaid": "This consultation is already paid. Redirecting...",
 
     "success": {
       "title": "Payment Successful",
@@ -640,16 +730,24 @@
         "completePayment": "Complete payment",
         "startZoom": "Start session via Zoom",
         "zoomPending": "Waiting for session link",
+        "zoomNotAvailable": "Session recording not available",
         "openChat": "Open chat",
-        "viewZoom": "View session via Zoom",
-        "cancel": "Cancel consultation",
+        "reviewZoom": "View session",
+        "reviewChat": "Open chat to review session",
+        "waitingForAccept": {
+          "titlePatient": "Payment confirmed — waiting for specialist to accept",
+          "descPatient": "Your payment was received. You'll be able to start the session once the specialist accepts your request.",
+          "titleConsultant": "Paid request awaiting your approval",
+          "descConsultant": "The patient has completed payment and funds are held in escrow. You can accept the request from the consultation requests page."
+        },
         "comingSoon": "Coming soon"
       },
       "banners": {
         "held": {
-          "title": "Payment confirmed — your consultation is booked",
-          "descPatient": "Your session is secured. We'll release payment to your provider after the consultation.",
-          "descConsultant": "Waiting for the session to take place. Payment is held in escrow."
+          "titlePatient": "Payment confirmed — your consultation is booked",
+          "titleConsultant": "Payment confirmed — request awaiting action",
+          "descPatient": "Your payment was received. We're holding the funds in escrow until the session is complete.",
+          "descConsultant": "The patient has completed payment. Funds are held in escrow until the session is complete."
         },
         "reviewWindow": {
           "title": "Review period in progress",
@@ -685,10 +783,98 @@
           "withdraw": "Withdraw earnings",
           "comingSoon": "Coming soon"
         }
+      },
+        "dispute": {
+      "dialog": {
+        "title": "Open a dispute",
+        "description": "Describe your reason clearly. Our team will review and respond within 48 hours.",
+        "reasonLabel": "Dispute reason",
+        "reasonPlaceholder": "Describe the issue in detail...",
+        "minChars": "Reason must be at least {count} characters",
+        "submit": "Submit dispute",
+        "cancel": "Cancel",
+        "submitting": "Submitting..."
+      },
+      "toast": {
+        "success": "Dispute opened successfully. Our team will review it shortly.",
+        "error": "Failed to open dispute. Please try again.",
+        "alreadyExists": "A dispute is already open for this consultation."
       }
+    } 
     },
+  
     "list": {
       "viewFinancialDetails": "View financial details"
+    }
+  },
+  "controlPanel": {
+    "disputes": {
+      "pageTitle": "Disputes Management",
+      "pageSubtitle": "Review and resolve open financial disputes",
+      "tabs": {
+        "all": "All",
+        "opened": "Open",
+        "resolved": "Resolved"
+      },
+      "summary": {
+        "frozenAmount": "Total Frozen Amount",
+        "totalOpen": "Open Disputes",
+        "totalResolved": "Resolved Disputes"
+      },
+      "table": {
+        "colId": "Dispute #",
+        "colPatient": "Patient",
+        "colConsultant": "Consultant",
+        "colConsultationType": "Consultation Type",
+        "colFinancialStatus": "Financial Status",
+        "colStatus": "Status",
+        "colDate": "Date",
+        "colActions": "Actions",
+        "viewButton": "View",
+        "emptyTitle": "No Disputes Found",
+        "emptyDescription": "No disputes match the selected filter",
+        "loadError": "Failed to load disputes. Please try again."
+      },
+      "status": {
+        "opened": "Open",
+        "resolved": "Resolved"
+      },
+      "detail": {
+        "pageTitle": "Dispute Details",
+        "backButton": "Back",
+        "sectionDispute": "Dispute Information",
+        "sectionPatient": "Patient Information",
+        "sectionConsultant": "Consultant Information",
+        "sectionConsultation": "Consultation Information",
+        "sectionEvidence": "Service Evidence",
+        "labelId": "Dispute #",
+        "labelStatus": "Status",
+        "labelFinancialStatus": "Financial Status",
+        "labelFrozenAmount": "Frozen Amount",
+        "labelCreatedAt": "Opened On",
+        "labelAdminNote": "Admin Note",
+        "labelResolution": "Resolution",
+        "resolveButton": "Resolve Dispute",
+        "noEvidence": "No evidence files attached",
+        "loadError": "Failed to load dispute details.",
+        "backToList": "Back to Disputes"
+      },
+      "resolveDialog": {
+        "title": "Resolve Dispute",
+        "description": "Select a resolution and add an admin note before confirming.",
+        "resolutionLabel": "Resolution",
+        "releaseLabel": "Release funds to consultant",
+        "refundLabel": "Refund patient",
+        "adminNoteLabel": "Admin Note",
+        "adminNotePlaceholder": "Describe the resolution reason...",
+        "submitButton": "Confirm Resolution",
+        "cancelButton": "Cancel",
+        "submitting": "Resolving..."
+      },
+      "toast": {
+        "resolveSuccess": "Dispute resolved successfully.",
+        "resolveError": "Failed to resolve dispute. Please try again."
+      }
     }
   }
 }

@@ -18,6 +18,8 @@ interface MessageInputProps {
   onOpenFilePicker: (type: "image" | "file") => void;
   onSetShowUploadMenu: React.Dispatch<React.SetStateAction<boolean>>;
   isSending: boolean;
+  /** When true, all input elements are disabled and Enter key is blocked */
+  disabled?: boolean;
 }
 
 export function MessageInput({
@@ -34,16 +36,17 @@ export function MessageInput({
   onOpenFilePicker,
   onSetShowUploadMenu,
   isSending,
+  disabled = false,
 }: MessageInputProps) {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      onSendMessage();
+      if (!disabled) onSendMessage();
     }
   };
 
   return (
-    <div className="border-t bg-white p-3">
+    <div className={`border-t bg-white p-3 ${disabled ? "opacity-50 pointer-events-none" : ""}`}>
       <div className="flex items-center gap-2">
         <div className="relative">
           <input
@@ -51,12 +54,14 @@ export function MessageInput({
             type="file"
             className="hidden"
             onChange={onFileChange}
+            disabled={disabled}
           />
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onSetShowUploadMenu((s) => !s)}
             className="p-2"
+            disabled={disabled}
           >
             <Paperclip className="w-4 h-4" />
           </Button>
@@ -84,11 +89,12 @@ export function MessageInput({
           placeholder="اكتب رسالة..."
           className="flex-1 min-h-[40px] max-h-[120px] resize-none rounded-2xl bg-gray-100 border-none focus-visible:ring-0 px-4 py-3"
           rows={1}
+          disabled={disabled}
         />
 
         <Button
           onClick={onSendMessage}
-          disabled={(!newMessage.trim() && !selectedFile) || isSending}
+          disabled={(!newMessage.trim() && !selectedFile) || isSending || disabled}
           className="rounded-full h-10 w-10 p-0 bg-[#32A88D] hover:bg-[#2a8f7a]"
         >
           {isSending ? (

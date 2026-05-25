@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -43,6 +44,7 @@ export default function DisputeDialog({
   queryId,
 }: DisputeDialogProps) {
   const t = useTranslations("consultations.details.dispute");
+  const { data: session } = useSession();
   const { mutateAsync, isPending } = useOpenDispute();
 
   const {
@@ -59,6 +61,10 @@ export default function DisputeDialog({
   };
 
   const onSubmit = async (values: DisputeFormValues) => {
+    if (session?.role !== "patient") {
+      toast.error("هذا الإجراء مخصص للمرضى فقط.");
+      return;
+    }
     try {
       await mutateAsync({ consultationType, queryId, reason: values.reason });
       toast.success(t("toast.success"));

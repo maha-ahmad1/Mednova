@@ -8,7 +8,8 @@ import {
   Clock,
   CreditCard,
   ArrowDownCircle,
-  FileDown,
+  Plus,
+  Eye,
   TrendingUp,
   Users,
   CheckCircle2,
@@ -17,7 +18,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "@/i18n/navigation";
 import { useConsultantWallet, useConsultantTransactions } from "@/features/financial/hooks";
+import { useBankAccount } from "@/features/financial/withdraw/hooks/useBankAccount";
+import { WithdrawRequestDialog } from "@/features/financial/withdraw/ui/WithdrawRequestDialog";
 import {
   WalletBalanceCard,
   WalletStatCard,
@@ -25,14 +29,29 @@ import {
 } from "../shared";
 import { Sparkline } from "../shared/Sparkline";
 import { ConsultantTransactionsTable } from "./components/ConsultantTransactionsTable";
+import { WithdrawalsTable } from "@/features/financial/withdraw/ui/WithdrawalsTable";
+
+type TableTab = "transactions" | "withdrawals";
 
 export function ConsultantWalletPage() {
   const t = useTranslations("financial");
+  const router = useRouter();
   const [period, setPeriod] = useState("week");
+  const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
+  const [tableTab, setTableTab] = useState<TableTab>("transactions");
 
   const { data: wallet, isLoading: walletLoading } = useConsultantWallet();
+  const { data: bankAccount } = useBankAccount();
   const { data: transactionsData, isLoading: isTransactionsLoading } =
     useConsultantTransactions(1, 15);
+
+  const handleWithdraw = () => {
+    if (!bankAccount || !bankAccount.is_verified) {
+      router.push("/profile/financial/bank-account");
+      return;
+    }
+    setWithdrawDialogOpen(true);
+  };
 
   const available = wallet?.available_balance ?? 0;
   const pending = wallet?.pending_balance ?? 0;
@@ -57,16 +76,30 @@ export function ConsultantWalletPage() {
         </div>
 
         <div className="flex gap-2 flex-wrap">
+          {!bankAccount ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 border-border/60 text-muted-foreground"
+              onClick={() => router.push("/profile/financial/bank-account")}
+            >
+              <Plus className="h-4 w-4" />
+              {t("shared.addBankAccount")}
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 border-border/60 text-muted-foreground"
+              onClick={() => router.push("/profile/financial/bank-account")}
+            >
+              <Eye className="h-4 w-4" />
+              {t("shared.viewBankAccount")}
+            </Button>
+          )}
           <Button
-            variant="outline"
             size="sm"
-            className="gap-1.5 border-border/60 text-muted-foreground"
-          >
-            <FileDown className="h-4 w-4" />
-            {t("consultant.exportStatement")}
-          </Button>
-          <Button
-            size="sm"
+            onClick={handleWithdraw}
             className="gap-1.5 bg-[#32A88D] hover:bg-[#2a9278] text-white"
           >
             <ArrowDownCircle className="h-4 w-4" />
@@ -110,7 +143,7 @@ export function ConsultantWalletPage() {
           iconBg=""
           icon={<CreditCard className="h-5 w-5 text-white" />}
           highlight
-          onWithdraw={() => {}}
+          onWithdraw={handleWithdraw}
           isLoading={walletLoading}
         />
       </div>
@@ -210,7 +243,50 @@ export function ConsultantWalletPage() {
         />
       )}
 
-      <ConsultantTransactionsTable />
+      {/* ── operations table with tabs ── */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <h2 className="font-semibold text-foreground text-base">
+            {t("consultant.operationsLog")}
+          </h2>
+          <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+            <button
+              onClick={() => setTableTab("transactions")}
+              className={`flex items-center gap-1.5 text-xs px-4 py-1.5 rounded-lg font-medium transition-colors ${
+                tableTab === "transactions"
+                  ? "bg-[#32A88D] text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <TrendingUp className="h-3.5 w-3.5" />
+              {t("consultant.tabs.transactions")}
+            </button>
+            <button
+              onClick={() => setTableTab("withdrawals")}
+              className={`flex items-center gap-1.5 text-xs px-4 py-1.5 rounded-lg font-medium transition-colors ${
+                tableTab === "withdrawals"
+                  ? "bg-[#32A88D] text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <ArrowDownCircle className="h-3.5 w-3.5" />
+              {t("consultant.tabs.withdrawals")}
+            </button>
+          </div>
+        </div>
+
+        {tableTab === "transactions" && <ConsultantTransactionsTable />}
+        {tableTab === "withdrawals" && <WithdrawalsTable />}
+      </div>
+
+      {wallet && bankAccount && (
+        <WithdrawRequestDialog
+          open={withdrawDialogOpen}
+          onOpenChange={setWithdrawDialogOpen}
+          wallet={wallet}
+          bankAccount={bankAccount}
+        />
+      )}
     </div>
   );
 }

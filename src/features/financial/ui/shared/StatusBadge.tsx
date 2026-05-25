@@ -1,9 +1,9 @@
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import type { TransactionStatus, PaymentStatus } from "../../types";
+import type { TransactionStatus, PaymentStatus, WithdrawalStatus } from "../../types";
 
-type FinancialStatus = TransactionStatus | PaymentStatus;
+type FinancialStatus = TransactionStatus | PaymentStatus | WithdrawalStatus;
 
 const statusClassName: Record<FinancialStatus, string> = {
   available: "bg-emerald-400 text-[#0f3d35] border-emerald-400",
@@ -13,6 +13,7 @@ const statusClassName: Record<FinancialStatus, string> = {
   captured: "bg-emerald-100 text-emerald-700 border-emerald-200",
   failed: "bg-rose-100 text-rose-700 border-rose-200",
   refunded: "bg-sky-100 text-sky-600 border-sky-200",
+  cancelled: "bg-rose-100 text-rose-700 border-rose-200",
 };
 
 interface StatusBadgeProps {
@@ -32,6 +33,7 @@ export function StatusBadge({ status, label, className }: StatusBadgeProps) {
     captured: t("statusBadge.captured"),
     failed: t("statusBadge.failed"),
     refunded: t("statusBadge.refunded"),
+    cancelled: t("statusBadge.cancelled"),
   };
 
   return (

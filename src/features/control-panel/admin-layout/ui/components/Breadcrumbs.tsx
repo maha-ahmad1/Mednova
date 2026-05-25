@@ -30,6 +30,7 @@ const segmentLabels: Record<string, string> = {
   roles: "الأدوار والصلاحيات",
   notifications: "الإشعارات",
   "commission-rate": "نسبة العمولة",
+  disputes: "النزاعات",
 };
 
 export function Breadcrumbs() {

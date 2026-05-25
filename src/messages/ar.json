@@ -428,6 +428,8 @@
       "chartWeek3": "أسبوع ٣",
       "chartWeek4": "أسبوع ٤",
       "withdrawalRequest": "طلب سحب",
+      "addBankAccount": "إضافة حساب بنكي",
+      "viewBankAccount": "الحساب البنكي",
       "consultationType": {
         "chat": "دردشة",
         "video": "فيديو"
@@ -447,7 +449,8 @@
       "completed": "مكتمل",
       "captured": "مكتمل",
       "failed": "فشل",
-      "refunded": "مسترد"
+      "refunded": "مسترد",
+      "cancelled": "ملغي"
     },
     "consultant": {
       "breadcrumb": "لوحة المستشار › المحفظة المالية",
@@ -465,7 +468,12 @@
       "incomeTitle": "الدخل خلال الفترة",
       "incomeSubtitle": "مقارنة الأرباح من الجلسات بعد خصم العمولة",
       "noTransactionsTitle": "لا توجد حركات مالية بعد",
-      "noTransactionsSubtitle": "ستظهر إحصائيات أرباحك هنا بعد اكتمال أول جلسة مدفوعة."
+      "noTransactionsSubtitle": "ستظهر إحصائيات أرباحك هنا بعد اكتمال أول جلسة مدفوعة.",
+      "operationsLog": "سجل العمليات",
+      "tabs": {
+        "transactions": "المعاملات",
+        "withdrawals": "السحوبات"
+      }
     },
     "consultantTransactions": {
       "sectionTitle": "الحركات المالية",
@@ -498,7 +506,8 @@
       "noTransactionsSubtitle": "ستظهر إحصائياتك ومدفوعاتك هنا فور إتمام أول استشارة.",
       "operationsLog": "سجل العمليات",
       "tabPayments": "المدفوعات",
-      "tabTransactions": "الحركات المالية"
+      "tabTransactions": "الحركات المالية",
+      "tabWithdrawals": "السحوبات"
     },
     "patientTransactions": {
       "colOperation": "العملية",
@@ -528,6 +537,91 @@
       "methodApplePay": "Apple Pay",
       "methodThawani": "ثواني",
       "methodMada": "مدى"
+    },
+    "withdraw": {
+      "bankAccount": {
+        "breadcrumb": "المحفظة المالية › الحساب البنكي",
+        "title": "إضافة حساب بنكي",
+        "subtitle": "سيُستخدم هذا الحساب لتحويل أرباحك عند طلب السحب",
+        "infoBanner": "ستتحقق من ملكية حسابك البنكي عبر رمز OTP يُرسل إلى جوالك",
+        "fieldBank": "البنك",
+        "fieldBankPlaceholder": "مثال: بنك مسقط",
+        "fieldCountry": "الدولة",
+        "fieldAccountHolder": "اسم صاحب الحساب",
+        "fieldAccountHolderPlaceholder": "مثال: سليمان محمد الراشدي",
+        "fieldAccountHolderHint": "يجب أن يطابق الاسم المسجل في البنك",
+        "fieldAccountNumber": "رقم الحساب",
+        "fieldAccountNumberPlaceholder": "0123456789012",
+        "fieldIban": "رقم الآيبان (IBAN)",
+        "fieldIbanPlaceholder": "OM12 3478 7980 1234 5678 90",
+        "fieldIbanHint": "مثال: OM12 3478 7980 1234 5678 90 — يجب أن يكون موجوداً في البنك",
+        "fieldSwift": "رمز SWIFT/BIC",
+        "fieldSwiftPlaceholder": "BMUSOMRX",
+        "submitButton": "حفظ وتأكيد",
+        "cancelButton": "إلغاء",
+        "savingButton": "جاري الإرسال...",
+        "displayTitle": "حسابك البنكي",
+        "displaySubtitle": "تم التحقق من الحساب — يمكنك الآن سحب أرباحك في أي وقت",
+        "displayEdit": "تعديل بيانات الحساب",
+        "displayEditHint": "سيتطلب التعديل تحققاً جديداً عبر OTP",
+        "displayDelete": "حذف الحساب البنكي",
+        "displayDeleteHint": "لن تستطيع سحب الأرباح حتى تضيف حساباً جديداً",
+        "displayWithdraw": "متابعة طلب السحب",
+        "emptyStateTitle": "لم تضف حسابًا بنكيًا بعد",
+        "emptyStateDescription": "لسحب أرباحك، أضف حسابك البنكي أولاً",
+        "emptyStateButton": "إضافة حساب بنكي",
+        "backButton": "إلغاء"
+      },
+      "otp": {
+        "breadcrumb": "المحفظة المالية › التحقق من الحساب",
+        "title": "أدخل رمز التحقق",
+        "subtitle": "أرسلنا رمزًا مكونًا من 6 أرقام إلى رقم جوالك المسجل",
+        "confirmButton": "تأكيد",
+        "confirmingButton": "جاري التحقق...",
+        "resendPrompt": "لم تستلم الرمز؟",
+        "resendButton": "ارجع لإعادة الإرسال",
+        "resendCooldown": "إعادة الإرسال ({seconds})"
+      },
+      "request": {
+        "title": "طلب سحب مبلغ",
+        "subtitle": "يتم التحويل خلال ١–٣ أيام عمل",
+        "availableLabel": "المبلغ القابل للسحب",
+        "bankLabel": "طريقة السحب",
+        "bankType": "بنك",
+        "summaryAmount": "المبلغ",
+        "summaryFee": "رسوم التحويل",
+        "summaryEta": "الوصول المتوقع",
+        "summaryEtaValue": "٢ يوم عمل",
+        "summaryRecipient": "المستلم",
+        "confirmButton": "تأكيد طلب السحب",
+        "cancelButton": "إلغاء",
+        "confirmingButton": "جاري الإرسال...",
+        "minimumWarning": "الحد الأدنى للسحب هو {amount}"
+      }
+    },
+    "withdrawals": {
+      "sectionTitle": "السحوبات",
+      "filterAll": "الكل",
+      "filterPending": "معلّق",
+      "filterCompleted": "مكتمل",
+      "filterCancelled": "ملغي",
+      "colId": "#",
+      "colAmount": "المبلغ",
+      "colBankAccount": "الحساب البنكي",
+      "colStatus": "الحالة",
+      "colDate": "التاريخ",
+      "colActions": "إجراءات",
+      "cancelButton": "إلغاء",
+      "loadError": "تعذر تحميل السحوبات. حاول مرة أخرى.",
+      "emptyTitle": "لا توجد سحوبات بعد",
+      "emptyDescription": "سيظهر هنا سجل سحوباتك",
+      "cancelDialog": {
+        "title": "إلغاء طلب السحب",
+        "description": "هل أنت متأكد من إلغاء سحب {amount} {currency}؟",
+        "warning": "لا يمكن التراجع عن هذا الإجراء.",
+        "confirm": "تأكيد الإلغاء",
+        "back": "تراجع"
+      }
     }
   },
   "payment": {
@@ -712,6 +806,76 @@
     },
     "list": {
       "viewFinancialDetails": "عرض التفاصيل المالية"
+    }
+  },
+  "controlPanel": {
+    "disputes": {
+      "pageTitle": "إدارة النزاعات",
+      "pageSubtitle": "مراجعة وحل النزاعات المالية المفتوحة",
+      "tabs": {
+        "all": "الكل",
+        "opened": "مفتوحة",
+        "resolved": "محلولة"
+      },
+      "summary": {
+        "frozenAmount": "إجمالي المبلغ المجمد",
+        "totalOpen": "النزاعات المفتوحة",
+        "totalResolved": "النزاعات المحلولة"
+      },
+      "table": {
+        "colId": "رقم النزاع",
+        "colPatient": "المريض",
+        "colConsultant": "المستشار",
+        "colConsultationType": "نوع الاستشارة",
+        "colFinancialStatus": "الحالة المالية",
+        "colStatus": "الحالة",
+        "colDate": "التاريخ",
+        "colActions": "الإجراءات",
+        "viewButton": "عرض",
+        "emptyTitle": "لا توجد نزاعات",
+        "emptyDescription": "لا توجد نزاعات تطابق الفلتر المحدد",
+        "loadError": "تعذر تحميل النزاعات. حاول مرة أخرى."
+      },
+      "status": {
+        "opened": "مفتوح",
+        "resolved": "محلول"
+      },
+      "detail": {
+        "pageTitle": "تفاصيل النزاع",
+        "backButton": "رجوع",
+        "sectionDispute": "معلومات النزاع",
+        "sectionPatient": "معلومات المريض",
+        "sectionConsultant": "معلومات المستشار",
+        "sectionConsultation": "معلومات الاستشارة",
+        "sectionEvidence": "دليل الخدمة",
+        "labelId": "رقم النزاع",
+        "labelStatus": "الحالة",
+        "labelFinancialStatus": "الحالة المالية",
+        "labelFrozenAmount": "المبلغ المجمد",
+        "labelCreatedAt": "تاريخ الفتح",
+        "labelAdminNote": "ملاحظة المسؤول",
+        "labelResolution": "القرار",
+        "resolveButton": "حل النزاع",
+        "noEvidence": "لا توجد ملفات مرفقة",
+        "loadError": "تعذر تحميل تفاصيل النزاع.",
+        "backToList": "العودة إلى النزاعات"
+      },
+      "resolveDialog": {
+        "title": "حل النزاع",
+        "description": "اختر القرار وأضف ملاحظة قبل التأكيد.",
+        "resolutionLabel": "القرار",
+        "releaseLabel": "الإفراج عن الأموال للمستشار",
+        "refundLabel": "استرداد المبلغ للمريض",
+        "adminNoteLabel": "ملاحظة المسؤول",
+        "adminNotePlaceholder": "صف سبب القرار...",
+        "submitButton": "تأكيد القرار",
+        "cancelButton": "إلغاء",
+        "submitting": "جارٍ الحل..."
+      },
+      "toast": {
+        "resolveSuccess": "تم حل النزاع بنجاح.",
+        "resolveError": "تعذر حل النزاع. حاول مرة أخرى."
+      }
     }
   }
 }

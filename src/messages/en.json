@@ -808,6 +808,103 @@
     }
   },
   "controlPanel": {
+    "financial": {
+      "pageTitle": "Financial Dashboard",
+      "pageSubtitle": "Platform-wide financial overview and transaction records",
+      "tabs": {
+        "overview": "Overview",
+        "revenue": "Revenue",
+        "escrow": "Escrow",
+        "transactions": "Transactions"
+      },
+      "overview": {
+        "loadError": "Failed to load financial data. Please try again.",
+        "sectionRevenue": "Revenue",
+        "sectionWallet": "Platform Wallet",
+        "sectionConsultations": "Consultation Finances",
+        "sectionDisputes": "Disputes",
+        "thisMonth": "This Month",
+        "lastMonth": "Last Month",
+        "totalBalance": "Total Balance",
+        "availableBalance": "Available",
+        "pendingBalance": "Pending",
+        "frozenBalance": "Frozen",
+        "totalPaid": "Total Paid",
+        "totalSettled": "Settled",
+        "totalHeld": "Held",
+        "totalInReview": "In Review",
+        "totalInDispute": "In Dispute",
+        "totalRefunded": "Refunded",
+        "pendingDisputes": "Pending Disputes",
+        "avgResolutionHours": "Avg. Resolution",
+        "hours": "hrs"
+      },
+      "revenue": {
+        "title": "Revenue Records",
+        "monthFilter": "Filter by month",
+        "allMonths": "All Months",
+        "entries": "entries",
+        "totalRevenue": "Total Revenue",
+        "colId": "#",
+        "colConsultation": "Consultation",
+        "colPrice": "Price",
+        "colCommission": "Commission",
+        "colConsultantEarning": "Consultant Earning",
+        "colDate": "Date",
+        "emptyTitle": "No Revenue Records",
+        "emptyDescription": "No revenue records match the selected filter.",
+        "loadError": "Failed to load revenue records. Please try again."
+      },
+      "escrow": {
+        "title": "Escrow / Held Funds",
+        "statusAll": "All",
+        "statusHeld": "Held",
+        "statusReview": "In Review",
+        "summaryHeld": "Total Held",
+        "summaryReview": "In Review",
+        "summaryTotal": "Total Escrow",
+        "entries": "entries",
+        "colId": "Consultation #",
+        "colType": "Type",
+        "colPatient": "Patient",
+        "colConsultant": "Consultant",
+        "colAmount": "Amount",
+        "colStatus": "Status",
+        "colDate": "Paid On",
+        "emptyTitle": "No Escrow Records",
+        "emptyDescription": "No held funds match the selected filter.",
+        "loadError": "Failed to load escrow records. Please try again."
+      },
+      "transactions": {
+        "title": "Platform Transactions",
+        "typeFilter": "Filter by type",
+        "colId": "#",
+        "colLabel": "Transaction",
+        "colConsultation": "Consultation",
+        "colEntry": "Entry",
+        "colAmount": "Amount",
+        "colStatus": "Status",
+        "colDate": "Date",
+        "emptyTitle": "No Transactions",
+        "emptyDescription": "No transactions match the selected filter.",
+        "loadError": "Failed to load transactions. Please try again.",
+        "type": {
+          "all": "All Types",
+          "payment_record": "Payment Record",
+          "consultation_hold": "Consultation Hold",
+          "consultation_credit": "Consultation Credit",
+          "platform_fee": "Platform Fee",
+          "refund": "Refund",
+          "dispute_freeze": "Dispute Freeze",
+          "dispute_release": "Dispute Release",
+          "withdrawal": "Withdrawal"
+        },
+        "entryType": {
+          "credit": "Credit",
+          "debit": "Debit"
+        }
+      }
+    },
     "disputes": {
       "pageTitle": "Disputes Management",
       "pageSubtitle": "Review and resolve open financial disputes",

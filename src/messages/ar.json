@@ -809,6 +809,103 @@
     }
   },
   "controlPanel": {
+    "financial": {
+      "pageTitle": "لوحة المالية",
+      "pageSubtitle": "نظرة عامة على المالية وسجلات المعاملات على مستوى المنصة",
+      "tabs": {
+        "overview": "نظرة عامة",
+        "revenue": "الإيرادات",
+        "escrow": "الأموال المحتجزة",
+        "transactions": "المعاملات"
+      },
+      "overview": {
+        "loadError": "تعذر تحميل البيانات المالية. حاول مرة أخرى.",
+        "sectionRevenue": "الإيرادات",
+        "sectionWallet": "محفظة المنصة",
+        "sectionConsultations": "مالية الاستشارات",
+        "sectionDisputes": "النزاعات",
+        "thisMonth": "هذا الشهر",
+        "lastMonth": "الشهر الماضي",
+        "totalBalance": "الرصيد الإجمالي",
+        "availableBalance": "المتاح",
+        "pendingBalance": "قيد الانتظار",
+        "frozenBalance": "مجمد",
+        "totalPaid": "إجمالي المدفوع",
+        "totalSettled": "مُسوّى",
+        "totalHeld": "محتجز",
+        "totalInReview": "قيد المراجعة",
+        "totalInDispute": "قيد النزاع",
+        "totalRefunded": "مُستردّ",
+        "pendingDisputes": "النزاعات المعلقة",
+        "avgResolutionHours": "متوسط وقت الحل",
+        "hours": "ساعة"
+      },
+      "revenue": {
+        "title": "سجلات الإيرادات",
+        "monthFilter": "تصفية حسب الشهر",
+        "allMonths": "جميع الأشهر",
+        "entries": "سجل",
+        "totalRevenue": "إجمالي الإيرادات",
+        "colId": "#",
+        "colConsultation": "الاستشارة",
+        "colPrice": "السعر",
+        "colCommission": "العمولة",
+        "colConsultantEarning": "أرباح المستشار",
+        "colDate": "التاريخ",
+        "emptyTitle": "لا توجد سجلات إيرادات",
+        "emptyDescription": "لا توجد سجلات تطابق الفلتر المحدد.",
+        "loadError": "تعذر تحميل سجلات الإيرادات. حاول مرة أخرى."
+      },
+      "escrow": {
+        "title": "الأموال المحتجزة",
+        "statusAll": "الكل",
+        "statusHeld": "محتجز",
+        "statusReview": "قيد المراجعة",
+        "summaryHeld": "إجمالي المحتجز",
+        "summaryReview": "قيد المراجعة",
+        "summaryTotal": "إجمالي الضمان",
+        "entries": "سجل",
+        "colId": "رقم الاستشارة",
+        "colType": "النوع",
+        "colPatient": "المريض",
+        "colConsultant": "المستشار",
+        "colAmount": "المبلغ",
+        "colStatus": "الحالة",
+        "colDate": "تاريخ الدفع",
+        "emptyTitle": "لا توجد أموال محتجزة",
+        "emptyDescription": "لا توجد سجلات تطابق الفلتر المحدد.",
+        "loadError": "تعذر تحميل الأموال المحتجزة. حاول مرة أخرى."
+      },
+      "transactions": {
+        "title": "معاملات المنصة",
+        "typeFilter": "تصفية حسب النوع",
+        "colId": "#",
+        "colLabel": "المعاملة",
+        "colConsultation": "الاستشارة",
+        "colEntry": "نوع القيد",
+        "colAmount": "المبلغ",
+        "colStatus": "الحالة",
+        "colDate": "التاريخ",
+        "emptyTitle": "لا توجد معاملات",
+        "emptyDescription": "لا توجد معاملات تطابق الفلتر المحدد.",
+        "loadError": "تعذر تحميل المعاملات. حاول مرة أخرى.",
+        "type": {
+          "all": "جميع الأنواع",
+          "payment_record": "سجل دفع",
+          "consultation_hold": "احتجاز استشارة",
+          "consultation_credit": "إيداع استشارة",
+          "platform_fee": "رسوم المنصة",
+          "refund": "استرداد",
+          "dispute_freeze": "تجميد نزاع",
+          "dispute_release": "إفراج نزاع",
+          "withdrawal": "سحب"
+        },
+        "entryType": {
+          "credit": "دائن",
+          "debit": "مدين"
+        }
+      }
+    },
     "disputes": {
       "pageTitle": "إدارة النزاعات",
       "pageSubtitle": "مراجعة وحل النزاعات المالية المفتوحة",

@@ -1,0 +1,1 @@
+export { AdminFinancialPage } from "./AdminFinancialPage";

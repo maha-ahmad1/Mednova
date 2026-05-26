@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { ConsultationRequest } from "@/types/consultation";
 import { consultationApi } from "@/app/api/consultation";
@@ -10,6 +10,8 @@ export const useConsultationRequestActions = (
   token?: string,
   userRole: "consultable" | "patient" = "consultable"
 ) => {
+  const queryClient = useQueryClient();
+
   const updateStatusMutation = useMutation({
     mutationFn: async (params: {
       request: ConsultationRequest;
@@ -45,6 +47,7 @@ export const useConsultationRequestActions = (
           break;
       }
       toast.success(message);
+      queryClient.invalidateQueries({ queryKey: ["consultations"] });
     },
 
     onError: (error: AxiosError) => {

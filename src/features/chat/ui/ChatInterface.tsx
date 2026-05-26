@@ -108,8 +108,8 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
   const isInputDisabled = !canSend || isQuotaExhausted;
 
   const chatDisabledNotice: string | null = !canSend
-    ? "انتهت فترة المراجعة. لا يمكن إرسال رسائل جديدة."
-    : isQuotaExhausted
+    ? "انتهت فترة الاستشارة. لا يمكن إرسال رسائل جديدة."
+      : isQuotaExhausted
       ? "لقد استنفذت رصيدك من الرسائل."
       : null;
   const otherUser = useMemo(

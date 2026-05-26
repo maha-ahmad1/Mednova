@@ -67,10 +67,7 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
     label: "المالية",
     icon: Landmark,
     items: [
-      { label: "المعاملات", href: "/coming-soon" },
-      { label: "المحافظ", href: "/coming-soon" },
-      { label: "المدفوعات", href: "/coming-soon" },
-      { label: "الإيرادات", href: "/coming-soon" },
+      { label: "لوحة المالية", href: "/control-panel/financial" },
       { label: "النزاعات", href: "/control-panel/disputes" },
     ],
   },

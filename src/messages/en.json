@@ -251,10 +251,22 @@
     "title2": "platform puts your care first",
     "desc": "Mednova platform puts your care first, combining specialized physiotherapy with smart services designed for your comfort.",
     "features": [
-      { "title": "Quick Booking", "desc": "Flexible and easy appointments" },
-      { "title": "Instant Consultations", "desc": "24/7 support available" },
-      { "title": "Smart Health File", "desc": "Comprehensive treatment tracking" },
-      { "title": "Specialized Expertise", "desc": "Top specialists in their fields" }
+      {
+        "title": "Quick Booking",
+        "desc": "Flexible and easy appointments"
+      },
+      {
+        "title": "Instant Consultations",
+        "desc": "24/7 support available"
+      },
+      {
+        "title": "Smart Health File",
+        "desc": "Comprehensive treatment tracking"
+      },
+      {
+        "title": "Specialized Expertise",
+        "desc": "Top specialists in their fields"
+      }
     ]
   },
   "smartGlove": {
@@ -262,10 +274,22 @@
     "title": "Smart Glove from Mednova",
     "desc": "A smart device to help you recover hand movement at home with ease and efficiency.",
     "features": [
-      { "title": "Home Use", "desc": "No need to visit a center" },
-      { "title": "Real Results", "desc": "Gradual improvement" },
-      { "title": "Comfort & Efficiency", "desc": "Ergonomic design" },
-      { "title": "Smart Technology", "desc": "Latest innovations" }
+      {
+        "title": "Home Use",
+        "desc": "No need to visit a center"
+      },
+      {
+        "title": "Real Results",
+        "desc": "Gradual improvement"
+      },
+      {
+        "title": "Comfort & Efficiency",
+        "desc": "Ergonomic design"
+      },
+      {
+        "title": "Smart Technology",
+        "desc": "Latest innovations"
+      }
     ],
     "cta": "Learn more about the smart glove"
   },
@@ -288,10 +312,22 @@
     "floatHome": "At home",
     "floatHomeDesc": "Easy to use",
     "stats": [
-      { "value": "95%", "label": "Customer satisfaction" },
-      { "value": "+500", "label": "Patients rehabilitated" },
-      { "value": "+85%", "label": "Improved mobility" },
-      { "value": "24/7", "label": "Technical support" }
+      {
+        "value": "95%",
+        "label": "Customer satisfaction"
+      },
+      {
+        "value": "+500",
+        "label": "Patients rehabilitated"
+      },
+      {
+        "value": "+85%",
+        "label": "Improved mobility"
+      },
+      {
+        "value": "24/7",
+        "label": "Technical support"
+      }
     ],
     "howItWorks": {
       "badge": "How it works",
@@ -341,14 +377,35 @@
       "title": "Patient dashboard",
       "activeBadge": "Active",
       "progress": [
-        { "label": "Weekly therapy progress", "value": "75%", "width": "75%" },
-        { "label": "Grip strength", "value": "+40%", "width": "60%" },
-        { "label": "Finger flexibility", "value": "+65%", "width": "65%" }
+        {
+          "label": "Weekly therapy progress",
+          "value": "75%",
+          "width": "75%"
+        },
+        {
+          "label": "Grip strength",
+          "value": "+40%",
+          "width": "60%"
+        },
+        {
+          "label": "Finger flexibility",
+          "value": "+65%",
+          "width": "65%"
+        }
       ],
       "miniStats": [
-        { "value": "12", "label": "Sessions completed" },
-        { "value": "24", "label": "Therapy hours" },
-        { "value": "85%", "label": "Customer satisfaction" }
+        {
+          "value": "12",
+          "label": "Sessions completed"
+        },
+        {
+          "value": "24",
+          "label": "Therapy hours"
+        },
+        {
+          "value": "85%",
+          "label": "Customer satisfaction"
+        }
       ]
     },
     "benefitsSection": {
@@ -626,46 +683,35 @@
   "payment": {
     "pageTitle": "Confirm Booking & Payment",
     "breadcrumb": "Booking & Payment Summary",
-
     "typeChat": "Text Consultation",
     "typeVideo": "Video Consultation",
-
     "step1Label": "Provider",
     "step2VideoLabel": "Appointment Details",
     "step2ChatLabel": "Consultation Type",
     "step3Label": "Cost Summary",
-
     "date": "Date",
     "time": "Time",
-
     "instantChat": "Instant Chat",
     "instantChatDesc": "Starts as soon as the specialist accepts",
-
     "verifiedSpecialist": "Verified Specialist",
-
     "consultationPrice": "Consultation Fee",
     "platformFee": "Platform Fee",
     "totalAmount": "Total Amount",
-
     "escrowTitle": "Guaranteed Financial Protection — Escrow System",
     "escrowDesc": "At Mednova, we hold the payment until the session is successfully completed. Funds are released to the specialist 48 hours after the session ends, provided there are no disputes.",
-
     "buttonCreatingLink": "Creating payment link...",
     "buttonPaid": "Payment Successful",
     "buttonPay": "Pay Securely — {total} {currency}",
-
     "sslNote": "Data encrypted with SSL 256-bit — fully secure payment",
     "agreeToTerms": "By paying, you agree to our",
     "termsAnd": "and",
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
-
     "invalidLink": "Invalid payment link",
     "loadError": "Failed to load booking data",
     "retry": "Try Again",
     "notFound": "Booking data not found",
     "paymentLinkError": "An error occurred while creating the payment link. Please try again.",
-
     "banner": {
       "loadingTitle": "Verifying Payment Status",
       "loadingDesc": "Please wait a moment...",
@@ -676,15 +722,12 @@
       "pendingTitle": "Processing Payment",
       "pendingDesc": "Status will update automatically in a moment"
     },
-
     "suspended": {
       "title": "Booking Temporarily Suspended",
       "desc": "This booking has been temporarily suspended. For assistance, please contact support.",
       "contactSupport": "Contact Support"
     },
-
     "redirectingPaid": "This consultation is already paid. Redirecting...",
-
     "success": {
       "title": "Payment Successful",
       "subtitle": "Your booking has been confirmed successfully.",
@@ -784,25 +827,24 @@
           "comingSoon": "Coming soon"
         }
       },
-        "dispute": {
-      "dialog": {
-        "title": "Open a dispute",
-        "description": "Describe your reason clearly. Our team will review and respond within 48 hours.",
-        "reasonLabel": "Dispute reason",
-        "reasonPlaceholder": "Describe the issue in detail...",
-        "minChars": "Reason must be at least {count} characters",
-        "submit": "Submit dispute",
-        "cancel": "Cancel",
-        "submitting": "Submitting..."
-      },
-      "toast": {
-        "success": "Dispute opened successfully. Our team will review it shortly.",
-        "error": "Failed to open dispute. Please try again.",
-        "alreadyExists": "A dispute is already open for this consultation."
+      "dispute": {
+        "dialog": {
+          "title": "Open a dispute",
+          "description": "Describe your reason clearly. Our team will review and respond within 48 hours.",
+          "reasonLabel": "Dispute reason",
+          "reasonPlaceholder": "Describe the issue in detail...",
+          "minChars": "Reason must be at least {count} characters",
+          "submit": "Submit dispute",
+          "cancel": "Cancel",
+          "submitting": "Submitting..."
+        },
+        "toast": {
+          "success": "Dispute opened successfully. Our team will review it shortly.",
+          "error": "Failed to open dispute. Please try again.",
+          "alreadyExists": "A dispute is already open for this consultation."
+        }
       }
-    } 
     },
-  
     "list": {
       "viewFinancialDetails": "View financial details"
     }
@@ -815,7 +857,8 @@
         "overview": "Overview",
         "revenue": "Revenue",
         "escrow": "Escrow",
-        "transactions": "Transactions"
+        "transactions": "Transactions",
+        "withdrawals": "Withdrawals"
       },
       "overview": {
         "loadError": "Failed to load financial data. Please try again.",
@@ -902,6 +945,82 @@
         "entryType": {
           "credit": "Credit",
           "debit": "Debit"
+        }
+      },
+      "withdrawals": {
+        "title": "Withdrawal Requests",
+        "statusFilter": {
+          "all": "All",
+          "pending_review": "Pending Review",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "colId": "#",
+        "colUser": "User",
+        "colUserType": "Type",
+        "colAmount": "Amount",
+        "colStatus": "Status",
+        "colBank": "Bank",
+        "colDate": "Date",
+        "colActions": "Actions",
+        "actionView": "View",
+        "actionProcess": "Process",
+        "actionDownloadProof": "Download Proof",
+        "emptyTitle": "No Withdrawal Requests",
+        "emptyDescription": "No withdrawal requests match the selected filter.",
+        "loadError": "Failed to load withdrawal requests. Please try again.",
+        "details": {
+          "title": "Withdrawal Details",
+          "sectionWithdrawal": "Withdrawal Summary",
+          "sectionUser": "User Information",
+          "sectionBank": "Bank Account",
+          "sectionWallet": "Wallet Snapshot",
+          "labelId": "Request ID",
+          "labelAmount": "Amount",
+          "labelStatus": "Status",
+          "labelCreatedAt": "Created At",
+          "labelProcessedAt": "Processed At",
+          "labelAdminNote": "Admin Note",
+          "labelTransferRef": "Transfer Reference",
+          "labelHasProof": "Transfer Proof",
+          "proofAvailable": "Available",
+          "proofNotAvailable": "Not Available",
+          "labelFullName": "Full Name",
+          "labelUserType": "User Type",
+          "labelEmail": "Email",
+          "labelPhone": "Phone",
+          "labelBankName": "Bank Name",
+          "labelAccountHolder": "Account Holder",
+          "labelAccountNumber": "Account Number",
+          "labelIban": "IBAN",
+          "labelSwift": "SWIFT Code",
+          "labelBankCountry": "Bank Country",
+          "labelBankStatus": "Account Status",
+          "labelAvailableBalance": "Available Balance",
+          "labelPendingBalance": "Pending Balance",
+          "labelTotalBalance": "Total Balance",
+          "noBankAccount": "No bank account linked",
+          "noWalletSnapshot": "No wallet snapshot available",
+          "notProcessed": "Not yet processed",
+          "noNote": "No note",
+          "noReference": "No reference",
+          "downloadProof": "Download Proof"
+        },
+        "process": {
+          "title": "Process Withdrawal",
+          "description": "Review and approve or reject this withdrawal request.",
+          "actionLabel": "Action",
+          "approve": "Approve",
+          "reject": "Reject",
+          "transferReference": "Transfer Reference",
+          "transferReferencePlaceholder": "Enter transfer reference number",
+          "transferProof": "Transfer Proof",
+          "transferProofPlaceholder": "Upload proof of transfer",
+          "adminNote": "Admin Note",
+          "adminNotePlaceholder": "Enter reason for rejection or additional notes",
+          "submit": "Confirm",
+          "submitting": "Processing...",
+          "cancel": "Cancel"
         }
       }
     },

@@ -180,7 +180,6 @@
     "copyright": "© 2026 ميدنوفا. جميع الحقوق محفوظة.",
     "availability": "متصلون بخدمتكم على مدار الساعة"
   },
-
   "login": {
     "title": "تسجيل الدخول",
     "description": "قم بإدخال بياناتك للانضمام إلى منصة ميدنوفا",
@@ -252,10 +251,22 @@
     "title2": "تضع رعايتك أولاً",
     "desc": "منصة ميدنوفا تضع رعايتك أولاً، تجمع بين العلاج الطبيعي المتخصص والخدمات الذكية المصممة لراحتك.",
     "features": [
-      { "title": "حجز سريع", "desc": "مواعيد مرنة وسهلة" },
-      { "title": "استشارات فورية", "desc": "دعم على مدار الساعة" },
-      { "title": "ملف صحي ذكي", "desc": "متابعة شاملة للعلاج" },
-      { "title": "خبرة متخصصة", "desc": "أفضل الأخصائيين في مجالاتهم" }
+      {
+        "title": "حجز سريع",
+        "desc": "مواعيد مرنة وسهلة"
+      },
+      {
+        "title": "استشارات فورية",
+        "desc": "دعم على مدار الساعة"
+      },
+      {
+        "title": "ملف صحي ذكي",
+        "desc": "متابعة شاملة للعلاج"
+      },
+      {
+        "title": "خبرة متخصصة",
+        "desc": "أفضل الأخصائيين في مجالاتهم"
+      }
     ]
   },
   "smartGlove": {
@@ -263,10 +274,22 @@
     "title": "القفاز الذكي من ميدنوفا",
     "desc": "جهاز ذكي لمساعدتك على استعادة حركة اليد في المنزل بسهولة وكفاءة.",
     "features": [
-      { "title": "استخدام منزلي", "desc": "لا حاجة لزيارة المركز" },
-      { "title": "نتائج حقيقية", "desc": "تحسن تدريجي" },
-      { "title": "راحة وكفاءة", "desc": "تصميم مريح" },
-      { "title": "تقنية ذكية", "desc": "أحدث الابتكارات" }
+      {
+        "title": "استخدام منزلي",
+        "desc": "لا حاجة لزيارة المركز"
+      },
+      {
+        "title": "نتائج حقيقية",
+        "desc": "تحسن تدريجي"
+      },
+      {
+        "title": "راحة وكفاءة",
+        "desc": "تصميم مريح"
+      },
+      {
+        "title": "تقنية ذكية",
+        "desc": "أحدث الابتكارات"
+      }
     ],
     "cta": "اعرف المزيد عن القفاز الذكي"
   },
@@ -289,10 +312,22 @@
     "floatHome": "منزلي",
     "floatHomeDesc": "استخدام سهل",
     "stats": [
-      { "value": "95%", "label": "رضا العملاء" },
-      { "value": "+500", "label": "مريض تم تأهيلهم" },
-      { "value": "+85%", "label": "تحسن في الحركة" },
-      { "value": "24/7", "label": "دعم فني" }
+      {
+        "value": "95%",
+        "label": "رضا العملاء"
+      },
+      {
+        "value": "+500",
+        "label": "مريض تم تأهيلهم"
+      },
+      {
+        "value": "+85%",
+        "label": "تحسن في الحركة"
+      },
+      {
+        "value": "24/7",
+        "label": "دعم فني"
+      }
     ],
     "howItWorks": {
       "badge": "آلية العمل",
@@ -342,14 +377,35 @@
       "title": "لوحة تحكم المريض",
       "activeBadge": "نشط",
       "progress": [
-        { "label": "تقدم العلاج الأسبوعي", "value": "75%", "width": "75%" },
-        { "label": "قوة القبضة", "value": "+40%", "width": "60%" },
-        { "label": "مرونة الأصابع", "value": "+65%", "width": "65%" }
+        {
+          "label": "تقدم العلاج الأسبوعي",
+          "value": "75%",
+          "width": "75%"
+        },
+        {
+          "label": "قوة القبضة",
+          "value": "+40%",
+          "width": "60%"
+        },
+        {
+          "label": "مرونة الأصابع",
+          "value": "+65%",
+          "width": "65%"
+        }
       ],
       "miniStats": [
-        { "value": "12", "label": "جلسات مكتملة" },
-        { "value": "24", "label": "ساعة علاج" },
-        { "value": "85%", "label": "رضا العملاء" }
+        {
+          "value": "12",
+          "label": "جلسات مكتملة"
+        },
+        {
+          "value": "24",
+          "label": "ساعة علاج"
+        },
+        {
+          "value": "85%",
+          "label": "رضا العملاء"
+        }
       ]
     },
     "benefitsSection": {
@@ -627,46 +683,35 @@
   "payment": {
     "pageTitle": "تأكيد الحجز والدفع",
     "breadcrumb": "ملخص الحجز والدفع",
-
     "typeChat": "استشارة نصية",
     "typeVideo": "استشارة فيديو",
-
     "step1Label": "المختص المحجوز",
     "step2VideoLabel": "تفاصيل الموعد",
     "step2ChatLabel": "نوع الاستشارة",
     "step3Label": "ملخص التكاليف",
-
     "date": "التاريخ",
     "time": "الوقت",
-
     "instantChat": "محادثة فورية",
     "instantChatDesc": "تبدأ بمجرد قبول المختص",
-
     "verifiedSpecialist": "اختصاصي معتمد",
-
     "consultationPrice": "قيمة الاستشارة",
     "platformFee": "رسوم المنصة",
     "totalAmount": "المبلغ الإجمالي",
-
     "escrowTitle": "حماية مالية مضمونة — نظام Escrow",
     "escrowDesc": "في ميدنوفا، نحتفظ بالمبلغ حتى إتمام الجلسة بنجاح. يُحوَّل للمختص بعد ٤٨ ساعة من انتهاء الجلسة دون نزاعات.",
-
     "buttonCreatingLink": "جاري إنشاء رابط الدفع...",
     "buttonPaid": "تم الدفع بنجاح",
     "buttonPay": "الدفع الآمن — {total} {currency}",
-
     "sslNote": "بيانات مشفرة بـ SSL 256-bit — دفع آمن تماماً",
     "agreeToTerms": "بالدفع، أنت توافق على",
     "termsAnd": "و",
     "terms": "شروط الخدمة",
     "privacy": "سياسة الخصوصية",
-
     "invalidLink": "رابط الدفع غير صحيح",
     "loadError": "تعذر تحميل بيانات الحجز",
     "retry": "إعادة المحاولة",
     "notFound": "لم يتم العثور على بيانات الحجز",
     "paymentLinkError": "حدث خطأ أثناء إنشاء رابط الدفع. حاول مرة أخرى.",
-
     "banner": {
       "loadingTitle": "جاري التحقق من حالة الدفع",
       "loadingDesc": "يرجى الانتظار لحظة...",
@@ -677,15 +722,12 @@
       "pendingTitle": "العملية قيد المعالجة",
       "pendingDesc": "سيتم تحديث الحالة تلقائياً خلال لحظات"
     },
-
     "suspended": {
       "title": "الموعد موقوف مؤقتاً",
       "desc": "تم إيقاف هذا الحجز مؤقتاً. للمساعدة، تواصل مع فريق الدعم.",
       "contactSupport": "التواصل مع الدعم"
     },
-
     "redirectingPaid": "هذه الاستشارة مدفوعة، جاري التوجيه...",
-
     "success": {
       "title": "تم الدفع بنجاح",
       "subtitle": "تم تأكيد حجزك بنجاح",
@@ -785,7 +827,6 @@
           "comingSoon": "قريباً"
         }
       },
-
       "dispute": {
         "dialog": {
           "title": "فتح نزاع على الاستشارة",
@@ -816,7 +857,8 @@
         "overview": "نظرة عامة",
         "revenue": "الإيرادات",
         "escrow": "الأموال المحتجزة",
-        "transactions": "المعاملات"
+        "transactions": "المعاملات",
+        "withdrawals": "السحوبات"
       },
       "overview": {
         "loadError": "تعذر تحميل البيانات المالية. حاول مرة أخرى.",
@@ -903,6 +945,82 @@
         "entryType": {
           "credit": "دائن",
           "debit": "مدين"
+        }
+      },
+      "withdrawals": {
+        "title": "طلبات السحب",
+        "statusFilter": {
+          "all": "الكل",
+          "pending_review": "بانتظار المراجعة",
+          "approved": "موافق عليه",
+          "rejected": "مرفوض"
+        },
+        "colId": "#",
+        "colUser": "المستخدم",
+        "colUserType": "النوع",
+        "colAmount": "المبلغ",
+        "colStatus": "الحالة",
+        "colBank": "البنك",
+        "colDate": "التاريخ",
+        "colActions": "الإجراءات",
+        "actionView": "عرض",
+        "actionProcess": "معالجة",
+        "actionDownloadProof": "تحميل الإثبات",
+        "emptyTitle": "لا توجد طلبات سحب",
+        "emptyDescription": "لا توجد طلبات سحب تطابق الفلتر المحدد.",
+        "loadError": "تعذر تحميل طلبات السحب. حاول مرة أخرى.",
+        "details": {
+          "title": "تفاصيل طلب السحب",
+          "sectionWithdrawal": "ملخص السحب",
+          "sectionUser": "معلومات المستخدم",
+          "sectionBank": "الحساب البنكي",
+          "sectionWallet": "لقطة المحفظة",
+          "labelId": "رقم الطلب",
+          "labelAmount": "المبلغ",
+          "labelStatus": "الحالة",
+          "labelCreatedAt": "تاريخ الإنشاء",
+          "labelProcessedAt": "تاريخ المعالجة",
+          "labelAdminNote": "ملاحظة المسؤول",
+          "labelTransferRef": "مرجع التحويل",
+          "labelHasProof": "إثبات التحويل",
+          "proofAvailable": "متوفر",
+          "proofNotAvailable": "غير متوفر",
+          "labelFullName": "الاسم الكامل",
+          "labelUserType": "نوع المستخدم",
+          "labelEmail": "البريد الإلكتروني",
+          "labelPhone": "الهاتف",
+          "labelBankName": "اسم البنك",
+          "labelAccountHolder": "صاحب الحساب",
+          "labelAccountNumber": "رقم الحساب",
+          "labelIban": "رقم الآيبان",
+          "labelSwift": "رمز SWIFT",
+          "labelBankCountry": "دولة البنك",
+          "labelBankStatus": "حالة الحساب",
+          "labelAvailableBalance": "الرصيد المتاح",
+          "labelPendingBalance": "الرصيد المعلق",
+          "labelTotalBalance": "الرصيد الإجمالي",
+          "noBankAccount": "لا يوجد حساب بنكي مرتبط",
+          "noWalletSnapshot": "لا تتوفر لقطة للمحفظة",
+          "notProcessed": "لم تتم المعالجة بعد",
+          "noNote": "لا توجد ملاحظة",
+          "noReference": "لا يوجد مرجع",
+          "downloadProof": "تحميل الإثبات"
+        },
+        "process": {
+          "title": "معالجة طلب السحب",
+          "description": "راجع طلب السحب وقم بالموافقة عليه أو رفضه.",
+          "actionLabel": "الإجراء",
+          "approve": "موافقة",
+          "reject": "رفض",
+          "transferReference": "مرجع التحويل",
+          "transferReferencePlaceholder": "أدخل رقم مرجع التحويل",
+          "transferProof": "إثبات التحويل",
+          "transferProofPlaceholder": "رفع إثبات التحويل",
+          "adminNote": "ملاحظة المسؤول",
+          "adminNotePlaceholder": "أدخل سبب الرفض أو ملاحظات إضافية",
+          "submit": "تأكيد",
+          "submitting": "جاري المعالجة...",
+          "cancel": "إلغاء"
         }
       }
     },

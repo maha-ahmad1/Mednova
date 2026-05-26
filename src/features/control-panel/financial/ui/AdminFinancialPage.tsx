@@ -6,12 +6,14 @@ import {
   TrendingUp,
   ShieldCheck,
   ArrowLeftRight,
+  Banknote,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardCards } from "./components/DashboardCards";
 import { RevenueTable } from "./components/RevenueTable";
 import { EscrowTable } from "./components/EscrowTable";
 import { TransactionsTable } from "./components/TransactionsTable";
+import { WithdrawalsTable } from "./components/WithdrawalsTable";
 
 // Active tab: brand green bg + white text; inactive: muted text, hover to foreground
 const TAB_TRIGGER =
@@ -59,6 +61,10 @@ export function AdminFinancialPage() {
             <ArrowLeftRight className="h-3.5 w-3.5 shrink-0" />
             {t("tabs.transactions")}
           </TabsTrigger>
+          <TabsTrigger value="withdrawals" className={TAB_TRIGGER}>
+            <Banknote className="h-3.5 w-3.5 shrink-0" />
+            {t("tabs.withdrawals")}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-0">
@@ -75,6 +81,10 @@ export function AdminFinancialPage() {
 
         <TabsContent value="transactions" className="mt-0">
           <TransactionsTable />
+        </TabsContent>
+
+        <TabsContent value="withdrawals" className="mt-0">
+          <WithdrawalsTable />
         </TabsContent>
       </Tabs>
     </div>

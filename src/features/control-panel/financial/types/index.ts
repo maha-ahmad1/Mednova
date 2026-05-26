@@ -161,3 +161,93 @@ export interface AdminTransactionsResponse {
   data: AdminTransaction[];
   pagination: AdminPaginationMeta;
 }
+
+// ─── Withdrawals ──────────────────────────────────────────────────────────────
+
+export type AdminWithdrawalStatus = "pending_review" | "approved" | "rejected";
+export type AdminWithdrawalStatusFilter = AdminWithdrawalStatus | "all";
+export type AdminProcessWithdrawalAction = "approve" | "reject";
+
+/** Shape of each row in the withdrawals list */
+export interface AdminWithdrawalListItem {
+  id: string;
+  amount: string;
+  currency: string;
+  status: AdminWithdrawalStatus;
+  status_label: string;
+  user_name: string;
+  user_type: string;
+  bank_name: string | null;
+  has_transfer_proof: boolean;
+  created_at: string;
+}
+
+export interface AdminWithdrawalUser {
+  id: string;
+  full_name: string;
+  type: string;
+  email: string;
+  phone: string;
+}
+
+export interface AdminWithdrawalBankAccount {
+  bank_name: string;
+  account_holder_name: string;
+  account_number: string;
+  iban: string;
+  swift_code: string | null;
+  bank_country: string;
+  status: string;
+}
+
+export interface AdminWithdrawalWalletSnapshot {
+  available_balance: string;
+  pending_balance: string;
+  total_balance: string;
+}
+
+export interface AdminWithdrawalDetail {
+  withdrawal: {
+    id: string;
+    amount: string;
+    currency: string;
+    status: string;
+    status_label: string;
+    admin_note: string | null;
+    transfer_reference: string | null;
+    has_transfer_proof: boolean;
+    transfer_proof_url: string | null;
+    created_at: string;
+    processed_at: string | null;
+  };
+  user: AdminWithdrawalUser;
+  bank_account: AdminWithdrawalBankAccount | null;
+  wallet_snapshot: AdminWithdrawalWalletSnapshot | null;
+}
+
+/** Response shape for GET /withdrawals (list) */
+export interface AdminWithdrawalsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    data: AdminWithdrawalListItem[];
+  };
+  pagination: AdminPaginationMeta;
+  status: string;
+}
+
+/** Response shape for GET /withdrawals/{id} (detail) */
+export interface AdminWithdrawalDetailResponse {
+  success: boolean;
+  message: string;
+  data: AdminWithdrawalDetail;
+  status: string;
+}
+
+/** Payload sent to POST /withdrawals/{id}/process (assembled into FormData in the API layer) */
+export interface AdminProcessWithdrawalPayload {
+  action: AdminProcessWithdrawalAction;
+  admin_note?: string | null;
+  transfer_reference?: string | null;
+  transfer_proof?: File | null;
+}

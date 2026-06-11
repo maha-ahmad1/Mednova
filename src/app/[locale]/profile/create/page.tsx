@@ -11,8 +11,7 @@ export default async function ProfileCreatePage() {
   if (!session) {
     return <div>الرجاء تسجيل الدخول</div>;
   }
-  console.log("Session in create ProfilePage:", session);
-if (session.isCompleted) redirect("/profile");
+  if (session.isCompleted) redirect("/profile");
 
   // const isCompleted = session.user?.is_completed;
   // if (isCompleted) {

@@ -11,16 +11,8 @@ export default async function ProfilePage() {
   if (!session) {
     return <div>الرجاء تسجيل الدخول</div>
   }
-console.log("Session in ProfilePage:", session);
-
-  // const isCompleted = session.user?.is_completed;
-  // if (!isCompleted) {
-  //   redirect("/profile/create")
-  // }
-//console.log("isCompleted page:", isCompleted);
 
   const role = session.role || session.user?.type_account
-  console.log("role: " + role)
 
   switch (role) {
     case "patient":

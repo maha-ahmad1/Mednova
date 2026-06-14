@@ -76,6 +76,22 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // Fast-path: skip JWT decryption for unauthenticated visitors on non-protected routes.
+  // Without a session cookie there is no token — getToken() would return null anyway.
+  // Protected paths (/control-panel, /profile) always go through the full token check
+  // so auth guards and pending/incomplete redirects are never bypassed.
+  const isProtectedPath =
+    cleanPathname.startsWith("/control-panel") ||
+    cleanPathname.startsWith("/profile");
+
+  const hasSessionCookie =
+    req.cookies.has("next-auth.session-token") ||
+    req.cookies.has("__Secure-next-auth.session-token");
+
+  if (!hasSessionCookie && !isProtectedPath) {
+    return NextResponse.next();
+  }
+
   const token = (await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,

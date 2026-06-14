@@ -2,7 +2,6 @@
 "use client";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import { Award, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,38 +14,20 @@ import { useTranslations } from 'next-intl';
 
 export default function ProgramsSection() {
   const t = useTranslations('programs');
-  const { data: session, status } = useSession();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["getTopEnrolledProgram"],
     queryFn: async () => {
-      try {
-        const token = session?.accessToken;
-
-        const res = await axios.get(
-          "https://api.mednovacare.com/api/programs/show/get-top-enrolled-program",
-          {
-            // headers: {
-            //   Authorization: `Bearer ${token}`,
-            // },
-            params: {
-              limit: 3,
-            },
-          }
-        );
-
-        console.log("✅ API Response:", res.data);
-        return res.data;
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          console.error("API Error:", err.response?.data || err.message);
-        } else {
-          console.error("Unexpected Error:", err);
+      const res = await axios.get(
+        "https://api.mednovacare.com/api/programs/show/get-top-enrolled-program",
+        {
+          params: {
+            limit: 3,
+          },
         }
-        throw err;
-      }
+      );
+      return res.data;
     },
-    // enabled: status === "authenticated",
   });
 // تحويل البيانات من API إلى التنسيق المشترك
 const programs: Program[] = (data?.data || []).map((item: Program) => ({

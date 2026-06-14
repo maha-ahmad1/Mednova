@@ -5,6 +5,10 @@
 // The response shape is the same regardless of the viewer role.
 // ─────────────────────────────────────────────────────────────
 
+// ── UI payment status (used by banner + form + orchestrator) ─
+
+export type PaymentStatusType = "pending" | "paid" | "failed" | "loading";
+
 // ── Financial status ─────────────────────────────────────────
 
 /** All possible values for a consultation's financial_status field. */

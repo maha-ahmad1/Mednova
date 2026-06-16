@@ -30,7 +30,7 @@ export default function ServicesPricing({ provider }: ServicesPricingProps) {
                 />
                 <span>{service.price}</span>
               </div>
-              <div className="text-sm text-gray-500">{service.duration}</div>
+              {/* <div className="text-sm text-gray-500">{service.duration}</div> */}
             </div>
           </div>
         ))}

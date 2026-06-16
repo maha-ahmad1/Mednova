@@ -88,7 +88,7 @@ export interface ServiceProvider {
     name: string;
     description: string;
     price: number;
-    duration: string;
+    // duration: string;
   }>;
   specialties?: Array<{
     id: number;

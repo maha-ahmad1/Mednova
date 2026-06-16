@@ -2,8 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle2, User, Mail, Phone, Calendar, MapPin, Heart, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation"
+import { LoadingButton } from "@/shared/ui/LoadingButton"
+import { useNavigationLoader } from "@/hooks/useNavigationLoader"
 
 interface PatientSuccessProps {
   patientData: {
@@ -20,7 +20,7 @@ interface PatientSuccessProps {
 }
 
 export function PatientSuccess({ patientData }: PatientSuccessProps) {
-  const router = useRouter()
+  const { push, isNavigating } = useNavigationLoader()
 
   return (
     <div className="max-w-4xl mx-auto py-10" dir="rtl">
@@ -144,12 +144,14 @@ export function PatientSuccess({ patientData }: PatientSuccessProps) {
 
           {/* Action Buttons */}
           <div className="flex justify-center gap-4 mt-8 pt-6 border-t">
-            <Button
-              onClick={() => router.push("/dashboard")}
+            <LoadingButton
+              onClick={() => push("/dashboard")}
+              isLoading={isNavigating}
+              loadingText="جاري الانتقال..."
               className="px-8 py-6 bg-[#32A88D] hover:bg-[#2a9179] text-white font-semibold"
             >
               العودة إلى لوحة التحكم
-            </Button>
+            </LoadingButton>
           </div>
         </CardContent>
       </Card>

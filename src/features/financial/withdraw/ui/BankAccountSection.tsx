@@ -1,19 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "@/i18n/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { useTranslations } from "next-intl";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShieldAlert, Landmark } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { LoadingButton } from "@/shared/ui/LoadingButton";
 import { useBankAccount } from "../hooks/useBankAccount";
 import { AddBankAccountForm } from "./AddBankAccountForm";
 import { BankAccountCard } from "./BankAccountCard";
 
 export function BankAccountSection() {
   const t = useTranslations("financial.withdraw");
-  const router = useRouter();
+  const { push, isNavigating } = useNavigationLoader();
   const { data: bankAccount, isLoading, isFetching } = useBankAccount();
   const [editMode, setEditMode] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -46,12 +47,14 @@ export function BankAccountSection() {
                 لإكمال إضافة الحساب البنكي، يرجى إدخال رمز التحقق.
               </p>
             </div>
-            <Button
-              onClick={() => router.push("/profile/financial/bank-account/verify")}
+            <LoadingButton
+              onClick={() => push("/profile/financial/bank-account/verify")}
+              isLoading={isNavigating}
+              loadingText="جارٍ الانتقال..."
               className="bg-[#32A88D] hover:bg-[#2a9278] text-white"
             >
               متابعة التحقق
-            </Button>
+            </LoadingButton>
           </CardContent>
         </Card>
       </div>

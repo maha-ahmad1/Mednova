@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ConfirmationModal } from "@/features/control-panel/users/ui/components/ConfirmationModal";
@@ -31,7 +31,7 @@ const SKELETON_ROWS_COUNT = 10;
 const PROGRAMS_PER_PAGE = 10;
 
 export function ProgramsManagementPage() {
-  const router = useRouter();
+  const { push } = useNavigationLoader();
   const [filters, setFilters] = useState<ProgramsFilters>(initialFilters);
   const [currentPage, setCurrentPage] = useState(1);
   const [pendingAction, setPendingAction] = useState<PendingProgramAction>(null);
@@ -182,8 +182,8 @@ export function ProgramsManagementPage() {
                 program={program}
                 isUpdatingStatus={statusLoadingId === program.id}
                 onStatusChange={(nextStatus) => handleStatusChange(program.id, nextStatus)}
-                onView={() => router.push(`/control-panel/programs/${program.id}`)}
-                onEdit={() => router.push(`/control-panel/programs/${program.id}/edit`)}
+                onView={() => push(`/control-panel/programs/${program.id}`)}
+                onEdit={() => push(`/control-panel/programs/${program.id}/edit`)}
                 onDelete={() => setPendingAction({ type: "delete", program })}
               />
             ))}

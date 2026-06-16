@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { useFetcher } from "@/hooks/useFetcher";
 import type { ServiceProvider } from "@/features/service-provider/types/provider";
 import { useSession } from "next-auth/react";
-import { useRouter } from "@/i18n/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { toast } from "sonner";
 import { useConsultationTypeStore } from "@/store/ConsultationTypeStore";
 import { useConsultationRequestStore } from "@/features/home/hooks/useConsultationRequestStore";
@@ -47,7 +47,7 @@ export function useBookingLogic({
   });
 
   const { data: session, status } = useSession();
-  const router = useRouter();
+  const { push } = useNavigationLoader();
 
   const { data: provider, isLoading: isLoadingProvider } =
     useFetcher<ServiceProvider | null>(
@@ -266,7 +266,7 @@ export function useBookingLogic({
     }
 
     if (!session?.user?.id) {
-      router.push("/login");
+      push("/login");
       return;
     }
 
@@ -299,7 +299,7 @@ export function useBookingLogic({
 
       const consultationRequestId = consultationResponse?.data?.id || consultationResponse?.id;
 
-      router.push(`/payment?consultation_id=${consultationRequestId}&type=video`);
+      push(`/payment?consultation_id=${consultationRequestId}&type=video`);
 
       setSelectedTime("");
       setSelectedDate(undefined);

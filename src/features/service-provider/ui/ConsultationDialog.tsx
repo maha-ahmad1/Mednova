@@ -11,7 +11,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSession } from "next-auth/react";
-import { useRouter } from "@/i18n/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
+import { LoadingButton } from "@/shared/ui/LoadingButton";
 import { useConsultationRequestStore } from "@/features/home/hooks/useConsultationRequestStore";
 import { useConsultationTypeStore } from "@/store/ConsultationTypeStore";
 import { toast } from "sonner";
@@ -29,7 +30,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
   buttonClassName = "",
 }) => {
   const { data: session } = useSession();
-  const router = useRouter();
+  const { push, isNavigating } = useNavigationLoader();
   const { storeConsultationRequest, Loading: isSubmitting } =
     useConsultationRequestStore();
   const { setConsultation } = useConsultationTypeStore();
@@ -38,7 +39,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
   const handleChatConsultation = async () => {
     if (!session?.user?.id) {
       toast.error("يجب تسجيل الدخول أولاً");
-      router.push("/login");
+      push("/login");
       return;
     }
 
@@ -65,7 +66,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
       setIsDialogOpen(false);
 
       // الانتقال إلى صفحة الدفع
-      router.push(`/payment?consultation_id=${consultationRequestId}&type=chat`);
+      push(`/payment?consultation_id=${consultationRequestId}&type=chat`);
     } catch (error) {
       console.error("❌ خطأ في إرسال طلب الاستشارة النصية:", error);
       // toast.error سيتم عرضه من useConsultationRequestStore
@@ -86,7 +87,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
     setIsDialogOpen(false);
 
     // الانتقال إلى صفحة الحجز
-    router.push(`/appointment/${provider.id}`);
+    push(`/appointment/${provider.id}`);
   };
 
   return (
@@ -108,14 +109,16 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
 
         {/* زر الملف الشخصي (يظهر فقط إذا showProfileButton = true) */}
         {showProfileButton && (
-          <Button
+          <LoadingButton
             size="lg"
             variant="ghost"
             className="cursor-pointer w-full xl:w-30 bg-white/90 backdrop-blur-sm text-[#32A88D] hover:bg-white border border-[#32A88D]/30 hover:border-[#32A88D] rounded-xl py-4 transition-all duration-300"
-            onClick={() => router.push(`/therapists/${provider.id}`)}
+            isLoading={isNavigating}
+            loadingText="جارٍ الانتقال..."
+            onClick={() => push(`/therapists/${provider.id}`)}
           >
             <span className="font-medium">الملف الشخصي</span>
-          </Button>
+          </LoadingButton>
         )}
       </div>
 
@@ -152,7 +155,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
             {/* استشارة فيديو */}
             <button
               onClick={handleVideoConsultation}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isNavigating}
               className="group flex flex-col items-center gap-3 p-6 bg-green-50 hover:bg-green-100 border-2 border-green-200 hover:border-green-300 rounded-2xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center group-hover:bg-green-600 transition-colors">

@@ -192,3 +192,15 @@
   direction: rtl;
   unicode-bidi: embed;
 }
+
+/* NavigationProgress bar — animates from 0 to 92% and holds there.
+   The component unmounts on route change, restarting the animation fresh
+   on the next navigation without any JS-side animation bookkeeping. */
+@keyframes nav-progress {
+  from { width: 0%; }
+  to   { width: 92%; }
+}
+
+.nav-progress-bar {
+  animation: nav-progress 1.5s ease-out forwards;
+}

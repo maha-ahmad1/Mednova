@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Info, CheckCircle2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,7 +37,7 @@ interface AddBankAccountFormProps {
 
 export function AddBankAccountForm({ onCancel, existingAccount }: AddBankAccountFormProps) {
   const t = useTranslations("financial.withdraw.bankAccount");
-  const router = useRouter();
+  const { push, back } = useNavigationLoader();
   const addMutation = useAddBankAccount();
   const updateMutation = useUpdateBankAccount();
   const { mutateAsync, isPending } = existingAccount ? updateMutation : addMutation;
@@ -68,7 +68,7 @@ export function AddBankAccountForm({ onCancel, existingAccount }: AddBankAccount
   const onSubmit = async (values: BankAccountFormValues) => {
     try {
       await mutateAsync({ ...values, bank_country: "OM" });
-      router.push("/profile/financial/bank-account/verify");
+      push("/profile/financial/bank-account/verify");
     } catch {
       // error handled in hook via toast
     }
@@ -181,7 +181,7 @@ export function AddBankAccountForm({ onCancel, existingAccount }: AddBankAccount
               </FormSubmitButton>
               <button
                 type="button"
-                onClick={() => (onCancel ? onCancel() : router.back())}
+                onClick={() => (onCancel ? onCancel() : back())}
                 disabled={isPending}
                 className="px-6 py-2 text-sm text-muted-foreground border border-border rounded-md hover:bg-muted/40 transition-colors disabled:opacity-50"
               >

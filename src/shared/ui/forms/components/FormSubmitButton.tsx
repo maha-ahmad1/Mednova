@@ -1,15 +1,16 @@
-import * as React from "react"
-import { Button, type buttonVariants } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import type { VariantProps } from "class-variance-authority"
+import * as React from "react";
+import type { VariantProps } from "class-variance-authority";
+import type { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { LoadingButton } from "@/shared/ui/LoadingButton";
 
 export interface FormSubmitButtonProps
   extends React.ComponentProps<"button">,
     VariantProps<typeof buttonVariants> {
-  isLoading?: boolean
-  loadingText?: string
-  children: React.ReactNode
-  align?: "left" | "right" | "center" 
+  isLoading?: boolean;
+  loadingText?: string;
+  children: React.ReactNode;
+  align?: "left" | "right" | "center";
 }
 
 const FormSubmitButton = React.forwardRef<HTMLButtonElement, FormSubmitButtonProps>(
@@ -22,7 +23,7 @@ const FormSubmitButton = React.forwardRef<HTMLButtonElement, FormSubmitButtonPro
       disabled,
       variant,
       size,
-      align = "right", 
+      align = "right",
       ...props
     },
     ref,
@@ -32,26 +33,28 @@ const FormSubmitButton = React.forwardRef<HTMLButtonElement, FormSubmitButtonPro
         ? "justify-start"
         : align === "center"
         ? "justify-center"
-        : "justify-end"
+        : "justify-end";
 
     return (
-      <div className={cn("flex w-full cursor-pointer", alignmentClass)}>
-        <Button
+      <div className={cn("flex w-full", alignmentClass)}>
+        <LoadingButton
           ref={ref}
           type="submit"
           variant={variant}
           size={size}
-          disabled={isLoading || disabled}
+          isLoading={isLoading}
+          loadingText={loadingText}
+          disabled={disabled}
           className={cn("cursor-pointer", className)}
-          {...props} 
+          {...props}
         >
-          {isLoading ? loadingText : children}
-        </Button>
+          {children}
+        </LoadingButton>
       </div>
-    )
+    );
   },
-)
+);
 
-FormSubmitButton.displayName = "FormSubmitButton"
+FormSubmitButton.displayName = "FormSubmitButton";
 
-export { FormSubmitButton }
+export { FormSubmitButton };

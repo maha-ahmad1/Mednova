@@ -1,8 +1,9 @@
+
+
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 
 interface LogoProps {
   width?: number;
@@ -11,11 +12,10 @@ interface LogoProps {
 }
 
 export function Logo({ width = 100, height = 100, className }: LogoProps) {
-  const router = useRouter();
-  const locale = useLocale();
+  const { push } = useNavigationLoader();
 
   const handleClick = () => {
-    router.push(`/${locale}`);
+    push("/");
   };
 
   return (

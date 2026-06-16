@@ -12,6 +12,7 @@ import "leaflet/dist/leaflet.css";
 // import NavbarWrapper from "@/components/ui/NavbarWrapper";
 // import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
  import EchoProvider from "@/providers/ClientEchoWrapper";
+import { NavigationProgress } from "@/shared/ui/NavigationProgress";
 
 const cairo = Cairo({
   subsets: ["arabic"],
@@ -33,6 +34,7 @@ export default async function RootLayout({
       <body className={cairo.variable}>
         <Providers>
           <SessionProviderWrapper>
+            <NavigationProgress />
             <Suspense fallback={null}>
               <EchoProvider>
                 <main className="min-h-screen">{children}</main>

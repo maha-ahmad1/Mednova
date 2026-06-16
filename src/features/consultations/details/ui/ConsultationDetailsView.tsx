@@ -7,7 +7,7 @@ import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
-import { useRouter } from "@/i18n/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { useConsultationDetails } from "@/features/consultations/details/hooks/useConsultationDetails";
 import FinancialStatusBanner from "@/features/consultations/details/ui/FinancialStatusBanner";
 import ConsultationHeader from "@/features/consultations/details/ui/sections/ConsultationHeader";
@@ -29,7 +29,7 @@ export default function ConsultationDetailsView({
   type,
 }: ConsultationDetailsViewProps) {
   const t = useTranslations("consultations.details");
-  const router = useRouter();
+  const { push } = useNavigationLoader();
   const { data: session } = useSession();
   const isPatientRole = session?.role === "patient";
   const { data: details, isLoading, error } = useConsultationDetails(id, type);
@@ -40,7 +40,7 @@ export default function ConsultationDetailsView({
 
   const handleWithdraw = () => {
     if (!bankAccount || !bankAccount.is_verified) {
-      router.push("/profile/financial/bank-account");
+      push("/profile/financial/bank-account");
       return;
     }
     setWithdrawDialogOpen(true);

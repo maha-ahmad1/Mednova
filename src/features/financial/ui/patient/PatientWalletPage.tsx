@@ -17,7 +17,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { useRouter } from "@/i18n/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
+import { LoadingButton } from "@/shared/ui/LoadingButton";
 import { usePatientWallet, usePatientPayments } from "@/features/financial/hooks";
 import { useBankAccount } from "@/features/financial/withdraw/hooks/useBankAccount";
 import { WithdrawRequestDialog } from "@/features/financial/withdraw/ui/WithdrawRequestDialog";
@@ -37,7 +38,7 @@ type ActiveTab = "payments" | "transactions" | "withdrawals";
 
 export function PatientWalletPage() {
   const t = useTranslations("financial");
-  const router = useRouter();
+  const { push, isNavigating } = useNavigationLoader();
   const [period, setPeriod] = useState("week");
   const [activeTab, setActiveTab] = useState<ActiveTab>("payments");
   const [withdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
@@ -49,7 +50,7 @@ export function PatientWalletPage() {
 
   const handleWithdraw = () => {
     if (!bankAccount || !bankAccount.is_verified) {
-      router.push("/profile/financial/bank-account");
+      push("/profile/financial/bank-account");
       return;
     }
     setWithdrawDialogOpen(true);
@@ -79,25 +80,29 @@ export function PatientWalletPage() {
 
         <div className="flex gap-2 flex-wrap">
           {!bankAccount ? (
-            <Button
+            <LoadingButton
               variant="outline"
               size="sm"
               className="gap-1.5 border-border/60 text-muted-foreground"
-              onClick={() => router.push("/profile/financial/bank-account")}
+              isLoading={isNavigating}
+              loadingText="جارٍ الانتقال..."
+              onClick={() => push("/profile/financial/bank-account")}
             >
               <Plus className="h-4 w-4" />
               {t("shared.addBankAccount")}
-            </Button>
+            </LoadingButton>
           ) : (
-            <Button
+            <LoadingButton
               variant="outline"
               size="sm"
               className="gap-1.5 border-border/60 text-muted-foreground"
-              onClick={() => router.push("/profile/financial/bank-account")}
+              isLoading={isNavigating}
+              loadingText="جارٍ الانتقال..."
+              onClick={() => push("/profile/financial/bank-account")}
             >
               <Eye className="h-4 w-4" />
               {t("shared.viewBankAccount")}
-            </Button>
+            </LoadingButton>
           )}
           <Button
             size="sm"

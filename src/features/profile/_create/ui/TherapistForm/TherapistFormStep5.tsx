@@ -10,12 +10,11 @@ import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 import { Controller } from "react-hook-form";
 import { TextArea } from "@/shared/ui/components/TextArea";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { useTherapist } from "@/features/profile/_create/hooks/useTherapistStore";
 import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import type { TherapistFormValues } from "@/app/api/therapist";
-import { Loader2 } from "lucide-react";
 import { useTherapistDraftStore } from "@/features/profile/_create/hooks/useTherapistDraftStore";
 import { SubmitHandler } from "react-hook-form";
 
@@ -63,7 +62,7 @@ export function TherapistFormStep5({
   useApplyGlobalFormErrors(globalErrors, methods.setError);
 
   const { data: session, update } = useSession();
-  const router = useRouter();
+  const { replace } = useNavigationLoader();
   const resetDraft = useTherapistDraftStore((state) => state.resetDraft);
 
   const { storeTherapist, isStoring } = useTherapist({
@@ -213,7 +212,7 @@ export function TherapistFormStep5({
       });
       showSuccessToast("تم إرسال بياناتك بنجاح!");
 
-      router.replace("/profile");
+      replace("/profile");
     } catch {}
   };
 
@@ -248,15 +247,8 @@ export function TherapistFormStep5({
             >
               رجوع
             </FormSubmitButton>
-            <FormSubmitButton className="px-6 py-5" disabled={isStoring}>
-              {isStoring ? (
-                <>
-                  <Loader2 className="w-4 h-4 ml-2 animate-spin" /> جارٍ
-                  الإرسال...
-                </>
-              ) : (
-                "إرسال"
-              )}
+            <FormSubmitButton className="px-6 py-5" isLoading={isStoring} loadingText="جارٍ الإرسال...">
+              إرسال
             </FormSubmitButton>
           </div>
         </form>

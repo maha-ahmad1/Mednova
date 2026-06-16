@@ -10,12 +10,11 @@ import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 import { Controller } from "react-hook-form";
 import { TextArea } from "@/shared/ui/components/TextArea";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { useCenterStore } from "@/features/profile/_create/hooks/useCenterStore";
 import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import type { CenterFormValues } from "@/app/api/center";
-import { Loader2 } from "lucide-react";
 import { useCenterDraftStore } from "@/features/profile/_create/hooks/useCenterDraftStore";
 import type { SubmitHandler } from "react-hook-form";
 
@@ -64,7 +63,7 @@ export function CenterFormStep5({
   useApplyGlobalFormErrors(globalErrors, methods.setError);
 
   const { data: session, update } = useSession();
-  const router = useRouter();
+  const { replace } = useNavigationLoader();
   const resetDraft = useCenterDraftStore((state) => state.resetDraft);
 
   const { storeCenter, isStoring } = useCenterStore({
@@ -204,7 +203,7 @@ export function CenterFormStep5({
       });
       showSuccessToast("تم إرسال بيانات المركز بنجاح!");
 
-      router.replace("/profile");
+      replace("/profile");
     } catch {}
   };
 
@@ -239,15 +238,8 @@ export function CenterFormStep5({
             >
               رجوع
             </FormSubmitButton>
-            <FormSubmitButton className="px-6 py-5" disabled={isStoring}>
-              {isStoring ? (
-                <>
-                  <Loader2 className="w-4 h-4 ml-2 animate-spin" /> جارٍ
-                  الإرسال...
-                </>
-              ) : (
-                "إرسال"
-              )}
+            <FormSubmitButton className="px-6 py-5" isLoading={isStoring} loadingText="جارٍ الإرسال...">
+              إرسال
             </FormSubmitButton>
           </div>
         </form>

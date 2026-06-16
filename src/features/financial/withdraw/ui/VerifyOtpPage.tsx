@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import {
   InputOTP,
   InputOTPGroup,
@@ -26,7 +26,7 @@ type OtpFormValues = z.infer<typeof otpSchema>;
 
 export function VerifyOtpPage() {
   const t = useTranslations("financial.withdraw.otp");
-  const router = useRouter();
+  const { push } = useNavigationLoader();
   const [resendCountdown, setResendCountdown] = useState(60);
   const { mutateAsync, isPending } = useVerifyBankOtp();
   const { mutate: resendOtp, isPending: isResending } = useResendBankOtp();
@@ -60,7 +60,7 @@ export function VerifyOtpPage() {
   const onSubmit = async (values: OtpFormValues) => {
     try {
       await mutateAsync(values.otp);
-      router.push("/profile/financial/bank-account");
+      push("/profile/financial/bank-account");
     } catch {
       // error handled in hook via toast
     }

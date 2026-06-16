@@ -20,7 +20,7 @@ import { WifiOff, RefreshCw, Home, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { countries } from "@/constants/countries";
 import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 
@@ -88,7 +88,7 @@ export function PatientFormStep2({
   );
 
   const [networkError, setNetworkError] = useState(false);
-  const router = useRouter();
+  const { push, replace } = useNavigationLoader();
   const [countryCode] = useState(formData.countryCode || "+968");
 
   const methods = useForm<PatientStep2FormData>({
@@ -202,7 +202,7 @@ export function PatientFormStep2({
                 </p>
               </div>
               <Button
-                onClick={() => router.push("/login")}
+                onClick={() => push("/login")}
                 className="w-full bg-[#32A88D] hover:bg-[#2a9178]"
               >
                 تسجيل الدخول
@@ -276,7 +276,7 @@ export function PatientFormStep2({
 
       showSuccessToast("تم حفظ البيانات بنجاح!");
 
-      router.replace("/profile");
+      replace("/profile");
       onNext();
     } catch (error: unknown) {
       console.error("Error submitting form:", error);
@@ -415,16 +415,10 @@ export function PatientFormStep2({
                 size="sm"
                 variant="default"
                 className="px-6 py-5"
-                disabled={isLoading}
+                isLoading={isLoading}
+                loadingText="جاري الحفظ..."
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                    جاري الحفظ...
-                  </>
-                ) : (
-                  "حفظ البيانات"
-                )}
+                حفظ البيانات
               </FormSubmitButton>
             </div>
           </form>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -125,7 +125,7 @@ const getConfirmationCopy = (
 };
 
 export function UsersManagementPage() {
-  const router = useRouter();
+  const { push } = useNavigationLoader();
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [filters, setFilters] = useState<UsersFilters>(initialFilters);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
@@ -474,7 +474,7 @@ export function UsersManagementPage() {
                       }
                       activateSubscriptionDestructive={user.isSubscribed}
                       onViewDetails={() =>
-                        router.push(`/control-panel/users/${user.id}`)
+                        push(`/control-panel/users/${user.id}`)
                       }
                       onToggleBlock={() =>
                         openConfirmation({

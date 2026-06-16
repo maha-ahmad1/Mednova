@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
-import { useRouter } from "@/i18n/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
+import { LoadingButton } from "@/shared/ui/LoadingButton";
 import { format } from "date-fns";
 import { ar, enUS } from "date-fns/locale";
 import { Calendar, CheckCircle2, Home, Stethoscope } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   type ConsultationDetails,
@@ -26,7 +26,7 @@ export function PaymentSuccessScreen({
   details,
 }: PaymentSuccessScreenProps) {
   const t = useTranslations("payment");
-  const router = useRouter();
+  const { push, isNavigating } = useNavigationLoader();
   const locale = useLocale();
   const dateLocale = locale === "ar" ? ar : enUS;
   const [count, setCount] = useState(5);
@@ -40,7 +40,7 @@ export function PaymentSuccessScreen({
       setCount((prev) => {
         if (prev <= 1) {
           clearInterval(intervalRef.current!);
-          router.push(detailsHref);
+          push(detailsHref);
           return 0;
         }
         return prev - 1;
@@ -50,16 +50,16 @@ export function PaymentSuccessScreen({
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [router, detailsHref]);
+  }, [push, detailsHref]);
 
   const handleViewDetails = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
-    router.push(detailsHref);
+    push(detailsHref);
   };
 
   const handleGoHome = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
-    router.push("/");
+    push("/");
   };
 
   const financial = isPatientFinancial(details.financial)
@@ -158,18 +158,25 @@ export function PaymentSuccessScreen({
 
             {/* Actions */}
             <div className="flex flex-col gap-3">
-              <Button onClick={handleViewDetails} className="w-full gap-2">
+              <LoadingButton
+                onClick={handleViewDetails}
+                isLoading={isNavigating}
+                loadingText="جارٍ الانتقال..."
+                className="w-full gap-2"
+              >
                 <CheckCircle2 className="h-4 w-4" />
                 {t("success.viewDetails")}
-              </Button>
-              <Button
+              </LoadingButton>
+              <LoadingButton
                 onClick={handleGoHome}
+                isLoading={isNavigating}
+                loadingText="جارٍ الانتقال..."
                 variant="outline"
                 className="w-full gap-2"
               >
                 <Home className="h-4 w-4" />
                 {t("success.goHome")}
-              </Button>
+              </LoadingButton>
             </div>
           </CardContent>
         </Card>

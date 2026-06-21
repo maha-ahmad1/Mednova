@@ -16,6 +16,8 @@ export default function PendingProfilePage() {
 
     if (approvalStatus === "approved") {
       router.replace("/profile");
+    } else if (approvalStatus === "rejected") {
+      router.replace("/profile/rejected");
     }
   }, [router, session?.approval_status, session?.user?.approval_status]);
 

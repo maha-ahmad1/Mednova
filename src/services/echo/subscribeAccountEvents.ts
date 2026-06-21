@@ -92,6 +92,19 @@ export const subscribeAccountEvents = ({
         duration: 5000,
       });
 
+      await updateSession({
+        approval_status: "rejected",
+        user: {
+          ...(sessionUser || {}),
+          approval_status: "rejected",
+        },
+      });
+
+      if (typeof window !== "undefined") {
+        window.location.replace("/profile/rejected");
+        return;
+      }
+
       router.replace("/profile/rejected");
     }
   });

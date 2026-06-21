@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { StepperHeader } from "@/features/profile/_create/ui/StepperHeader";
 import { CenterFormStep2 } from "./CenterFormStep2";
 import { CenterFormStep3 } from "./CenterFormStep3";
@@ -10,6 +12,20 @@ import { useCenterDraftStore } from "@/features/profile/_create/hooks/useCenterD
 import { useSession } from "next-auth/react";
 
 export default function CenterWrapper() {
+  const [hasHydrated, setHasHydrated] = useState(
+    () => useCenterDraftStore.persist.hasHydrated()
+  );
+
+  useEffect(() => {
+    if (useCenterDraftStore.persist.hasHydrated()) {
+      setHasHydrated(true);
+      return;
+    }
+    return useCenterDraftStore.persist.onFinishHydration(() => {
+      setHasHydrated(true);
+    });
+  }, []);
+
   const currentStep = useCenterDraftStore((state) => state.currentStep);
   const globalErrors = useCenterDraftStore((state) => state.globalErrors);
   const formData = useCenterDraftStore((state) => state.formData);
@@ -20,6 +36,14 @@ export default function CenterWrapper() {
   const nextStep = () => setCurrentStep(Math.min(currentStep + 1, 5));
   const prevStep = () => setCurrentStep(Math.max(currentStep - 1, 1));
   const { data: session } = useSession();
+
+  if (!hasHydrated) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <Loader2 className="w-10 h-10 animate-spin text-[#32A88D]" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -37,7 +61,6 @@ export default function CenterWrapper() {
       <div className="mt-10">
         {currentStep === 1 && (
           <CenterFormStep1
-            key={session?.user?.id}
             onNext={nextStep}
             formData={formData}
             updateFormData={updateFormData}

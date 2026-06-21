@@ -38,6 +38,13 @@ export function PaymentStatusBanner({ status }: { status: PaymentStatusType }) {
       bg: "from-amber-50/80 to-yellow-50/50",
       text: "text-amber-800",
     },
+    //  unpaid: {
+    //   icon: <Clock className="h-4 w-4 text-amber-700" />,
+    //   title: "مش مدفوع ",
+    //   desc: "الرجاء الدفع لإكمال العملية",
+    //   bg: "from-amber-50/80 to-yellow-50/50",
+    //   text: "text-amber-800",
+    // },
   };
 
   const c = config[status];

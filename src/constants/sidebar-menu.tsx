@@ -12,11 +12,11 @@ import {
 
 export const sidebarMenus = {
   patient: [
-    { icon: LayoutDashboard, label: "لوحة التحكم", href: "/" },
+    { icon: LayoutDashboard, label: "الصفحة الرئيسية", href: "/" },
     { icon: UserPlus, label: "الصفحة الشخصية", href: "/profile" },
     // { icon: Users, label: "المستخدمين", href: "/coming-soon" },
     { icon: Calendar, label: "طلبات الاستشارة", href: "/profile/consultations" },
-    { icon: Activity, label: "الجلسات", href: "/coming-soon" },
+    // { icon: Activity, label: "الجلسات", href: "/coming-soon" },
         { icon: Wallet, label: "المحفظة المالية", href: "/profile/financial" },
 
     // { icon: FileText, label: "التقارير", href: "/coming-soon" },
@@ -25,17 +25,17 @@ export const sidebarMenus = {
   ],
 
   therapist: [
-    { icon: LayoutDashboard, label: "لوحة التحكم", href: "/" },
+    { icon: LayoutDashboard, label: "الصفحة الرئيسية", href: "/" },
     { icon: UserPlus, label: "الصفحة الشخصية", href: "/profile" },
     { icon: Calendar, label: "المواعيد", href: "/profile/consultations" },
-    { icon: Activity, label: "الجلسات", href: "/coming-soon" },
+    // { icon: Activity, label: "الجلسات", href: "/coming-soon" },
     { icon: Wallet, label: "المحفظة المالية", href: "/profile/financial" },
     { icon: FileText, label: "التقارير", href: "/coming-soon" },
     { icon: HelpCircle, label: "المساعدة", href: "/coming-soon" },
   ],
 
   rehabilitation_center: [
-    { icon: LayoutDashboard, label: "لوحة التحكم", href: "/" },
+    { icon: LayoutDashboard, label: "الصفحة الرئيسية", href: "/" },
     { icon: Calendar, label: "المواعيد", href: "/appointments" },
     { icon: Users, label: "المرضى", href: "/patients" },
     { icon: HelpCircle, label: "المساعدة", href: "/coming-soon" },

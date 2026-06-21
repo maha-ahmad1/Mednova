@@ -4,6 +4,13 @@
     "cta": "Complete Profile",
     "dismiss": "Dismiss"
   },
+  "accountRejected": {
+    "title": "Account Verification Rejected",
+    "description": "Unfortunately, your verification request was not approved. If you believe this is a mistake or need more information, please contact our support team.",
+    "contactSupport": "Contact Support via WhatsApp",
+    "whatsappMessage": "Hello, my account verification request was rejected and I would like more information.",
+    "logout": "Logout"
+  },
   "navbar": {
     "search": "Search for user, appointment, or report...",
     "searchPlaceholder": "Search for a user, appointment, or report...",

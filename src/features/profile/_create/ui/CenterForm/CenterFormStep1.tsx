@@ -162,18 +162,9 @@ export function CenterFormStep1({
 useEffect(() => {
   if (status === "authenticated" && session?.user) {
     const parsed = parsePhoneNumber(session.user.phone);
-
-    methods.reset({
-      full_name: session.user.full_name || "",
-      email: session.user.email || "",
-      phone: parsed.localNumber,
-      gender: undefined,
-      formatted_address: "",
-      year_establishment: "",
-      birth_date: "",
-      image: undefined,
-      name_center: "",
-    });
+    methods.setValue("full_name", session.user.full_name || "");
+    methods.setValue("email", session.user.email || "");
+    methods.setValue("phone", parsed.localNumber);
   }
 }, [session?.user?.id]);
 

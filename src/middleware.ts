@@ -143,6 +143,14 @@ export async function middleware(req: NextRequest) {
         url.pathname = `/${locale}/profile`;
         return NextResponse.redirect(url);
       }
+    } else if (approval_status === "rejected") {
+      if (
+        !cleanPathname.startsWith("/profile/rejected") &&
+        isRestrictedForIncompleteProfile(cleanPathname)
+      ) {
+        url.pathname = `/${locale}/profile/rejected`;
+        return NextResponse.redirect(url);
+      }
     }
   }
 

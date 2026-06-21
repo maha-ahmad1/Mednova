@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
@@ -11,15 +11,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/shared/ui/components/Navbar/Navbar";
 import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
 import { useCreatePaymentLink } from "@/features/payment/hooks/useCreatePaymentLink";
-import { usePaymentStatus } from "@/features/payment/hooks/usePaymentStatus";
 import { useFetcher } from "@/hooks/useFetcher";
 import {
   type ConsultationDetails,
-  type PaymentStatusType,
   isPaid as isPaidStatus,
   isPatientFinancial,
 } from "@/features/payment/types";
-import { PaymentSuccessScreen } from "@/features/payment/ui/PaymentSuccessScreen";
 import { PaymentForm } from "@/features/payment/ui/PaymentForm";
 
 export default function PaymentPageView() {
@@ -45,20 +42,6 @@ export default function PaymentPageView() {
 
   const createPaymentLinkMutation = useCreatePaymentLink();
 
-  const isGatewayReturn = useMemo(
-    () =>
-      ["payment_return", "gateway_payment_id", "biller_ref", "status"].some(
-        (key) => searchParams.has(key),
-      ),
-    [searchParams],
-  );
-
-  const { data: paymentStatusData, isLoading: isCheckingStatus } =
-    usePaymentStatus({
-      consultationId: details?.id,
-      enabled: isGatewayReturn,
-    });
-
   useEffect(() => {
     if (!consultationId || !type) {
       toast.error(t("invalidLink"));
@@ -67,14 +50,10 @@ export default function PaymentPageView() {
   }, [consultationId, type, router, t]);
 
   useEffect(() => {
-    if (
-      details &&
-      !isGatewayReturn &&
-      isPaidStatus(details.data.financial_status)
-    ) {
+    if (details && isPaidStatus(details.data.financial_status)) {
       router.replace(`/profile/consultations/${details.type}/${details.id}`);
     }
-  }, [details, isGatewayReturn, router]);
+  }, [details, router]);
 
   if (!consultationId || !type) return null;
 
@@ -165,22 +144,8 @@ export default function PaymentPageView() {
     );
   }
 
-  // ── Gateway return + paid → success screen ───────────────────
-  if (isGatewayReturn && isPaidStatus(financialStatus)) {
-    return (
-      <>
-        <Navbar />
-        <PaymentSuccessScreen
-          consultationId={details.id}
-          consultationType={details.type}
-          details={details}
-        />
-      </>
-    );
-  }
-
   // ── Already paid (direct visit) → redirect in progress ───────
-  if (isPaidStatus(financialStatus) && !isGatewayReturn) {
+  if (isPaidStatus(financialStatus)) {
     return (
       <>
         <Navbar />
@@ -199,11 +164,6 @@ export default function PaymentPageView() {
 
   // ── Normal payment UI (unpaid) ───────────────────────────────
   if (!isPatientFinancial(details.financial)) return null;
-
-  const rawStatus = paymentStatusData?.status ?? "pending";
-  const paymentStatus: PaymentStatusType = isCheckingStatus
-    ? "loading"
-    : (rawStatus as PaymentStatusType);
 
   const handleStartPayment = async () => {
     try {
@@ -233,10 +193,7 @@ export default function PaymentPageView() {
       <PaymentForm
         details={details}
         financial={details.financial}
-        paymentStatus={paymentStatus}
         isMutationPending={createPaymentLinkMutation.isPending}
-        isPollingPaid={paymentStatus === "paid"}
-        isGatewayReturn={isGatewayReturn}
         onStartPayment={handleStartPayment}
       />
     </>

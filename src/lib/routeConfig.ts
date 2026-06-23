@@ -1,9 +1,10 @@
 /**
- * Routes that require a fully-completed profile.
- * Incomplete users who try to access these are redirected to /profile/create.
- * All other authenticated routes are freely accessible (with a banner reminder).
+ * Routes that require a fully-approved account (completed profile + approval_status "approved").
+ * Users who are incomplete, pending review, or rejected are redirected away from these routes
+ * to their respective status page. All other routes (home, specialists, services, articles,
+ * etc.) stay freely browsable so users can explore the platform while waiting.
  */
-export const INCOMPLETE_PROFILE_RESTRICTED_ROUTES = [
+export const APPROVED_ACCOUNT_RESTRICTED_ROUTES = [
   "/appointment",
   "/payment",
   "/profile",
@@ -12,9 +13,9 @@ export const INCOMPLETE_PROFILE_RESTRICTED_ROUTES = [
   "/profile/financial",
 ];
 
-/** Returns true if the given clean path (no locale prefix) is restricted for incomplete profiles. */
-export function isRestrictedForIncompleteProfile(cleanPath: string): boolean {
-  return INCOMPLETE_PROFILE_RESTRICTED_ROUTES.some(
+/** Returns true if the given clean path (no locale prefix) requires an approved account. */
+export function isRestrictedForUnapprovedAccount(cleanPath: string): boolean {
+  return APPROVED_ACCOUNT_RESTRICTED_ROUTES.some(
     (route) => cleanPath === route || cleanPath.startsWith(`${route}/`),
   );
 }

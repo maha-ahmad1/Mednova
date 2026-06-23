@@ -9,9 +9,6 @@ import { Providers } from "../providers/QueryClientProvider";
 import { SessionProviderWrapper } from "@/providers/SessionProviderWrapper";
 import { Toaster } from "@/components/ui/sonner";
 import "leaflet/dist/leaflet.css";
-// import NavbarWrapper from "@/components/ui/NavbarWrapper";
-// import LandingNavbar from "@/shared/ui/layout/LandingNavbar";
- import EchoProvider from "@/providers/ClientEchoWrapper";
 import { NavigationProgress } from "@/shared/ui/NavigationProgress";
 
 const cairo = Cairo({
@@ -36,9 +33,7 @@ export default async function RootLayout({
           <SessionProviderWrapper>
             <NavigationProgress />
             <Suspense fallback={null}>
-              <EchoProvider>
-                <main className="min-h-screen">{children}</main>
-              </EchoProvider>
+              <main className="min-h-screen">{children}</main>
               <Toaster richColors position="top-center" />
             </Suspense>
             <SpeedInsights />

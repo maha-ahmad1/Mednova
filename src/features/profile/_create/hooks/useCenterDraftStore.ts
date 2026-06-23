@@ -2,6 +2,9 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
 export type CenterDraftFormData = {
+  full_name: string
+  email: string
+  phone: string
   gender?: "male" | "female"
   birth_date: string
   image?: File
@@ -46,6 +49,9 @@ const initialState: Pick<CenterDraftState, "currentStep" | "globalErrors" | "for
   currentStep: 1,
   globalErrors: {},
   formData: {
+    full_name: "",
+    email: "",
+    phone: "",
     gender: undefined,
     birth_date: "",
     image: undefined,
@@ -85,6 +91,6 @@ export const useCenterDraftStore = create<CenterDraftState>()(
       updateFormData: (data) => set((state) => ({ formData: { ...state.formData, ...data } })),
       resetDraft: () => set(initialState),
     }),
-    { name: "center-create-draft" }
+    { name: "center-create-draft", version: 1 }
   )
 )

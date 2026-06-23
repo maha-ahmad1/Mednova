@@ -21,20 +21,25 @@ interface SubscribeAccountEventsParams {
     user: Record<string, unknown>;
   }) => Promise<unknown>;
   sessionUser: Record<string, unknown> | undefined;
-  router: {
-    replace: (href: string) => void;
-    refresh: () => void;
-  };
+  /** Translator scoped to the "accountStatus" message namespace. */
+  t: (key: string) => string;
   instanceId?: string;
 }
 
+/**
+ * Listens for account approval/rejection events. Intentionally does NOT
+ * auto-redirect — the session is updated in the background so route guards
+ * stay accurate, while the user keeps control via the persistent
+ * AccountStatusNotificationCard (which renders the "Go to Profile" /
+ * "View Details" actions and drives the navigation progress bar).
+ */
 export const subscribeAccountEvents = ({
   accountChannel,
   userId,
   addNotification,
   updateSession,
   sessionUser,
-  router,
+  t,
   instanceId,
 }: SubscribeAccountEventsParams): void => {
   console.debug("[EchoDebug][Account] attach-listener", {
@@ -43,77 +48,49 @@ export const subscribeAccountEvents = ({
     userId,
     instanceId,
   });
-  accountChannel.listen(".account.status.updated", async (event: AccountStatusEvent) => {
-    console.log("📢 حدث تحديث حالة الحساب:", event);
-    console.log("🔥🔥🔥 حدث تحديث الحساب واصل:", event);
 
-    const notification = createAccountStatusNotification(event);
-    console.debug("[EchoDebug][Account] addNotification", {
+  accountChannel.listen(".account.status.updated", async (event: AccountStatusEvent) => {
+    console.debug("[EchoDebug][Account] event-received", {
       timestamp: new Date().toISOString(),
       userId,
-      eventType: `.account.status.updated:${event.status}`,
-      notificationId: notification.id,
       instanceId,
+      event,
     });
-    addNotification(notification);
 
-    if (event.status === "approved") {
-      toast.success(event.message || "تم قبول حسابك", {
-        duration: 5000,
-      });
-
-      const updatedSession = await updateSession({
-        approval_status: "approved",
-        user: {
-          ...(sessionUser || {}),
-          approval_status: "approved",
-        },
-      });
-
-      const isApproved =
-        (updatedSession as { approval_status?: string } | null)?.approval_status ===
-          "approved" ||
-        (
-          updatedSession as {
-            user?: { approval_status?: string };
-          } | null
-        )?.user?.approval_status === "approved";
-
-      if (isApproved && typeof window !== "undefined") {
-        window.location.replace("/profile");
-        return;
-      }
-
-      // router.replace("/profile");
+    if (event.status !== "approved" && event.status !== "rejected") {
+      return;
     }
 
-    if (event.status === "rejected") {
-      toast.error(event.message || "تم رفض حسابك", {
-        duration: 5000,
-      });
+    const isApproved = event.status === "approved";
+    const title = isApproved ? t("approvedTitle") : t("rejectedTitle");
+    // Backend message is the source of truth — only fall back to translated
+    // copy when the backend doesn't provide one.
+    const description =
+      event.message?.trim() ||
+      (isApproved ? t("approvedDescription") : t("rejectedDescription"));
 
-      await updateSession({
-        approval_status: "rejected",
-        user: {
-          ...(sessionUser || {}),
-          approval_status: "rejected",
-        },
-      });
+    addNotification(createAccountStatusNotification(event, title, description));
 
-      if (typeof window !== "undefined") {
-        window.location.replace("/profile/rejected");
-        return;
-      }
-
-      router.replace("/profile/rejected");
+    if (isApproved) {
+      toast.success(title, { description, duration: 6000 });
+    } else {
+      toast.error(title, { description, duration: 6000 });
     }
+
+    await updateSession({
+      approval_status: event.status,
+      user: {
+        ...(sessionUser || {}),
+        approval_status: event.status,
+      },
+    });
   });
 
   accountChannel.subscribed(() => {
-    console.log("✅ تم الاشتراك بنجاح في قناة accountChannel", `customer.${userId}`);
+    console.debug("[EchoDebug][Account] subscribed", `customer.${userId}`);
   });
 
   accountChannel.error((error: unknown) => {
-    console.error("❌ خطأ في accountChannel:", error);
+    console.error("[EchoDebug][Account] subscription-error", error);
   });
 };

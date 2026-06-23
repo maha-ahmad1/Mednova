@@ -3,6 +3,7 @@
 import { Sidebar } from "@/features/profile/_create/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { useLocale } from "next-intl";
 import Navbar from "@/shared/ui/components/Navbar/Navbar";
 
 export default function DashboardLayout({
@@ -11,6 +12,8 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const locale = useLocale();
+  const dir = locale === "ar" ? "rtl" : "ltr";
 
   const isCreatePage = pathname.includes("/create");
   const isPendingPage = pathname.includes("/pending");
@@ -18,7 +21,7 @@ export default function DashboardLayout({
   const hideChrome = isCreatePage || isPendingPage || isRejectedPage;
 
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
+    <div className="min-h-screen bg-gray-50" dir={dir}>
       {!hideChrome && <Navbar variant="dashboard" />}
 
       <div className="flex">

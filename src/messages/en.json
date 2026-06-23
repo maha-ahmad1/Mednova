@@ -7,9 +7,32 @@
   "accountRejected": {
     "title": "Account Verification Rejected",
     "description": "Unfortunately, your verification request was not approved. If you believe this is a mistake or need more information, please contact our support team.",
+    "reasonLabel": "Reason provided",
     "contactSupport": "Contact Support via WhatsApp",
     "whatsappMessage": "Hello, my account verification request was rejected and I would like more information.",
+    "backToHome": "Back to Home",
     "logout": "Logout"
+  },
+  "accountStatus": {
+    "approvedTitle": "Account Approved",
+    "approvedDescription": "Your account has been approved. You now have full access to all Mednova features.",
+    "approvedAction": "Go to Profile",
+    "rejectedTitle": "Account Review Not Approved",
+    "rejectedDescription": "Unfortunately, your account could not be approved. Please review the details or contact support.",
+    "rejectedAction": "View Details"
+  },
+  "accountPending": {
+    "title": "Your Account Is Under Review",
+    "restrictedAccess": "Your account is currently under review. You will be able to access this feature once your account has been approved.",
+    "description": "We're reviewing your account information to make sure everything is accurate and complete. This usually takes between 24 and 48 hours.",
+    "whyReviewTitle": "Why do we review accounts?",
+    "whyReviewDescription": "We review every new account to maintain service quality and protect our users' data.",
+    "notification": "We'll send you a notification as soon as the review is complete, so you don't need to keep checking back.",
+    "goToSpecialists": "Browse Specialists",
+    "backToHome": "Back to Home",
+    "thanks": "Thank you for your patience. We're here to help anytime.",
+    "reviewDuration": "Review time: 1-2 days",
+    "qualityCheck": "Quality Review"
   },
   "navbar": {
     "search": "Search for user, appointment, or report...",

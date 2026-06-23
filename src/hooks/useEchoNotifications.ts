@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { getEcho } from "@/lib/echo";
 import { useConsultationStore } from "@/store/consultationStore";
 import { useNotificationStore } from "@/store/notificationStore";
@@ -16,6 +17,7 @@ export const useEchoNotifications = (): void => {
   const router = useRouter();
   const pathname = usePathname();
   const pathnameRef = useRef(pathname);
+  const t = useTranslations("accountStatus");
 
   const addRequest = useConsultationStore((state) => state.addRequest);
   const updateRequest = useConsultationStore((state) => state.updateRequest);
@@ -112,7 +114,7 @@ export const useEchoNotifications = (): void => {
       addNotification,
       updateSession: update,
       sessionUser: session?.user,
-      router,
+      t,
       instanceId,
     });
 
@@ -140,5 +142,6 @@ export const useEchoNotifications = (): void => {
     status,
     update,
     deduplicator,
+    t,
   ]);
 };

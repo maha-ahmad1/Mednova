@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { routing } from "@/i18n/routing";
-import { isRestrictedForIncompleteProfile } from "@/lib/routeConfig";
+import { isRestrictedForUnapprovedAccount } from "@/lib/routeConfig";
 
 /** Paths without locale prefix (e.g. /ar/login → /login) */
 function isAuthPublicPath(cleanPath: string): boolean {
@@ -125,14 +125,20 @@ export async function middleware(req: NextRequest) {
       // Only block restricted pages — public/general pages stay accessible
       if (
         !cleanPathname.startsWith("/profile/create") &&
-        isRestrictedForIncompleteProfile(cleanPathname)
+        isRestrictedForUnapprovedAccount(cleanPathname)
       ) {
         url.pathname = `/${locale}/profile/create`;
         return NextResponse.redirect(url);
       }
     } else if (approval_status === "pending") {
-      if (!cleanPathname.startsWith("/profile/pending")) {
+      // Pending users can freely browse public pages while their account is under review —
+      // only routes that require an approved account redirect them to /profile/pending.
+      if (
+        !cleanPathname.startsWith("/profile/pending") &&
+        isRestrictedForUnapprovedAccount(cleanPathname)
+      ) {
         url.pathname = `/${locale}/profile/pending`;
+        url.searchParams.set("restricted", "1");
         return NextResponse.redirect(url);
       }
     } else if (approval_status === "approved") {
@@ -146,7 +152,7 @@ export async function middleware(req: NextRequest) {
     } else if (approval_status === "rejected") {
       if (
         !cleanPathname.startsWith("/profile/rejected") &&
-        isRestrictedForIncompleteProfile(cleanPathname)
+        isRestrictedForUnapprovedAccount(cleanPathname)
       ) {
         url.pathname = `/${locale}/profile/rejected`;
         return NextResponse.redirect(url);

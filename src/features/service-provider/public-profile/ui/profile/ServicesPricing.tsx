@@ -30,17 +30,17 @@ export default function ServicesPricing({ provider }: ServicesPricingProps) {
                 />
                 <span>{service.price}</span>
               </div>
-              <div className="text-sm text-gray-500">{service.duration}</div>
+              {/* <div className="text-sm text-gray-500">{service.duration}</div> */}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+      {/* <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
         <p className="text-sm text-blue-700 text-center">
           جميع الأسعار تشمل ضريبة القيمة المضافة ورسوم الخدمة
         </p>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -22,28 +22,20 @@ import { cn } from "@/lib/utils";
 import {
   type ConsultationDetails,
   type PatientFinancial,
-  type PaymentStatusType,
 } from "@/features/payment/types";
 import { StepIndicator } from "@/features/payment/ui/StepIndicator";
-import { PaymentStatusBanner } from "@/features/payment/ui/PaymentStatusBanner";
 
 export interface PaymentFormProps {
   details: ConsultationDetails;
   financial: PatientFinancial;
-  paymentStatus: PaymentStatusType;
   isMutationPending: boolean;
-  isPollingPaid: boolean;
-  isGatewayReturn: boolean;
   onStartPayment: () => Promise<void>;
 }
 
 export function PaymentForm({
   details,
   financial,
-  paymentStatus,
   isMutationPending,
-  isPollingPaid,
-  isGatewayReturn,
   onStartPayment,
 }: PaymentFormProps) {
   const t = useTranslations("payment");
@@ -62,9 +54,6 @@ export function PaymentForm({
       <div className="absolute -bottom-40 -right-40 h-[500px] w-[500px] rounded-full bg-emerald-100/30 blur-3xl" />
 
       <div className="relative z-10 mx-auto max-w-3xl space-y-6" dir="rtl">
-        {/* Status banner on gateway return */}
-        {isGatewayReturn && <PaymentStatusBanner status={paymentStatus} />}
-
         {/* Main Booking Card */}
         <Card className="overflow-hidden border-0 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl">
           <CardContent className="space-y-6 p-6 md:p-8">
@@ -220,7 +209,7 @@ export function PaymentForm({
             <div className="space-y-4 pt-2">
               <Button
                 onClick={onStartPayment}
-                disabled={isMutationPending || isPollingPaid}
+                disabled={isMutationPending}
                 className={cn(
                   "group relative w-full bg-gradient-to-r from-primary to-primary/90 py-6 text-base font-semibold shadow-md",
                   "transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 disabled:opacity-70",
@@ -231,11 +220,6 @@ export function PaymentForm({
                   <>
                     <Loader2 className="ml-2 h-5 w-5 animate-spin" />
                     {t("buttonCreatingLink")}
-                  </>
-                ) : isPollingPaid ? (
-                  <>
-                    <CheckCircle2 className="ml-2 h-5 w-5" />
-                    {t("buttonPaid")}
                   </>
                 ) : (
                   <>

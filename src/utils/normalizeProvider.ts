@@ -5,7 +5,7 @@ export type ProviderService = {
   name: string;
   description: string;
   price: number;
-  duration: string;
+  // duration: string;
 };
 
 type ProviderSchedule = NonNullable<ServiceProvider["schedules"]>[number];
@@ -41,14 +41,14 @@ const DEFAULT_SERVICES: ProviderService[] = [
     name: "استشارة نصية",
     description: "دردشة عبر المحادثة",
     price: 30,
-    duration: "30 دقيقة",
+    // duration: "30 دقيقة",
   },
   {
     id: 2,
     name: "جلسة فيديو",
     description: "استشارة متكاملة عبر زووم",
     price: 50,
-    duration: "60 دقيقة",
+    // duration: "60 دقيقة",
   },
 ];
 
@@ -77,14 +77,14 @@ export function normalizeProvider(data: ServiceProvider): NormalizedProvider {
       name: "استشارة نصية",
       description: "دردشة عبر المحادثة",
       price: toNumber((detailsSource as Record<string, unknown> | undefined)?.chat_consultation_price),
-      duration: "30 دقيقة",
+      // duration: "30 دقيقة",
     },
     {
       id: 2,
       name: "جلسة فيديو",
       description: "استشارة متكاملة عبر زووم",
       price: toNumber((detailsSource as Record<string, unknown> | undefined)?.video_consultation_price),
-      duration: "60 دقيقة",
+      // duration: "60 دقيقة",
     },
   ];
 

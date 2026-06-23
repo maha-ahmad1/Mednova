@@ -100,21 +100,21 @@ export const createSystemNotification = (
   return mapped;
 };
 
-export const createAccountStatusNotification = (event: {
-  status: string;
-  reason?: string;
-  message?: string;
-}): Notification => {
+export const createAccountStatusNotification = (
+  event: {
+    status: string;
+    reason?: string;
+    message?: string;
+  },
+  title: string,
+  message: string,
+): Notification => {
   const normalizedReason = event.reason?.trim() || "no-reason";
   const mapped: Notification = {
     id: `account_${event.status}_${normalizedReason.slice(0, 64)}`,
     type: event.status === "approved" ? "account_approved" : "account_rejected",
-    title: event.status === "approved" ? "تم قبول حسابك" : "تم رفض حسابك",
-    message:
-      event.message ||
-      (event.status === "approved"
-        ? "تهانينا! تم قبول حسابك"
-        : "نأسف، لم يتم قبول حسابك"),
+    title,
+    message,
     read: false,
     createdAt: new Date().toISOString(),
     source: "pusher",

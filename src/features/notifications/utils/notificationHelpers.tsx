@@ -1,11 +1,13 @@
 import {
   Bell,
   Check,
+  CheckCircle2,
   Clock,
   Video,
   MessageSquare,
   AlertCircle,
   User,
+  XCircle,
 } from "lucide-react";
 
 // دالة لتنسيق الوقت النسبي
@@ -35,6 +37,10 @@ export const getNotificationIcon = (type: string) => {
       return <AlertCircle className="h-4 w-4" />;
     case "consultation_completed":
       return <Check className="h-4 w-4" />;
+    case "account_approved":
+      return <CheckCircle2 className="h-4 w-4" />;
+    case "account_rejected":
+      return <XCircle className="h-4 w-4" />;
     default:
       return <Bell className="h-4 w-4" />;
   }
@@ -54,6 +60,10 @@ export const getNotificationColor = (type: string) => {
       return "bg-red-500";
     case "consultation_completed":
       return "bg-purple-500";
+    case "account_approved":
+      return "bg-green-500";
+    case "account_rejected":
+      return "bg-red-500";
     default:
       return "bg-gray-500";
   }

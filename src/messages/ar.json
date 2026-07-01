@@ -1152,6 +1152,8 @@
   "floatingContact": {
     "ariaLabel": "تحتاج مساعدة؟",
     "whatsapp": "واتساب",
-    "email": "راسلنا"
+    "email": "راسلنا",
+    "minimize": "إخفاء",
+    "restore": "إظهار"
   }
 }

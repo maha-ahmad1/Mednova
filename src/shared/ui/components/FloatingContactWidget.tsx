@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { Mail, X } from "lucide-react";
+import { ChevronUp, EyeOff, Mail, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePathname } from "@/i18n/navigation";
 
 const MASCOT_SRC = "/images/home/mascot-turtle-v2.png";
 
@@ -31,7 +32,9 @@ function WhatsAppIcon({ className }: { className?: string }) {
 
 export function FloatingContactWidget() {
   const t = useTranslations("floatingContact");
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [minimized, setMinimized] = useState(false);
   const [showWelcomeBadge, setShowWelcomeBadge] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -80,15 +83,44 @@ export function FloatingContactWidget() {
     };
   }, [open]);
 
+  // All hooks done — now safe to do conditional rendering
+
+  if (pathname.includes("control-panel")) return null;
+
   function handleToggle() {
     setOpen((prev) => !prev);
     setShowWelcomeBadge(false);
   }
 
+  function handleMinimize() {
+    setMinimized(true);
+    setOpen(false);
+  }
+
+  // Minimized state: tiny restore button only
+  if (minimized) {
+    return (
+      <div className="fixed bottom-6 end-6 z-40 hidden sm:block">
+        <button
+          type="button"
+          onClick={() => setMinimized(false)}
+          aria-label={t("restore")}
+          className="bg-primary relative flex h-11 w-11 items-center justify-center rounded-full text-white shadow-lg transition-shadow duration-150 hover:shadow-xl"
+        >
+          <span
+            className="bg-primary animate-contact-pulse absolute inset-0 rounded-full"
+            aria-hidden="true"
+          />
+          <ChevronUp className="relative h-5 w-5" />
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={containerRef}
-      className="fixed bottom-6 end-6 z-40 flex flex-col items-end gap-3"
+      className="fixed bottom-6 end-6 z-40 hidden sm:flex flex-col items-end gap-3"
     >
       {open && (
         <div className="flex flex-col items-end gap-3">
@@ -187,6 +219,16 @@ export function FloatingContactWidget() {
         <span className="bg-primary rounded-full px-5 py-2 text-sm font-semibold whitespace-nowrap text-white shadow-md">
           {t("ariaLabel")}
         </span>
+      </button>
+
+      <button
+        type="button"
+        onClick={handleMinimize}
+        aria-label={t("minimize")}
+        className="flex items-center gap-1 self-center rounded-full px-3 py-1 text-xs text-muted-foreground/70 transition-colors hover:text-muted-foreground"
+      >
+        <EyeOff className="h-3 w-3" />
+        <span>{t("minimize")}</span>
       </button>
     </div>
   );

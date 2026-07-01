@@ -85,9 +85,14 @@ export const useTherapistDraftStore = create<TherapistDraftState>()(
       ...initialState,
       setCurrentStep: (step) => set({ currentStep: step }),
       setGlobalErrors: (errors) => set({ globalErrors: errors }),
-      updateFormData: (data) => set((state) => ({ formData: { ...state.formData, ...data } })),
+      updateFormData: (data) => {
+        set((state) => ({ formData: { ...state.formData, ...data } }));
+      },
       resetDraft: () => set(initialState),
     }),
-    { name: "therapist-create-draft" }
+    {
+      name: "therapist-create-draft",
+      version: 1,
+    }
   )
 )

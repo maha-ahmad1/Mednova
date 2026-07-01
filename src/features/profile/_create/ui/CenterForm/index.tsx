@@ -57,7 +57,7 @@
 //         <p className="text-sm text-gray-600 leading-relaxed mt-2">
 //           يرجى تعبئة البيانات التالية بدقة لتسهيل إجراءات المتابعة الطبية داخل
 //           منصة
-//           <span className="text-[#32A88D] font-medium"> ميدنوفا</span>.
+//           <span className="text-[#32A88D] font-medium"> مدنوڤا</span>.
 //         </p>
 //       </div>
 
@@ -67,7 +67,7 @@
 //             إدخال بيانات المركز التأهيلي{" "}
 //           </CardTitle>
 //           <CardDescription className="text-md">
-//             قم بإدخال بياناتك للانضمام الى منصة ميدنوفا
+//             قم بإدخال بياناتك للانضمام الى منصة مدنوڤا
 //           </CardDescription>
 //         </CardHeader>
 //         <CardContent className="px-14 ">

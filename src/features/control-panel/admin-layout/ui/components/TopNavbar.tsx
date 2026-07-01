@@ -32,7 +32,7 @@ export function TopNavbar({ collapsed, onOpenMobileSidebar }: TopNavbarProps) {
             <Menu className="h-5 w-5" />
           </Button>
 
-          <div className="hidden text-sm font-semibold text-primary sm:block">لوحة تحكم ميدنوفا</div>
+          <div className="hidden text-sm font-semibold text-primary sm:block">لوحة تحكم مدنوڤا</div>
         </div>
 
         <Breadcrumbs />

@@ -64,8 +64,8 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData, g
 
   return (
     <FormStepCard
-      title="انضم كمختص إلى ميدنوفا"
-      description="سجّل كمختص في منصة ميدنوفا لبدء تقديم الاستشارات الطبية والمساهمة في تحسين الرعاية الصحية."
+      title="انضم كمختص إلى مدنوڤا"
+      description="سجّل كمختص في منصة مدنوڤا لبدء تقديم الاستشارات الطبية والمساهمة في تحسين الرعاية الصحية."
     >
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" dir="rtl">
@@ -215,8 +215,8 @@ export function TherapistFormStep3({ onNext, onBack, formData, updateFormData, g
 
 //   return (
 //     <FormStepCard
-//       title="انضم كمختص إلى ميدنوفا"
-//       description="سجّل كمختص في منصة ميدنوفا لبدء تقديم الاستشارات الطبية والمساهمة في تحسين الرعاية الصحية."
+//       title="انضم كمختص إلى مدنوڤا"
+//       description="سجّل كمختص في منصة مدنوڤا لبدء تقديم الاستشارات الطبية والمساهمة في تحسين الرعاية الصحية."
 //     >
 //       <FormProvider {...methods}>
 //         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" dir="rtl">

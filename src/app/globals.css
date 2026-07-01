@@ -204,3 +204,52 @@
 .nav-progress-bar {
   animation: nav-progress 1.5s ease-out forwards;
 }
+
+/* FloatingContactWidget — gentle breathing pulse on the idle trigger button */
+@keyframes contact-pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  70% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.animate-contact-pulse {
+  animation: contact-pulse-ring 2.5s ease-in-out infinite;
+}
+
+/* Spring-like pop-in for the contact menu and its options */
+@keyframes contact-pop-in {
+  0% {
+    transform: scale(0.8) translateY(8px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-contact-pop-in {
+  animation: contact-pop-in 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-contact-pulse {
+    animation: none;
+    display: none;
+  }
+
+  .animate-contact-pop-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

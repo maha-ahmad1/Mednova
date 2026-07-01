@@ -50,7 +50,7 @@ export default function PatientWrapper() {
         currentStep={currentStep}
         steps={[
           { id: 1, title: "البيانات الشخصية" },
-          { id: 2, title: "المؤهلات الطبية" },
+          { id: 2, title: "البيانات الاضافية" },
         ]}
       />
 

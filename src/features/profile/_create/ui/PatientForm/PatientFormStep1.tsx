@@ -198,7 +198,7 @@ export function PatientFormStep1({
             إدخال بيانات المريض{" "}
           </CardTitle>
           <CardDescription className="text-md">
-            قم بإدخال بياناتك للانضمام الى منصة ميدنوفا
+            قم بإدخال بياناتك للانضمام الى منصة مدنوڤا
           </CardDescription>
         </CardHeader>
         <CardContent className="px-14">

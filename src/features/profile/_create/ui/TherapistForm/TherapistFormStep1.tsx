@@ -112,11 +112,9 @@ export function TherapistFormStep1({
     if (session?.user && !formData.full_name) {
       const parsedSessionPhone = parsePhoneNumber(session.user.phone);
       setPhoneCountryCode(parsedSessionPhone.countryCode);
-      methods.reset({
-        full_name: session.user.full_name || "",
-        email: session.user.email || "",
-        phone: parsedSessionPhone.localNumber,
-      });
+      methods.setValue("full_name", session.user.full_name || "");
+      methods.setValue("email", session.user.email || "");
+      methods.setValue("phone", parsedSessionPhone.localNumber);
     }
   }, [session?.user, methods, formData]);
 
@@ -136,8 +134,8 @@ export function TherapistFormStep1({
   return (
     <>
       <FormStepCard
-        title="انضم كمختص إلى ميدنوفا"
-        description="سجّل كمختص في منصة ميدنوفا لبدء تقديم الاستشارات الطبية والمساهمة في تحسين الرعاية الصحية."
+        title="انضم كمختص إلى مدنوڤا"
+        description="سجّل كمختص في منصة مدنوڤا لبدء تقديم الاستشارات الطبية والمساهمة في تحسين الرعاية الصحية."
       >
         <FormProvider {...methods}>
           <form

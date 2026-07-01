@@ -183,8 +183,8 @@ useEffect(() => {
 
   return (
     <FormStepCard
-      title="انضم كمركز طبي إلى ميدنوفا"
-      description="سجّل مركزك الطبي في منصة ميدنوفا لبدء تقديم الخدمات الطبية والمساهمة في تحسين الرعاية الصحية."
+      title="انضم كمركز طبي إلى مدنوڤا"
+      description="سجّل مركزك الطبي في منصة مدنوڤا لبدء تقديم الخدمات الطبية والمساهمة في تحسين الرعاية الصحية."
     >
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" dir="rtl">

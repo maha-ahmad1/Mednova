@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { Mail, X } from "lucide-react";
+import { Mail, Maximize2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePathname } from "@/i18n/navigation";
 
-const MASCOT_SRC = "/images/home/mascot-turtle.png";
+const MASCOT_SRC = "/images/home/mascot-turtle-v2.png";
 
 const WHATSAPP_NUMBER = "+96892349692";
 const SUPPORT_EMAIL = "info@mednovacare.com";
@@ -31,7 +32,9 @@ function WhatsAppIcon({ className }: { className?: string }) {
 
 export function FloatingContactWidget() {
   const t = useTranslations("floatingContact");
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [minimized, setMinimized] = useState(false);
   const [showWelcomeBadge, setShowWelcomeBadge] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -80,15 +83,51 @@ export function FloatingContactWidget() {
     };
   }, [open]);
 
+  // All hooks done — now safe to do conditional rendering
+
+  if (pathname.includes("control-panel")) return null;
+
   function handleToggle() {
     setOpen((prev) => !prev);
     setShowWelcomeBadge(false);
   }
 
+  function handleMinimize() {
+    setMinimized(true);
+    setOpen(false);
+  }
+
+  // Minimized: compact pill with mascot + expand icon
+  if (minimized) {
+    return (
+      <div className="fixed bottom-6 end-6 z-40 hidden sm:block">
+        <button
+          type="button"
+          onClick={() => setMinimized(false)}
+          aria-label={t("restore")}
+          className="group flex items-center overflow-hidden rounded-full bg-white shadow-lg ring-1 ring-black/10 transition-shadow hover:shadow-xl"
+        >
+          <span className="relative h-14 w-14 shrink-0">
+            <Image
+              src={MASCOT_SRC}
+              alt=""
+              fill
+              sizes="56px"
+              className="object-contain p-0.5"
+            />
+          </span>
+          <span className="flex items-center justify-center pe-4 ps-2 text-muted-foreground transition-colors group-hover:text-foreground">
+            <Maximize2 className="h-4 w-4" />
+          </span>
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={containerRef}
-      className="fixed bottom-6 end-6 z-40 flex flex-col items-end gap-3"
+      className="fixed bottom-6 end-6 z-40 hidden sm:flex flex-col items-end gap-3"
     >
       {open && (
         <div className="flex flex-col items-end gap-3">
@@ -118,76 +157,90 @@ export function FloatingContactWidget() {
         </div>
       )}
 
+      {/* Mascot circle — toggles the options menu */}
       <button
         type="button"
         onClick={handleToggle}
         aria-label={t("ariaLabel")}
         aria-expanded={open}
-        className="flex flex-col items-center gap-2"
+        className="relative flex h-[110px] w-[110px] items-center justify-center"
       >
-        <span className="relative flex h-[110px] w-[110px] items-center justify-center">
-          {!open && (
-            <span
-              className="bg-primary animate-contact-pulse absolute inset-0 rounded-full"
-              aria-hidden="true"
-            />
-          )}
+        {!open && (
+          <span
+            className="bg-primary animate-contact-pulse absolute inset-0 rounded-full"
+            aria-hidden="true"
+          />
+        )}
 
-          <span className="ring-border relative h-24 w-24 overflow-hidden rounded-full border-[3px] border-white bg-white shadow-lg ring-1">
-            <Image
-              src={MASCOT_SRC}
-              alt=""
-              fill
-              sizes="96px"
-              className="object-contain p-1"
-            />
-            <span
+        <span className="ring-border relative h-24 w-24 overflow-hidden rounded-full border-[3px] border-white bg-white shadow-lg ring-1">
+          <Image
+            src={MASCOT_SRC}
+            alt=""
+            fill
+            sizes="96px"
+            className="object-contain p-1"
+          />
+          <span
+            className={cn(
+              "bg-secondary/85 absolute inset-0 flex items-center justify-center backdrop-blur-[1px] transition-all duration-300",
+              open
+                ? "scale-100 opacity-100"
+                : "pointer-events-none scale-75 opacity-0",
+            )}
+            aria-hidden="true"
+          >
+            <X
               className={cn(
-                "bg-secondary/85 absolute inset-0 flex items-center justify-center backdrop-blur-[1px] transition-all duration-300",
-                open
-                  ? "scale-100 opacity-100"
-                  : "pointer-events-none scale-75 opacity-0",
+                "h-8 w-8 text-white transition-transform duration-300",
+                open ? "rotate-0" : "-rotate-90",
               )}
+            />
+          </span>
+        </span>
+
+        {!open && (
+          <>
+            <span
+              className="absolute top-0 end-0 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-black/5"
               aria-hidden="true"
             >
-              <X
-                className={cn(
-                  "h-8 w-8 text-white transition-transform duration-300",
-                  open ? "rotate-0" : "-rotate-90",
-                )}
-              />
+              <WhatsAppIcon className="h-5 w-5" />
             </span>
-          </span>
-
-          {!open && (
-            <>
-              <span
-                className="absolute top-0 end-0 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-black/5"
-                aria-hidden="true"
-              >
-                <WhatsAppIcon className="h-5 w-5" />
-              </span>
-              <span
-                className="absolute bottom-1 start-[-6px] flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-black/5"
-                aria-hidden="true"
-              >
-                <Mail className="h-5 w-5 text-[#0F6E56]" />
-              </span>
-            </>
-          )}
-
-          {showWelcomeBadge && (
             <span
-              className="absolute top-1 end-3 h-4 w-4 rounded-full bg-red-500 ring-2 ring-white"
+              className="absolute bottom-1 start-[-6px] flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-1 ring-black/5"
               aria-hidden="true"
-            />
-          )}
-        </span>
+            >
+              <Mail className="h-5 w-5 text-[#0F6E56]" />
+            </span>
+          </>
+        )}
 
-        <span className="bg-primary rounded-full px-5 py-2 text-sm font-semibold whitespace-nowrap text-white shadow-md">
-          {t("ariaLabel")}
-        </span>
+        {showWelcomeBadge && (
+          <span
+            className="absolute top-1 end-3 h-4 w-4 rounded-full bg-red-500 ring-2 ring-white"
+            aria-hidden="true"
+          />
+        )}
       </button>
+
+      {/* Bottom row: pill label + minimize button */}
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={handleToggle}
+          className="bg-primary rounded-full px-5 py-2 text-sm font-semibold whitespace-nowrap text-white shadow-md"
+        >
+          {t("ariaLabel")}
+        </button>
+        <button
+          type="button"
+          onClick={handleMinimize}
+          aria-label={t("minimize")}
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/10 text-muted-foreground/70 transition-colors hover:text-muted-foreground"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
     </div>
   );
 }

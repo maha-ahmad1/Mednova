@@ -1152,6 +1152,8 @@
   "floatingContact": {
     "ariaLabel": "Need help?",
     "whatsapp": "WhatsApp",
-    "email": "Email us"
+    "email": "Email us",
+    "minimize": "Hide",
+    "restore": "Show"
   }
 }

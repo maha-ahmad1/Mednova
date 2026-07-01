@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Mail, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const MASCOT_SRC = "/images/home/mascot-turtle.png";
+const MASCOT_SRC = "/images/home/mascot-turtle-v2.png";
 
 const WHATSAPP_NUMBER = "+96892349692";
 const SUPPORT_EMAIL = "info@mednovacare.com";

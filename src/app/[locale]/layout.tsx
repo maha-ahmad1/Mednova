@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { IncompleteProfileBanner } from "@/shared/ui/components/IncompleteProfileBanner";
 import { AccountStatusNotificationCard } from "@/shared/ui/components/AccountStatusNotificationCard";
+import { FloatingContactWidget } from "@/shared/ui/components/FloatingContactWidget";
 import EchoProvider from "@/providers/ClientEchoWrapper";
 // import * as Sentry from "@sentry/nextjs";
 export default async function LocaleLayout({
@@ -29,6 +30,7 @@ export default async function LocaleLayout({
           <IncompleteProfileBanner />
           <AccountStatusNotificationCard />
           {children}
+          <FloatingContactWidget />
         </EchoProvider>
       </div>
     </NextIntlClientProvider>

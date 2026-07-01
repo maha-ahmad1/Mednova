@@ -32,14 +32,19 @@ const patientStep2Schema = z.object({
   country: z.string().min(1, "حقل البلد مطلوب."),
   city: z.string().min(1, "حقل المدينة مطلوب."),
   status: z.string().optional(),
-  image: z
-    .any()
-    .refine((file) => file instanceof File, {
-      message: "يرجى رفع الصورة ",
-    })
-    .refine((file) => file, {
-      message: "يرجى رفع الصورة ",
-    }),
+  // image: z
+  //   .any()
+  //   .refine((file) => file instanceof File, {
+  //     message: "يرجى رفع الصورة ",
+  //   })
+  //   .refine((file) => file, {
+  //     message: "يرجى رفع الصورة ",
+  //   }),
+
+image: z
+  .instanceof(File)
+  .optional()
+  .nullable(),
 });
 
 export interface PatientFormData {
@@ -304,7 +309,7 @@ export function PatientFormStep2({
           إدخال بيانات المريض
         </CardTitle>
         <CardDescription className="text-md">
-          قم بإدخال بياناتك للانضمام الى منصة ميدنوفا
+          قم بإدخال بياناتك للانضمام الى منصة مدنوڤا
         </CardDescription>
       </CardHeader>
 

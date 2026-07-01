@@ -50,10 +50,10 @@ const t = useTranslations("hero");
             </p>
 
             {/* أزرار الإجراء */}
-            <div className="flex flex-col w-fit md:flex-row gap-4 justify-center lg:justify-start mb-12">
+            <div className="flex flex-col w-full md:w-fit md:flex-row gap-4 justify-center lg:justify-start mb-12">
               <Button
                 size="lg"
-                className="bg-gradient-to-r w-[40%] md:w-[50%] from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="bg-gradient-to-r w-full md:w-auto from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 asChild
               >
                 <Link href="/specialists">
@@ -62,11 +62,11 @@ const t = useTranslations("hero");
                 </Link>
               </Button>
 
-              <Link href="#services">
+              <Link href="#services" className="w-full md:w-auto">
                 <Button
                   variant="outline"
                   size="lg"
-                  className="cursor-pointer border-[#32A88D] w-[40%] md:w-[80%] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-8 py-4 text-lg transition-all duration-300"
+                  className="cursor-pointer border-[#32A88D] w-full md:w-auto text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-8 py-4 text-lg transition-all duration-300"
                 >
                   {t("learn")}
                 </Button>
@@ -74,7 +74,7 @@ const t = useTranslations("hero");
             </div>
 
             {/* إحصائيات */}
-            <div className="grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0">
+            {/* <div className="grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0">
               <div className="text-center">
                 <div className="text-2xl font-bold text-[#32A88D]">
                   {t("statSpecialistsValue")}
@@ -93,7 +93,7 @@ const t = useTranslations("hero");
                 </div>
                 <div className="text-sm text-gray-600">{t("satisfaction")}</div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* الصورة والعناصر المرئية */}

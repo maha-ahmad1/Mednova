@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { StepperHeader } from "@/features/profile/_create/ui/StepperHeader";
 import { TherapistFormStep1 } from "./TherapistFormStep1";
 import { TherapistFormStep2 } from "./TherapistFormStep2";
@@ -9,6 +11,20 @@ import { TherapistFormStep5 } from "./TherapistFormStep5";
 import { useTherapistDraftStore } from "@/features/profile/_create/hooks/useTherapistDraftStore";
 
 export default function TherapistWrapper() {
+  const [hasHydrated, setHasHydrated] = useState(
+    () => typeof window === "undefined" ? false : useTherapistDraftStore.persist?.hasHydrated() ?? false
+  );
+
+  useEffect(() => {
+    if (useTherapistDraftStore.persist?.hasHydrated()) {
+      setHasHydrated(true);
+      return;
+    }
+    return useTherapistDraftStore.persist?.onFinishHydration(() => {
+      setHasHydrated(true);
+    });
+  }, []);
+
   const currentStep = useTherapistDraftStore((state) => state.currentStep);
   const globalErrors = useTherapistDraftStore((state) => state.globalErrors);
   const formData = useTherapistDraftStore((state) => state.formData);
@@ -18,6 +34,14 @@ export default function TherapistWrapper() {
 
   const nextStep = () => setCurrentStep(Math.min(currentStep + 1, 5));
   const prevStep = () => setCurrentStep(Math.max(currentStep - 1, 1));
+
+  if (!hasHydrated) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <Loader2 className="w-10 h-10 animate-spin text-[#32A88D]" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto">

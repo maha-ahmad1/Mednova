@@ -33,7 +33,7 @@ export function PatientSuccess({ patientData }: PatientSuccessProps) {
         </div>
         <h1 className="text-3xl font-bold text-foreground mb-2">تم حفظ البيانات بنجاح!</h1>
         <p className="text-muted-foreground text-lg">
-          تم إضافة بياناتك إلى منصة <span className="text-[#32A88D] font-semibold">ميدنوفا</span> بنجاح
+          تم إضافة بياناتك إلى منصة <span className="text-[#32A88D] font-semibold">مدنوڤا</span> بنجاح
         </p>
       </div>
 

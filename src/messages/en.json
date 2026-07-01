@@ -77,7 +77,7 @@
     "heading1": "Your comfort",
     "heading2": "starts here",
     "description": "Restore your health with top physiotherapy specialists",
-    "start": "Start now",
+    "start": "Book your consultation now",
     "learn": "Learn more",
     "specialists": "Certified specialists",
     "patients": "Recovered patients",
@@ -282,22 +282,48 @@
     "desc": "Mednova platform puts your care first, combining specialized physiotherapy with smart services designed for your comfort.",
     "features": [
       {
-        "title": "Quick Booking",
-        "desc": "Flexible and easy appointments"
-      },
-      {
-        "title": "Instant Consultations",
-        "desc": "24/7 support available"
-      },
-      {
-        "title": "Smart Health File",
-        "desc": "Comprehensive treatment tracking"
-      },
-      {
         "title": "Specialized Expertise",
         "desc": "Top specialists in their fields"
+      },
+      {
+        "title": "Personalized Care Plans",
+        "desc": "Treatment tailored to your case"
+      },
+      {
+        "title": "Multidisciplinary Team",
+        "desc": "Integrated expertise across specialties"
+      },
+      {
+        "title": "Step-by-Step Follow-up",
+        "desc": "We stay with you through full recovery"
       }
     ]
+  },
+  "trustStrip": {
+    "items": [
+      {
+        "title": "Verified specialists",
+        "desc": "Certified and qualified professionals"
+      },
+      {
+        "title": "Secure health records",
+        "desc": "Your data is fully protected and private"
+      },
+      {
+        "title": "Fast consultation booking",
+        "desc": "Connect with a specialist in minutes"
+      },
+      {
+        "title": "Continuous support",
+        "desc": "We're with you every step of your journey"
+      }
+    ]
+  },
+  "closingCta": {
+    "badge": "Start today",
+    "title": "Ready to start your recovery journey?",
+    "description": "Book your consultation now and take the first step toward better health with top physiotherapy specialists.",
+    "cta": "Book your consultation now"
   },
   "smartGlove": {
     "badge": "Advanced medical technology",
@@ -1122,5 +1148,10 @@
         "resolveError": "Failed to resolve dispute. Please try again."
       }
     }
+  },
+  "floatingContact": {
+    "ariaLabel": "Need help?",
+    "whatsapp": "WhatsApp",
+    "email": "Email us"
   }
 }

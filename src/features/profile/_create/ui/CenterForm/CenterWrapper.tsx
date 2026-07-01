@@ -13,15 +13,15 @@ import { useSession } from "next-auth/react";
 
 export default function CenterWrapper() {
   const [hasHydrated, setHasHydrated] = useState(
-    () => useCenterDraftStore.persist.hasHydrated()
+    () => typeof window === "undefined" ? false : useCenterDraftStore.persist?.hasHydrated() ?? false
   );
 
   useEffect(() => {
-    if (useCenterDraftStore.persist.hasHydrated()) {
+    if (useCenterDraftStore.persist?.hasHydrated()) {
       setHasHydrated(true);
       return;
     }
-    return useCenterDraftStore.persist.onFinishHydration(() => {
+    return useCenterDraftStore.persist?.onFinishHydration(() => {
       setHasHydrated(true);
     });
   }, []);

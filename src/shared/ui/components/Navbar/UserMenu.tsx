@@ -9,13 +9,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { User, Settings, HelpCircle, LogOut } from "lucide-react";
+import { User, Wallet, HelpCircle, LogOut ,Calendar} from "lucide-react";
 import { useProfileImageStore } from "@/store/useProfileImageStore";
 
 export function UserMenu() {
   const { data: session } = useSession();
   const storeImage = useProfileImageStore((state) => state.image);
-  
+
   if (!session?.user) return null;
 
   // Use Zustand store image (source of truth for UI), fallback to session image
@@ -59,17 +59,20 @@ export function UserMenu() {
         </DropdownMenuItem>
 
         <DropdownMenuItem className="flex gap-2">
-          <Link href="/coming-soon" className="flex-1 text-sm text-right">
-            الإعدادات
+          <Link
+            href="/profile/consultations"
+            className="flex-1 text-sm text-right"
+          >
+            طلبات الإستشارة
           </Link>
-          <Settings className="w-4 h-4" />
+          <Calendar className="w-4 h-4" />
         </DropdownMenuItem>
 
         <DropdownMenuItem className="flex gap-2">
-          <Link href="/coming-soon" className="flex-1 text-sm text-right">
-            المساعدة
+          <Link href="/profile/financial" className="flex-1 text-sm text-right">
+           المحفظة المالية
           </Link>
-          <HelpCircle className="w-4 h-4" />
+          <Wallet className="w-4 h-4" />
         </DropdownMenuItem>
 
         <div className="h-px bg-gray-200 my-1" />

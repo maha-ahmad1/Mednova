@@ -1,5 +1,4 @@
 
-
 export { useNotificationsDropdown } from './hooks/useNotificationsDropdown';
 export { useNotifications } from './hooks/useNotifications';
 
@@ -37,14 +36,21 @@ export {
   NOTIFICATION_ENDPOINTS,
 } from './constants';
 
-
 export { NotificationDropdown } from "./components/NotificationDropdown";
 export { NotificationItem } from "./components/NotificationItem";
 export { NotificationHeader } from "./components/NotificationHeader";
 export { NotificationFooter } from "./components/NotificationFooter";
 export { NotificationEmptyState } from "./components/NotificationEmptyState";
+
+export { NotificationItemBase } from "./ui/NotificationItemBase";
+export { NotificationItemCompact } from "./ui/NotificationItemCompact";
+export { NotificationItemFull } from "./ui/NotificationItemFull";
+
 export {
-  formatTimeAgo,
-  getNotificationIcon,
-  getNotificationColor,
-} from "./utils/notificationHelpers";
+  NOTIFICATION_TYPE_CONFIG,
+  getTypeConfig,
+} from "./config/notificationTypeConfig";
+
+export { resolveNotificationAction } from "./utils/resolveNotificationAction";
+
+export { formatTimeAgo } from "./utils/notificationHelpers";

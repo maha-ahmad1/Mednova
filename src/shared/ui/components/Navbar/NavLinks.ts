@@ -33,6 +33,7 @@ export const NavLinks: NavLink[] = [
     link: "#",
     dropdown: [
       { id: 1, titleKey: "smartGlove", link: "/smartgloves" },
+      { id: 2, titleKey: "smartDevicesCatalog", link: "/smart-devices" },
     ],
   },
 ];

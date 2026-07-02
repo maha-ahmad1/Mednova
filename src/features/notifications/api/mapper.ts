@@ -2,17 +2,30 @@ import { Notification, NotificationType, ApiNotification, ApiResponse, Notificat
 import { getNotificationTitleByType } from "../utils/notificationTitles";
 
 
+const KNOWN_NOTIFICATION_TYPES = new Set<string>([
+  'consultation_requested',
+  'consultation_accepted',
+  'consultation_active',
+  'consultation_cancelled',
+  'consultation_cancelled_by_consultant',
+  'consultation_cancelled_by_patient',
+  'consultation_completed',
+  'consultation_updated',
+  'account_approved',
+  'account_rejected',
+  'message',
+  'comment',
+  'like',
+  'follow',
+  'system',
+  'alert',
+]);
+
 export const mapApiTypeToNotificationType = (type: string): NotificationType => {
-  const typeMap: Record<string, NotificationType> = {
-    'MESSAGE': 'message',
-    'COMMENT': 'comment',
-    'LIKE': 'like',
-    'FOLLOW': 'follow',
-    'SYSTEM': 'system',
-    'ALERT': 'alert',
-  };
-  
-  return typeMap[type.toUpperCase()] || 'system';
+  const normalized = type.trim().toLowerCase();
+  return KNOWN_NOTIFICATION_TYPES.has(normalized)
+    ? (normalized as NotificationType)
+    : 'system';
 };
 
 export const getNotificationTitle = (type: string): string => {

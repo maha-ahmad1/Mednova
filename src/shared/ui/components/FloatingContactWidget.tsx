@@ -7,9 +7,9 @@ import { Mail, Maximize2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "@/i18n/navigation";
 
-const MASCOT_SRC = "/images/home/mascot-turtle-v2.png";
+const MASCOT_SRC = "/images/home/mascot-turtle-v1.jpeg";
 
-const WHATSAPP_NUMBER = "+96892349692";
+export const WHATSAPP_NUMBER = "+96892349692";
 const SUPPORT_EMAIL = "info@mednovacare.com";
 
 const WELCOME_BADGE_SESSION_KEY = "floatingContactWelcomeShown";

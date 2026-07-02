@@ -12,17 +12,10 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { useNotificationsDropdown } from "@/features/notifications/hooks/useNotificationsDropdown";
-
-
 import { NotificationHeader } from "./NotificationHeader";
 import { NotificationFooter } from "./NotificationFooter";
-import { NotificationEmptyState } from "./NotificationEmptyState";  
-import { NotificationItem } from "./NotificationItem";
-import {
-  formatTimeAgo,
-  getNotificationIcon,
-  getNotificationColor,
-} from "../utils/notificationHelpers";
+import { NotificationEmptyState } from "./NotificationEmptyState";
+import { NotificationItemCompact } from "../ui/NotificationItemCompact";
 
 
 export function NotificationDropdown() {
@@ -46,7 +39,7 @@ export function NotificationDropdown() {
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <Badge
-              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+              className="absolute -top-1 -end-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
               variant="destructive"
             >
               {unreadCount}
@@ -54,8 +47,7 @@ export function NotificationDropdown() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-96 ml-6" align="end" forceMount>
-        {/* Header */}
+      <DropdownMenuContent className="w-96 me-6" align="end" forceMount>
         <NotificationHeader
           unreadCount={unreadCount}
           onMarkAllAsRead={handleMarkAllAsRead}
@@ -67,27 +59,17 @@ export function NotificationDropdown() {
               <NotificationEmptyState isLoading={isLoading} />
             ) : (
               recentNotifications.map((notification) => (
-                <NotificationItem
+                <NotificationItemCompact
                   key={notification.id}
-                  id={notification.id}
-                  type={notification.type}
-                  title={notification.title}
-                  message={notification.message}
-                  data={notification.data}
-                  read={notification.read}
-                  createdAt={notification.createdAt}
-                  source={notification.source}
+                  notification={notification}
                   onMarkAsRead={handleMarkAsRead}
-                  getIcon={getNotificationIcon}
-                  getColor={getNotificationColor}
-                  formatTimeAgo={formatTimeAgo}
+                  onCloseDropdown={() => setOpen(false)}
                 />
               ))
             )}
           </DropdownMenuGroup>
         </ScrollArea>
 
-        {/* Footer */}
         <NotificationFooter totalCount={notifications.length} />
       </DropdownMenuContent>
     </DropdownMenu>

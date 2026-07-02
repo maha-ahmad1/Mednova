@@ -31,14 +31,28 @@ export interface Notification {
   source: 'api' | 'pusher';
 }
 
-export type NotificationType = 
+export type NotificationType =
+  // Consultation lifecycle
+  | 'consultation_requested'
+  | 'consultation_accepted'
+  | 'consultation_active'
+  | 'consultation_cancelled'
+  | 'consultation_cancelled_by_consultant'
+  | 'consultation_cancelled_by_patient'
+  | 'consultation_completed'
+  | 'consultation_updated'
+  // Account status
+  | 'account_approved'
+  | 'account_rejected'
+  // Messaging / Social
   | 'message'
   | 'comment'
   | 'like'
   | 'follow'
+  // System
   | 'system'
   | 'alert'
-  | string; // allow other/custom types (fallback)
+  | (string & {}); // escape hatch for future/unknown types — keeps literals useful
 
 export interface NotificationsPageResult {
   notifications: Notification[];
@@ -66,7 +80,7 @@ export interface NotificationItemProps {
   message: string;
   data: NotificationData;
   read: boolean;
-  createdAt: string;
+  // createdAt: string;
   source: "api" | "pusher";
   onMarkAsRead: (id: string) => void;
   getIcon: (type: NotificationType) => ReactNode;

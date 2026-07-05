@@ -9,10 +9,9 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetDescription,
   SheetFooter,
 } from "@/components/ui/sheet";
-import type { DeviceProduct } from "../types/device.types";
+import type { DeviceProduct, DeviceProductTranslation } from "../types/device.types";
 import { WhatsAppCTAButton } from "./WhatsAppCTAButton";
 
 interface DeviceDetailSheetProps {
@@ -22,10 +21,8 @@ interface DeviceDetailSheetProps {
 
 export function DeviceDetailSheet({ device, trigger }: DeviceDetailSheetProps) {
   const t = useTranslations("smartDevices");
-  const name = t(`products.${device.id}.name`);
-  const tagline = t(`products.${device.id}.tagline`);
-  const features = t.raw(`products.${device.id}.features`) as string[];
-  const configuration = t.raw(`products.${device.id}.configuration`) as string[];
+  const product = t.raw(`products.${device.id}`) as DeviceProductTranslation;
+  const { name, description, features, configuration } = product;
 
   return (
     <Sheet>
@@ -42,12 +39,20 @@ export function DeviceDetailSheet({ device, trigger }: DeviceDetailSheetProps) {
             />
           </div>
           <SheetTitle className="mt-4 text-xl text-gray-900">{name}</SheetTitle>
-          <SheetDescription className="text-sm text-gray-600">
-            {tagline}
-          </SheetDescription>
         </SheetHeader>
 
         <div className="flex flex-col gap-6 px-4">
+          {description && (
+            <div>
+              <h3 className="mb-2 text-sm font-semibold text-gray-900">
+                {t("descriptionLabel")}
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-700">
+                {description}
+              </p>
+            </div>
+          )}
+
           {device.hostSize && (
             <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
               <p className="text-xs font-medium text-gray-500">
@@ -59,35 +64,39 @@ export function DeviceDetailSheet({ device, trigger }: DeviceDetailSheetProps) {
             </div>
           )}
 
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">
-              {t("featuresLabel")}
-            </h3>
-            <ul className="space-y-2">
-              {features.map((feature) => (
-                <li key={feature} className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#32A88D]" />
-                  <span className="text-sm text-gray-700">{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {features.length > 0 && (
+            <div>
+              <h3 className="mb-3 text-sm font-semibold text-gray-900">
+                {t("featuresLabel")}
+              </h3>
+              <ul className="space-y-2">
+                {features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#32A88D]" />
+                    <span className="text-sm text-gray-700">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">
-              {t("configurationLabel")}
-            </h3>
-            <ul className="flex flex-wrap gap-2">
-              {configuration.map((item) => (
-                <li
-                  key={item}
-                  className="rounded-full border border-[#32A88D]/20 bg-[#32A88D]/5 px-3 py-1 text-xs text-[#1F6069]"
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {configuration.length > 0 && (
+            <div>
+              <h3 className="mb-3 text-sm font-semibold text-gray-900">
+                {t("configurationLabel")}
+              </h3>
+              <ul className="flex flex-wrap gap-2">
+                {configuration.map((item) => (
+                  <li
+                    key={item}
+                    className="rounded-full border border-[#32A88D]/20 bg-[#32A88D]/5 px-3 py-1 text-xs text-[#1F6069]"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         <SheetFooter>

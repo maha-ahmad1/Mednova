@@ -1189,195 +1189,106 @@
   "smartDevices": {
     "breadcrumb": "Smart Devices",
     "pageTitle": "Smart Rehabilitation Devices",
-    "pageSubtitle": "Explore SYREBO's smart hand and upper-limb rehabilitation robots — professional-grade devices for clinics and home care, backed by Mednova's expert support.",
+    "pageSubtitle": "SYREBO rehabilitation robots for hand and upper limb therapy — for home and clinical use.",
     "categories": {
       "all": "All Devices",
-      "homecare": "Home Care",
-      "clinical": "Clinical",
+      "homecare": "Homecare",
+      "clinical": "Clinical Use",
       "accessories": "Accessories"
     },
     "bestSeller": "Best Seller",
     "viewDetails": "View Details",
     "contactWhatsapp": "Contact us on WhatsApp",
     "whatsappMessageTemplate": "Hello, I'm interested in {product} from Mednova's Smart Devices catalog. Could you share pricing and availability?",
-    "featuresLabel": "Key Features",
-    "configurationLabel": "Package Includes",
+    "featuresLabel": "Features",
+    "configurationLabel": "Configuration",
     "hostSizeLabel": "Host Size",
+    "descriptionLabel": "Description",
     "ctaBannerTitle": "Looking to equip your clinic?",
-    "ctaBannerSubtitle": "Get in touch for bulk pricing, clinical demos, and tailored device recommendations for your practice.",
+    "ctaBannerSubtitle": "Contact us for bulk pricing and clinical trial arrangements.",
     "ctaBannerButton": "Contact us on WhatsApp",
     "products": {
       "hrc10": {
-        "name": "SYREBO Soft Rehabilitation Glove HRC10",
-        "tagline": "Pneumatic-powered hand rehab, designed for gentle home therapy.",
-        "features": [
-          "Pneumatic-powered soft actuation for safe, comfortable hand movement",
-          "Passive training mode to guide finger flexion and extension",
-          "Mirror training mode using the unaffected hand as a reference",
-          "Lightweight, glove-based design built for home use",
-          "Compact host unit for simple daily setup"
-        ],
-        "configuration": ["Host unit", "Rehabilitation glove", "Data glove"]
+        "name": "Soft Rehabilitation Glove SY-HRC10",
+        "features": ["Pneumatic powered", "Passive training", "Mirror training"],
+        "configuration": ["1 pc * Host", "1 pc * Rehab glove", "1 pc * Data glove"]
       },
       "hrc12": {
-        "name": "SYREBO Soft Rehabilitation Glove HRC12",
-        "tagline": "A fuller home training suite for finger dexterity and functional recovery.",
-        "features": [
-          "Passive training for guided, repetitive finger movement",
-          "Pinch training to rebuild grip and precision control",
-          "Fine motor training for detailed hand coordination",
-          "Finger mirror training that mirrors the healthy hand",
-          "Extend training to restore full finger extension",
-          "Functional training focused on real-life hand tasks"
-        ],
-        "configuration": [
-          "Host unit",
-          "Rehabilitation glove",
-          "Data glove",
-          "Training ball",
-          "Power adapter"
-        ]
+        "name": "Soft Rehabilitation Glove SY-HRC12",
+        "features": ["Passive training", "Pinch training", "Fine motor training", "Finger mirror training", "Extend training", "Functional training"],
+        "configuration": ["1 pc * Host", "1 pc * Rehab glove", "1 pc * Data glove", "1 pc * Training ball", "1 pc * Adapter"]
       },
       "hre12e": {
-        "name": "SYREBO Soft Rehabilitation Glove HRE12E",
-        "tagline": "Our most trusted home rehabilitation glove, refined for everyday use.",
-        "features": [
-          "Passive training for guided, repetitive finger movement",
-          "Pinch training to rebuild grip and precision control",
-          "Fine motor training for detailed hand coordination",
-          "Finger mirror training that mirrors the healthy hand",
-          "Extend training to restore full finger extension",
-          "Functional training focused on real-life hand tasks"
-        ],
-        "configuration": [
-          "Host unit",
-          "Rehabilitation glove",
-          "Data glove",
-          "Training ball",
-          "Power adapter"
-        ]
+        "name": "Soft Rehabilitation Glove SY-HRE12E",
+        "features": ["Passive training", "Pinch training", "Fine motor training", "Finger mirror training", "Extend training", "Functional training"],
+        "configuration": ["1 pc * Host", "1 pc * Rehab glove", "1 pc * Data glove", "1 pc * Training ball", "1 pc * Adapter"]
       },
       "hrc15": {
-        "name": "SYREBO Soft Rehabilitation Robot HRC15",
-        "tagline": "Clinical-grade hand therapy with adaptive assistance and resistance.",
-        "features": [
-          "Passive training for controlled, repetitive movement",
-          "Mirror training using the unaffected hand as a reference",
-          "Assistance training that supports active patient effort",
-          "Resistance training to progressively build hand strength",
-          "Active game-based training to boost engagement and motivation"
-        ],
-        "configuration": [
-          "Host unit",
-          "Rehabilitation glove",
-          "Data glove",
-          "Training ball",
-          "Power adapter"
-        ]
+        "name": "Soft Rehabilitation Robot SY-HRC15",
+        "features": ["Passive training", "Mirror training", "Assistance training", "Resistance training", "Active Game training"],
+        "configuration": ["1 pc * Host", "1 pc * Rehab glove", "1 pc * Data glove", "1 pc * Training ball", "1 pc * Adapter"]
       },
       "hr06e": {
-        "name": "SYREBO Soft Rehabilitation Robot HR06E",
-        "tagline": "Task-oriented hand therapy built around everyday movements.",
+        "name": "Soft Rehabilitation Robot SY-HR06E",
         "features": [
-          "Task-oriented training modeled on daily hand functions, such as grasping a ball",
-          "Single-finger isolation training to target nerve-level hand rehabilitation",
-          "Multiple glove sizes (S/M/L) for individual finger training",
-          "Dedicated all-finger glove for combined-hand exercises",
-          "Left- and right-hand data gloves for bilateral tracking"
+          "Includes all 03E functions, plus:",
+          "Task oriented: based on daily hand function exercise, like pinching a ball",
+          "Single finger training: promotes hand function nerve rehab"
         ],
         "configuration": [
-          "Host unit",
-          "3 pairs of rehabilitation gloves (S/M/L, individual finger training)",
-          "1 pair of all-finger rehabilitation gloves",
-          "1 pair of data gloves (left & right)",
-          "Training ball",
-          "Support pillow",
-          "Power adapter",
-          "Manual switch"
+          "1 pc * Host",
+          "3 pairs * Rehab glove (S/M/L, for individual finger training)",
+          "1 pair * Rehab glove (for all finger training)",
+          "1 pair * Data glove (L&R)",
+          "1 pc * Training ball",
+          "1 pc * Pillow",
+          "1 pc * Adapter",
+          "1 pc * Manual switch"
         ]
       },
       "hr08e": {
-        "name": "SYREBO Soft Rehabilitation Robot HR08E",
-        "tagline": "The HR06E experience, extended with clinic-ready reporting tools.",
+        "name": "Soft Rehabilitation Robot SY-HR08E",
         "features": [
-          "All HR06E task-oriented and single-finger training modes",
-          "Multi-user patient management for busy clinics",
-          "HDMI output for on-screen therapy sessions",
-          "Built-in report printing for progress documentation"
+          "Includes all 06E functions, plus:",
+          "User management",
+          "HDMI interface",
+          "Report printing"
         ],
         "configuration": [
-          "Host unit",
-          "3 pairs of rehabilitation gloves (S/M/L, individual finger training)",
-          "1 pair of all-finger rehabilitation gloves",
-          "1 pair of data gloves (left & right)",
-          "Training ball",
-          "Support pillow",
-          "Power adapter",
-          "Manual switch",
-          "Grip strength gauge"
+          "1 pc * Host",
+          "3 pairs * Rehab glove (S/M/L, for individual finger training)",
+          "1 pair * Rehab glove (for all finger training)",
+          "1 pair * Data glove (L&R)",
+          "1 pc * Training ball",
+          "1 pc * Pillow",
+          "1 pc * Adapter",
+          "1 pc * Manual switch",
+          "1 pc * Gauge"
         ]
       },
       "hr08g": {
-        "name": "SYREBO Hand Rehabilitation Robot HR08G (BCI)",
-        "tagline": "Brain-controlled hand therapy that reshapes neural pathways.",
-        "features": [
-          "Built on motor imagery and neural plasticity principles",
-          "Brain-controlled interface (BCI) training that reads active movement intent",
-          "Perception-control closed-loop neural stimulation",
-          "Designed to reshape neural pathways and improve rehabilitation outcomes",
-          "Power-assisted gloves in multiple sizes for an individualized fit"
-        ],
-        "configuration": [
-          "Host unit",
-          "3 pairs of power-assisted gloves",
-          "Grip strength meter",
-          "Power adapter",
-          "User manual"
-        ]
+        "name": "Hand Rehabilitation Robot SY-HR08G (BCI)",
+        "description": "Based on principles of motor imagery and neural plasticity, through brain-controlled interface training it stimulates the patient's active movement awareness, achieving a \"perception-control\" bidirectional closed-loop neural stimulation, reshaping the user's neural pathway and significantly improving rehabilitation effectiveness.",
+        "features": [],
+        "configuration": ["1 pc * Host", "3 pairs * Power-assisted glove", "1 pc * Grip strength meter", "1 pc * Adapter", "1 pc * User manual"]
       },
       "uea2": {
-        "name": "SYREBO Upper Limb Rehabilitation Robot UEA2",
-        "tagline": "Full upper-limb training through interactive, target-based exercises.",
-        "features": [
-          "Target-oriented training tasks for the whole upper limb",
-          "Builds strength, speed, and movement accuracy",
-          "Height-adjustable desk for seated or wheelchair-accessible use",
-          "Interactive control box with keyboard and mouse input",
-          "Hand module accessories for varied exercise types"
-        ],
-        "configuration": [
-          "Host unit",
-          "Height-adjustable desk",
-          "Control box",
-          "Keyboard & mouse",
-          "Support strap",
-          "Hand module accessories",
-          "HDMI cable",
-          "Host cable",
-          "User manual"
-        ]
+        "name": "Upper Limb Rehabilitation Robot SY-UEA2",
+        "description": "Provides users with various effective target-oriented training to enhance upper limb strength, speed and accuracy, and reshape upper limb functionality.",
+        "features": [],
+        "configuration": ["1 pc * Host", "1 pc * Height-adjustable desk", "1 pc * Control box", "1 set * Keyboard & mouse", "1 set * Strap", "1 set * Hand module accessories", "1 pc * HDMI cable", "1 pc * Host cable", "1 pc * User manual"]
       },
       "uh01": {
-        "name": "SYREBO Dynamic Arm Support UH01",
-        "tagline": "Lightweight arm support that trains the elbow and shoulder together.",
-        "features": [
-          "Supports and guides elbow joint movement",
-          "Supports and guides shoulder joint movement",
-          "Reduces the effort needed to lift and move the arm during exercise",
-          "Compatible accessory for broader upper-limb rehab routines"
-        ],
-        "configuration": ["Dynamic arm support unit"]
+        "name": "Dynamic Arm Support SY-UH01",
+        "description": "Promotes rehabilitation by training the elbow and shoulder joints of the patient.",
+        "features": [],
+        "configuration": []
       },
       "m1": {
-        "name": "SYREBO Smart Rehab Mirror M1",
-        "tagline": "Mirror therapy that helps the brain relearn hand movement.",
-        "features": [
-          "Supports classic mirror therapy technique for motor recovery",
-          "Encourages brain function remodeling through visual feedback",
-          "Simple, screen-free design for easy home or clinic use",
-          "Complements glove- and robot-based hand training"
-        ],
-        "configuration": ["Smart rehab mirror unit"]
+        "name": "Smart Rehab Mirror SY-M1",
+        "description": "Promotes brain function remodeling and induces the recovery of hand motor ability.",
+        "features": [],
+        "configuration": []
       }
     }
   }

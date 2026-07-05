@@ -8,3 +8,10 @@ export interface DeviceProduct {
   isBestSeller?: boolean;
   hostSize?: string; // e.g. "105x95x60mm" — omit if not applicable
 }
+
+export interface DeviceProductTranslation {
+  name: string;
+  description?: string;
+  features: string[];
+  configuration: string[];
+}

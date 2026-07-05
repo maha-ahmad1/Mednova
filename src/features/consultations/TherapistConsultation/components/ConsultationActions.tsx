@@ -114,9 +114,9 @@ export default function ConsultationActions({
             <p className="font-semibold text-green-800 text-sm sm:text-lg">
               تم إكمال الاستشارة بنجاح
             </p>
-            <p className="text-green-600 text-xs sm:text-sm mt-1 sm:mt-2">
+            {/* <p className="text-green-600 text-xs sm:text-sm mt-1 sm:mt-2">
               شكراً لك على تقديم خدمة مميزة للمريض
-            </p>
+            </p> */}
           </div>
         )}
 

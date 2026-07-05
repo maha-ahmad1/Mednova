@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import type { DeviceProduct } from "../types/device.types";
+import type { DeviceProduct, DeviceProductTranslation } from "../types/device.types";
 import { DeviceDetailSheet } from "./DeviceDetailSheet";
 import { WhatsAppCTAButton } from "./WhatsAppCTAButton";
 
@@ -14,8 +14,8 @@ interface DeviceCardProps {
 
 export function DeviceCard({ device }: DeviceCardProps) {
   const t = useTranslations("smartDevices");
-  const name = t(`products.${device.id}.name`);
-  const tagline = t(`products.${device.id}.tagline`);
+  const product = t.raw(`products.${device.id}`) as DeviceProductTranslation;
+  const { name, description } = product;
 
   return (
     <div className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
@@ -40,7 +40,11 @@ export function DeviceCard({ device }: DeviceCardProps) {
           <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-gray-900">
             {name}
           </h3>
-          <p className="mt-1 line-clamp-2 text-xs text-gray-500">{tagline}</p>
+          {description && (
+            <p className="mt-1 line-clamp-2 text-xs text-gray-500">
+              {description}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center gap-2">

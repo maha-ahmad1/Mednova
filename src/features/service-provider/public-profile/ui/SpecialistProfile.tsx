@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, Edit, Star } from "lucide-react";
 import { ConsultationDialog } from "@/features/service-provider/ui/ConsultationDialog";
 import { useFetcher } from "@/hooks/useFetcher";
+import { cn } from "@/lib/utils";
 import ProfileHeader from "./profile/ProfileHeader";
 import ProfileDetails from "./profile/ProfileDetails";
 import ServicesPricing from "./profile/ServicesPricing";
@@ -27,6 +28,9 @@ export default function SpecialistProfile(): React.ReactNode {
   const reviewsTabRef = useRef<HTMLDivElement>(null);
 
   const [activeTab, setActiveTab] = useState("bio");
+  const [bioExpanded, setBioExpanded] = useState(false);
+  const [isBioClamped, setIsBioClamped] = useState(false);
+  const bioRef = useRef<HTMLParagraphElement>(null);
 
   const { data: rawProvider, isLoading, error } = useFetcher<ServiceProvider | null>(
     ["providerProfile", params.id],
@@ -47,6 +51,13 @@ export default function SpecialistProfile(): React.ReactNode {
       router.replace(`/centers/${params.id}`);
     }
   }, [rawProvider, pathname, params.id, router]);
+
+  useEffect(() => {
+    const el = bioRef.current;
+    if (el) {
+      setIsBioClamped(el.scrollHeight > el.clientHeight);
+    }
+  }, [provider?.bio, activeTab]);
 
   const scrollToReviews = () => {
     setActiveTab("reviews");
@@ -127,9 +138,24 @@ export default function SpecialistProfile(): React.ReactNode {
 
                     <div>
                       <h3 className="text-xl font-semibold text-gray-800 mb-4">نبذة عن المختص</h3>
-                      <p className="text-gray-600 leading-relaxed text-lg">
+                      <p
+                        ref={bioRef}
+                        className={cn(
+                          "text-gray-600 leading-relaxed text-lg",
+                          !bioExpanded && "line-clamp-3",
+                        )}
+                      >
                         {provider.bio || "لا توجد معلومات متاحة حالياً."}
                       </p>
+                      {isBioClamped && (
+                        <button
+                          type="button"
+                          onClick={() => setBioExpanded((prev) => !prev)}
+                          className="text-[#32A88D] text-sm font-medium mt-2 hover:underline"
+                        >
+                          {bioExpanded ? "عرض أقل" : "عرض المزيد"}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </TabsContent>

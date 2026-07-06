@@ -41,6 +41,11 @@ export type NotificationType =
   | 'consultation_cancelled_by_patient'
   | 'consultation_completed'
   | 'consultation_updated'
+  | 'consultation_cancelled_by_system'
+  | 'consultation_review_window_opened'
+  | 'consultation_review_window_expiring_patient'
+  | 'consultation_settlement_completed_patient'
+  | 'consultation_reminder_for_all'
   // Account status
   | 'account_approved'
   | 'account_rejected'
@@ -71,6 +76,7 @@ export interface NotificationData {
   consultation_id?: number;
   patient_name?: string;
   video_room_link?: string;
+  consultation_type?: 'chat' | 'video';
 }
 
 export interface NotificationItemProps {

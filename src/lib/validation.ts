@@ -1,5 +1,9 @@
 import * as z from "zod";
 
+
+const MIN_BIO_LENGTH = 120;
+const MAX_BIO_LENGTH = 800;
+
 export const personalSchema = z.object({
   full_name: z.string().min(2, "الاسم يجب أن يكون أكثر من حرفين"),
   email: z.string().email("بريد إلكتروني غير صالح"),
@@ -17,16 +21,39 @@ export const personalSchema = z.object({
     }),
 });
 
+// export const bioSchema = z.object({
+//   bio: z
+//     .string()
+//     .min(1, "النبذة لا يجب أن تكون فارغة.")
+//     .refine((val) => val.trim().split(/\s+/).length >= 10, {
+//       message: "النبذة يجب أن تكون أكثر من عشر كلمات.",
+//     })
+//     .refine((val) => val.trim().split(/\s+/).length <= 50, {
+//       message: "النبذة لا يجب أن تتجاوز 50 كلمة.",
+//     }),
+// });
+
+// export const bioSchema = z.object({
+//   bio: z
+//     .string()
+//     .trim()
+//     .min(1, "النبذة لا يجب أن تكون فارغة.")
+//     .refine((val) => val.split(/\s+/).length >= MIN_BIO_WORDS, {
+//       message: `النبذة يجب أن تحتوي على ${MIN_BIO_WORDS} كلمة على الأقل.`,
+//     })
+//     .refine((val) => val.split(/\s+/).length <= MAX_BIO_WORDS, {
+//       message: `النبذة يجب ألا تتجاوز ${MAX_BIO_WORDS} كلمة.`,
+//     }),
+// });
+
+
+
 export const bioSchema = z.object({
   bio: z
     .string()
-    .min(1, "النبذة لا يجب أن تكون فارغة.")
-    .refine((val) => val.trim().split(/\s+/).length >= 10, {
-      message: "النبذة يجب أن تكون أكثر من عشر كلمات.",
-    })
-    .refine((val) => val.trim().split(/\s+/).length <= 50, {
-      message: "النبذة لا يجب أن تتجاوز 50 كلمة.",
-    }),
+    .trim()
+    .min(MIN_BIO_LENGTH, `النبذة يجب أن تحتوي على ${MIN_BIO_LENGTH} حرفًا على الأقل.`)
+    .max(MAX_BIO_LENGTH, `النبذة يجب ألا تتجاوز ${MAX_BIO_LENGTH} حرفًا.`),
 });
 
 export const medicalSchema = z.object({

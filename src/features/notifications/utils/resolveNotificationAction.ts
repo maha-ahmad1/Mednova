@@ -14,8 +14,12 @@ export const resolveNotificationAction = (notification: Notification): Notificat
   }
 
   const consultationId = typeof data.consultation_id === 'number' ? data.consultation_id : undefined;
-  if (consultationId !== undefined) {
-    return { kind: 'internal', href: `/consultations/${consultationId}` };
+  const consultationType = data.consultation_type === 'chat' || data.consultation_type === 'video'
+    ? data.consultation_type
+    : undefined;
+
+  if (consultationId !== undefined && consultationType !== undefined) {
+    return { kind: 'internal', href: `/profile/consultations/${consultationType}/${consultationId}` };
   }
 
   return { kind: 'none' };

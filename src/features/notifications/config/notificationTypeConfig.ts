@@ -11,6 +11,8 @@ import {
   Heart,
   UserPlus,
   Info,
+  Wallet,
+  AlarmClock,
 } from 'lucide-react';
 
 export interface NotificationTypeConfigEntry {
@@ -65,6 +67,31 @@ const CONFIG_MAP: Record<string, NotificationTypeConfigEntry> = {
     icon: Clock,
     colorClass: 'bg-orange-500',
     titleKey: 'types.consultation_updated',
+  },
+  consultation_cancelled_by_system: {
+    icon: XCircle,
+    colorClass: 'bg-gray-500',
+    titleKey: 'types.consultation_cancelled_by_system',
+  },
+  consultation_review_window_opened: {
+    icon: Clock,
+    colorClass: 'bg-yellow-500',
+    titleKey: 'types.consultation_review_window_opened',
+  },
+  consultation_review_window_expiring_patient: {
+    icon: Clock,
+    colorClass: 'bg-orange-600',
+    titleKey: 'types.consultation_review_window_expiring_patient',
+  },
+  consultation_settlement_completed_patient: {
+    icon: Wallet,
+    colorClass: 'bg-green-600',
+    titleKey: 'types.consultation_settlement_completed_patient',
+  },
+  consultation_reminder_for_all: {
+    icon: AlarmClock,
+    colorClass: 'bg-blue-500',
+    titleKey: 'types.consultation_reminder_for_all',
   },
   account_approved: {
     icon: CheckCircle2,

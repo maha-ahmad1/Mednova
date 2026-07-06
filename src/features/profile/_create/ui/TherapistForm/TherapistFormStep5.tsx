@@ -18,6 +18,8 @@ import type { TherapistFormValues } from "@/app/api/therapist";
 import { useTherapistDraftStore } from "@/features/profile/_create/hooks/useTherapistDraftStore";
 import { SubmitHandler } from "react-hook-form";
 
+const MIN_BIO_LENGTH = 120;
+const MAX_BIO_LENGTH = 800;
 interface TherapistStep4Props {
   onBack: () => void;
   formData: Record<string, unknown>;
@@ -26,8 +28,11 @@ interface TherapistStep4Props {
 setGlobalErrors?: (errors: Record<string, string>) => void;
 }
 const step4Schema = z.object({
-  bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
-  status: z.string().optional(),
+ bio: z
+    .string()
+    .trim()
+    .min(MIN_BIO_LENGTH, `النبذة يجب أن تحتوي على ${MIN_BIO_LENGTH} حرفًا على الأقل.`)
+    .max(MAX_BIO_LENGTH, `النبذة يجب ألا تتجاوز ${MAX_BIO_LENGTH} حرفًا.`),  status: z.string().optional(),
 });
 
 type Step4Data = z.infer<typeof step4Schema>;

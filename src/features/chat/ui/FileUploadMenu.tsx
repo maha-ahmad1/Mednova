@@ -9,7 +9,7 @@ interface FileUploadMenuProps {
 
 export function FileUploadMenu({ onSelectImage, onSelectFile, onClose }: FileUploadMenuProps) {
   return (
-    <div className="absolute bottom-full mb-2 left-0 bg-white border border-gray-200 rounded-xl shadow-lg p-3 z-50 min-w-[180px] backdrop-blur-sm">
+    <div className="absolute bottom-full mb-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg p-3 z-50 min-w-[180px] backdrop-blur-sm">
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
         <span className="text-sm font-medium text-gray-700">إرفاق ملف</span>
         <Button

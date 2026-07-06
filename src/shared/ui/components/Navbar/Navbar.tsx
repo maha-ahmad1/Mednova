@@ -53,7 +53,7 @@ export default function Navbar({
               </nav>
             </div>
           )}
-
+{/* 
           {variant === "dashboard" && (
             <div className="relative w-full max-w-md">
               <Search className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2" />
@@ -63,7 +63,7 @@ export default function Navbar({
                 className="w-full pe-10 text-start"
               />
             </div>
-          )}
+          )} */}
         </div>
 
         <LanguageSwitcher />

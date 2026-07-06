@@ -18,8 +18,17 @@ import type { CenterFormValues } from "@/app/api/center";
 import { useCenterDraftStore } from "@/features/profile/_create/hooks/useCenterDraftStore";
 import type { SubmitHandler } from "react-hook-form";
 
+
+const MIN_BIO_LENGTH = 120;
+const MAX_BIO_LENGTH = 800;
+
+
 const step5Schema = z.object({
-  bio: z.string().min(10, "يرجى كتابة نبذة لا تقل عن 10 أحرف"),
+   bio: z
+    .string()
+    .trim()
+    .min(MIN_BIO_LENGTH, `النبذة يجب أن تحتوي على ${MIN_BIO_LENGTH} حرفًا على الأقل.`)
+    .max(MAX_BIO_LENGTH, `النبذة يجب ألا تتجاوز ${MAX_BIO_LENGTH} حرفًا.`),
   status: z.string().optional(),
 });
 

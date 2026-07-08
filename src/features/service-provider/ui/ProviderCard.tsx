@@ -1,6 +1,7 @@
 "use client";
  
 import React from "react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Star, MapPin, Banknote, Stethoscope } from "lucide-react";
 import { ServiceProvider } from "../types/provider";
@@ -43,12 +44,13 @@ const SpecialtiesDisplay = ({
   specialtyNames: string[];
   isTherapist: boolean;
 }) => {
+  const t = useTranslations("specialists.card");
   const MAX_VISIBLE = 2;
   const visible = specialtyNames.slice(0, MAX_VISIBLE);
   const hidden = specialtyNames.slice(MAX_VISIBLE);
   const hasMore = hidden.length > 0;
- 
-  const fallback = isTherapist ? "تخصص عام" : "مركز تأهيلي";
+
+  const fallback = isTherapist ? t("generalSpecialty") : t("rehabCenter");
   const displayNames = specialtyNames.length > 0 ? visible : [fallback];
  
   return (
@@ -70,7 +72,7 @@ const SpecialtiesDisplay = ({
         {/* عرض +X بشكل نظيف */}
         {hasMore && (
           <span
-            className="mr-1.5 text-[#32A88D] font-semibold cursor-help text-xs"
+            className="ms-1.5 text-[#32A88D] font-semibold cursor-help text-xs"
             title={hidden.join("، ")}
           >
             +{hidden.length}
@@ -85,6 +87,7 @@ const SpecialtiesDisplay = ({
    Provider Card
 ======================= */
 export const ProviderCard: React.FC<ProviderCardProps> = ({ provider }) => {
+  const t = useTranslations("specialists.card");
   const isTherapist = provider.type_account === "therapist";
   const rating = provider.average_rating
     ? Number(provider.average_rating)
@@ -150,7 +153,7 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({ provider }) => {
         <div className="absolute top-3 left-3">
           <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm text-gray-700 px-2.5 py-1 rounded-full text-xs font-medium shadow-sm">
             <MapPin className="w-3 h-3 text-[#32A88D]" />
-            <span>{provider.location_details?.city || "غير محدد"}</span>
+            <span>{provider.location_details?.city || t("notSpecified")}</span>
           </div>
         </div>
  
@@ -186,18 +189,18 @@ export const ProviderCard: React.FC<ProviderCardProps> = ({ provider }) => {
             
             {/* محادثة */}
             <div className="flex items-center gap-1">
-              <span className="text-gray-500">محادثة</span>
+              <span className="text-gray-500">{t("chat")}</span>
               <span className="font-bold text-[#32A88D]">
                 {prices.chatPrice}
               </span>
               <CurrencyRenderer currency={prices.currency} />
             </div>
- 
+
             <span className="text-gray-200 select-none">|</span>
- 
+
             {/* فيديو */}
             <div className="flex items-center gap-1">
-              <span className="text-gray-500">فيديو</span>
+              <span className="text-gray-500">{t("video")}</span>
               <span className="font-bold text-[#32A88D]">
                 {prices.videoPrice}
               </span>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import type { NormalizedProvider } from "@/utils/normalizeProvider";
 
 interface ServicesPricingProps {
@@ -6,9 +7,10 @@ interface ServicesPricingProps {
 }
 
 export default function ServicesPricing({ provider }: ServicesPricingProps) {
+  const t = useTranslations("specialists.publicProfile.services");
   return (
     <div className="space-y-6 ">
-      <h3 className="text-gray-500 text-sm mb-4"> :أسعار الجلسات </h3>
+      <h3 className="text-gray-500 text-sm mb-4">{t("pricesTitle")}</h3>
       <div className="space-y-4">
         {provider.services.map((service) => (
           <div
@@ -19,13 +21,13 @@ export default function ServicesPricing({ provider }: ServicesPricingProps) {
               <div className="font-semibold text-gray-800">{service.name}</div>
               <div className="text-sm text-gray-500">{service.description}</div>
             </div>
-            <div className="text-right">
+            <div className="text-end">
               <div className="flex items-center text-2xl font-bold text-[#32A88D]">
                 <Image
                   src="/images/Light22.svg"
                   width={14}
                   height={14}
-                  className="w-6 h-6 translate-y-[1px] ml-1"
+                  className="w-6 h-6 translate-y-[1px] me-1"
                   alt="OMR currency"
                 />
                 <span>{service.price}</span>

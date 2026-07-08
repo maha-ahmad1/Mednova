@@ -134,11 +134,147 @@
     "filter": "إعادة تعيين الفلاتر",
     "noResultsTitle": "لم يتم العثور على نتائج",
     "noResultsDesc": "لا يوجد أخصائيون يطابقون بحثك",
-    "viewProfile": "عرض الملف الشخصي",
+    "viewProfile": " الملف الشخصي",
     "selectSpecialty": "اختر التخصص",
+    "country": "الدولة",
     "selectCountry": "اختر الدولة",
     "city": "المدينة",
-    "selectCity": "اختر المدينة"
+    "selectCity": "اختر المدينة",
+    "card": {
+      "chat": "محادثة",
+      "video": "فيديو",
+      "notSpecified": "غير محدد",
+      "generalSpecialty": "تخصص عام",
+      "rehabCenter": "مركز تأهيلي"
+    },
+    "consultationDialog": {
+      "requestConsultation": "طلب استشارة",
+      "navigating": "جارٍ الانتقال...",
+      "chooseTypeTitle": "اختر نوع الاستشارة",
+      "withProvider": "مع {name}",
+      "chatTitle": "استشارة نصية",
+      "chatDesc": "محادثة فورية مباشرة",
+      "videoTitle": "استشارة فيديو",
+      "videoDesc": "موعد مسبق مجدول",
+      "submitting": "جاري إرسال الطلب...",
+      "loginRequiredToast": "يجب تسجيل الدخول أولاً"
+    },
+    "publicProfile": {
+      "errorTitle": "حدث خطأ",
+      "notFoundDesc": "لم يتم العثور على المختص",
+      "breadcrumb": "الملف الشخصي",
+      "reviewsTab": "التقييمات",
+      "bioTab": "السيرة الذاتية",
+      "aboutTitle": "نبذة عن المختص",
+      "noInfoAvailable": "لا توجد معلومات متاحة حالياً.",
+      "showLess": "عرض أقل",
+      "showMore": "عرض المزيد",
+      "outOfFive": "من 5.0",
+      "reviewsCountSuffix": "تقييم",
+      "writeYourReview": "اكتب تقييمك",
+      "writeReview": "اكتب تقييم",
+      "chooseSessionTime": "اختر موعد الجلسة",
+      "specialtiesLabel": "التخصصات:",
+      "experienceYearsSuffix": "سنوات خبرة",
+      "details": {
+        "university": "الجامعة",
+        "graduationYear": "سنة التخرج",
+        "experienceYears": "سنوات الخبرة",
+        "yearsUnit": "{years} سنوات",
+        "yearEstablishment": "سنة التأسيس",
+        "location": "الموقع",
+        "licenseAuthority": "جهة الترخيص"
+      },
+      "schedule": {
+        "workSchedule": "جدول العمل",
+        "onlineSessions": "جلسات أونلاين",
+        "inPersonSessions": "جلسات حضور",
+        "morning": "الصباح:",
+        "evening": "المساء:",
+        "availableDays": "الأيام المتاحة"
+      },
+      "services": {
+        "pricesTitle": "أسعار الجلسات:",
+        "chatServiceName": "استشارة نصية",
+        "chatServiceDesc": "دردشة عبر المحادثة",
+        "videoServiceName": "جلسة فيديو",
+        "videoServiceDesc": "استشارة متكاملة عبر زووم"
+      }
+    },
+    "reviewsSection": {
+      "addReview": "أضف تقييم",
+      "editReview": "تعديل التقييم"
+    },
+    "reviewDialog": {
+      "close": "إغلاق",
+      "thanksTitle": "شكراً لك!",
+      "thanksDesc": "تم إرسال تقييمك بنجاح",
+      "title": "اكتب تقييمك",
+      "subtitle": "شاركنا تجربتك مع {name}",
+      "ratingPrompt": "كيف تقيم تجربتك؟",
+      "ratingHint": "اختر من 1 إلى 5 نجوم",
+      "ratingOutOf": "{rating} من 5",
+      "detailsLabel": "شاركنا المزيد من التفاصيل",
+      "commentPlaceholder": "اكتب تعليقك هنا... (اختياري)",
+      "detailsHint": "مشاركة تجربتك تساعد الآخرين على اتخاذ قرار أفضل",
+      "submitting": "جاري الإرسال...",
+      "submitButton": "إرسال التقييم",
+      "closingNote": "سيتم إغلاق النافذة تلقائياً...",
+      "thanksNote": "شكراً لمشاركتك رأيك معنا. تقييمك يساعدنا في تحسين خدماتنا.",
+      "submitSuccessToast": "تم إرسال تقييمك بنجاح!",
+      "submitErrorToast": "حدث خطأ أثناء إرسال التقييم"
+    },
+    "reviewStars": {
+      "starAriaLabel": "{count} نجمة"
+    }
+  },
+  "booking": {
+    "headerBadge": "حجز المواعيد",
+    "headerTitle": "حجز موعد استشارة بالفيديو",
+    "headerSubtitle": "اختر التاريخ والوقت المناسبين لحجز موعد استشارتك مع {type}",
+    "specialistWord": "المختص",
+    "centerWord": "المركز",
+    "confirmBooking": "تأكيد الحجز",
+    "bookingInProgress": "جاري الحجز...",
+    "providerCard": {
+      "bookingInfoTitle": "معلومات الحجز",
+      "serviceLabel": "الخدمة",
+      "durationLabel": "المدة",
+      "durationValue": "40 دقيقة",
+      "dateLabel": "التاريخ",
+      "timeLabel": "الوقت",
+      "appointmentTypeLabel": "نوع الموعد",
+      "videoConsultation": "استشارة فيديو",
+      "backButton": "الرجوع",
+      "specialistAlt": "المختص",
+      "centerAlt": "المركز",
+      "specialtyFallback": "تخصص المختص",
+      "addressFallback": "عنوان غير محدد"
+    },
+    "dateTime": {
+      "chooseDate": "اختر التاريخ",
+      "chooseTime": "اختر الوقت",
+      "selectDateFirst": "الرجاء اختيار تاريخ أولاً",
+      "loadingTimes": "جاري تحميل الأوقات المتاحة...",
+      "noTimesAvailable": "لا توجد أوقات متاحة",
+      "chooseAnotherDate": "يرجى اختيار تاريخ آخر",
+      "morningPeriod": "الفترة الصباحية",
+      "eveningPeriod": "الفترة المسائية"
+    },
+    "timezone": {
+      "label": "المنطقة الزمنية",
+      "useMyLocation": "استخدام موقعي",
+      "loading": "جاري التحميل...",
+      "selectPlaceholder": "اختر المنطقة الزمنية",
+      "searchPlaceholder": "ابحث عن مدينة أو منطقة...",
+      "zonesAvailable": "{count} منطقة زمنية متاحة",
+      "noZonesFound": "لم يتم العثور على مناطق تطابق بحثك"
+    },
+    "toasts": {
+      "selectDateTime": "الرجاء اختيار التاريخ والوقت",
+      "noConsultantId": "لا يوجد معرف للمستشار",
+      "bookingError": "حدث خطأ أثناء الحجز"
+    }
   },
   "hero": {
     "title": "تعافيك يبدأ مع مدنوڤا",
@@ -1070,6 +1206,60 @@
       "cancelled": "مرفوض",
       "active": "نشطة",
       "completed": "مكتمل"
+    }
+  },
+  "chat": {
+    "header": {
+      "therapist": "معالج",
+      "center": "مركز تأهيل",
+      "patient": "مريض"
+    },
+    "list": {
+      "title": "المحادثات",
+      "empty": "لا توجد محادثات للمستخدمين المقبولين حالياً.",
+      "loginRequired": "يجب تسجيل الدخول للوصول إلى المحادثات",
+      "selectPrompt": "اختر محادثة من القائمة.",
+      "backToList": "العودة إلى قائمة المحادثات"
+    },
+    "panel": {
+      "backToDetails": "العودة إلى التفاصيل",
+      "unavailableTitle": "المحادثة غير متاحة",
+      "unavailablePendingReason": "يجب قبول الاستشارة أولاً لبدء المحادثة",
+      "unavailableCancelledReason": "تم رفض هذه الاستشارة",
+      "unavailableDefaultReason": "لا يمكن الوصول إلى المحادثة في الوقت الحالي"
+    },
+    "interface": {
+      "loadError": "خطأ في تحميل المحادثة",
+      "loading": "جاري تحميل المحادثة...",
+      "loadingMessages": "جاري تحميل رسائل أقدم...",
+      "messagesLoadError": "حدث خطأ في تحميل الرسائل",
+      "noMessages": "لا توجد رسائل بعد",
+      "periodEndedNotice": "انتهت فترة الاستشارة. لا يمكن إرسال رسائل جديدة.",
+      "quotaExhaustedNotice": "لقد استنفذت رصيدك من الرسائل.",
+      "fileTooLarge": "حجم الملف أكبر من الحد المسموح (10MB)",
+      "sendSuccessToast": "تم إرسال الرسالة بنجاح",
+      "sendFailedError": "فشل في إرسال الرسالة",
+      "sendErrorToast": "حدث خطأ في الإرسال",
+      "fetchFailedError": "فشل في جلب الرسائل",
+      "markReadFailedError": "فشل في تحديث حالة الرسالة",
+      "markReadStatusFailedError": "فشل في تحديث حالة القراءة",
+      "newMessageToast": "📩 رسالة جديدة"
+    },
+    "input": {
+      "placeholder": "اكتب رسالة..."
+    },
+    "uploadMenu": {
+      "title": "إرفاق ملف",
+      "image": "صورة",
+      "imageTypes": "JPG, PNG, GIF",
+      "file": "ملف",
+      "fileTypes": "PDF, DOC, ZIP",
+      "maxSize": "الحجم الأقصى: 10MB"
+    },
+    "filePreview": {
+      "download": "تحميل",
+      "delete": "حذف",
+      "attachedFile": "ملف مرفق"
     }
   },
   "controlPanel": {

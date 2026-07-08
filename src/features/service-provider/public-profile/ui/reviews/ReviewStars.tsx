@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +20,7 @@ export const ReviewStars: React.FC<ReviewStarsProps> = ({
   disabled = false,
   size = 'md',
 }) => {
+  const t = useTranslations("specialists.reviewStars");
   const sizes = {
     sm: 'w-6 h-6',
     md: 'w-8 h-8',
@@ -43,7 +45,7 @@ export const ReviewStars: React.FC<ReviewStarsProps> = ({
             onMouseEnter={() => !disabled && onHoverRatingChange(starValue)}
             onMouseLeave={() => !disabled && onHoverRatingChange(0)}
             disabled={disabled}
-            aria-label={`${starValue} نجمة`}
+            aria-label={t("starAriaLabel", { count: starValue })}
           >
             <Star
               className={cn(

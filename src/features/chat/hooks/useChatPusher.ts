@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { getChatEcho } from "@/lib/echo";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -23,6 +24,7 @@ export const useChatPusher = (
 ) => {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
+  const t = useTranslations("chat.interface");
 
   const echoRef = useRef<ReturnType<typeof getChatEcho> | null>(null);
   const channelRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -52,13 +54,13 @@ export const useChatPusher = (
           : newMessage.receiver_id;
 
       if (Number(receiverId) === Number(session?.user?.id)) {
-        toast.info("📩 رسالة جديدة", {
+        toast.info(t("newMessageToast"), {
           duration: 3000,
           position: "top-center",
         });
       }
     },
-    [chatRequestId, queryClient, session?.user?.id]
+    [chatRequestId, queryClient, session?.user?.id, t]
   );
 
   useEffect(() => {
@@ -151,7 +153,7 @@ export const useChatPusher = (
 
           // إشعار للمستقبل فقط
           if (Number(receivedMessage.receiver_id) === Number(userId)) {
-            toast.info("📩 رسالة جديدة", {
+            toast.info(t("newMessageToast"), {
               duration: 4000,
               position: "top-center",
             });

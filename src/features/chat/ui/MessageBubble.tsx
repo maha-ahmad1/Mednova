@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import NextImage from "next/image";
 import type { Message } from "@/types/chat";
 
@@ -8,8 +9,10 @@ interface MessageBubbleProps {
 }
 
 const MessageBubble = memo(({ message, isMyMessage }: MessageBubbleProps) => {
+  const t = useTranslations("chat.filePreview");
+  const locale = useLocale();
   const isOptimistic = message.status === "sending";
-  
+
   const formatTime = (dateString: string) => {
     try {
       if (dateString.includes("PM") || dateString.includes("AM")) {
@@ -17,7 +20,7 @@ const MessageBubble = memo(({ message, isMyMessage }: MessageBubbleProps) => {
       }
       const date = new Date(dateString);
       if (!isNaN(date.getTime())) {
-        return date.toLocaleTimeString("ar-SA", {
+        return date.toLocaleTimeString(locale === "ar" ? "ar-SA" : "en-US", {
           hour: "2-digit",
           minute: "2-digit",
         });
@@ -64,7 +67,7 @@ const MessageBubble = memo(({ message, isMyMessage }: MessageBubbleProps) => {
                 rel="noreferrer"
                 className="text-sm text-blue-600 underline"
               >
-                ملف مرفق
+                {t("attachedFile")}
               </a>
             </div>
           )}
@@ -78,7 +81,7 @@ const MessageBubble = memo(({ message, isMyMessage }: MessageBubbleProps) => {
 
             {isMyMessage && (
               <span
-                className={`mr-1 flex items-center ${
+                className={`ms-1 flex items-center ${
                   message.is_read ? "text-blue-600" : "text-gray-400"
                 }`}
               >

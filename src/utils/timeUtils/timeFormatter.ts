@@ -1,5 +1,5 @@
-export const formatTime = (time24: string): string => {
-  if (!time24 || time24.trim() === "") return "غير محدد";
+export const formatTime = (time24: string, locale: "ar" | "en" = "ar"): string => {
+  if (!time24 || time24.trim() === "") return locale === "ar" ? "غير محدد" : "Not specified";
 
   try {
     // التعامل مع تنسيقات مختلفة للوقت
@@ -23,18 +23,18 @@ export const formatTime = (time24: string): string => {
       const minute = minutes || "00";
       
       if (isNaN(hour)) return timeStr; // إرجاع النص الأصلي إذا لم نستطع التحليل
-      
-      const ampm = hour >= 12 ? 'م' : 'ص';
+
+      const ampm = locale === "ar" ? (hour >= 12 ? 'م' : 'ص') : (hour >= 12 ? 'PM' : 'AM');
       const hour12 = hour % 12 || 12;
       return `${hour12}:${minute.padStart(2, '0')} ${ampm}`;
     }
 
     const [, hourStr, minuteStr] = timeMatch;
     const hour = parseInt(hourStr, 10);
-    
+
     if (hour < 0 || hour > 23) return timeStr;
 
-    const ampm = hour >= 12 ? 'م' : 'ص';
+    const ampm = locale === "ar" ? (hour >= 12 ? 'م' : 'ص') : (hour >= 12 ? 'PM' : 'AM');
     const hour12 = hour % 12 || 12;
     
     return `${hour12}:${minuteStr} ${ampm}`;
@@ -47,18 +47,25 @@ export const formatTime = (time24: string): string => {
 /**
  * دالة لتنسيق المدة
  */
-export const formatDuration = (minutes: number | string): string => {
+export const formatDuration = (minutes: number | string, locale: "ar" | "en" = "ar"): string => {
   const mins = typeof minutes === 'string' ? parseInt(minutes, 10) : minutes;
-  
-  if (isNaN(mins)) return "غير محدد";
-  
+
+  if (isNaN(mins)) return locale === "ar" ? "غير محدد" : "Not specified";
+
+  if (locale === "en") {
+    if (mins < 60) return `${mins} min`;
+    const hours = Math.floor(mins / 60);
+    const remainingMinutes = mins % 60;
+    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}min` : `${hours}h`;
+  }
+
   if (mins < 60) {
     return `${mins} دقيقة`;
   }
-  
+
   const hours = Math.floor(mins / 60);
   const remainingMinutes = mins % 60;
-  
+
   return remainingMinutes > 0
     ? `${hours} ساعة و ${remainingMinutes} دقيقة`
     : `${hours} ساعة`;

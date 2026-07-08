@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Globe, ChevronDown, Check, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TimeZoneService, type TimeZoneOption } from "@/utils/timezoneService";
@@ -22,6 +23,7 @@ export default function TimeZoneSelector({
   showHeader = true, // القيمة الافتراضية true لعرض العنوان
   showIcon = true, // القيمة الافتراضية true لعرض الأيقونة
 }: Props) {
+  const t = useTranslations("booking.timezone");
   // الحالات (States)
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -113,7 +115,7 @@ export default function TimeZoneSelector({
 
   // الحصول على تسمية المنطقة المختارة
   const getSelectedLabel = () => {
-    if (!selectedTimeZone) return "اختر المنطقة الزمنية";
+    if (!selectedTimeZone) return t("selectPlaceholder");
 
     const zone = timeZones.find((t) => t.id === selectedTimeZone);
     if (!zone) return selectedTimeZone;
@@ -172,7 +174,7 @@ export default function TimeZoneSelector({
             <div className="flex items-center gap-2">
               {showIcon && <Globe className="w-4 h-4 text-gray-600" />}
               <span className="text-sm font-medium text-gray-700">
-                المنطقة الزمنية
+                {t("label")}
               </span>
             </div>
           )}
@@ -180,9 +182,9 @@ export default function TimeZoneSelector({
           <button
             type="button"
             onClick={handleUseMyLocation}
-            className="mr-auto cursor-pointer text-xs text-[#32A88D] hover:text-[#2a8a7a] transition-colors"
+            className="ms-auto cursor-pointer text-xs text-[#32A88D] hover:text-[#2a8a7a] transition-colors"
           >
-            استخدام موقعي
+            {t("useMyLocation")}
           </button>
         </div>
       )}
@@ -200,7 +202,7 @@ export default function TimeZoneSelector({
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
             {loading ? (
-              <span className="text-gray-500 text-sm">جاري التحميل...</span>
+              <span className="text-gray-500 text-sm">{t("loading")}</span>
             ) : (
               <span className="text-gray-800 text-sm truncate">
                 {getSelectedLabel()}
@@ -227,19 +229,19 @@ export default function TimeZoneSelector({
               {/* شريط البحث */}
               <div className="p-3 border-b border-gray-100 sticky top-0 bg-white rounded-t-md">
                 <div className="relative">
-                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Search className="absolute end-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="ابحث عن مدينة أو منطقة..."
+                    placeholder={t("searchPlaceholder")}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full pr-10 pl-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#32A88D] focus:border-[#32A88D]"
+                    className="w-full pe-10 ps-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#32A88D] focus:border-[#32A88D]"
                     autoFocus
                     onClick={(e) => e.stopPropagation()}
                   />
                 </div>
                 <div className="mt-2 text-xs text-gray-500">
-                  {filteredZones.length} منطقة زمنية متاحة
+                  {t("zonesAvailable", { count: filteredZones.length })}
                 </div>
               </div>
 
@@ -247,7 +249,7 @@ export default function TimeZoneSelector({
               <div className="max-h-64 overflow-y-auto">
                 {filteredZones.length === 0 ? (
                   <div className="p-6 text-center text-gray-500 text-sm">
-                    لم يتم العثور على مناطق تطابق بحثك
+                    {t("noZonesFound")}
                   </div>
                 ) : (
                   filteredZones.map((zone) => (
@@ -259,7 +261,7 @@ export default function TimeZoneSelector({
                         handleSelectZone(zone.id);
                       }}
                       className={cn(
-                        "w-full text-right px-4 py-3 hover:bg-gray-50 transition-colors flex items-center justify-between group",
+                        "w-full text-start px-4 py-3 hover:bg-gray-50 transition-colors flex items-center justify-between group",
                         selectedTimeZone === zone.id && "bg-[#32A88D]/10"
                       )}
                     >

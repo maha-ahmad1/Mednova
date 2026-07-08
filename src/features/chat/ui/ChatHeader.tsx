@@ -1,4 +1,5 @@
-import { ArrowRight } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,14 +17,17 @@ interface ChatHeaderProps {
 }
 
 export function ChatHeader({ otherUser, onBack }: ChatHeaderProps) {
+  const t = useTranslations("chat.header");
+  const isRtl = useLocale() === "ar";
+  const BackIcon = isRtl ? ArrowRight : ArrowLeft;
   const getUserTypeText = (type: string) => {
     switch (type) {
       case "therapist":
-        return "معالج";
+        return t("therapist");
       case "rehabilitation_center":
-        return "مركز تأهيل";
+        return t("center");
       default:
-        return "مريض";
+        return t("patient");
     }
   };
 
@@ -32,7 +36,7 @@ export function ChatHeader({ otherUser, onBack }: ChatHeaderProps) {
       <div className="flex items-center gap-3">
         {onBack && (
           <Button variant="ghost" size="sm" onClick={onBack} className="p-2">
-            <ArrowRight className="w-4 h-4" />
+            <BackIcon className="w-4 h-4" />
           </Button>
         )}
 

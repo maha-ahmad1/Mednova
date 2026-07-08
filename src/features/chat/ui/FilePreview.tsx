@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import NextImage from "next/image";
 import { FileIcon, Download, X } from "lucide-react";
 
@@ -12,15 +13,16 @@ export function FilePreview({
   selectedFile, 
   selectedPreview, 
   uploadProgress, 
-  onRemoveFile 
+  onRemoveFile
 }: FilePreviewProps) {
+  const t = useTranslations("chat.filePreview");
   if (!selectedFile || !selectedPreview) return null;
 
   const isImage = selectedFile.type.startsWith("image/");
 
   if (isImage) {
     return (
-      <div className="mr-2 relative group">
+      <div className="ms-2 relative group">
         <div className="relative">
           <NextImage
             src={selectedPreview}
@@ -31,7 +33,7 @@ export function FilePreview({
           />
           <button
             onClick={onRemoveFile}
-            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg transition-transform hover:scale-110"
+            className="absolute -top-2 -end-2 bg-red-500 text-white rounded-full p-1 shadow-lg transition-transform hover:scale-110"
             type="button"
           >
             <X className="w-3 h-3" />
@@ -42,11 +44,11 @@ export function FilePreview({
   }
 
   return (
-    <div className="mr-2 flex items-center gap-3 border border-[#32A88D]/20 rounded-xl p-3 bg-[#32A88D]/5">
+    <div className="ms-2 flex items-center gap-3 border border-[#32A88D]/20 rounded-xl p-3 bg-[#32A88D]/5">
       <div className="flex items-center justify-center w-12 h-12 bg-[#32A88D] rounded-lg">
         <FileIcon className="w-6 h-6 text-white" />
       </div>
-      <div className="flex-1 text-right">
+      <div className="flex-1 text-start">
         <div className="font-medium text-sm text-gray-800 truncate max-w-[120px]">
           {selectedFile.name}
         </div>
@@ -59,14 +61,14 @@ export function FilePreview({
           href={selectedPreview}
           download={selectedFile.name}
           className="text-[#32A88D] hover:text-[#2a8f7a] transition-colors"
-          title="تحميل"
+          title={t("download")}
         >
           <Download className="w-4 h-4" />
         </a>
         <button
           onClick={onRemoveFile}
           className="text-red-500 hover:text-red-600 transition-colors"
-          title="حذف"
+          title={t("delete")}
         >
           <X className="w-4 h-4" />
         </button>

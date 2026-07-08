@@ -3,6 +3,7 @@ import {
   useQueryClient,
   useInfiniteQuery,
 } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import type { Message, SendMessageData } from "@/types/chat";
 import type { AxiosError, AxiosProgressEvent } from "axios";
@@ -21,6 +22,7 @@ interface ApiErrorResponse {
 
 export const useMessages = (chatRequestId: number, limit = 15) => {
   const axiosInstance = useAxiosInstance();
+  const t = useTranslations("chat.interface");
 
   return useInfiniteQuery({
     queryKey: ["messages", chatRequestId],
@@ -48,7 +50,7 @@ export const useMessages = (chatRequestId: number, limit = 15) => {
       );
 
       if (!response.data.success) {
-        throw new Error("فشل في جلب الرسائل");
+        throw new Error(t("fetchFailedError"));
       }
 
       const apiData = response.data.data;
@@ -122,6 +124,7 @@ getNextPageParam: (lastPage) => {
 export const useSendMessage = () => {
   const axiosInstance = useAxiosInstance();
   const queryClient = useQueryClient();
+  const t = useTranslations("chat.interface");
 
   return useMutation({
     // Accept either:
@@ -170,7 +173,7 @@ export const useSendMessage = () => {
         const errorMsg =
           response.data.data?.error ||
           response.data.message ||
-          "فشل في إرسال الرسالة";
+          t("sendFailedError");
         throw new Error(errorMsg);
       }
 
@@ -189,7 +192,7 @@ export const useSendMessage = () => {
       if (chatId) {
         queryClient.invalidateQueries({ queryKey: ["messages", chatId] });
       }
-      toast.success("تم إرسال الرسالة بنجاح");
+      toast.success(t("sendSuccessToast"));
     },
     onError: (error: AxiosError<ApiErrorResponse>) => {
       // console.error('❌ خطأ في إرسال الرسالة:', error);
@@ -199,7 +202,7 @@ export const useSendMessage = () => {
         errorData?.data?.error ||
         errorData?.message ||
         error.message ||
-        "حدث خطأ في الإرسال";
+        t("sendErrorToast");
       toast.error(errorMessage);
     },
   });
@@ -207,6 +210,7 @@ export const useSendMessage = () => {
 
 export const useMarkAsRead = () => {
   const axiosInstance = useAxiosInstance();
+  const t = useTranslations("chat.interface");
 
   return useMutation({
     mutationFn: async (senderId: number) => {
@@ -218,7 +222,7 @@ export const useMarkAsRead = () => {
         throw new Error(
           response.data.data?.error ||
             response.data.message ||
-            "فشل في تحديث حالة الرسالة"
+            t("markReadFailedError")
         );
       }
 
@@ -235,7 +239,7 @@ export const useMarkAsRead = () => {
         errorData?.data?.error ||
         errorData?.message ||
         error.message ||
-        "فشل في تحديث حالة القراءة";
+        t("markReadStatusFailedError");
       toast.error(errorMessage);
     },
   });

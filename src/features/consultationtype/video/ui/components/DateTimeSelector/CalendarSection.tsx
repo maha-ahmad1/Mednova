@@ -1,6 +1,7 @@
 "use client"
 import { Calendar } from "@/components/ui/calendar"
-import { ar } from "date-fns/locale"
+import { ar, enUS } from "date-fns/locale"
+import { useLocale } from "next-intl"
 import { useState, useEffect } from "react"
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export default function CalendarSection({ selectedDate, setSelectedDate, timeZone }: Props) {
+  const dateFnsLocale = useLocale() === "ar" ? ar : enUS
   const [displayDate, setDisplayDate] = useState<Date | undefined>()
 
   // تحويل التاريخ للعرض حسب المنطقة الزمنية
@@ -61,7 +63,7 @@ export default function CalendarSection({ selectedDate, setSelectedDate, timeZon
           mode="single"
           selected={displayDate}
           onSelect={handleDateSelect}
-          locale={ar}
+          locale={dateFnsLocale}
           className="rounded-md !cursor-pointer w-full"
           disabled={(date) => {
             const yesterday = new Date()

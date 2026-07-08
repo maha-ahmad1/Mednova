@@ -2,6 +2,7 @@
 
 
 import React, { useState, useEffect } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -43,6 +44,8 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
   defaultComment = '',
   onClose,
 }) => {
+  const t = useTranslations('specialists.reviewDialog');
+  const dir = useLocale() === 'ar' ? 'rtl' : 'ltr';
   const [rating, setRating] = useState(defaultRating);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState(defaultComment);
@@ -91,12 +94,12 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md md:max-w-lg rounded-2xl">
+      <DialogContent className="sm:max-w-md md:max-w-lg rounded-2xl" dir={dir}>
         <button
           onClick={handleClose}
           disabled={isSubmitting}
-          className="absolute left-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50"
-          aria-label="إغلاق"
+          className="absolute start-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50"
+          aria-label={t('close')}
         >
           <X className="w-5 h-5 text-gray-500" />
         </button>
@@ -108,10 +111,10 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
                 <CheckCircle className="w-10 h-10 text-green-600" />
               </div>
               <DialogTitle className="text-2xl font-bold text-gray-800">
-                شكراً لك!
+                {t('thanksTitle')}
               </DialogTitle>
               <DialogDescription className="text-lg text-gray-600">
-                تم إرسال تقييمك بنجاح
+                {t('thanksDesc')}
               </DialogDescription>
             </div>
           ) : (
@@ -120,10 +123,10 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
                 <Star className="w-8 h-8 text-[#32A88D]" />
               </div>
               <DialogTitle className="text-2xl font-bold text-gray-800">
-                اكتب تقييمك
+                {t('title')}
               </DialogTitle>
               <DialogDescription className="text-gray-600">
-                شاركنا تجربتك مع {revieweeName}
+                {t('subtitle', { name: revieweeName })}
               </DialogDescription>
             </>
           )}
@@ -134,10 +137,10 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
             <div className="py-6">
               <div className="text-center mb-4">
                 <p className="text-gray-700 font-medium mb-2">
-                  كيف تقيم تجربتك؟
+                  {t('ratingPrompt')}
                 </p>
                 <p className="text-sm text-gray-500">
-                  اختر من 1 إلى 5 نجوم
+                  {t('ratingHint')}
                 </p>
               </div>
 
@@ -155,7 +158,7 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
               {rating > 0 && (
                 <div className="text-center">
                   <p className="text-lg font-semibold text-[#32A88D]">
-                    {rating} من 5
+                    {t('ratingOutOf', { rating })}
                   </p>
                 </div>
               )}
@@ -163,18 +166,18 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
 
             <div className="space-y-4">
               <label htmlFor="comment" className="text-gray-700 font-medium">
-                شاركنا المزيد من التفاصيل
+                {t('detailsLabel')}
               </label>
               <Textarea
                 id="comment"
-                placeholder="اكتب تعليقك هنا... (اختياري)"
+                placeholder={t('commentPlaceholder')}
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 disabled={isSubmitting}
                 className="min-h-[120px] resize-none rounded-xl border-gray-300 focus:border-[#32A88D] focus:ring-[#32A88D]"
               />
               <p className="text-sm text-gray-500">
-                مشاركة تجربتك تساعد الآخرين على اتخاذ قرار أفضل
+                {t('detailsHint')}
               </p>
             </div>
 
@@ -187,10 +190,10 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
                 {isSubmitting ? (
                   <div className="flex items-center justify-center gap-2">
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>جاري الإرسال...</span>
+                    <span>{t('submitting')}</span>
                   </div>
                 ) : (
-                  'إرسال التقييم'
+                  t('submitButton')
                 )}
               </Button>
             </DialogFooter>
@@ -198,10 +201,10 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
         ) : (
           <div className="py-8 text-center">
             <p className="text-gray-600 mb-6">
-              شكراً لمشاركتك رأيك معنا. تقييمك يساعدنا في تحسين خدماتنا.
+              {t('thanksNote')}
             </p>
             <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-              <p>سيتم إغلاق النافذة تلقائياً...</p>
+              <p>{t('closingNote')}</p>
             </div>
           </div>
         )}

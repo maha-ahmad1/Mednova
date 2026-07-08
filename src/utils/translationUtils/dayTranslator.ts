@@ -1,27 +1,31 @@
-export const translateDay = (day: string): string => {
-  if (!day) return "غير محدد";
-  
-  const daysMap: Record<string, string> = {
-    // الإنجليزية
-    'saturday': 'السبت',
-    'sunday': 'الأحد',
-    'monday': 'الاثنين',
-    'tuesday': 'الثلاثاء',
-    'wednesday': 'الأربعاء',
-    'thursday': 'الخميس',
-    'friday': 'الجمعة',
-    
-    // بأحرف كبيرة
-    'Saturday': 'السبت',
-    'Sunday': 'الأحد',
-    'Monday': 'الاثنين',
-    'Tuesday': 'الثلاثاء',
-    'Wednesday': 'الأربعاء',
-    'Thursday': 'الخميس',
-    'Friday': 'الجمعة',
-  };
-  
+export const translateDay = (day: string, locale: "ar" | "en" = "ar"): string => {
+  if (!day) return locale === "ar" ? "غير محدد" : "Not specified";
+
   const normalizedDay = day.trim().toLowerCase();
+
+  if (locale === "en") {
+    const englishDaysMap: Record<string, string> = {
+      saturday: "Saturday",
+      sunday: "Sunday",
+      monday: "Monday",
+      tuesday: "Tuesday",
+      wednesday: "Wednesday",
+      thursday: "Thursday",
+      friday: "Friday",
+    };
+    return englishDaysMap[normalizedDay] || day;
+  }
+
+  const daysMap: Record<string, string> = {
+    saturday: 'السبت',
+    sunday: 'الأحد',
+    monday: 'الاثنين',
+    tuesday: 'الثلاثاء',
+    wednesday: 'الأربعاء',
+    thursday: 'الخميس',
+    friday: 'الجمعة',
+  };
+
   return daysMap[normalizedDay] || day;
 };
 

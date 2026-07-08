@@ -51,7 +51,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
           <div className="space-y-2">
             <button
               onClick={() => onTabChange("all")}
-              className={`w-full text-right px-3 py-2 rounded-lg transition-all duration-200 ${
+              className={`w-full text-start px-3 py-2 rounded-lg transition-all duration-200 ${
                 selectedTab === "all"
                   ? "bg-[#32A88D] text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -61,7 +61,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
             </button>
             <button
               onClick={() => onTabChange("therapist")}
-              className={`w-full text-right px-3 py-2 rounded-lg transition-all duration-200 ${
+              className={`w-full text-start px-3 py-2 rounded-lg transition-all duration-200 ${
                 selectedTab === "therapist"
                   ? "bg-[#32A88D] text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -71,7 +71,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
             </button>
             <button
               onClick={() => onTabChange("center")}
-              className={`w-full text-right px-3 py-2 rounded-lg transition-all duration-200 ${
+              className={`w-full text-start px-3 py-2 rounded-lg transition-all duration-200 ${
                 selectedTab === "center"
                   ? "bg-[#32A88D] text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -130,7 +130,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
         </div> */}
         <div className="space-y-4">
           <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-2">الدولة</h4>
+            <h4 className="text-sm font-medium text-gray-700 mb-2">{t("country")}</h4>
             <Select
               value={filters.country}
               onValueChange={(value) => {

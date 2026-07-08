@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,6 +27,10 @@ export default function SpecialistProfile(): React.ReactNode {
   const pathname = usePathname();
   const router = useRouter();
   const reviewsTabRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations("specialists.publicProfile");
+  const tCard = useTranslations("specialists.card");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
 
   const [activeTab, setActiveTab] = useState("bio");
   const [bioExpanded, setBioExpanded] = useState(false);
@@ -37,7 +42,23 @@ export default function SpecialistProfile(): React.ReactNode {
     params.id ? `/api/customer/${params.id}` : null
   );
 
-  const provider = rawProvider ? normalizeProvider(rawProvider) : null;
+  const provider = rawProvider
+    ? normalizeProvider(rawProvider, {
+        notSpecified: tCard("notSpecified"),
+        citySeparator: locale === "ar" ? "، " : ", ",
+        chatServiceName: t("services.chatServiceName"),
+        chatServiceDesc: t("services.chatServiceDesc"),
+        videoServiceName: t("services.videoServiceName"),
+        videoServiceDesc: t("services.videoServiceDesc"),
+        university: t("details.university"),
+        graduationYear: t("details.graduationYear"),
+        experienceYearsLabel: t("details.experienceYears"),
+        yearsUnit: (years) => t("details.yearsUnit", { years }),
+        yearEstablishment: t("details.yearEstablishment"),
+        location: t("details.location"),
+        licenseAuthority: t("details.licenseAuthority"),
+      })
+    : null;
   const { data: session } = useSession();
   const currentUserId = typeof session?.user?.id === "number" ? session.user.id : 0;
 
@@ -91,9 +112,9 @@ export default function SpecialistProfile(): React.ReactNode {
       <section className="py-20 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-gray-50/50 to-white">
         <EmptyState
           type="error"
-          title="حدث خطأ"
-          description="لم يتم العثور على المختص"
-          actionText="إعادة المحاولة"
+          title={t("errorTitle")}
+          description={t("notFoundDesc")}
+          actionText={tCommon("tryAgain")}
           onAction={() => window.location.reload()}
         />
       </section>
@@ -103,7 +124,7 @@ export default function SpecialistProfile(): React.ReactNode {
   return (
     <>
       <Navbar variant="landing" />
-      <BreadcrumbNav currentPage="الملف الشخصي" />
+      <BreadcrumbNav currentPage={t("breadcrumb")} />
 
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -119,16 +140,16 @@ export default function SpecialistProfile(): React.ReactNode {
                 <TabsList className="grid w-full grid-cols-2 mb-8">
                   <TabsTrigger value="reviews" className="text-lg flex items-center gap-2">
                     <Star className="w-5 h-5" />
-                    التقييمات
+                    {t("reviewsTab")}
                   </TabsTrigger>
 
                   <TabsTrigger value="bio" className="text-lg flex items-center gap-2">
                     <BookOpen className="w-5 h-5" />
-                    السيرة الذاتية
+                    {t("bioTab")}
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="bio" className="mt-0 text-right">
+                <TabsContent value="bio" className="mt-0 text-start">
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <ServicesPricing provider={provider} />
@@ -137,7 +158,7 @@ export default function SpecialistProfile(): React.ReactNode {
                     </div>
 
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-800 mb-4">نبذة عن المختص</h3>
+                      <h3 className="text-xl font-semibold text-gray-800 mb-4">{t("aboutTitle")}</h3>
                       <p
                         ref={bioRef}
                         className={cn(
@@ -145,7 +166,7 @@ export default function SpecialistProfile(): React.ReactNode {
                           !bioExpanded && "line-clamp-3",
                         )}
                       >
-                        {provider.bio || "لا توجد معلومات متاحة حالياً."}
+                        {provider.bio || t("noInfoAvailable")}
                       </p>
                       {isBioClamped && (
                         <button
@@ -153,21 +174,21 @@ export default function SpecialistProfile(): React.ReactNode {
                           onClick={() => setBioExpanded((prev) => !prev)}
                           className="text-[#32A88D] text-sm font-medium mt-2 hover:underline"
                         >
-                          {bioExpanded ? "عرض أقل" : "عرض المزيد"}
+                          {bioExpanded ? t("showLess") : t("showMore")}
                         </button>
                       )}
                     </div>
                   </div>
                 </TabsContent>
 
-                <TabsContent value="reviews" className="mt-0 text-right">
+                <TabsContent value="reviews" className="mt-0 text-start">
                   <div className="space-y-6" ref={reviewsTabRef}>
                     <div className="bg-white p-6 rounded-2xl shadow-sm border">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-4">
                           <div className="text-center">
                             <div className="text-4xl font-bold text-gray-800">{provider.rating.toFixed(1)}</div>
-                            <div className="text-gray-500">من 5.0</div>
+                            <div className="text-gray-500">{t("outOfFive")}</div>
                           </div>
                           <div>
                             <div className="flex items-center gap-1">
@@ -182,7 +203,7 @@ export default function SpecialistProfile(): React.ReactNode {
                                 />
                               ))}
                             </div>
-                            <div className="text-gray-600 mt-1">({provider.reviewsCount} تقييم)</div>
+                            <div className="text-gray-600 mt-1">({provider.reviewsCount} {t("reviewsCountSuffix")})</div>
                           </div>
                         </div>
                       </div>
@@ -194,7 +215,7 @@ export default function SpecialistProfile(): React.ReactNode {
                       revieweeType="customer"
                       revieweeName={provider.name}
                       showTriggerButton={true}
-                      triggerButtonText="اكتب تقييمك"
+                      triggerButtonText={t("writeYourReview")}
                     />
                   </div>
                 </TabsContent>
@@ -205,7 +226,7 @@ export default function SpecialistProfile(): React.ReactNode {
               <div className="sticky top-8 space-y-6">
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">اختر موعد الجلسة</h3>
+                    <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">{t("chooseSessionTime")}</h3>
 
                     <ScheduleCard provider={provider} />
 
@@ -231,8 +252,8 @@ export default function SpecialistProfile(): React.ReactNode {
                         onClick={scrollToReviews}
                         className="w-full border-[#32A88D]/40 text-[#2a8a7a] hover:bg-[#32A88D]/10"
                       >
-                        <Edit className="w-4 h-4 ml-2" />
-                        اكتب تقييم
+                        <Edit className="w-4 h-4 me-2" />
+                        {t("writeReview")}
                       </Button>
                     </div>
                   </div>

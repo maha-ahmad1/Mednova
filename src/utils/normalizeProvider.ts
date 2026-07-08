@@ -35,22 +35,21 @@ export interface NormalizedProvider {
   details: ProviderInfoItem[];
 }
 
-const DEFAULT_SERVICES: ProviderService[] = [
-  {
-    id: 1,
-    name: "استشارة نصية",
-    description: "دردشة عبر المحادثة",
-    price: 30,
-    // duration: "30 دقيقة",
-  },
-  {
-    id: 2,
-    name: "جلسة فيديو",
-    description: "استشارة متكاملة عبر زووم",
-    price: 50,
-    // duration: "60 دقيقة",
-  },
-];
+export type NormalizeProviderMessages = {
+  notSpecified: string;
+  citySeparator: string;
+  chatServiceName: string;
+  chatServiceDesc: string;
+  videoServiceName: string;
+  videoServiceDesc: string;
+  university: string;
+  graduationYear: string;
+  experienceYearsLabel: string;
+  yearsUnit: (years: number | string) => string;
+  yearEstablishment: string;
+  location: string;
+  licenseAuthority: string;
+};
 
 const toNumber = (value: unknown, fallback = 0): number => {
   if (typeof value === "number" && Number.isFinite(value)) return value;
@@ -61,65 +60,81 @@ const toNumber = (value: unknown, fallback = 0): number => {
   return fallback;
 };
 
-const toDisplayValue = (value: unknown): string | number => {
+const toDisplayValue = (value: unknown, notSpecified: string): string | number => {
   if (typeof value === "number") return value;
   if (typeof value === "string" && value.trim().length > 0) return value;
-  return "غير محدد";
+  return notSpecified;
 };
 
-export function normalizeProvider(data: ServiceProvider): NormalizedProvider {
+export function normalizeProvider(
+  data: ServiceProvider,
+  messages: NormalizeProviderMessages,
+): NormalizedProvider {
   const isTherapist = data.type_account === "therapist";
   const detailsSource = isTherapist ? data.therapist_details : data.center_details;
+
+  const defaultServices: ProviderService[] = [
+    {
+      id: 1,
+      name: messages.chatServiceName,
+      description: messages.chatServiceDesc,
+      price: 30,
+    },
+    {
+      id: 2,
+      name: messages.videoServiceName,
+      description: messages.videoServiceDesc,
+      price: 50,
+    },
+  ];
 
   const servicesFromApi: ProviderService[] = [
     {
       id: 1,
-      name: "استشارة نصية",
-      description: "دردشة عبر المحادثة",
+      name: messages.chatServiceName,
+      description: messages.chatServiceDesc,
       price: toNumber((detailsSource as Record<string, unknown> | undefined)?.chat_consultation_price),
-      // duration: "30 دقيقة",
     },
     {
       id: 2,
-      name: "جلسة فيديو",
-      description: "استشارة متكاملة عبر زووم",
+      name: messages.videoServiceName,
+      description: messages.videoServiceDesc,
       price: toNumber((detailsSource as Record<string, unknown> | undefined)?.video_consultation_price),
-      // duration: "60 دقيقة",
     },
   ];
 
   const hasApiPrices = servicesFromApi.some((service) => service.price > 0);
 
-  const city = data.location_details?.city || "غير محدد";
-  const country = data.location_details?.country || "غير محدد";
+  const city = data.location_details?.city || messages.notSpecified;
+  const country = data.location_details?.country || messages.notSpecified;
 
   const infoItems: ProviderInfoItem[] = isTherapist
     ? [
         {
-          label: "الجامعة",
-          value: toDisplayValue(data.therapist_details?.university_name),
+          label: messages.university,
+          value: toDisplayValue(data.therapist_details?.university_name, messages.notSpecified),
         },
         {
-          label: "سنة التخرج",
-          value: toDisplayValue(data.therapist_details?.graduation_year),
+          label: messages.graduationYear,
+          value: toDisplayValue(data.therapist_details?.graduation_year, messages.notSpecified),
         },
         {
-          label: "سنوات الخبرة",
-          value: `${data.therapist_details?.experience_years ?? 0} سنوات`,
+          label: messages.experienceYearsLabel,
+          value: messages.yearsUnit(data.therapist_details?.experience_years ?? 0),
         },
       ]
     : [
         {
-          label: "سنة التأسيس",
-          value: toDisplayValue(data.center_details?.year_establishment),
+          label: messages.yearEstablishment,
+          value: toDisplayValue(data.center_details?.year_establishment, messages.notSpecified),
         },
         {
-          label: "الموقع",
-          value: `${city}، ${country}`,
+          label: messages.location,
+          value: `${city}${messages.citySeparator}${country}`,
         },
         {
-          label: "جهة الترخيص",
-          value: toDisplayValue(data.center_details?.license_authority),
+          label: messages.licenseAuthority,
+          value: toDisplayValue(data.center_details?.license_authority, messages.notSpecified),
         },
       ];
 
@@ -142,14 +157,14 @@ export function normalizeProvider(data: ServiceProvider): NormalizedProvider {
             id: specialty.id,
             name: specialty.name,
           })) || [],
-    services: hasApiPrices ? servicesFromApi : data.services || DEFAULT_SERVICES,
+    services: hasApiPrices ? servicesFromApi : data.services || defaultServices,
     schedule: data.schedules?.[0] || null,
     rating: toNumber(data.average_rating),
     reviewsCount: data.total_reviews || 0,
     location: {
       city,
       country,
-      label: `${city}، ${country}`,
+      label: `${city}${messages.citySeparator}${country}`,
     },
     details: infoItems,
   };

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ChatInterface from "@/features/chat/ui/ChatInterface";
@@ -12,18 +13,6 @@ interface ConsultationChatPanelProps {
   onBackToDetails: () => void;
   backButtonLabel?: string;
 }
-
-const getChatUnavailableMessage = (status: ConsultationRequest["status"]) => {
-  if (status === "pending") {
-    return "يجب قبول الاستشارة أولاً لبدء المحادثة";
-  }
-
-  if (status === "cancelled") {
-    return "تم رفض هذه الاستشارة";
-  }
-
-  return "لا يمكن الوصول إلى المحادثة في الوقت الحالي";
-};
 
 const mapRequestToChatRequest = (request: ConsultationRequest): ChatRequest => ({
   id: request.id,
@@ -48,21 +37,29 @@ export default function ConsultationChatPanel({
   request,
   canShowChat,
   onBackToDetails,
-  backButtonLabel = "العودة إلى التفاصيل",
+  backButtonLabel,
 }: ConsultationChatPanelProps) {
+  const t = useTranslations("chat.panel");
+
+  const getChatUnavailableMessage = (status: ConsultationRequest["status"]) => {
+    if (status === "pending") return t("unavailablePendingReason");
+    if (status === "cancelled") return t("unavailableCancelledReason");
+    return t("unavailableDefaultReason");
+  };
+
   if (!canShowChat) {
     return (
       <div className="p-8 text-center h-full flex items-center justify-center">
         <div>
           <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            المحادثة غير متاحة
+            {t("unavailableTitle")}
           </h3>
           <p className="text-gray-500 text-sm">
             {getChatUnavailableMessage(request.status)}
           </p>
           <Button onClick={onBackToDetails} variant="outline" className="mt-4">
-            {backButtonLabel}
+            {backButtonLabel ?? t("backToDetails")}
           </Button>
         </div>
       </div>

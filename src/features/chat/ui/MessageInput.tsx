@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Send, Loader2, Paperclip } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -38,6 +39,7 @@ export function MessageInput({
   isSending,
   disabled = false,
 }: MessageInputProps) {
+  const t = useTranslations("chat.input");
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -86,7 +88,7 @@ export function MessageInput({
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder="اكتب رسالة..."
+          placeholder={t("placeholder")}
           className="flex-1 min-h-[40px] max-h-[120px] resize-none rounded-2xl bg-gray-100 border-none focus-visible:ring-0 px-4 py-3"
           rows={1}
           disabled={disabled}

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { Loader2, MessageCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,15 +29,16 @@ const ACCEPTED_CHAT_STATUSES: ConsultationRequest["status"][] = [
 const canAccessChat = (status: ConsultationRequest["status"]) =>
   ACCEPTED_CHAT_STATUSES.includes(status);
 
-const getStatusLabel = (status: ConsultationRequest["status"]) => {
-  if (status === "active") return "نشطة";
-  if (status === "accepted") return "مقبولة";
-  if (status === "completed") return "مكتملة";
-  return status;
-};
-
 export default function ProfileChatPage() {
   const { data: session } = useSession();
+  const t = useTranslations("chat.list");
+  const tStatus = useTranslations("consultations.status");
+  const getStatusLabel = (status: ConsultationRequest["status"]) => {
+    if (status === "active" || status === "accepted" || status === "completed") {
+      return tStatus(status);
+    }
+    return status;
+  };
   const [timezone, setTimezone] = useState<string>("");
   const [isMobile, setIsMobile] = useState(false);
   const [selectedRequest, setSelectedRequest] =
@@ -124,7 +126,7 @@ export default function ProfileChatPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <MessageCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-600">يجب تسجيل الدخول للوصول إلى المحادثات</p>
+          <p className="text-gray-600">{t("loginRequired")}</p>
         </div>
       </div>
     );
@@ -139,21 +141,21 @@ export default function ProfileChatPage() {
   }
 
   return (
-    <div className="w-full" dir="rtl">
+    <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         {(!isMobile || !selectedRequest) && (
           <Card className="lg:col-span-1 h-[calc(100vh-220px)] overflow-hidden">
             <CardHeader className="pb-3 border-b">
               <CardTitle className="text-base flex items-center gap-2">
                 <MessageCircle className="w-5 h-5 text-[#32A88D]" />
-                المحادثات
+                {t("title")}
                 <Badge className="bg-[#32A88D] text-white">{chatRequests.length}</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0 overflow-y-auto h-[calc(100%-68px)]">
               {chatRequests.length === 0 ? (
                 <div className="h-full flex items-center justify-center p-6 text-center text-gray-500 text-sm">
-                  لا توجد محادثات للمستخدمين المقبولين حالياً.
+                  {t("empty")}
                 </div>
               ) : (
                 chatRequests.map((request) => {
@@ -168,7 +170,7 @@ export default function ProfileChatPage() {
                       key={request.id}
                       type="button"
                       onClick={() => setSelectedRequest(request)}
-                      className={`w-full text-right p-4 border-b transition-colors ${
+                      className={`w-full text-start p-4 border-b transition-colors ${
                         isActive ? "bg-[#32A88D]/10" : "hover:bg-gray-50"
                       }`}
                     >
@@ -207,7 +209,7 @@ export default function ProfileChatPage() {
                 request={selectedRequest}
                 canShowChat={canAccessChat(selectedRequest.status)}
                 onBackToDetails={() => setSelectedRequest(null)}
-                backButtonLabel="العودة إلى قائمة المحادثات"
+                backButtonLabel={t("backToList")}
               />
             </Card>
           </div>
@@ -215,7 +217,7 @@ export default function ProfileChatPage() {
 
         {!selectedRequest && isMobile && chatRequests.length > 0 && (
           <div className="lg:col-span-2 h-[calc(100vh-220px)] flex items-center justify-center text-gray-500">
-            اختر محادثة من القائمة.
+            {t("selectPrompt")}
           </div>
         )}
       </div>

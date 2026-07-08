@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslations } from "next-intl";
 import { ReviewDialog } from "./ReviewDialog";
 import { Button } from "@/components/ui/button";
 import { Star, MessageSquare } from "lucide-react";
@@ -27,10 +28,11 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
   revieweeName,
   existingReview,
   showTriggerButton = true,
-  triggerButtonText = "أضف تقييم",
+  triggerButtonText,
   onReviewSubmitted,
   onReviewError,
 }): React.ReactNode => {
+  const t = useTranslations("specialists.reviewsSection");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { mutate: submitReview, isPending } = useSubmitReviewMutation();
@@ -66,13 +68,13 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
         >
           {existingReview ? (
             <>
-              <MessageSquare className="w-4 h-4 ml-2" />
-              تعديل التقييم
+              <MessageSquare className="w-4 h-4 me-2" />
+              {t("editReview")}
             </>
           ) : (
             <>
-              <Star className="w-4 h-4 ml-2" />
-              {triggerButtonText}
+              <Star className="w-4 h-4 me-2" />
+              {triggerButtonText ?? t("addReview")}
             </>
           )}
         </Button>

@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useState, useRef, useEffect, useMemo, useCallback, memo } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,8 @@ interface ChatInterfaceProps {
 
 function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
   const { data: session } = useSession();
+  const t = useTranslations("chat.interface");
+  const tCommon = useTranslations("common");
   const [newMessage, setNewMessage] = useState("");
   const [optimisticMessages, setOptimisticMessages] = useState<Message[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -108,9 +111,9 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
   const isInputDisabled = !canSend || isQuotaExhausted;
 
   const chatDisabledNotice: string | null = !canSend
-    ? "انتهت فترة الاستشارة. لا يمكن إرسال رسائل جديدة."
+    ? t("periodEndedNotice")
       : isQuotaExhausted
-      ? "لقد استنفذت رصيدك من الرسائل."
+      ? t("quotaExhaustedNotice")
       : null;
   const otherUser = useMemo(
     () =>
@@ -371,7 +374,7 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
     if (!file) return;
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("حجم الملف أكبر من الحد المسموح (10MB)");
+      toast.error(t("fileTooLarge"));
       e.currentTarget.value = "";
       return;
     }
@@ -409,10 +412,10 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
         <CardContent className="flex flex-col items-center justify-center h-64">
           <div className="text-red-500 text-center">
             <div className="text-lg font-semibold mb-2">
-              خطأ في تحميل المحادثة
+              {t("loadError")}
             </div>
             <Button variant="outline" onClick={() => window.location.reload()}>
-              إعادة المحاولة
+              {tCommon("tryAgain")}
             </Button>
           </div>
         </CardContent>
@@ -425,7 +428,7 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
       <Card className="h-full">
         <CardContent className="flex items-center justify-center h-64">
           <Loader2 className="w-8 h-8 animate-spin text-[#32A88D]" />
-          <span className="mr-2">جاري تحميل المحادثة...</span>
+          <span className="ms-2">{t("loading")}</span>
         </CardContent>
       </Card>
     );
@@ -443,7 +446,7 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
             </div>
           ) : error ? (
             <div className="flex items-center justify-center h-full text-red-500">
-              حدث خطأ في تحميل الرسائل
+              {t("messagesLoadError")}
             </div>
           ) : allMessages.length > 0 ? (
             <Virtuoso
@@ -482,8 +485,8 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
                   isFetchingNextPage && (
                     <div className="flex justify-center p-4">
                       <Loader2 className="w-6 h-6 animate-spin text-[#32A88D]" />
-                      <span className="mr-2 text-sm text-gray-500">
-                        جاري تحميل رسائل أقدم...
+                      <span className="ms-2 text-sm text-gray-500">
+                        {t("loadingMessages")}
                       </span>
                     </div>
                   ),
@@ -491,7 +494,7 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
             />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-500">
-              لا توجد رسائل بعد
+              {t("noMessages")}
             </div>
           )}
         </div>

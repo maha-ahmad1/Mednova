@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { ImageIcon, File, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -8,10 +9,11 @@ interface FileUploadMenuProps {
 }
 
 export function FileUploadMenu({ onSelectImage, onSelectFile, onClose }: FileUploadMenuProps) {
+  const t = useTranslations("chat.uploadMenu");
   return (
-    <div className="absolute bottom-full mb-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg p-3 z-50 min-w-[180px] backdrop-blur-sm">
+    <div className="absolute bottom-full mb-2 end-0 bg-white border border-gray-200 rounded-xl shadow-lg p-3 z-50 min-w-[180px] backdrop-blur-sm">
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
-        <span className="text-sm font-medium text-gray-700">إرفاق ملف</span>
+        <span className="text-sm font-medium text-gray-700">{t("title")}</span>
         <Button
           variant="ghost"
           size="sm"
@@ -31,9 +33,9 @@ export function FileUploadMenu({ onSelectImage, onSelectFile, onClose }: FileUpl
           <div className="flex items-center justify-center w-10 h-10 bg-blue-50 rounded-lg">
             <ImageIcon className="w-5 h-5 text-blue-600" />
           </div>
-          <div className="flex-1 text-right">
-            <div className="text-sm font-medium text-gray-800">صورة</div>
-            <div className="text-xs text-gray-500">JPG, PNG, GIF</div>
+          <div className="flex-1 text-start">
+            <div className="text-sm font-medium text-gray-800">{t("image")}</div>
+            <div className="text-xs text-gray-500">{t("imageTypes")}</div>
           </div>
         </button>
 
@@ -45,15 +47,15 @@ export function FileUploadMenu({ onSelectImage, onSelectFile, onClose }: FileUpl
           <div className="flex items-center justify-center w-10 h-10 bg-green-50 rounded-lg">
             <File className="w-5 h-5 text-green-600" />
           </div>
-          <div className="flex-1 text-right">
-            <div className="text-sm font-medium text-gray-800">ملف</div>
-            <div className="text-xs text-gray-500">PDF, DOC, ZIP</div>
+          <div className="flex-1 text-start">
+            <div className="text-sm font-medium text-gray-800">{t("file")}</div>
+            <div className="text-xs text-gray-500">{t("fileTypes")}</div>
           </div>
         </button>
       </div>
 
       <div className="mt-3 pt-2 border-t border-gray-100">
-        <p className="text-xs text-gray-500 text-center">الحجم الأقصى: 10MB</p>
+        <p className="text-xs text-gray-500 text-center">{t("maxSize")}</p>
       </div>
     </div>
   );

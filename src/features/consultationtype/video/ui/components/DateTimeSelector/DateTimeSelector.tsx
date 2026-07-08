@@ -1,4 +1,5 @@
 "use client"
+import { useTranslations } from "next-intl"
 import CalendarSection from "./CalendarSection"
 import TimeSlotsSection from "./TimeSlotsSection"
 import TimeZoneSelector from "./TimeZoneSelector"
@@ -32,6 +33,7 @@ export default function DateTimeSelector({
   apiBaseUrl,
   onTimeZoneChange,
 }: Props) {
+  const t = useTranslations("booking.dateTime")
   const handleTimeZoneChange = (newTimeZone: string) => {
     setTimeZone(newTimeZone)
 
@@ -55,7 +57,7 @@ export default function DateTimeSelector({
           <div className="p-4 sm:p-6 order-1 xl:order-1 relative">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center gap-2">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-800">اختر التاريخ</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-800">{t("chooseDate")}</h3>
               </div>
             </div>
             <CalendarSection selectedDate={selectedDate} setSelectedDate={setSelectedDate} timeZone={timeZone} />
@@ -75,7 +77,7 @@ export default function DateTimeSelector({
           <div className="p-4 sm:p-6 order-2 xl:order-2">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center gap-2">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-800">اختر الوقت</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-800">{t("chooseTime")}</h3>
               </div>
             </div>
             <TimeSlotsSection

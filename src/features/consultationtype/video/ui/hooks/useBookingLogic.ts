@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { useFetcher } from "@/hooks/useFetcher";
 import type { ServiceProvider } from "@/features/service-provider/types/provider";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { toast } from "sonner";
 import { useConsultationTypeStore } from "@/store/ConsultationTypeStore";
@@ -32,6 +33,8 @@ export function useBookingLogic({
   doctorId?: string;
   patientId?: string;
 }) {
+  const t = useTranslations("booking.toasts");
+  const tProviderCard = useTranslations("booking.providerCard");
   const { currentConsultation, clearConsultation } =
     useConsultationTypeStore();
   const effectiveDoctorId = doctorId || currentConsultation?.providerId;
@@ -261,7 +264,7 @@ export function useBookingLogic({
 
   const handleBooking = async () => {
     if (!selectedDate || !selectedTime) {
-      toast.error("الرجاء اختيار التاريخ والوقت");
+      toast.error(t("selectDateTime"));
       return;
     }
 
@@ -271,7 +274,7 @@ export function useBookingLogic({
     }
 
     if (!effectiveDoctorId) {
-      toast.error("لا يوجد معرف للمستشار");
+      toast.error(t("noConsultantId"));
       return;
     }
 
@@ -305,15 +308,15 @@ export function useBookingLogic({
       setSelectedDate(undefined);
     } catch (error) {
       console.error("❌ خطأ في حجز الفيديو:", error);
-      toast.error("حدث خطأ أثناء الحجز");
+      toast.error(t("bookingError"));
     }
   };
 
   const getSpecialty = () =>
-    getProviderSpecializationLabel(provider, "تخصص المختص");
+    getProviderSpecializationLabel(provider, tProviderCard("specialtyFallback"));
 
   const getAddress = () =>
-    provider?.location_details?.formatted_address || "عنوان غير محدد";
+    provider?.location_details?.formatted_address || tProviderCard("addressFallback");
 
   const getProviderImage = () =>
     provider?.image ||

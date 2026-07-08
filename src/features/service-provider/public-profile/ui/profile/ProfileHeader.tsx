@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Star, MapPin, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { NormalizedProvider } from "@/utils/normalizeProvider";
@@ -8,6 +9,7 @@ interface ProfileHeaderProps {
 }
 
 export default function ProfileHeader({ provider }: ProfileHeaderProps) {
+  const t = useTranslations("specialists.publicProfile");
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, i) => (
       <Star
@@ -45,7 +47,7 @@ export default function ProfileHeader({ provider }: ProfileHeaderProps) {
 
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
                 <div className="flex items-center">{renderStars(provider.rating || 0)}</div>
-                <span className="text-gray-600">({provider.reviewsCount || 0} تقييم)</span>
+                <span className="text-gray-600">({provider.reviewsCount || 0} {t("reviewsCountSuffix")})</span>
               </div>
 
               <div className="flex flex-col sm:flex-row flex-wrap gap-2 mb-4">
@@ -64,7 +66,7 @@ export default function ProfileHeader({ provider }: ProfileHeaderProps) {
                 {provider.experienceYears !== null && (
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    <span>{provider.experienceYears} سنوات خبرة</span>
+                    <span>{provider.experienceYears} {t("experienceYearsSuffix")}</span>
                   </div>
                 )}
               </div>

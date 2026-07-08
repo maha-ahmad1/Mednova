@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { MessageSquare, Video, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +30,9 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
   showProfileButton = true, // قيمة افتراضية
   buttonClassName = "",
 }) => {
+  const t = useTranslations("specialists.consultationDialog");
+  const tSpecialists = useTranslations("specialists");
+  const dir = useLocale() === "ar" ? "rtl" : "ltr";
   const { data: session } = useSession();
   const { push, isNavigating } = useNavigationLoader();
   const { storeConsultationRequest, Loading: isSubmitting } =
@@ -38,7 +42,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
 
   const handleChatConsultation = async () => {
     if (!session?.user?.id) {
-      toast.error("يجب تسجيل الدخول أولاً");
+      toast.error(t("loginRequiredToast"));
       push("/login");
       return;
     }
@@ -103,7 +107,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
               showProfileButton ? "xl:w-30" : ""
             } bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl py-4 transition-all duration-300 shadow-md hover:shadow-lg ${buttonClassName}`}
           >
-            <span className="font-bold">طلب استشارة</span>
+            <span className="font-bold">{t("requestConsultation")}</span>
           </Button>
         </DialogTrigger>
 
@@ -114,24 +118,24 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
             variant="ghost"
             className="cursor-pointer w-full xl:w-30 bg-white/90 backdrop-blur-sm text-[#32A88D] hover:bg-white border border-[#32A88D]/30 hover:border-[#32A88D] rounded-xl py-4 transition-all duration-300"
             isLoading={isNavigating}
-            loadingText="جارٍ الانتقال..."
+            loadingText={t("navigating")}
             onClick={() => push(`/therapists/${provider.id}`)}
           >
-            <span className="font-medium">الملف الشخصي</span>
+            <span className="font-medium">{tSpecialists("viewProfile")}</span>
           </LoadingButton>
         )}
       </div>
 
-      <DialogContent className="sm:max-w-md rounded-2xl">
+      <DialogContent className="sm:max-w-md rounded-2xl" dir={dir}>
         <DialogHeader>
           <div className="text-center">
             <div className="w-16 h-16 bg-[#32A88D]/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <MessageSquare className="w-8 h-8 text-[#32A88D]" />
             </div>
             <DialogTitle className="text-xl font-bold text-gray-800">
-              اختر نوع الاستشارة
+              {t("chooseTypeTitle")}
             </DialogTitle>
-            <p className="text-gray-600 mt-2">مع {provider.full_name}</p>
+            <p className="text-gray-600 mt-2">{t("withProvider", { name: provider.full_name })}</p>
           </div>
         </DialogHeader>
 
@@ -146,9 +150,9 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
               <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center group-hover:bg-blue-600 transition-colors">
                 <MessageSquare className="w-6 h-6 text-white" />
               </div>
-              <span className="font-medium text-blue-700">استشارة نصية</span>
+              <span className="font-medium text-blue-700">{t("chatTitle")}</span>
               <span className="text-xs text-blue-600 text-center">
-                محادثة فورية مباشرة
+                {t("chatDesc")}
               </span>
             </button>
 
@@ -161,9 +165,9 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
               <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center group-hover:bg-green-600 transition-colors">
                 <Video className="w-6 h-6 text-white" />
               </div>
-              <span className="font-medium text-green-700">استشارة فيديو</span>
+              <span className="font-medium text-green-700">{t("videoTitle")}</span>
               <span className="text-xs text-green-600 text-center">
-                موعد مسبق مجدول{" "}
+                {t("videoDesc")}
               </span>
             </button>
           </div>
@@ -171,7 +175,7 @@ export const ConsultationDialog: React.FC<ConsultationDialogProps> = ({
           {isSubmitting && (
             <div className="flex items-center justify-center gap-2 mt-6 p-4 bg-gray-50 rounded-xl">
               <Loader2 className="w-5 h-5 text-[#32A88D] animate-spin" />
-              <span className="text-gray-600">جاري إرسال الطلب...</span>
+              <span className="text-gray-600">{t("submitting")}</span>
             </div>
           )}
         </div>

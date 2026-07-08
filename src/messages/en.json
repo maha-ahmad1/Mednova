@@ -136,9 +136,145 @@
     "noResultsDesc": "No specialists match your search",
     "viewProfile": "View profile",
     "selectSpecialty": "Select specialty",
+    "country": "Country",
     "selectCountry": "Select country",
     "city": "City",
-    "selectCity": "Select city"
+    "selectCity": "Select city",
+    "card": {
+      "chat": "Chat",
+      "video": "Video",
+      "notSpecified": "Not specified",
+      "generalSpecialty": "General specialty",
+      "rehabCenter": "Rehabilitation center"
+    },
+    "consultationDialog": {
+      "requestConsultation": "Book Now",
+      "navigating": "Navigating...",
+      "chooseTypeTitle": "Choose Consultation Type",
+      "withProvider": "With {name}",
+      "chatTitle": "Text Consultation",
+      "chatDesc": "Instant live chat",
+      "videoTitle": "Video Consultation",
+      "videoDesc": "Pre-scheduled appointment",
+      "submitting": "Submitting request...",
+      "loginRequiredToast": "You must sign in first"
+    },
+    "publicProfile": {
+      "errorTitle": "An error occurred",
+      "notFoundDesc": "Specialist not found",
+      "breadcrumb": "Profile",
+      "reviewsTab": "Reviews",
+      "bioTab": "Bio",
+      "aboutTitle": "About the Specialist",
+      "noInfoAvailable": "No information available currently.",
+      "showLess": "Show less",
+      "showMore": "Show more",
+      "outOfFive": "out of 5.0",
+      "reviewsCountSuffix": "review(s)",
+      "writeYourReview": "Write your review",
+      "writeReview": "Write a review",
+      "chooseSessionTime": "Choose Session Time",
+      "specialtiesLabel": "Specialties:",
+      "experienceYearsSuffix": "years experience",
+      "details": {
+        "university": "University",
+        "graduationYear": "Graduation Year",
+        "experienceYears": "Years of Experience",
+        "yearsUnit": "{years} years",
+        "yearEstablishment": "Establishment Year",
+        "location": "Location",
+        "licenseAuthority": "Licensing Authority"
+      },
+      "schedule": {
+        "workSchedule": "Work Schedule",
+        "onlineSessions": "Online Sessions",
+        "inPersonSessions": "In-person Sessions",
+        "morning": "Morning:",
+        "evening": "Evening:",
+        "availableDays": "Available Days"
+      },
+      "services": {
+        "pricesTitle": "Session Prices:",
+        "chatServiceName": "Text Consultation",
+        "chatServiceDesc": "Chat conversation",
+        "videoServiceName": "Video Session",
+        "videoServiceDesc": "Full consultation via Zoom"
+      }
+    },
+    "reviewsSection": {
+      "addReview": "Add Review",
+      "editReview": "Edit Review"
+    },
+    "reviewDialog": {
+      "close": "Close",
+      "thanksTitle": "Thank you!",
+      "thanksDesc": "Your review has been submitted successfully",
+      "title": "Write Your Review",
+      "subtitle": "Share your experience with {name}",
+      "ratingPrompt": "How do you rate your experience?",
+      "ratingHint": "Choose from 1 to 5 stars",
+      "ratingOutOf": "{rating} out of 5",
+      "detailsLabel": "Share more details",
+      "commentPlaceholder": "Write your comment here... (optional)",
+      "detailsHint": "Sharing your experience helps others make a better decision",
+      "submitting": "Submitting...",
+      "submitButton": "Submit Review",
+      "closingNote": "The window will close automatically...",
+      "thanksNote": "Thank you for sharing your feedback with us. Your review helps us improve our services.",
+      "submitSuccessToast": "Your review has been submitted successfully!",
+      "submitErrorToast": "An error occurred while submitting the review"
+    },
+    "reviewStars": {
+      "starAriaLabel": "{count} star"
+    }
+  },
+  "booking": {
+    "headerBadge": "Appointment Booking",
+    "headerTitle": "Book a Video Consultation",
+    "headerSubtitle": "Choose the date and time that suits you to book your consultation with the {type}",
+    "specialistWord": "specialist",
+    "centerWord": "center",
+    "confirmBooking": "Confirm Booking",
+    "bookingInProgress": "Booking...",
+    "providerCard": {
+      "bookingInfoTitle": "Booking Information",
+      "serviceLabel": "Service",
+      "durationLabel": "Duration",
+      "durationValue": "40 minutes",
+      "dateLabel": "Date",
+      "timeLabel": "Time",
+      "appointmentTypeLabel": "Appointment Type",
+      "videoConsultation": "Video Consultation",
+      "backButton": "Back",
+      "specialistAlt": "Specialist",
+      "centerAlt": "Center",
+      "specialtyFallback": "Specialist specialty",
+      "addressFallback": "Address not specified"
+    },
+    "dateTime": {
+      "chooseDate": "Choose Date",
+      "chooseTime": "Choose Time",
+      "selectDateFirst": "Please select a date first",
+      "loadingTimes": "Loading available times...",
+      "noTimesAvailable": "No times available",
+      "chooseAnotherDate": "Please choose another date",
+      "morningPeriod": "Morning",
+      "eveningPeriod": "Evening"
+    },
+    "timezone": {
+      "label": "Time Zone",
+      "useMyLocation": "Use my location",
+      "loading": "Loading...",
+      "selectPlaceholder": "Select time zone",
+      "searchPlaceholder": "Search for a city or region...",
+      "zonesAvailable": "{count} time zone(s) available",
+      "noZonesFound": "No matching time zones found"
+    },
+    "toasts": {
+      "selectDateTime": "Please select a date and time",
+      "noConsultantId": "No consultant ID found",
+      "bookingError": "An error occurred during booking"
+    }
   },
   "hero": {
     "title": "Your recovery starts with Mednova",
@@ -1070,6 +1206,60 @@
       "cancelled": "Rejected",
       "active": "Active",
       "completed": "Completed"
+    }
+  },
+  "chat": {
+    "header": {
+      "therapist": "Therapist",
+      "center": "Rehabilitation Center",
+      "patient": "Patient"
+    },
+    "list": {
+      "title": "Conversations",
+      "empty": "No conversations for accepted users currently.",
+      "loginRequired": "You must sign in to access conversations",
+      "selectPrompt": "Select a conversation from the list.",
+      "backToList": "Back to conversation list"
+    },
+    "panel": {
+      "backToDetails": "Back to details",
+      "unavailableTitle": "Chat unavailable",
+      "unavailablePendingReason": "The consultation must be accepted first to start the chat",
+      "unavailableCancelledReason": "This consultation was rejected",
+      "unavailableDefaultReason": "The chat is currently unavailable"
+    },
+    "interface": {
+      "loadError": "Error loading the conversation",
+      "loading": "Loading conversation...",
+      "loadingMessages": "Loading older messages...",
+      "messagesLoadError": "An error occurred while loading messages",
+      "noMessages": "No messages yet",
+      "periodEndedNotice": "The consultation period has ended. New messages cannot be sent.",
+      "quotaExhaustedNotice": "You have used up your message quota.",
+      "fileTooLarge": "File size exceeds the allowed limit (10MB)",
+      "sendSuccessToast": "Message sent successfully",
+      "sendFailedError": "Failed to send message",
+      "sendErrorToast": "An error occurred while sending",
+      "fetchFailedError": "Failed to fetch messages",
+      "markReadFailedError": "Failed to update message status",
+      "markReadStatusFailedError": "Failed to update read status",
+      "newMessageToast": "📩 New message"
+    },
+    "input": {
+      "placeholder": "Type a message..."
+    },
+    "uploadMenu": {
+      "title": "Attach a file",
+      "image": "Image",
+      "imageTypes": "JPG, PNG, GIF",
+      "file": "File",
+      "fileTypes": "PDF, DOC, ZIP",
+      "maxSize": "Max size: 10MB"
+    },
+    "filePreview": {
+      "download": "Download",
+      "delete": "Delete",
+      "attachedFile": "Attached file"
     }
   },
   "controlPanel": {

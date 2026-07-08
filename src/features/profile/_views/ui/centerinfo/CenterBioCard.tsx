@@ -10,6 +10,7 @@ import type { TherapistProfile } from "@/types/therpist";
 import { bioSchema } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import { Loader2, Edit, Building, FileText, BookOpen } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 
 type CenterBioCardProps = {
   details: TherapistProfile["therapist_details"];
@@ -22,6 +23,9 @@ export function CenterBioCard({
   userId,
   refetch,
 }: CenterBioCardProps) {
+  const t = useTranslations("profile.centerInfo");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
   const [editing, setEditing] = useState(false);
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [bio, setBio] = useState(details?.bio ?? "");
@@ -85,7 +89,7 @@ const [expanded, setExpanded] = useState(false);
         fieldErrors[field] = issue.message;
       });
       setServerErrors(fieldErrors);
-      toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
+      toast.error(t("bioCard.validationError"));
       return;
     }
 
@@ -97,13 +101,13 @@ const [expanded, setExpanded] = useState(false);
     try {
       await update(payload);
       await refetch();
-      toast.success("تم حفظ النبذة بنجاح");
+      toast.success(t("bioCard.saveSuccess"));
       setLocalDetails((prev) => ({ ...prev, bio }));
       setEditing(false);
       setServerErrors({});
     } catch (err) {
       console.error(err);
-      toast.error("حدث خطأ أثناء الحفظ");
+      toast.error(t("bioCard.saveError"));
     }
   };
 
@@ -121,7 +125,7 @@ const [expanded, setExpanded] = useState(false);
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
-          <h3 className="text-xl font-bold text-gray-800">نبذة عن المركز</h3>
+          <h3 className="text-xl font-bold text-gray-800">{t("bioCard.title")}</h3>
         </div>
 
         {!editing ? (
@@ -132,7 +136,7 @@ const [expanded, setExpanded] = useState(false);
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
             <Edit className="w-4 h-4" />
-            تعديل النبذة
+            {t("bioCard.editButton")}
           </Button>
         ) : (
           <div className="flex gap-2">
@@ -143,7 +147,7 @@ const [expanded, setExpanded] = useState(false);
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
             >
               {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
-              حفظ التغييرات
+              {t("saveButton")}
             </Button>
             <Button
               onClick={cancelEdit}
@@ -151,7 +155,7 @@ const [expanded, setExpanded] = useState(false);
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
-              إلغاء
+              {t("cancelButton")}
             </Button>
           </div>
         )}
@@ -163,7 +167,7 @@ const [expanded, setExpanded] = useState(false);
             <Building className="w-5 h-5 text-[#32A88D] mt-1" />
             <div className="flex-1">
               <span className="text-sm text-gray-500 block mb-3">
-                النبذة التعريفية
+                {t("bioCard.bioLabel")}
               </span>
               {displayDetails?.bio ? (
                 <div className="prose prose-sm max-w-none">
@@ -182,16 +186,16 @@ const [expanded, setExpanded] = useState(false);
                       onClick={() => setExpanded((prev) => !prev)}
                       className="text-[#32A88D] text-sm font-medium mt-2 hover:underline"
                     >
-                      {expanded ? "عرض أقل" : "عرض المزيد"}
+                      {expanded ? t("bioCard.showLess") : t("bioCard.showMore")}
                     </button>
                   )}
                 </div>
               ) : (
                 <div className="text-center py-8 text-gray-500">
                   <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                  <p>لا توجد نبذة تعريفية مضافة</p>
+                  <p>{t("bioCard.noBioTitle")}</p>
                   <p className="text-sm mt-1">
-                    اضغط على زر التعديل لإضافة نبذة عن المركز
+                    {t("bioCard.noBioDesc")}
                   </p>
                 </div>
               )}
@@ -202,21 +206,20 @@ const [expanded, setExpanded] = useState(false);
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
           <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-            تعديل النبذة التعريفية
+            {t("bioCard.editTitle")}
           </h4>
 
           <div className="space-y-4">
             <TextArea
-              label="النبذة التعريفية"
-              rtl
+              label={t("bioCard.bioLabel")}
+              rtl={isRtl}
               value={bio}
               onChange={(e) => handleChange(e.target.value)}
               error={getFieldError("bio")}
               className="bg-white min-h-[200px] resize-vertical"
-              placeholder="أكتب نبذة مختصرة عن المركز، الخدمات المقدمة، التخصصات، المميزات، وأي معلومات أخرى تريد مشاركتها مع العملاء..."
+              placeholder={t("bioCard.bioPlaceholder")}
             />
 
-            {/* عداد الأحرف */}
             <div className="flex justify-between items-center text-sm">
               <span
                 className={`${
@@ -225,33 +228,31 @@ const [expanded, setExpanded] = useState(false);
                     : "text-gray-500"
                 }`}
               >
-                {characterCount} / {maxCharacters} حرف
+                {t("bioCard.charCount", { count: characterCount, max: maxCharacters })}
               </span>
               {characterCount > maxCharacters * 0.8 && (
                 <span className="text-amber-600">
                   {characterCount > maxCharacters
-                    ? "تجاوزت الحد المسموح"
-                    : "اقتربت من الحد المسموح"}
+                    ? t("bioCard.exceededLimit")
+                    : t("bioCard.approachingLimit")}
                 </span>
               )}
             </div>
 
-            {/* نصائح للكتابة */}
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <h5 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
                 <BookOpen className="w-4 h-4" />
-                نصائح للكتابة:
+                {t("bioCard.tipsTitle")}
               </h5>
               <ul className="text-blue-700 text-sm space-y-1 list-disc list-inside">
-                <li>اذكر نبذة عن تاريخ المركز وإنجازاته</li>
-                <li>أضف معلومات عن الخدمات والتخصصات المقدمة</li>
-                <li>شارك رؤية المركز ورسالته</li>
-                <li>اذكر المميزات والجوانب التي تميز المركز</li>
-                <li>حافظ على اللغة واضحة ومهنية</li>
+                <li>{t("bioCard.tip1")}</li>
+                <li>{t("bioCard.tip2")}</li>
+                <li>{t("bioCard.tip3")}</li>
+                <li>{t("bioCard.tip4")}</li>
+                <li>{t("bioCard.tip5")}</li>
               </ul>
             </div>
 
-            {/* معاينة سريعة */}
             {/* {bio && (
               <div className="bg-white p-4 rounded-lg border border-gray-200">
                 <h5 className="font-medium text-gray-700 mb-2">معاينة النبذة:</h5>

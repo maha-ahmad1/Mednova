@@ -10,6 +10,7 @@ import { useUpdateTherapist } from "@/features/profile/_views/hooks/useUpdateThe
 import { pricingSchema } from "@/lib/validation";
 import { Loader2, Edit, Video, MessageSquare, BadgeDollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslations, useLocale } from "next-intl";
 
 type TherapistPricingCardProps = {
   details: TherapistProfile["therapist_details"];
@@ -24,6 +25,9 @@ export function TherapistPricingCard({
   userId,
   refetch,
 }: TherapistPricingCardProps) {
+  const t = useTranslations("profile.therapistInfo");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
   const [editing, setEditing] = useState(false);
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [values, setValues] = useState({
@@ -78,7 +82,7 @@ export function TherapistPricingCard({
         fieldErrors[field] = issue.message;
       });
       setServerErrors(fieldErrors);
-      toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
+      toast.error(t("pricingCard.validationError"));
       return;
     }
 
@@ -90,11 +94,11 @@ export function TherapistPricingCard({
     try {
       await update(payload);
       await refetch();
-      toast.success("تم تحديث الأسعار بنجاح");
+      toast.success(t("pricingCard.saveSuccess"));
       setEditing(false);
       setServerErrors({});
     } catch {
-      toast.error("حدث خطأ أثناء التحديث");
+      toast.error(t("pricingCard.saveError"));
     }
   };
 
@@ -120,7 +124,7 @@ export function TherapistPricingCard({
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
-          <h3 className="text-xl font-bold text-gray-800">أسعار الاستشارات</h3>
+          <h3 className="text-xl font-bold text-gray-800">{t("pricingCard.title")}</h3>
         </div>
 
         {!editing ? (
@@ -131,7 +135,7 @@ export function TherapistPricingCard({
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
             <Edit className="w-4 h-4" />
-            تعديل الأسعار
+            {t("pricingCard.editButton")}
           </Button>
         ) : (
           <div className="flex gap-2">
@@ -142,7 +146,7 @@ export function TherapistPricingCard({
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
             >
               {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
-              حفظ التغييرات
+              {t("saveButton")}
             </Button>
             <Button
               onClick={cancelEdit}
@@ -150,7 +154,7 @@ export function TherapistPricingCard({
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
-              إلغاء
+              {t("cancelButton")}
             </Button>
           </div>
         )}
@@ -160,7 +164,7 @@ export function TherapistPricingCard({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FieldDisplay
             icon={<Video className="w-5 h-5" />}
-            label="سعر الاستشارة المرئية"
+            label={t("pricingCard.videoPriceLabel")}
             value={
               values.video_consultation_price ? (
                 <Badge className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
@@ -173,7 +177,7 @@ export function TherapistPricingCard({
           />
           <FieldDisplay
             icon={<MessageSquare className="w-5 h-5" />}
-            label="سعر الاستشارة النصية"
+            label={t("pricingCard.chatPriceLabel")}
             value={
               values.chat_consultation_price ? (
                 <Badge className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
@@ -186,7 +190,7 @@ export function TherapistPricingCard({
           />
           <FieldDisplay
             icon={<BadgeDollarSign className="w-5 h-5" />}
-            label="العملة"
+            label={t("pricingCard.currencyLabel")}
             value={
               currencyLabel ? (
                 <Badge className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm">
@@ -202,43 +206,43 @@ export function TherapistPricingCard({
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
           <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-            تعديل أسعار الاستشارات
+            {t("pricingCard.editTitle")}
           </h4>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormInput
-              label="سعر الاستشارة المرئية"
+              label={t("pricingCard.videoPriceLabel")}
               type="number"
               value={values.video_consultation_price}
               onChange={(e) =>
                 setValues((v) => ({ ...v, video_consultation_price: e.target.value }))
               }
-              rtl
+              rtl={isRtl}
               className="no-spinner bg-white"
               error={getFieldError("video_consultation_price")}
             />
 
             <FormInput
-              label="سعر الاستشارة النصية"
+              label={t("pricingCard.chatPriceLabel")}
               type="number"
               value={values.chat_consultation_price}
               onChange={(e) =>
                 setValues((v) => ({ ...v, chat_consultation_price: e.target.value }))
               }
-              rtl
+              rtl={isRtl}
               className="no-spinner bg-white"
               error={getFieldError("chat_consultation_price")}
             />
 
             <FormSelect
-              label="العملة"
+              label={t("pricingCard.currencyLabel")}
               options={currencyOptions}
               value={values.currency}
               onValueChange={(val) => setValues((v) => ({ ...v, currency: val }))}
-              rtl
+              rtl={isRtl}
               error={getFieldError("currency")}
               className="bg-white"
-              placeholder="اختر العملة"
+              placeholder={t("pricingCard.currencyPlaceholder")}
             />
           </div>
         </div>

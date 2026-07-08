@@ -11,6 +11,7 @@ import type { TherapistFormValues } from "@/app/api/therapist";
 import { locationSchema } from "@/lib/validation";
 import { Loader2, Edit, MapPin, Globe } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslations, useLocale } from "next-intl";
 
 type TherapistLocationCardProps = {
   details: TherapistProfile;
@@ -25,6 +26,9 @@ export function TherapistLocationCard({
   refetch,
   serverErrors = {},
 }: TherapistLocationCardProps) {
+  const t = useTranslations("profile.therapistInfo");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
   const location = details?.location_details;
   const [editing, setEditing] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -78,7 +82,7 @@ export function TherapistLocationCard({
         newErrors[key] = issue.message;
       });
       setFormErrors(newErrors);
-      toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
+      toast.error(t("locationCard.validationError"));
       return;
     }
 
@@ -90,11 +94,11 @@ export function TherapistLocationCard({
     try {
       await update(payload);
       await refetch();
-      toast.success("تم تحديث الموقع بنجاح");
+      toast.success(t("locationCard.saveSuccess"));
       setEditing(false);
       setFormErrors({});
     } catch {
-      toast.error("حدث خطأ أثناء التحديث");
+      toast.error(t("locationCard.saveError"));
     }
   };
 
@@ -120,23 +124,23 @@ export function TherapistLocationCard({
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
-          <h3 className="text-xl font-bold text-gray-800">الموقع</h3>
+          <h3 className="text-xl font-bold text-gray-800">{t("locationCard.title")}</h3>
         </div>
-        
+
         {!editing ? (
-          <Button 
-            onClick={startEdit} 
-            variant="outline" 
+          <Button
+            onClick={startEdit}
+            variant="outline"
             size="sm"
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
             <Edit className="w-4 h-4" />
-            تعديل الموقع
+            {t("locationCard.editButton")}
           </Button>
         ) : (
           <div className="flex gap-2">
-            <Button 
-              onClick={handleSave} 
+            <Button
+              onClick={handleSave}
               disabled={isUpdating}
               size="sm"
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
@@ -144,15 +148,15 @@ export function TherapistLocationCard({
               {isUpdating && (
                 <Loader2 className="w-4 h-4 animate-spin" />
               )}
-              حفظ التغييرات
+              {t("saveButton")}
             </Button>
-            <Button 
-              onClick={cancelEdit} 
-              variant="outline" 
+            <Button
+              onClick={cancelEdit}
+              variant="outline"
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
-              إلغاء
+              {t("cancelButton")}
             </Button>
           </div>
         )}
@@ -162,7 +166,7 @@ export function TherapistLocationCard({
         <div className="grid grid-cols-1 gap-4">
           <FieldDisplay
             icon={<Globe className="w-5 h-5" />}
-            label="الدولة"
+            label={t("locationCard.countryLabel")}
             value={
               values.country ? (
                 <Badge className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
@@ -171,10 +175,10 @@ export function TherapistLocationCard({
               ) : "-"
             }
           />
-          
+
           <FieldDisplay
             icon={<MapPin className="w-5 h-5" />}
-            label="المدينة"
+            label={t("locationCard.cityLabel")}
             value={
               values.city ? (
                 <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
@@ -183,19 +187,23 @@ export function TherapistLocationCard({
               ) : "-"
             }
           />
-          
+
           <FieldDisplay
             icon={<MapPin className="w-5 h-5" />}
-            label="العنوان التفصيلي"
+            label={t("locationCard.addressLabel")}
             value={values.formatted_address || "-"}
           />
 
-          {/* خريطة مصغرة أو رابط الخريطة */}
           {values.country && values.city && (
             <div className="bg-white p-4 rounded-lg border border-gray-100 mt-2">
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <MapPin className="w-4 h-4 text-[#32A88D]" />
-                <span>الموقع: {values.city}, {values.country}</span>
+                <span>
+                  {t("locationCard.locationLabel", {
+                    city: values.city,
+                    country: values.country,
+                  })}
+                </span>
               </div>
               {values.formatted_address && (
                 <p className="text-xs text-gray-500 mt-1 truncate">
@@ -209,65 +217,68 @@ export function TherapistLocationCard({
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
           <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-            تعديل معلومات الموقع
+            {t("locationCard.editTitle")}
           </h4>
-          
+
           <div className="grid grid-cols-1 gap-6">
             <FormSelect
-              label="الدولة"
-              placeholder="اختر الدولة"
+              label={t("locationCard.countryLabel")}
+              placeholder={t("locationCard.countryPlaceholder")}
               value={values.country}
               onValueChange={(val) =>
                 setValues((v) => ({ ...v, country: val, city: "" }))
               }
               options={countries.map((c) => ({ value: c.name, label: c.name }))}
-              rtl
+              rtl={isRtl}
               error={getFieldError("country")}
               className="bg-white"
             />
 
             <FormSelect
-              label="المدينة"
-              placeholder={values.country ? "اختر المدينة" : "اختر الدولة أولاً"}
+              label={t("locationCard.cityLabel")}
+              placeholder={
+                values.country
+                  ? t("locationCard.cityPlaceholder")
+                  : t("locationCard.cityPlaceholderNoCountry")
+              }
               value={values.city}
               onValueChange={(val) => setValues((v) => ({ ...v, city: val }))}
               options={(selectedCountry?.cities || []).map((c) => ({
                 value: c,
                 label: c,
               }))}
-              rtl
+              rtl={isRtl}
               error={getFieldError("city")}
               className="bg-white"
               disabled={!values.country}
             />
 
             <FormInput
-              label="العنوان التفصيلي"
+              label={t("locationCard.addressLabel")}
               value={values.formatted_address}
               onChange={(e) =>
                 setValues((v) => ({ ...v, formatted_address: e.target.value }))
               }
-              rtl
+              rtl={isRtl}
               error={getFieldError("formatted_address")}
               className="bg-white"
-              placeholder="أدخل العنوان الكامل"
+              placeholder={t("locationCard.addressPlaceholder")}
             />
 
-            {/* معاينة الموقع */}
             {(values.country || values.city) && (
               <div className="bg-white p-4 rounded-lg border border-gray-200">
                 <h5 className="font-medium text-gray-700 mb-2 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-[#32A88D]" />
-                  معاينة الموقع:
+                  {t("locationCard.previewTitle")}
                 </h5>
                 <div className="text-sm text-gray-600">
                   {values.country && (
-                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs mr-2">
+                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs me-2">
                       {values.country}
                     </span>
                   )}
                   {values.city && (
-                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs mr-2">
+                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs me-2">
                       {values.city}
                     </span>
                   )}

@@ -19,6 +19,7 @@ import { personalSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
 import Image from "next/image";
 import { buildFullPhoneNumber, parsePhoneNumber } from "@/utils/phone";
+import { useTranslations, useLocale } from "next-intl";
 
 interface TherapistPersonalCardProps {
   profile: TherapistProfile;
@@ -34,6 +35,9 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
   userId,
   refetch,
 }) => {
+  const t = useTranslations("profile.therapistInfo");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
   const [editing, setEditing] = useState(false);
   type PersonalSchemaType = z.infer<typeof personalSchema>;
   type FormValues = Partial<
@@ -95,7 +99,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
         fieldErrors[field] = issue.message;
       });
       setServerErrors(fieldErrors);
-      toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
+      toast.error(t("personalCard.validationError"));
       return;
     }
 
@@ -134,10 +138,10 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
       setEditing(false);
       setServerErrors({});
 
-      toast.success("تم حفظ التغييرات بنجاح");
+      toast.success(t("personalCard.saveSuccess"));
     } catch (err) {
       console.error(err);
-      toast.error("حدث خطأ أثناء التحديث");
+      toast.error(t("personalCard.saveError"));
     }
   };
 
@@ -175,7 +179,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
           <div className="flex justify-between items-start mb-6">
             <div>
               <p className="text-2xl font-bold text-gray-800">
-                البيانات الشخصية
+                {t("personalCard.title")}
               </p>
             </div>
 
@@ -188,7 +192,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                   className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
                 >
                   {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
-                  حفظ التغييرات
+                  {t("saveButton")}
                 </Button>
                 <Button
                   onClick={cancelEdit}
@@ -196,7 +200,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                   size="sm"
                   className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
                 >
-                  إلغاء
+                  {t("cancelButton")}
                 </Button>
               </div>
             ) : (
@@ -207,7 +211,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                 className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
               >
                 <Edit className="w-4 h-4" />
-                تعديل الملف الشخصي
+                {t("personalCard.editButton")}
               </Button>
             )}
           </div>
@@ -215,15 +219,15 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
           {!editing ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Field
-                label="الاسم الكامل"
+                label={t("personalCard.fullNameLabel")}
                 value={displayProfile.full_name ?? "-"}
               />
               <Field
-                label="البريد الإلكتروني"
+                label={t("personalCard.emailLabel")}
                 value={displayProfile.email ?? "-"}
               />
               <Field
-                label="رقم الهاتف"
+                label={t("personalCard.phoneLabel")}
                 value={
                   displayProfile.phone ? (
                     <span dir="ltr" className="inline-block text-left">
@@ -235,11 +239,11 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                 }
               />
               <Field
-                label="تاريخ الميلاد"
+                label={t("personalCard.birthDateLabel")}
                 value={displayProfile.birth_date ?? "-"}
               />
               <Field
-                label="الجنس"
+                label={t("personalCard.genderLabel")}
                 value={
                   <Badge
                     className={`px-3 py-1 rounded-full ${
@@ -248,7 +252,9 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                         : "bg-pink-100 text-pink-800"
                     }`}
                   >
-                    {displayProfile.gender === "Male" ? "ذكر" : "أنثى"}
+                    {displayProfile.gender === "Male"
+                      ? t("personalCard.genderMale")
+                      : t("personalCard.genderFemale")}
                   </Badge>
                 }
               />
@@ -282,32 +288,32 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
             <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-                تعديل المعلومات الشخصية
+                {t("personalCard.editTitle")}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormInput
-                  label="الاسم الكامل"
+                  label={t("personalCard.fullNameLabel")}
                   value={formValues.full_name as string | undefined}
                   onChange={(e) =>
                     setFormValues((s) => ({ ...s, full_name: e.target.value }))
                   }
-                  rtl
+                  rtl={isRtl}
                   error={getFieldError("full_name")}
                   className="bg-white"
                 />
                 <FormInput
-                  label="البريد الإلكتروني"
+                  label={t("personalCard.emailLabel")}
                   value={formValues.email as string | undefined}
                   onChange={(e) =>
                     setFormValues((s) => ({ ...s, email: e.target.value }))
                   }
-                  rtl
+                  rtl={isRtl}
                   error={getFieldError("email")}
                   className="bg-white"
                   readOnly
                 />
                 <FormPhoneInput
-                  label="رقم الهاتف"
+                  label={t("personalCard.phoneLabel")}
                   countryCodeValue={countryCode}
                   onCountryCodeChange={setCountryCode}
                   value={formValues.phone as string | undefined}
@@ -319,27 +325,27 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
                   className="bg-white no-spinner "
                 />
                 <FormInput
-                  label="تاريخ الميلاد"
+                  label={t("personalCard.birthDateLabel")}
                   type="date"
                   value={formValues.birth_date as string | undefined}
                   onChange={(e) =>
                     setFormValues((s) => ({ ...s, birth_date: e.target.value }))
                   }
-                  rtl
+                  rtl={isRtl}
                   error={getFieldError("birth_date")}
                   className="bg-white"
                 />
                 <FormSelect
-                  label="الجنس"
+                  label={t("personalCard.genderLabel")}
                   options={[
-                    { value: "male", label: "ذكر" },
-                    { value: "female", label: "أنثى" },
+                    { value: "male", label: t("personalCard.genderMale") },
+                    { value: "female", label: t("personalCard.genderFemale") },
                   ]}
                   value={formValues.gender as string | undefined}
                   onValueChange={(val) =>
                     setFormValues((s) => ({ ...s, gender: val }))
                   }
-                  rtl
+                  rtl={isRtl}
                   error={getFieldError("gender")}
                   className="bg-white"
                 />

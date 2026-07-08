@@ -3,6 +3,7 @@ import { useFetcher } from "@/hooks/useFetcher";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 import type { CenterProfile } from "@/types/center";
 
 import { CenterBioCard } from "./CenterBioCard";
@@ -16,9 +17,9 @@ import { CenterPricingCard } from "./CenterPricingCard";
 export default function CenterInfo() {
   const { data: session } = useSession();
   const userId = session?.user?.id;
-
-  
-   console.log("roles" + session?.role)
+  const t = useTranslations("profile.centerInfo");
+  const locale = useLocale();
+  const dir = locale === "ar" ? "rtl" : "ltr";
 
   const { data, isLoading, isError, error, refetch } =
     useFetcher<CenterProfile>(
@@ -28,24 +29,22 @@ export default function CenterInfo() {
 
   if (isLoading) {
     return (
-      <div dir="rtl" className="min-h-[60vh] flex items-center justify-center">
+      <div dir={dir} className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-[#32A88D]" />
-        <span className="ml-3 text-gray-600">جارٍ التحميل...</span>
+        <span className="ms-3 text-gray-600">{t("loading")}</span>
       </div>
     );
   }
 
   if (isError) {
-    toast.error(
-      `حدث خطأ أثناء جلب البيانات: ${String((error as Error)?.message)}`
-    );
+    toast.error(t("loadError", { error: String((error as Error)?.message) }));
   }
 
   const profile = (data ?? {}) as CenterProfile;
 
   return (
     <div className="container max-w-5xl mx-auto">
-      <div dir="rtl" className="space-y-6">
+      <div dir={dir} className="space-y-6">
         <CenterPersonalCard
           profile={profile}
           userId={userId!}

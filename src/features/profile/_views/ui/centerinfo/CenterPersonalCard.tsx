@@ -24,6 +24,7 @@ import { centerSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
 import { buildFullPhoneNumber, parsePhoneNumber } from "@/utils/phone";
 import { formatDate } from "@/utils/dateUtils";
+import { useTranslations, useLocale } from "next-intl";
 
 interface CenterPersonalCardProps {
   profile: CenterProfile;
@@ -36,6 +37,9 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
   userId,
   refetch,
 }) => {
+  const t = useTranslations("profile.centerInfo");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
   const [editing, setEditing] = useState(false);
 
   type FormValues = Partial<
@@ -109,7 +113,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
         fieldErrors[field] = issue.message;
       });
       setServerErrors(fieldErrors);
-      toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
+      toast.error(t("personalCard.validationError"));
       return;
     }
 
@@ -145,10 +149,10 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
       if (fresh) setLocalProfile(fresh);
       setEditing(false);
       setServerErrors({});
-      toast.success("تم حفظ التغييرات بنجاح");
+      toast.success(t("personalCard.saveSuccess"));
     } catch (err) {
       console.error(err);
-      toast.error("حدث خطأ أثناء التحديث");
+      toast.error(t("personalCard.saveError"));
     }
   };
 
@@ -187,7 +191,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
           <div className="flex justify-between items-start mb-6">
             <div>
               <p className="text-2xl font-bold text-gray-800">
-                بيانات المركز وصاحبه
+                {t("personalCard.title")}
               </p>
             </div>
 
@@ -200,7 +204,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                   className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
                 >
                   {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
-                  حفظ التغييرات
+                  {t("saveButton")}
                 </Button>
                 <Button
                   onClick={cancelEdit}
@@ -208,7 +212,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                   size="sm"
                   className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
                 >
-                  إلغاء
+                  {t("cancelButton")}
                 </Button>
               </div>
             ) : (
@@ -219,34 +223,33 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                 className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
               >
                 <Edit className="w-4 h-4" />
-                تعديل جميع البيانات
+                {t("personalCard.editButton")}
               </Button>
             )}
           </div>
 
           {!editing ? (
             <>
-              {/* بيانات صاحب المركز */}
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                   <User className="w-5 h-5 text-[#32A88D]" />
-                  بيانات صاحب المركز
+                  {t("personalCard.ownerSectionTitle")}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <Field
-                    label="الاسم الكامل"
+                    label={t("personalCard.fullNameLabel")}
                     value={displayProfile.full_name ?? "-"}
                     icon={<User className="w-4 h-4" />}
                   />
 
                   <Field
-                    label="البريد الإلكتروني"
+                    label={t("personalCard.emailLabel")}
                     value={displayProfile.email ?? "-"}
                     icon={<Mail className="w-4 h-4" />}
                   />
 
                   <Field
-                    label="رقم الهاتف"
+                    label={t("personalCard.phoneLabel")}
                     value={
                       displayProfile.phone ? (
                         <Badge className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
@@ -262,11 +265,11 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                   />
 
                   <Field
-                    label="تاريخ الميلاد"
+                    label={t("personalCard.birthDateLabel")}
                     value={
                       displayProfile.birth_date ? (
                         <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                          {formatDate(displayProfile.birth_date, {}, "ar-EG", "-")}
+                          {formatDate(displayProfile.birth_date, {}, isRtl ? "ar-EG" : "en-US", "-")}
                         </Badge>
                       ) : (
                         "-"
@@ -276,7 +279,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                   />
 
                   <Field
-                    label="الجنس"
+                    label={t("personalCard.genderLabel")}
                     value={
                       <Badge
                         className={`px-3 py-1 rounded-full ${
@@ -288,9 +291,9 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                         }`}
                       >
                         {displayProfile.gender === "Male"
-                          ? "ذكر"
+                          ? t("personalCard.genderMale")
                           : displayProfile.gender === "Female"
-                            ? "أنثى"
+                            ? t("personalCard.genderFemale")
                             : "-"}
                       </Badge>
                     }
@@ -310,33 +313,31 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                 </div>
               </div>
 
-              {/* خط فاصل */}
               <div className="relative my-8">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-4 bg-white text-gray-500">
-                    بيانات المركز
+                    {t("personalCard.centerSectionTitle")}
                   </span>
                 </div>
               </div>
 
-              {/* بيانات المركز */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                   <Building className="w-5 h-5 text-[#32A88D]" />
-                  بيانات المركز
+                  {t("personalCard.centerSectionTitle")}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <Field
-                    label="اسم المركز"
+                    label={t("personalCard.centerNameLabel")}
                     value={displayProfile.center_details?.name_center ?? "-"}
                     icon={<Building className="w-4 h-4" />}
                   />
 
                   <Field
-                    label="سنة التأسيس"
+                    label={t("personalCard.yearEstablishmentLabel")}
                     value={
                       displayProfile.center_details?.year_establishment ? (
                         <Badge className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
@@ -375,18 +376,17 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
             <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
                 <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-                تعديل جميع البيانات
+                {t("personalCard.editTitle")}
               </h3>
 
-              {/* بيانات صاحب المركز */}
               <div className="mb-8">
                 <h4 className="text-md font-semibold text-gray-700 mb-4 flex items-center gap-2">
                   <User className="w-4 h-4 text-[#32A88D]" />
-                  بيانات صاحب المركز
+                  {t("personalCard.ownerSectionTitle")}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormInput
-                    label="الاسم الكامل"
+                    label={t("personalCard.fullNameLabel")}
                     value={formValues.full_name as string | undefined}
                     onChange={(e) =>
                       setFormValues((s) => ({
@@ -394,19 +394,19 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                         full_name: e.target.value,
                       }))
                     }
-                    rtl
+                    rtl={isRtl}
                     error={getFieldError("full_name")}
                     className="bg-white"
-                    placeholder="أدخل الاسم الكامل"
+                    placeholder={t("personalCard.fullNamePlaceholder")}
                   />
 
                   <FormInput
-                    label="البريد الإلكتروني"
+                    label={t("personalCard.emailLabel")}
                     value={formValues.email as string | undefined}
                     onChange={(e) =>
                       setFormValues((s) => ({ ...s, email: e.target.value }))
                     }
-                    rtl
+                    rtl={isRtl}
                     error={getFieldError("email")}
                     className="bg-white"
                     placeholder="example@email.com"
@@ -414,7 +414,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                   />
 
                   <FormPhoneInput
-                    label="رقم الهاتف"
+                    label={t("personalCard.phoneLabel")}
                     countryCodeValue={countryCode}
                     onCountryCodeChange={setCountryCode}
                     value={formValues.phone as string | undefined}
@@ -423,11 +423,11 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                     }
                     error={getFieldError("phone")}
                     className="bg-white no-spinner"
-                    placeholder="0000 0000"
+                    placeholder={t("personalCard.phonePlaceholder")}
                   />
 
                   <FormInput
-                    label="تاريخ الميلاد"
+                    label={t("personalCard.birthDateLabel")}
                     type="date"
                     value={formValues.birth_date as string | undefined}
                     onChange={(e) =>
@@ -436,25 +436,25 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                         birth_date: e.target.value,
                       }))
                     }
-                    rtl
+                    rtl={isRtl}
                     error={getFieldError("birth_date")}
                     className="bg-white"
                   />
 
                   <FormSelect
-                    label="الجنس"
+                    label={t("personalCard.genderLabel")}
                     options={[
-                      { value: "Male", label: "ذكر" },
-                      { value: "Female", label: "أنثى" },
+                      { value: "Male", label: t("personalCard.genderMale") },
+                      { value: "Female", label: t("personalCard.genderFemale") },
                     ]}
                     value={formValues.gender as string | undefined}
                     onValueChange={(val) =>
                       setFormValues((s) => ({ ...s, gender: val }))
                     }
-                    rtl
+                    rtl={isRtl}
                     error={getFieldError("gender")}
                     className="bg-white"
-                    placeholder="اختر الجنس"
+                    placeholder={t("personalCard.genderPlaceholder")}
                   />
                   {/* 
                   <FormSelect
@@ -476,27 +476,25 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                 </div>
               </div>
 
-              {/* خط فاصل */}
               <div className="relative my-8">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-4 bg-gray-50 text-gray-500">
-                    بيانات المركز
+                    {t("personalCard.centerSectionTitle")}
                   </span>
                 </div>
               </div>
 
-              {/* بيانات المركز */}
               <div>
                 <h4 className="text-md font-semibold text-gray-700 mb-4 flex items-center gap-2">
                   <Building className="w-4 h-4 text-[#32A88D]" />
-                  بيانات المركز
+                  {t("personalCard.centerSectionTitle")}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormInput
-                    label="اسم المركز"
+                    label={t("personalCard.centerNameLabel")}
                     value={formValues.name_center as string | undefined}
                     onChange={(e) =>
                       setFormValues((s) => ({
@@ -504,14 +502,14 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                         name_center: e.target.value,
                       }))
                     }
-                    rtl
+                    rtl={isRtl}
                     error={getFieldError("name_center")}
                     className="bg-white"
-                    placeholder="أدخل اسم المركز"
+                    placeholder={t("personalCard.centerNamePlaceholder")}
                   />
 
                   <FormInput
-                    label="سنة التأسيس"
+                    label={t("personalCard.yearEstablishmentLabel")}
                     type="number"
                     min="1900"
                     max={new Date().getFullYear()}
@@ -522,10 +520,10 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
                         year_establishment: e.target.value,
                       }))
                     }
-                    rtl
+                    rtl={isRtl}
                     error={getFieldError("year_establishment")}
                     className="bg-white no-spinner"
-                    placeholder="مثال: 2020"
+                    placeholder={t("personalCard.yearEstablishmentPlaceholder")}
                   />
                 </div>
               </div>

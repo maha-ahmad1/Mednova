@@ -821,6 +821,7 @@
     }
   },
   "payment": {
+    "navigating": "Navigating...",
     "pageTitle": "Confirm Booking & Payment",
     "breadcrumb": "Booking & Payment Summary",
     "typeChat": "Text Consultation",

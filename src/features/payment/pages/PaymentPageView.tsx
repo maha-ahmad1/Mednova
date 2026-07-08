@@ -118,7 +118,7 @@ export default function PaymentPageView() {
         <Navbar />
         <BreadcrumbNav currentPage={t("breadcrumb")} />
         <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-primary/5 px-4 py-8">
-          <div className="relative z-10 mx-auto max-w-3xl" dir="rtl">
+          <div className="relative z-10 mx-auto max-w-3xl">
             <Card className="overflow-hidden border-0 shadow-xl">
               <CardContent className="space-y-4 p-6 text-center md:p-8">
                 <Clock className="mx-auto h-12 w-12 text-amber-500" />
@@ -132,7 +132,7 @@ export default function PaymentPageView() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <MessageCircle className="ml-2 h-4 w-4" />
+                    <MessageCircle className="me-2 h-4 w-4" />
                     {t("suspended.contactSupport")}
                   </a>
                 </Button>

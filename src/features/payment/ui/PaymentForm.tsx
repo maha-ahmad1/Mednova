@@ -53,7 +53,7 @@ export function PaymentForm({
       <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
       <div className="absolute -bottom-40 -right-40 h-[500px] w-[500px] rounded-full bg-emerald-100/30 blur-3xl" />
 
-      <div className="relative z-10 mx-auto max-w-3xl space-y-6" dir="rtl">
+      <div className="relative z-10 mx-auto max-w-3xl space-y-6">
         {/* Main Booking Card */}
         <Card className="overflow-hidden border-0 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl">
           <CardContent className="space-y-6 p-6 md:p-8">
@@ -83,7 +83,7 @@ export function PaymentForm({
                     height={56}
                     className="h-14 w-14 rounded-full border-2 border-white object-cover shadow-md"
                   />
-                  <span className="absolute -bottom-0.5 -left-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-emerald-500">
+                  <span className="absolute -bottom-0.5 -start-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-emerald-500">
                     <CheckCircle2 className="h-2.5 w-2.5 text-white" />
                   </span>
                 </div>
@@ -218,12 +218,12 @@ export function PaymentForm({
                 <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 {isMutationPending ? (
                   <>
-                    <Loader2 className="ml-2 h-5 w-5 animate-spin" />
+                    <Loader2 className="me-2 h-5 w-5 animate-spin" />
                     {t("buttonCreatingLink")}
                   </>
                 ) : (
                   <>
-                    <CreditCard className="ml-2 h-5 w-5 transition-transform group-hover:scale-110" />
+                    <CreditCard className="me-2 h-5 w-5 transition-transform group-hover:scale-110" />
                     {t("buttonPay", { total, currency })}
                   </>
                 )}

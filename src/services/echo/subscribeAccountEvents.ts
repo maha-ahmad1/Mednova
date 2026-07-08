@@ -69,7 +69,12 @@ export const subscribeAccountEvents = ({
       event.message?.trim() ||
       (isApproved ? t("approvedDescription") : t("rejectedDescription"));
 
-    addNotification(createAccountStatusNotification(event, title, description));
+    const accountNotification = createAccountStatusNotification(event, title, description);
+    // TEMP DEBUG - remove after diagnosing sound issue
+    console.log("🔔 [SoundDebug] Notification received (account status)", {
+      notificationId: accountNotification.id,
+    });
+    addNotification(accountNotification);
 
     if (isApproved) {
       toast.success(title, { description, duration: 6000 });

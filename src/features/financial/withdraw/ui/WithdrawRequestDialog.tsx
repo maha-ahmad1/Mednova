@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2, Building2, ArrowDownCircle } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -33,6 +33,8 @@ export function WithdrawRequestDialog({
   bankAccount,
 }: WithdrawRequestDialogProps) {
   const t = useTranslations("financial.withdraw.request");
+  const locale = useLocale();
+  const dir = locale === "ar" ? "rtl" : "ltr";
   const { mutateAsync, isPending } = useRequestWithdrawal();
 
   const handleClose = () => {
@@ -54,7 +56,7 @@ export function WithdrawRequestDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md" dir="rtl">
+      <DialogContent className="sm:max-w-md" dir={dir}>
         <DialogHeader>
           <DialogTitle>{t("title")}</DialogTitle>
           <DialogDescription>{t("subtitle")}</DialogDescription>

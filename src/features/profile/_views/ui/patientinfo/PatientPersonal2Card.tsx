@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   FormPhoneInput,
@@ -47,6 +48,10 @@ export default function PatientPersonal2Card({
   getFieldError,
 }: Props) {
   const isEditing = editingCard === "personal2";
+  const t = useTranslations("profile.patientInfo.card2");
+  const tParent = useTranslations("profile.patientInfo");
+  const tCommon = useTranslations("common");
+  const isRtl = useLocale() === "ar";
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleChange = (field: string, value: string) => {
@@ -132,7 +137,7 @@ export default function PatientPersonal2Card({
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
-          <h2 className="text-xl font-bold text-gray-800">معلومات إضافية</h2>
+          <h2 className="text-xl font-bold text-gray-800">{t("title")}</h2>
         </div>
 
         {!isEditing ? (
@@ -143,7 +148,7 @@ export default function PatientPersonal2Card({
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
             <Edit className="w-4 h-4" />
-            تعديل المعلومات
+            {t("editButton")}
           </Button>
         ) : (
           <div className="flex gap-2">
@@ -154,7 +159,7 @@ export default function PatientPersonal2Card({
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
             >
               {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
-              حفظ التغييرات
+              {tParent("saveChangesButton")}
             </Button>
             <Button
               onClick={cancelEdit}
@@ -162,7 +167,7 @@ export default function PatientPersonal2Card({
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
-              إلغاء
+              {tCommon("cancel")}
             </Button>
           </div>
         )}
@@ -173,7 +178,7 @@ export default function PatientPersonal2Card({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FieldDisplay
             icon={<AlertCircle className="w-5 h-5" />}
-            label="جهة الاتصال للطوارئ"
+            label={t("emergencyContactLabel")}
             value={
               patient.patient_details?.emergency_phone ? (
                 <Badge className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
@@ -189,7 +194,7 @@ export default function PatientPersonal2Card({
 
           <FieldDisplay
             icon={<User className="w-5 h-5" />}
-            label="صلة القرابة"
+            label={t("relationshipLabel")}
             value={
               patient.patient_details?.relationship ? (
                 <Badge className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm">
@@ -203,7 +208,7 @@ export default function PatientPersonal2Card({
 
           <FieldDisplay
             icon={<User className="w-5 h-5" />}
-            label="الجنس"
+            label={t("genderLabel")}
             value={
               patient.gender ? (
                 <Badge
@@ -213,7 +218,7 @@ export default function PatientPersonal2Card({
                       : "bg-pink-100 text-pink-800"
                   }`}
                 >
-                  {patient.gender === "Male" ? "ذكر" : "أنثى"}
+                  {patient.gender === "Male" ? t("genderMale") : t("genderFemale")}
                 </Badge>
               ) : (
                 "-"
@@ -223,7 +228,7 @@ export default function PatientPersonal2Card({
 
           <FieldDisplay
             icon={<MapPin className="w-5 h-5" />}
-            label="الدولة"
+            label={t("countryLabel")}
             value={
               patient.location_details?.country ? (
                 <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
@@ -237,7 +242,7 @@ export default function PatientPersonal2Card({
 
           <FieldDisplay
             icon={<Navigation className="w-5 h-5" />}
-            label="المدينة"
+            label={t("cityLabel")}
             value={
               patient.location_details?.city ? (
                 <Badge className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
@@ -252,7 +257,7 @@ export default function PatientPersonal2Card({
           <div className="">
             <FieldDisplay
               icon={<MapPin className="w-5 h-5" />}
-              label="العنوان التفصيلي"
+              label={t("addressLabel")}
               value={patient.location_details?.formatted_address || "-"}
             />
           </div>
@@ -262,7 +267,7 @@ export default function PatientPersonal2Card({
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
           <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-            تعديل المعلومات الإضافية
+            {t("editTitle")}
           </h4>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -270,7 +275,7 @@ export default function PatientPersonal2Card({
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-red-500" />
-                جهة الاتصال للطوارئ
+                {t("emergencyContactLabel")}
               </label>
               <FormPhoneInput
                 label=""
@@ -285,7 +290,7 @@ export default function PatientPersonal2Card({
                   handleChange("emergency_contact", e.target.value)
                 }
                 // rtl
-                placeholder="0000 0000"
+                placeholder={t("emergencyContactPlaceholder")}
                 error={getFieldError("emergency_contact", "personal2")}
                 className="bg-white no-spinner"
               />
@@ -293,36 +298,36 @@ export default function PatientPersonal2Card({
 
             {/* Relationship */}
             <FormInput
-              label="صلة القرابة"
+              label={t("relationshipLabel")}
               type="text"
               value={(formValues.relationship as string) || ""}
               onChange={(e) => handleChange("relationship", e.target.value)}
               className="bg-white border-gray-300 focus:border-[#32A88D]"
-              placeholder="مثال: أب/أم/أخ"
+              placeholder={t("relationshipPlaceholder")}
               error={getFieldError("relationship", "personal2")}
             />
 
             {/* Gender */}
             <FormSelect
-              label="الجنس"
+              label={t("genderLabel")}
               options={[
-                { value: "male", label: "ذكر" },
-                { value: "female", label: "أنثى" },
+                { value: "male", label: t("genderMale") },
+                { value: "female", label: t("genderFemale") },
               ]}
               value={(formValues.gender as string) ?? ""}
               onValueChange={(val) =>
                 setFormValues((s) => ({ ...s, gender: val }))
               }
-              rtl
+              rtl={isRtl}
               error={getFieldError("gender", "personal2")}
               className="bg-white"
-              placeholder="اختر الجنس"
+              placeholder={t("genderPlaceholder")}
             />
 
             {/* Country */}
             <FormSelect
-              label="الدولة"
-              placeholder="اختر الدولة"
+              label={t("countryLabel")}
+              placeholder={t("countryPlaceholder")}
               value={(formValues.country as string) || ""}
               onValueChange={(val) =>
                 setFormValues((v) => ({ ...v, country: val, city: "" }))
@@ -331,18 +336,18 @@ export default function PatientPersonal2Card({
                 value: c.name,
                 label: c.name,
               }))}
-              rtl
+              rtl={isRtl}
               error={getFieldError("country", "personal2")}
               className="bg-white"
             />
 
             {/* City */}
             <FormSelect
-              label="المدينة"
+              label={t("cityLabel")}
               placeholder={
                 (formValues.country as string)
-                  ? "اختر المدينة"
-                  : "اختر الدولة أولاً"
+                  ? t("cityPlaceholder")
+                  : t("cityPlaceholderNoCountry")
               }
               value={(formValues.city as string) || ""}
               onValueChange={(val) => handleChange("city", val)}
@@ -350,7 +355,7 @@ export default function PatientPersonal2Card({
                 value: c,
                 label: c,
               }))}
-              rtl
+              rtl={isRtl}
               error={getFieldError("city", "personal2")}
               className="bg-white"
               disabled={!formValues.country}
@@ -358,14 +363,14 @@ export default function PatientPersonal2Card({
 
             {/* Detailed Address */}
             <FormInput
-              label="العنوان التفصيلي"
+              label={t("addressLabel")}
               type="text"
               value={(formValues.formatted_address as string) || ""}
               onChange={(e) =>
                 handleChange("formatted_address", e.target.value)
               }
               className="bg-white border-gray-300 focus:border-[#32A88D]"
-              placeholder="أدخل العنوان الكامل"
+              placeholder={t("addressPlaceholder")}
               error={getFieldError("formatted_address", "personal2")}
             />
           </div>
@@ -376,7 +381,7 @@ export default function PatientPersonal2Card({
             <div className="bg-white p-4 rounded-lg border border-gray-200 mt-6">
               <h5 className="font-medium text-gray-700 mb-3 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#32A88D]" />
-                معاينة الموقع:
+                {t("locationPreview")}
               </h5>
               <div className="flex flex-wrap gap-2">
                 {typeof formValues.country === "string" && (

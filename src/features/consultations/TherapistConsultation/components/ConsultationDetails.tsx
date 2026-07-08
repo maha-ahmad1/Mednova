@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { useTranslations } from "next-intl";
 import type { ConsultationRequest } from "@/types/consultation";
 import {
   User,
@@ -22,35 +23,26 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { getStatusBadge, getTypeIcon } from "@/features/consultations/utils/consultation-helpers";
 
-// دالة مساعدة لتنسيق التاريخ والوقت
-const formatAppointmentDateTime = (request: ConsultationRequest) => {
+// Formats the appointment day/time using the caller's translated day names
+const formatAppointmentDateTime = (
+  request: ConsultationRequest,
+  getDayLabel: (day: string) => string,
+) => {
   if (request.data?.appointment) {
     const appointment = request.data.appointment;
-    const dayMap: Record<string, string> = {
-      "Sunday": "الأحد",
-      "Monday": "الإثنين", 
-      "Tuesday": "الثلاثاء",
-      "Wednesday": "الأربعاء",
-      "Thursday": "الخميس",
-      "Friday": "الجمعة",
-      "Saturday": "السبت"
-    };
-    
-    const arabicDay = dayMap[appointment.requested_day] || appointment.requested_day;
-    
-    // تنسيق الوقت بشكل أفضل
+    const localizedDay = getDayLabel(appointment.requested_day);
+
     let timeDisplay = appointment.requested_time;
     if (appointment.requested_time) {
-      // إذا كان الوقت بصيغة "HH:MM" حولها لتنسيق مقروء
       const timeParts = appointment.requested_time.split(':');
       if (timeParts.length >= 2) {
         timeDisplay = `${timeParts[0]}:${timeParts[1]}`;
       }
     }
-    
+
     return {
-      fullDate: `${arabicDay} ${timeDisplay}`,
-      day: arabicDay,
+      fullDate: `${localizedDay} ${timeDisplay}`,
+      day: localizedDay,
       time: timeDisplay,
     };
   }
@@ -73,6 +65,14 @@ export default function ConsultationDetails({
   userRole,
 }: ConsultationDetailsProps) {
   const { data: session } = useSession();
+  const t = useTranslations("consultations.panel");
+  const tDays = useTranslations("consultations.panel.days");
+  const tStatus = useTranslations("consultations.status");
+  const getStatusLabel = (status: string) => tStatus(status as "pending" | "accepted" | "cancelled" | "active" | "completed");
+  const getDayLabel = (day: string) => {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    return days.includes(day) ? tDays(day as (typeof days)[number]) : day;
+  };
   // ✅ احصل على أحدث نسخة من الـ store
   const { requests } = useConsultationStore();
   const storeRequest = requests.find((r) => r.id === initialRequest.id);
@@ -84,7 +84,7 @@ export default function ConsultationDetails({
   const consultant = displayRequest.data.consultant;
 
   // ✅ معلومات تاريخ الحجز
-  const appointmentInfo = formatAppointmentDateTime(displayRequest);
+  const appointmentInfo = formatAppointmentDateTime(displayRequest, getDayLabel);
 
 
   // ✅ ✅ ✅ **الجزء الأهم:** اكتشاف إذا كان الرابط من البوشر
@@ -150,7 +150,7 @@ const shouldShowZoomButton = () => {
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <RefreshCw className="w-4 h-4 text-green-600" />
             <span className="text-green-700 text-sm font-medium">
-              تم تحديث رابط الزوم مباشرةً
+              {t("liveUpdateBanner")}
             </span>
           </div>
           <Badge className="bg-green-100 text-green-800 border-green-300 text-xs">
@@ -167,7 +167,7 @@ const shouldShowZoomButton = () => {
               <div className="absolute top-3 right-3">
                 <div className="flex items-center gap-1 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full border border-blue-300">
                   <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                  مباشر
+                  {t("live")}
                 </div>
               </div>
             )}
@@ -178,12 +178,12 @@ const shouldShowZoomButton = () => {
               </div>
               <div>
                 <h4 className="font-bold text-blue-800 text-lg">
-                  استشارة فيديو مباشرة
+                  {t("videoTitle")}
                 </h4>
                 <p className="text-blue-600 text-sm">
                   {isZoomLinkFromPusher()
-                    ? "تم إنشاء الرابط مباشرة - انقر للانضمام"
-                    : "انقر للانضمام إلى جلسة الزوم"}
+                    ? t("videoDescLive")
+                    : t("videoDescNormal")}
                 </p>
               </div>
             </div>
@@ -201,20 +201,20 @@ const shouldShowZoomButton = () => {
               <VideoIcon className="w-5 h-5" />
               <span className="font-semibold">
                 {isZoomLinkFromPusher()
-                  ? "انضم الآن (مباشر)"
-                  : "انضم إلى جلسة الزوم"}
+                  ? t("joinNowLive")
+                  : t("joinZoom")}
               </span>
               <ExternalLink className="w-4 h-4" />
             </Button>
 
             <div className="flex justify-between items-center mt-2">
               <p className="text-xs text-blue-500">
-                سيتم فتح الرابط في نافذة جديدة
+                {t("linkOpensNewWindow")}
               </p>
               {isZoomLinkFromPusher() && (
                 <p className="text-xs text-green-600 font-medium flex items-center gap-1">
                   <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                  ⚡ تحديث مباشر
+                  ⚡ {t("liveUpdate")}
                 </p>
               )}
             </div>
@@ -249,15 +249,14 @@ const shouldShowZoomButton = () => {
           <div className="mb-6 sm:mb-8" >
             <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
               <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-              بيانات{" "}
               {displayRequest.data.consultant_type === "therapist"
-                ? "المعالج"
-                : "المركز"}
+                ? t("therapistDataTitle")
+                : t("centerDataTitle")}
             </h3>
             <div className="grid grid-cols-1 gap-3 sm:gap-4">
               <InfoCard
                 icon={User}
-                label="الاسم الكامل"
+                label={t("fullNameLabel")}
                 value={consultant.full_name}
               />
               {/* <InfoCard
@@ -280,12 +279,12 @@ const shouldShowZoomButton = () => {
           <div className="mb-6 sm:mb-8">
             <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
               <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-              بيانات المريض
+              {t("patientDataTitle")}
             </h3>
             <div className="grid grid-cols-1 gap-3 sm:gap-4">
               <InfoCard
                 icon={User}
-                label="الاسم الكامل"
+                label={t("fullNameLabel")}
                 value={patient.full_name}
               />
               {/* <InfoCard
@@ -302,15 +301,15 @@ const shouldShowZoomButton = () => {
       <div className="mb-6 sm:mb-8">
         <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
           <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-          معلومات الاستشارة
+          {t("consultationInfoTitle")}
         </h3>
         <div className="space-y-3 sm:space-y-4">
           <div className="p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm">
             <p className="text-xs sm:text-sm text-gray-600 mb-2">
-              نوع الاستشارة
+              {t("consultationTypeLabel")}
             </p>
             <p className="font-semibold text-gray-800 text-sm sm:text-base">
-              {displayRequest.type === "chat" ? "محادثة نصية" : "استشارة فيديو"}
+              {displayRequest.type === "chat" ? t("typeChat") : t("typeVideo")}
             </p>
           </div>
 
@@ -319,7 +318,7 @@ const shouldShowZoomButton = () => {
             <div className="p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm">
               <p className="text-xs sm:text-sm text-gray-600 mb-2 flex items-center gap-1">
                 <Calendar className="w-4 h-4 text-[#32A88D]" />
-                تاريخ الحجز
+                {t("bookingDateLabel")}
               </p>
               <div className="font-semibold text-gray-800 text-sm sm:text-base">
                 <div className="flex items-center gap-2">
@@ -335,10 +334,10 @@ const shouldShowZoomButton = () => {
 
           <div className="p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm">
             <p className="text-xs sm:text-sm text-gray-600 mb-2">
-              حالة الاستشارة
+              {t("statusLabel")}
             </p>
             <div className="font-semibold text-gray-800 text-sm sm:text-base">
-              {getStatusBadge(displayRequest.status)}
+              {getStatusBadge(displayRequest.status, getStatusLabel)}
             </div>
           </div>
         </div>
@@ -350,7 +349,7 @@ const shouldShowZoomButton = () => {
             <Button asChild className="w-full bg-[#32A88D] hover:bg-[#2a8a7a] text-white py-3">
               <Link href="/profile/chat">
                 <MessageCircle className="w-5 h-5 ml-2" />
-                فتح المحادثة
+                {t("openChat")}
               </Link>
             </Button>
           </div>
@@ -366,7 +365,7 @@ const shouldShowZoomButton = () => {
   );
 
   return (
-    <div className={`lg:col-span-2 ${isMobile ? "block" : "block"}`} dir="rtl">
+    <div className={`lg:col-span-2 ${isMobile ? "block" : "block"}`}>
       <Card className="bg-gradient-to-b from-white to-gray-50/50 border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg h-full flex flex-col">
         <CardHeader className="pb-3 sm:pb-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white rounded-t-xl sm:rounded-t-2xl">
           <div className="flex items-center justify-between">
@@ -379,18 +378,18 @@ const shouldShowZoomButton = () => {
                   className="lg:hidden"
                 >
                   <ChevronLeft className="w-4 h-4 ml-1" />
-                  رجوع
+                  {t("back")}
                 </Button>
               )}
               <CardTitle className="text-lg sm:text-xl font-bold text-gray-800 flex items-center gap-2 sm:gap-3">
                 <User className="w-5 h-5 sm:w-6 sm:h-6 text-[#32A88D]" />
-                تفاصيل الاستشارة
+                {t("title")}
               </CardTitle>
             </div>
             <div className="flex items-center gap-1 sm:gap-2">
               {getTypeIcon(displayRequest.type)}
               <div className="scale-75 sm:scale-100 origin-right">
-                {getStatusBadge(displayRequest.status)}
+                {getStatusBadge(displayRequest.status, getStatusLabel)}
               </div>
            
             </div>

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { useTranslations, useLocale } from "next-intl";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -13,6 +14,10 @@ import { User, Wallet, HelpCircle, LogOut ,Calendar} from "lucide-react";
 import { useProfileImageStore } from "@/store/useProfileImageStore";
 
 export function UserMenu() {
+  const t = useTranslations("sidebar");
+  const tNav = useTranslations("navbar");
+  const locale = useLocale();
+  const dir: "rtl" | "ltr" = locale === "ar" ? "rtl" : "ltr";
   const { data: session } = useSession();
   const storeImage = useProfileImageStore((state) => state.image);
 
@@ -43,44 +48,46 @@ export function UserMenu() {
 
       <DropdownMenuContent
         align="end"
-        className="text-right w-40 bg-white/80 backdrop-blur-lg p-1 ml-6"
+        className="text-start w-40 bg-white/80 backdrop-blur-lg p-1 me-6"
       >
-        <DropdownMenuItem
-          className="flex items-center gap-2 px-3 py-2 rounded-md 
+        <div dir={dir} className="contents">
+          <DropdownMenuItem
+            className="flex items-center gap-2 px-3 py-2 rounded-md
              hover:bg-gray-100/60 text-gray-700 transition"
-        >
-          <Link
-            href="/profile"
-            className="flex-1  text-sm text-right truncate block"
           >
-            {session.user.full_name}
-          </Link>
-          <User className="w-4 h-4 shrink-0" />
-        </DropdownMenuItem>
+            <Link
+              href="/profile"
+              className="flex-1  text-sm text-start truncate block"
+            >
+              {session.user.full_name}
+            </Link>
+            <User className="w-4 h-4 shrink-0" />
+          </DropdownMenuItem>
 
-        <DropdownMenuItem className="flex gap-2">
-          <Link
-            href="/profile/consultations"
-            className="flex-1 text-sm text-right"
-          >
-            طلبات الإستشارة
-          </Link>
-          <Calendar className="w-4 h-4" />
-        </DropdownMenuItem>
+          <DropdownMenuItem className="flex gap-2">
+            <Link
+              href="/profile/consultations"
+              className="flex-1 text-sm text-start"
+            >
+              {t("consultationRequests")}
+            </Link>
+            <Calendar className="w-4 h-4" />
+          </DropdownMenuItem>
 
-        <DropdownMenuItem className="flex gap-2">
-          <Link href="/profile/financial" className="flex-1 text-sm text-right">
-           المحفظة المالية
-          </Link>
-          <Wallet className="w-4 h-4" />
-        </DropdownMenuItem>
+          <DropdownMenuItem className="flex gap-2">
+            <Link href="/profile/financial" className="flex-1 text-sm text-start">
+              {t("financialWallet")}
+            </Link>
+            <Wallet className="w-4 h-4" />
+          </DropdownMenuItem>
 
-        <div className="h-px bg-gray-200 my-1" />
+          <div className="h-px bg-gray-200 my-1" />
 
-        <DropdownMenuItem onClick={() => signOut()} className="flex gap-2">
-          <span className="flex-1 text-sm">تسجيل الخروج</span>
-          <LogOut className="w-4 h-4" />
-        </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => signOut()} className="flex gap-2">
+            <span className="flex-1 text-sm">{tNav("logout")}</span>
+            <LogOut className="w-4 h-4" />
+          </DropdownMenuItem>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

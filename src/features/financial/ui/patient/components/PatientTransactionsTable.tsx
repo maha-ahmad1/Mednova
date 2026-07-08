@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { usePatientTransactions } from "@/features/financial/hooks";
@@ -13,6 +13,8 @@ const SKELETON_ROWS = 8;
 
 export function PatientTransactionsTable() {
   const t = useTranslations("financial");
+  const locale = useLocale();
+  const dateLocale = locale === "ar" ? "ar-OM" : "en-US";
   const [page, setPage] = useState(1);
 
   const {
@@ -31,11 +33,11 @@ export function PatientTransactionsTable() {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 text-right font-medium">{t("patientTransactions.colOperation")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("patientTransactions.colConsultation")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("patientTransactions.colAmount")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("patientTransactions.colStatus")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("patientTransactions.colDate")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientTransactions.colOperation")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientTransactions.colConsultation")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientTransactions.colAmount")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientTransactions.colStatus")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientTransactions.colDate")}</th>
             </tr>
           </thead>
 
@@ -108,7 +110,7 @@ export function PatientTransactionsTable() {
                     <StatusBadge status={tx.status} label={tx.status_label} />
                   </td>
                   <td className="px-4 py-3 text-muted-foreground text-xs">
-                    {formatDate(tx.created_at)}
+                    {formatDate(tx.created_at, undefined, dateLocale)}
                   </td>
                 </tr>
               ))}

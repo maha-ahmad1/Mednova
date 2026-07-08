@@ -34,6 +34,73 @@
     "reviewDuration": "مدة المراجعة: 1-2 يوم",
     "qualityCheck": "مراجعة الجودة"
   },
+  "sidebar": {
+    "home": "الصفحة الرئيسية",
+    "myProfile": "الصفحة الشخصية",
+    "consultationRequests": "طلبات الاستشارة",
+    "appointments": "المواعيد",
+    "patients": "المرضى",
+    "financialWallet": "المحفظة المالية",
+    "reports": "التقارير",
+    "help": "المساعدة",
+    "navigating": "جارٍ الانتقال...",
+    "userNamePlaceholder": "اسم المستخدم"
+  },
+  "profile": {
+    "patientInfo": {
+      "loading": "جارٍ تحميل بيانات المريض...",
+      "loadError": "حدث خطأ أثناء جلب البيانات: {error}",
+      "validationError": "يرجى تصحيح الأخطاء قبل الحفظ",
+      "saveSuccess": "تم حفظ التعديلات بنجاح",
+      "saveError": "حدث خطأ أثناء التحديث",
+      "saveChangesButton": "حفظ التغييرات",
+      "cancelButton": "إلغاء",
+      "card1": {
+        "title": "البيانات الأساسية",
+        "editButton": "تعديل البيانات",
+        "editTitle": "تعديل البيانات الأساسية",
+        "fullNameLabel": "الاسم الكامل",
+        "fullNamePlaceholder": "أدخل الاسم الكامل",
+        "emailLabel": "البريد الإلكتروني",
+        "phoneLabel": "رقم الهاتف",
+        "phonePlaceholder": "0000 0000",
+        "birthDateLabel": "تاريخ الميلاد"
+      },
+      "card2": {
+        "title": "معلومات إضافية",
+        "editButton": "تعديل المعلومات",
+        "editTitle": "تعديل المعلومات الإضافية",
+        "emergencyContactLabel": "جهة الاتصال للطوارئ",
+        "emergencyContactPlaceholder": "0000 0000",
+        "relationshipLabel": "صلة القرابة",
+        "relationshipPlaceholder": "مثال: أب/أم/أخ",
+        "genderLabel": "الجنس",
+        "genderPlaceholder": "اختر الجنس",
+        "genderMale": "ذكر",
+        "genderFemale": "أنثى",
+        "countryLabel": "الدولة",
+        "countryPlaceholder": "اختر الدولة",
+        "cityLabel": "المدينة",
+        "cityPlaceholder": "اختر المدينة",
+        "cityPlaceholderNoCountry": "اختر الدولة أولاً",
+        "addressLabel": "العنوان التفصيلي",
+        "addressPlaceholder": "أدخل العنوان الكامل",
+        "locationPreview": "معاينة الموقع:"
+      },
+      "validation": {
+        "fullNameMin": "الاسم يجب أن يكون أكثر من حرفين",
+        "emailInvalid": "بريد إلكتروني غير صالح",
+        "phoneMin": "رقم الهاتف قصير جدًا",
+        "birthDateInvalid": "تاريخ غير صالح",
+        "emergencyContactMin": "رقم جهة الاتصال قصير جدًا",
+        "genderRequired": "الجنس مطلوب",
+        "countryRequired": "الدولة مطلوبة",
+        "cityRequired": "المدينة مطلوبة",
+        "addressMin": "العنوان يجب أن يكون أكثر من 3 أحرف",
+        "imageTooLarge": "الصورة كبيرة جدًا (أقل من 5MB)"
+      }
+    }
+  },
   "navbar": {
     "search": "ابحث عن مستخدم، موعد، أو تقرير...",
     "searchPlaceholder": "ابحث عن مستخدم، موعد، أو تقرير...",
@@ -543,6 +610,7 @@
       "withdrawalRequest": "طلب سحب",
       "addBankAccount": "إضافة حساب بنكي",
       "viewBankAccount": "الحساب البنكي",
+      "navigating": "جارٍ الانتقال...",
       "consultationType": {
         "chat": "دردشة",
         "video": "فيديو"
@@ -683,7 +751,20 @@
         "emptyStateTitle": "لم تضف حسابًا بنكيًا بعد",
         "emptyStateDescription": "لسحب أرباحك، أضف حسابك البنكي أولاً",
         "emptyStateButton": "إضافة حساب بنكي",
-        "backButton": "إلغاء"
+        "backButton": "إلغاء",
+        "pendingVerificationTitle": "يرجى تأكيد حسابك البنكي",
+        "pendingVerificationDesc": "لإكمال إضافة الحساب البنكي، يرجى إدخال رمز التحقق.",
+        "continueVerificationButton": "متابعة التحقق",
+        "countryValue": "OM - سلطنة عمان",
+        "ibanValid": "صالح",
+        "validation": {
+          "bankNameRequired": "اسم البنك مطلوب",
+          "accountHolderRequired": "اسم صاحب الحساب مطلوب",
+          "accountNumberRequired": "رقم الحساب مطلوب",
+          "ibanInvalid": "رقم الآيبان يجب أن يبدأ بـ OM ويتبعه 21 رقماً",
+          "swiftRequired": "رمز SWIFT مطلوب",
+          "swiftTooLong": "رمز SWIFT طويل جداً"
+        }
       },
       "otp": {
         "breadcrumb": "المحفظة المالية › التحقق من الحساب",
@@ -693,7 +774,8 @@
         "confirmingButton": "جاري التحقق...",
         "resendPrompt": "لم تستلم الرمز؟",
         "resendButton": "ارجع لإعادة الإرسال",
-        "resendCooldown": "إعادة الإرسال ({seconds})"
+        "resendCooldown": "إعادة الإرسال ({seconds})",
+        "otpIncomplete": "يجب إدخال جميع الأرقام الستة"
       },
       "request": {
         "title": "طلب سحب مبلغ",
@@ -733,11 +815,13 @@
         "description": "هل أنت متأكد من إلغاء سحب {amount} {currency}؟",
         "warning": "لا يمكن التراجع عن هذا الإجراء.",
         "confirm": "تأكيد الإلغاء",
+        "cancelling": "جاري الإلغاء...",
         "back": "تراجع"
       }
     }
   },
   "payment": {
+    "navigating": "جارٍ الانتقال...",
     "pageTitle": "تأكيد الحجز والدفع",
     "breadcrumb": "ملخص الحجز والدفع",
     "typeChat": "استشارة نصية",
@@ -903,7 +987,89 @@
       }
     },
     "list": {
-      "viewFinancialDetails": "عرض التفاصيل المالية"
+      "viewFinancialDetails": "عرض التفاصيل المالية",
+      "title": "طلبات الاستشارة",
+      "back": "العودة",
+      "searchPlaceholder": "ابحث باسم المريض أو الأعراض...",
+      "tabVideo": "فيديو",
+      "tabChat": "محادثة",
+      "tabAll": "الكل",
+      "noSearchResults": "لا توجد نتائج للبحث",
+      "noRequests": "لا توجد طلبات استشارة",
+      "userImageAlt": "صورة المستخدم",
+      "openChat": "فتح المحادثة"
+    },
+    "view": {
+      "loading": "جاري تحميل طلبات الاستشارة...",
+      "loadError": "حدث خطأ في جلب طلبات الاستشارة",
+      "selectPrompt": "اختر طلب استشارة",
+      "selectPromptDescWithRequests": "اختر طلب استشارة من القائمة على اليمين لعرض التفاصيل الكاملة واتخاذ الإجراء المناسب",
+      "selectPromptDescEmpty": "لا توجد طلبات استشارة حالياً"
+    },
+    "panel": {
+      "back": "رجوع",
+      "title": "تفاصيل الاستشارة",
+      "liveUpdateBanner": "تم تحديث رابط الزوم مباشرةً",
+      "live": "مباشر",
+      "videoTitle": "استشارة فيديو مباشرة",
+      "videoDescLive": "تم إنشاء الرابط مباشرة - انقر للانضمام",
+      "videoDescNormal": "انقر للانضمام إلى جلسة الزوم",
+      "joinNowLive": "انضم الآن (مباشر)",
+      "joinZoom": "انضم إلى جلسة الزوم",
+      "linkOpensNewWindow": "سيتم فتح الرابط في نافذة جديدة",
+      "liveUpdate": "تحديث مباشر",
+      "therapistDataTitle": "بيانات المعالج",
+      "centerDataTitle": "بيانات المركز",
+      "patientDataTitle": "بيانات المريض",
+      "fullNameLabel": "الاسم الكامل",
+      "consultationInfoTitle": "معلومات الاستشارة",
+      "consultationTypeLabel": "نوع الاستشارة",
+      "typeChat": "محادثة نصية",
+      "typeVideo": "استشارة فيديو",
+      "bookingDateLabel": "تاريخ الحجز",
+      "statusLabel": "حالة الاستشارة",
+      "openChat": "فتح المحادثة",
+      "days": {
+        "Sunday": "الأحد",
+        "Monday": "الإثنين",
+        "Tuesday": "الثلاثاء",
+        "Wednesday": "الأربعاء",
+        "Thursday": "الخميس",
+        "Friday": "الجمعة",
+        "Saturday": "السبت"
+      }
+    },
+    "actions": {
+      "cancelling": "جاري الرفض...",
+      "cancelConsultation": "إلغاء الإستشارة",
+      "cancelledTitle": "تم إلغاء طلب الاستشارة",
+      "cancelledDesc": "سيتم إعلام المريض بقرار الإلغاء",
+      "completedTitle": "تم إكمال الاستشارة بنجاح",
+      "thanksNote": "شكراً لك على تقديم خدمة مميزة للمريض",
+      "accepting": "جاري القبول...",
+      "acceptButton": "قبول الطلب",
+      "joinZoomSession": "انضم إلى جلسة الزوم",
+      "rejectedTitle": "تم رفض طلب الاستشارة",
+      "rejectedDesc": "سيتم إعلام المريض بقرار الرفض",
+      "acceptFailedToast": "فشل قبول الطلب، حاول مرة أخرى",
+      "completeFailedToast": "فشل اكمال الطلب، حاول مرة أخرى",
+      "rejectFailedToast": "فشل الغاء الطلب، حاول مرة أخرى"
+    },
+    "rejectDialog": {
+      "title": "تأكيد إلغاء الاستشارة",
+      "reasonLabel": "سبب الإلغاء",
+      "reasonPlaceholder": "أدخل سبب إلغاء الاستشارة...",
+      "reasonNote": "هذا السبب سيتم إرساله للمريض",
+      "confirmButton": "تأكيد الرفض",
+      "confirmingButton": "جاري الرفض...",
+      "reasonRequiredToast": "يرجى إدخال سبب الرفض"
+    },
+    "status": {
+      "pending": "في انتظار الموافقة",
+      "accepted": "مقبول",
+      "cancelled": "مرفوض",
+      "active": "نشطة",
+      "completed": "مكتمل"
     }
   },
   "controlPanel": {

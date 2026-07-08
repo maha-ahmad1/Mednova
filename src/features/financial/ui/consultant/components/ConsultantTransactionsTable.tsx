@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Receipt } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
@@ -18,6 +18,8 @@ const SKELETON_ROWS = 8;
 
 export function ConsultantTransactionsTable() {
   const t = useTranslations("financial");
+  const locale = useLocale();
+  const dateLocale = locale === "ar" ? "ar-OM" : "en-US";
   const [page, setPage] = useState(1);
 
   const {
@@ -41,12 +43,12 @@ export function ConsultantTransactionsTable() {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colOperation")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colConsultation")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colPatient")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colAmount")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colStatus")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("consultantTransactions.colDate")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("consultantTransactions.colOperation")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("consultantTransactions.colConsultation")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("consultantTransactions.colPatient")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("consultantTransactions.colAmount")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("consultantTransactions.colStatus")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("consultantTransactions.colDate")}</th>
             </tr>
           </thead>
 
@@ -136,7 +138,7 @@ export function ConsultantTransactionsTable() {
                     <StatusBadge status={tx.status} label={tx.status_label} />
                   </td>
                   <td className="px-4 py-3 text-muted-foreground text-xs">
-                    {formatDate(tx.created_at)}
+                    {formatDate(tx.created_at, undefined, dateLocale)}
                   </td>
                 </tr>
               ))}

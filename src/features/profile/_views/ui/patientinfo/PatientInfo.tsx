@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useFetcher } from "@/hooks/useFetcher";
 import { useUpdatePatient } from "@/features/profile/_views/hooks/useUpdatePatient";
 import { useUpdateLoction } from "../../hooks/useUpdateLoction";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { personal1Schema, personal2Schema } from "@/lib/validation";
+import { createPersonal1Schema, createPersonal2Schema } from "@/lib/validation";
 import PatientPersonal1Card from "./PatientPersonal1Card";
 import PatientPersonal2Card from "./PatientPersonal2Card";
 import type { PatientProfile } from "@/types/patient";
@@ -17,7 +18,42 @@ import { buildFullPhoneNumber, parsePhoneNumber } from "@/utils/phone";
 
 export default function PatientInfo() {
   const { data: session } = useSession();
+  const t = useTranslations("profile.patientInfo");
+  const tValidation = useTranslations("profile.patientInfo.validation");
   const userId = session?.user?.id;
+
+  const personal1Schema = useMemo(
+    () =>
+      createPersonal1Schema({
+        fullNameMin: tValidation("fullNameMin"),
+        emailInvalid: tValidation("emailInvalid"),
+        phoneMin: tValidation("phoneMin"),
+        birthDateInvalid: tValidation("birthDateInvalid"),
+        emergencyContactMin: tValidation("emergencyContactMin"),
+        genderRequired: tValidation("genderRequired"),
+        countryRequired: tValidation("countryRequired"),
+        cityRequired: tValidation("cityRequired"),
+        addressMin: tValidation("addressMin"),
+        imageTooLarge: tValidation("imageTooLarge"),
+      }),
+    [tValidation],
+  );
+  const personal2Schema = useMemo(
+    () =>
+      createPersonal2Schema({
+        fullNameMin: tValidation("fullNameMin"),
+        emailInvalid: tValidation("emailInvalid"),
+        phoneMin: tValidation("phoneMin"),
+        birthDateInvalid: tValidation("birthDateInvalid"),
+        emergencyContactMin: tValidation("emergencyContactMin"),
+        genderRequired: tValidation("genderRequired"),
+        countryRequired: tValidation("countryRequired"),
+        cityRequired: tValidation("cityRequired"),
+        addressMin: tValidation("addressMin"),
+        imageTooLarge: tValidation("imageTooLarge"),
+      }),
+    [tValidation],
+  );
 
   const { data, isLoading, isError, error, refetch } =
     useFetcher<PatientProfile>(
@@ -48,16 +84,16 @@ export default function PatientInfo() {
 
   if (isLoading) {
     return (
-      <div dir="rtl" className="min-h-[60vh] flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-[#32A88D]" />
-        <span className="ml-3 text-gray-600">جارٍ تحميل بيانات المريض...</span>
+        <span className="ml-3 text-gray-600">{t("loading")}</span>
       </div>
     );
   }
 
   if (isError) {
     toast.error(
-      `حدث خطأ أثناء جلب البيانات: ${String((error as Error)?.message)}`
+      t("loadError", { error: String((error as Error)?.message) })
     );
   }
 
@@ -128,7 +164,7 @@ export default function PatientInfo() {
           fieldErrors[field] = issue.message;
         });
         setServerErrors(fieldErrors);
-        toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
+        toast.error(t("validationError"));
         return;
       }
 
@@ -184,16 +220,16 @@ export default function PatientInfo() {
 
       setEditingCard(null);
       setServerErrors({});
-      toast.success("تم حفظ التعديلات بنجاح");
+      toast.success(t("saveSuccess"));
     } catch (err) {
       console.error("handleSave error:", err);
-      toast.error("حدث خطأ أثناء التحديث");
+      toast.error(t("saveError"));
     }
   };
 
   return (
     <div className="container max-w-5xl mx-auto">
-      <div dir="rtl" className="space-y-6">
+      <div className="space-y-6">
         <PatientPersonal1Card
           patient={d}
           onSave={handleSave}

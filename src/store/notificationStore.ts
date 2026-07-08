@@ -113,6 +113,11 @@ export const useNotificationStore = create<NotificationStore>()(
           );
           if (duplicateByFingerprint) {
             console.debug(`[Dedup] DROP ${dedupKey} notification-fingerprint`);
+            // TEMP DEBUG - remove after diagnosing sound issue
+            console.log("⚠️ [SoundDebug] Dedup detected — dropped by fingerprint, array will NOT change, no sound will fire", {
+              dedupKey,
+              notificationId: notification.id,
+            });
             return state;
           }
 
@@ -121,9 +126,19 @@ export const useNotificationStore = create<NotificationStore>()(
           if (exists) {
             console.debug(`[Dedup] DROP ${notification.id} notification-id`);
             console.warn('⚠️ إشعار مكرر تم تجاهله:', notification.id);
+            // TEMP DEBUG - remove after diagnosing sound issue
+            console.log("⚠️ [SoundDebug] Dedup detected — dropped by id, array will NOT change, no sound will fire", {
+              notificationId: notification.id,
+            });
             return state;
           }
           console.debug(`[Dedup] PASS ${dedupKey} notification-new`);
+          // TEMP DEBUG - remove after diagnosing sound issue
+          console.log("🔔 [SoundDebug] Notification passed dedup — will be added to store", {
+            dedupKey,
+            notificationId: notification.id,
+            source: notification.source,
+          });
           
           return {
             notifications: [notification, ...state.notifications],

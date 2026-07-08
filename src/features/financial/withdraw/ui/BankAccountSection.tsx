@@ -22,7 +22,7 @@ export function BankAccountSection() {
   // Wait for any in-flight fetch to settle before making routing decisions
   if (isLoading || isFetching) {
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-4" dir="rtl">
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-4">
         <Skeleton className="h-4 w-48" />
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-4 w-80" />
@@ -35,25 +35,25 @@ export function BankAccountSection() {
   // Data is settled — show CTA instead of auto-redirecting to avoid loops
   if (bankAccount && !bankAccount.is_verified) {
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-4" dir="rtl">
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-4">
         <Card className="border-0 shadow-md">
           <CardContent className="p-6 flex flex-col items-center gap-4 text-center">
             <div className="rounded-full bg-amber-100 p-4">
               <ShieldAlert className="h-7 w-7 text-amber-600" />
             </div>
             <div>
-              <p className="font-semibold text-foreground">يرجى تأكيد حسابك البنكي</p>
+              <p className="font-semibold text-foreground">{t("bankAccount.pendingVerificationTitle")}</p>
               <p className="text-sm text-muted-foreground mt-1">
-                لإكمال إضافة الحساب البنكي، يرجى إدخال رمز التحقق.
+                {t("bankAccount.pendingVerificationDesc")}
               </p>
             </div>
             <LoadingButton
               onClick={() => push("/profile/financial/bank-account/verify")}
               isLoading={isNavigating}
-              loadingText="جارٍ الانتقال..."
+              loadingText={t("bankAccount.continueVerificationButton")}
               className="bg-[#32A88D] hover:bg-[#2a9278] text-white"
             >
-              متابعة التحقق
+              {t("bankAccount.continueVerificationButton")}
             </LoadingButton>
           </CardContent>
         </Card>
@@ -77,7 +77,7 @@ export function BankAccountSection() {
   // No bank account — show empty state or the add form
   if (!showForm) {
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-8" dir="rtl">
+      <div className="max-w-5xl mx-auto px-4 sm:px-8">
         <Card className="border-0 shadow-md">
           <CardContent className="p-8 flex flex-col items-center gap-4 text-center">
             <div className="rounded-full bg-[#32A88D]/10 p-5">

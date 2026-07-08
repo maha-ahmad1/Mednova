@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +28,8 @@ export function CancelWithdrawalDialog({
   currency,
 }: CancelWithdrawalDialogProps) {
   const t = useTranslations("financial.withdrawals.cancelDialog");
+  const locale = useLocale();
+  const dir = locale === "ar" ? "rtl" : "ltr";
   const { mutateAsync, isPending } = useCancelWithdrawal();
 
   const formatted = amount.toLocaleString("en-US", {
@@ -46,8 +48,8 @@ export function CancelWithdrawalDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" dir="rtl">
-        <DialogHeader className="mr-2 mt-2">
+      <DialogContent className="sm:max-w-md" dir={dir}>
+        <DialogHeader className="ms-2 mt-2">
           <DialogTitle>{t("title")}</DialogTitle>
         </DialogHeader>
 
@@ -73,8 +75,8 @@ export function CancelWithdrawalDialog({
           >
             {isPending ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin ml-2" />
-                جاري الإلغاء...
+                <Loader2 className="h-4 w-4 animate-spin me-2" />
+                {t("cancelling")}
               </>
             ) : (
               t("confirm")

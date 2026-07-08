@@ -19,6 +19,10 @@ export const subscribeSystemEvents = ({
   publicChannel.listen("SystemNotification", (event: SystemNotificationEvent) => {
     console.log("🔔 إشعار نظامي:", event);
     const notification = createSystemNotification(event);
+    // TEMP DEBUG - remove after diagnosing sound issue
+    console.log("🔔 [SoundDebug] Notification received (system)", {
+      notificationId: notification.id,
+    });
     addNotification(notification);
 
     toast.info(event.message, {

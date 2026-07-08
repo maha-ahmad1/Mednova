@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Check, Video, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -21,6 +22,7 @@ export default function ConsultationActions({
   token,
   userRole,
 }: ConsultationActionsProps) {
+  const t = useTranslations("consultations.actions");
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   // console.log("request rejected", request);
 
@@ -45,7 +47,7 @@ export default function ConsultationActions({
       await acceptRequest(request);
       onRequestUpdate({ ...request, status: "accepted" });
     } catch {
-      toast.error("فشل قبول الطلب، حاول مرة أخرى");
+      toast.error(t("acceptFailedToast"));
     }
   };
 
@@ -54,7 +56,7 @@ export default function ConsultationActions({
       await startConsultation(request);
       onRequestUpdate({ ...request, status: "completed" });
     } catch {
-      toast.error("فشل اكمال الطلب، حاول مرة أخرى");
+      toast.error(t("completeFailedToast"));
     }
   };
 
@@ -64,7 +66,7 @@ export default function ConsultationActions({
       onRequestUpdate({ ...request, status: "cancelled" });
       setRejectDialogOpen(false);
     } catch {
-      toast.error("فشل الغاء الطلب، حاول مرة أخرى");
+      toast.error(t("rejectFailedToast"));
     }
   };
 
@@ -81,10 +83,10 @@ export default function ConsultationActions({
             {isProcessing ? (
               <>
                 <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
-                جاري الرفض...
+                {t("cancelling")}
               </>
             ) : (
-              "إلغاء الإستشارة"
+              t("cancelConsultation")
             )}
           </Button>
         )}
@@ -100,10 +102,10 @@ export default function ConsultationActions({
           <div className="w-full text-center p-4 sm:p-6 bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-lg sm:rounded-xl">
             {/* <X className="w-8 h-8 sm:w-12 sm:h-12 text-red-600 mx-auto mb-2 sm:mb-3" /> */}
             <p className="font-semibold text-red-800 text-sm sm:text-lg">
-              تم إلغاء طلب الاستشارة
+              {t("cancelledTitle")}
             </p>
             <p className="text-red-600 text-xs sm:text-sm mt-1 sm:mt-2">
-              سيتم إعلام المريض بقرار الإلغاء
+              {t("cancelledDesc")}
             </p>
           </div>
         )}
@@ -112,7 +114,7 @@ export default function ConsultationActions({
           <div className="w-full text-center p-4 sm:p-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg sm:rounded-xl">
             <Check className="w-8 h-8 sm:w-12 sm:h-12 text-green-600 mx-auto mb-2 sm:mb-3" />
             <p className="font-semibold text-green-800 text-sm sm:text-lg">
-              تم إكمال الاستشارة بنجاح
+              {t("completedTitle")}
             </p>
             {/* <p className="text-green-600 text-xs sm:text-sm mt-1 sm:mt-2">
               شكراً لك على تقديم خدمة مميزة للمريض
@@ -159,7 +161,7 @@ export default function ConsultationActions({
               className="w-full mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center justify-center gap-2"
             >
               <Video className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="font-semibold">انضم إلى جلسة الزوم</span>
+              <span className="font-semibold">{t("joinZoomSession")}</span>
             </Button>
           </div>
         )}
@@ -180,7 +182,7 @@ export default function ConsultationActions({
               className="w-full mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center justify-center gap-2"
             >
               <Video className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="font-semibold">انضم إلى جلسة الزوم</span>
+              <span className="font-semibold">{t("joinZoomSession")}</span>
             </Button>
           )} */}
         {request.status === "pending" && (
@@ -193,12 +195,12 @@ export default function ConsultationActions({
               {isProcessing ? (
                 <>
                   <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
-                  جاري القبول...
+                  {t("accepting")}
                 </>
               ) : (
                 <>
                   {/* <Check className="w-4 h-4 sm:w-5 sm:h-5" /> */}
-                  قبول الطلب
+                  {t("acceptButton")}
                 </>
               )}
             </Button>
@@ -209,7 +211,7 @@ export default function ConsultationActions({
               variant="outline"
               className="cursor-pointer border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-1 sm:flex-initial"
             >
-              إلغاء الإستشارة
+              {t("cancelConsultation")}
             </Button>
           </>
         )}
@@ -243,7 +245,7 @@ export default function ConsultationActions({
               className="w-full mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center justify-center gap-2"
             >
               <Video className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="font-semibold">انضم إلى جلسة الزوم</span>
+              <span className="font-semibold">{t("joinZoomSession")}</span>
             </Button>
           </div>
         )}
@@ -252,10 +254,10 @@ export default function ConsultationActions({
           <div className="w-full text-center p-4 sm:p-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg sm:rounded-xl">
             <Check className="w-8 h-8 sm:w-12 sm:h-12 text-green-600 mx-auto mb-2 sm:mb-3" />
             <p className="font-semibold text-green-800 text-sm sm:text-lg">
-              تم إكمال الاستشارة بنجاح
+              {t("completedTitle")}
             </p>
             <p className="text-green-600 text-xs sm:text-sm mt-1 sm:mt-2">
-              شكراً لك على تقديم خدمة مميزة للمريض
+              {t("thanksNote")}
             </p>
           </div>
         )}
@@ -264,10 +266,10 @@ export default function ConsultationActions({
           <div className="w-full text-center p-4 sm:p-6 bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-lg sm:rounded-xl">
             {/* <X className="w-8 h-8 sm:w-12 sm:h-12 text-red-600 mx-auto mb-2 sm:mb-3" /> */}
             <p className="font-semibold text-red-800 text-sm sm:text-lg">
-              تم رفض طلب الاستشارة
+              {t("rejectedTitle")}
             </p>
             <p className="text-red-600 text-xs sm:text-sm mt-1 sm:mt-2">
-              سيتم إعلام المريض بقرار الرفض
+              {t("rejectedDesc")}
             </p>
           </div>
         )}

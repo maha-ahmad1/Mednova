@@ -31,7 +31,7 @@ export function BankAccountCard({ account, onEdit }: BankAccountCardProps) {
   const t = useTranslations("financial.withdraw.bankAccount");
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-4" dir="rtl">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-4">
       <div>
         <p className="text-xs text-muted-foreground mb-1">{t("breadcrumb")}</p>
         <h1 className="text-2xl font-bold text-foreground">{t("displayTitle")}</h1>

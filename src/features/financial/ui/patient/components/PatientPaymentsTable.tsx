@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { usePatientPayments } from "@/features/financial/hooks";
@@ -13,6 +13,8 @@ const SKELETON_ROWS = 8;
 
 export function PatientPaymentsTable() {
   const t = useTranslations("financial");
+  const locale = useLocale();
+  const dateLocale = locale === "ar" ? "ar-OM" : "en-US";
   const [page, setPage] = useState(1);
 
   const PAYMENT_METHOD_LABELS: Record<string, string> = {
@@ -43,14 +45,14 @@ export function PatientPaymentsTable() {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colConsultation")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colConsultant")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colAmountPaid")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colPaymentFees")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colPaymentMethod")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colStatus")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colRefund")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("patientPayments.colDate")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientPayments.colConsultation")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientPayments.colConsultant")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientPayments.colAmountPaid")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientPayments.colPaymentFees")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientPayments.colPaymentMethod")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientPayments.colStatus")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientPayments.colRefund")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("patientPayments.colDate")}</th>
             </tr>
           </thead>
 
@@ -128,7 +130,7 @@ export function PatientPaymentsTable() {
                     )}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground text-xs">
-                    {formatDate(pay.created_at)}
+                    {formatDate(pay.created_at, undefined, dateLocale)}
                   </td>
                 </tr>
               ))}

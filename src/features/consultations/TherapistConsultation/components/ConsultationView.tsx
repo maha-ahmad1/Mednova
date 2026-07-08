@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Loader2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import type { ConsultationRequest, UserType } from "@/types/consultation";
@@ -25,7 +26,7 @@ interface ApiResponse {
 }
 
 export default function ConsultationView({}: ConsultationViewProps) {
-
+  const t = useTranslations("consultations.view");
   const [timezone, setTimezone] = useState<string>("");
 
   const { data, isLoading, error } = useFetcher<ApiResponse>(
@@ -88,7 +89,7 @@ export default function ConsultationView({}: ConsultationViewProps) {
 
   useEffect(() => {
     if (error) {
-      toast.error("حدث خطأ في جلب طلبات الاستشارة");
+      toast.error(t("loadError"));
       console.log("Error loading consultations:", error.message);
     }
   }, [error]);
@@ -126,7 +127,7 @@ export default function ConsultationView({}: ConsultationViewProps) {
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-[#32A88D] mx-auto mb-4" />
           <span className="text-gray-600 text-lg">
-            جاري تحميل طلبات الاستشارة...
+            {t("loading")}
           </span>
         </div>
       </div>
@@ -134,7 +135,7 @@ export default function ConsultationView({}: ConsultationViewProps) {
   }
 
   return (
-   <div className="w-full bg-gray-50 py-6 px-4 lg:pb-6 lg:pt-8" dir="rtl">
+   <div className="w-full bg-gray-50 py-6 px-4 lg:pb-6 lg:pt-8">
   <div className="max-w-7xl mx-auto">
     <div className="grid grid-cols-1 mx-auto max-w-5xl w-full gap-4 lg:grid-cols-3 sm:gap-6 lg:gap-8">
       {isMobile ? (
@@ -182,12 +183,12 @@ export default function ConsultationView({}: ConsultationViewProps) {
                     <MessageCircle className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-[#32A88D]" />
                   </div>
                   <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-700 mb-2 sm:mb-3">
-                    اختر طلب استشارة
+                    {t("selectPrompt")}
                   </h3>
                   <p className="text-gray-500 text-sm sm:text-base lg:text-lg max-w-md mx-auto">
-                    {requests.length === 0 
-                      ? "لا توجد طلبات استشارة حالياً" 
-                      : "اختر طلب استشارة من القائمة على اليمين لعرض التفاصيل الكاملة واتخاذ الإجراء المناسب"
+                    {requests.length === 0
+                      ? t("selectPromptDescEmpty")
+                      : t("selectPromptDescWithRequests")
                     }
                   </p>
                 </CardContent>

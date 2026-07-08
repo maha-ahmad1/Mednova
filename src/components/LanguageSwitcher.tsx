@@ -26,7 +26,7 @@ export default function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button variant="outline" className="flex items-center gap-2  rounded-xl px-6 py-2 ">
           {current?.label}
           <ChevronDown className="h-4 w-4" />
         </Button>

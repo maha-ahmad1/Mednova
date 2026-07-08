@@ -6,6 +6,7 @@ import { useNotificationSoundStore } from "@/store/notificationSoundStore";
 import {
   playNotificationSound,
   unlockNotificationAudio,
+  isNotificationAudioUnlocked,
 } from "@/lib/notificationSound";
 
 const GESTURE_EVENTS = ["pointerdown", "keydown", "touchstart"] as const;
@@ -30,16 +31,43 @@ export const useNotificationSound = (): void => {
 
   // Unlock audio on the first real user gesture anywhere in the app.
   useEffect(() => {
-    const handleGesture = () => {
+    // TEMP DEBUG - remove after diagnosing sound issue
+    const mountId = Math.random().toString(36).slice(2, 8);
+    console.log("🧩 [UnlockDebug] init effect running — attaching gesture listeners", {
+      mountId,
+      events: GESTURE_EVENTS,
+      unlockedBefore: isNotificationAudioUnlocked(),
+    });
+
+    const handleGesture = (e: Event) => {
+      // TEMP DEBUG - remove after diagnosing sound issue
+      console.log("🖱️ [UnlockDebug] gesture fired", {
+        mountId,
+        type: e.type,
+        isTrusted: (e as Event & { isTrusted?: boolean }).isTrusted,
+      });
       unlockNotificationAudio();
       GESTURE_EVENTS.forEach((evt) =>
         window.removeEventListener(evt, handleGesture)
       );
+      // TEMP DEBUG - remove after diagnosing sound issue
+      console.log("🧹 [UnlockDebug] gesture listeners removed after first gesture", {
+        mountId,
+        unlockedAfter: isNotificationAudioUnlocked(),
+      });
     };
     GESTURE_EVENTS.forEach((evt) =>
       window.addEventListener(evt, handleGesture, { once: false })
     );
+    // TEMP DEBUG - remove after diagnosing sound issue
+    console.log("🧩 [UnlockDebug] gesture listeners attached", { mountId });
+
     return () => {
+      // TEMP DEBUG - remove after diagnosing sound issue
+      console.log("🧹 [UnlockDebug] effect cleanup — removing gesture listeners (unmount or re-run)", {
+        mountId,
+        unlockedAtCleanup: isNotificationAudioUnlocked(),
+      });
       GESTURE_EVENTS.forEach((evt) =>
         window.removeEventListener(evt, handleGesture)
       );
@@ -65,14 +93,45 @@ export const useNotificationSound = (): void => {
   }, []);
 
   useEffect(() => {
-    if (!baselineReadyRef.current) return;
+    // TEMP DEBUG - remove after diagnosing sound issue
+    console.log("🔔 [SoundDebug] notifications array changed", {
+      length: notifications.length,
+      topId: notifications[0]?.id ?? null,
+      baselineReady: baselineReadyRef.current,
+    });
+
+    if (!baselineReadyRef.current) {
+      // TEMP DEBUG - remove after diagnosing sound issue
+      console.log("❌ [SoundDebug] Sound blocked — baseline not ready yet (persist not hydrated)");
+      return;
+    }
 
     const topId = notifications[0]?.id ?? null;
     const grew = notifications.length > lastCountRef.current;
     const topChanged = topId !== lastTopIdRef.current;
 
+    // TEMP DEBUG - remove after diagnosing sound issue
+    console.log("🔊 [SoundDebug] Sound check (hook level)", {
+      grew,
+      topChanged,
+      topId,
+      lastTopId: lastTopIdRef.current,
+      count: notifications.length,
+      lastCount: lastCountRef.current,
+      muted: mutedRef.current,
+      unlocked: isNotificationAudioUnlocked(),
+    });
+
     if (grew && topChanged) {
+      // TEMP DEBUG - remove after diagnosing sound issue
+      console.log("✅ [SoundDebug] grew && topChanged — calling playNotificationSound");
       playNotificationSound(mutedRef.current);
+    } else {
+      // TEMP DEBUG - remove after diagnosing sound issue
+      console.log("❌ [SoundDebug] Sound blocked — grew/topChanged condition not met", {
+        grew,
+        topChanged,
+      });
     }
 
     lastTopIdRef.current = topId;

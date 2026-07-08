@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,14 +18,16 @@ import { cn } from "@/lib/utils";
 import { useVerifyBankOtp } from "../hooks/useVerifyBankOtp";
 import { useResendBankOtp } from "../hooks/useResendBankOtp";
 
-const otpSchema = z.object({
-  otp: z.string().length(6, "يجب إدخال جميع الأرقام الستة"),
-});
+const createOtpSchema = (otpIncompleteMessage: string) =>
+  z.object({
+    otp: z.string().length(6, otpIncompleteMessage),
+  });
 
-type OtpFormValues = z.infer<typeof otpSchema>;
+type OtpFormValues = z.infer<ReturnType<typeof createOtpSchema>>;
 
 export function VerifyOtpPage() {
   const t = useTranslations("financial.withdraw.otp");
+  const otpSchema = useMemo(() => createOtpSchema(t("otpIncomplete")), [t]);
   const { push } = useNavigationLoader();
   const [resendCountdown, setResendCountdown] = useState(60);
   const { mutateAsync, isPending } = useVerifyBankOtp();
@@ -67,7 +69,7 @@ export function VerifyOtpPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-8" dir="rtl">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8">
       <p className="text-xs text-muted-foreground mb-6">{t("breadcrumb")}</p>
 
       <div className="max-w-md mx-auto">
@@ -126,7 +128,7 @@ export function VerifyOtpPage() {
               </FormSubmitButton>
             </form>
 
-            <p className="text-sm text-muted-foreground" dir="rtl">
+            <p className="text-sm text-muted-foreground">
               {t("resendPrompt")}{" "}
               <button
                 type="button"

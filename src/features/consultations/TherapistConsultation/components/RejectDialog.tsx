@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { AlertTriangle, X, Loader2 } from "lucide-react";
 import {
   Dialog,
@@ -28,11 +29,15 @@ export default function RejectDialog({
   onConfirm,
   isLoading = false,
 }: RejectDialogProps) {
+  const locale = useLocale();
+  const dir: "rtl" | "ltr" = locale === "ar" ? "rtl" : "ltr";
+  const t = useTranslations("consultations.rejectDialog");
+  const tCommon = useTranslations("common");
   const [rejectionReason, setRejectionReason] = useState("");
 
   const handleConfirm = async () => {
     if (!rejectionReason.trim()) {
-      toast.error("يرجى إدخال سبب الرفض");
+      toast.error(t("reasonRequiredToast"));
       return;
     }
 
@@ -46,11 +51,11 @@ export default function RejectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" dir="rtl">
-        <DialogHeader className=" mr-2 mt-2">
+      <DialogContent className="sm:max-w-md" dir={dir}>
+        <DialogHeader className=" ms-2 mt-2">
           <DialogTitle className="flex items-center gap-2 text-red-600">
             {/* <AlertTriangle className="w-5 h-5" /> */}
-            تأكيد إلغاء الاستشارة
+            {t("title")}
           </DialogTitle>
           {/* <DialogDescription className="text-right">
             هل أنت متأكد من رفض طلب الاستشارة؟ يرجى إدخال سبب الرفض وسيتم إعلام المريض به.
@@ -59,22 +64,21 @@ export default function RejectDialog({
 
         <div className="space-y-4">
           <div className="space-y-2 my-2">
-            <Label htmlFor="rejectionReason" className="text-right block">
-              سبب الإلغاء
+            <Label htmlFor="rejectionReason" className="text-start block">
+              {t("reasonLabel")}
               <span className="text-red-500">*</span>
             </Label>
             <Textarea
               id="rejectionReason"
-              placeholder="أدخل سبب الإلغاء 
- الاستشارة..."
+              placeholder={t("reasonPlaceholder")}
               value={rejectionReason}
               onChange={(e) => setRejectionReason(e.target.value)}
               disabled={isLoading}
-              className="min-h-[100px] resize-none text-right"
-              dir="rtl"
+              className="min-h-[100px] resize-none text-start"
+              dir={dir}
             />
-            <p className="text-xs text-gray-500 text-right">
-              هذا السبب سيتم إرساله للمريض
+            <p className="text-xs text-gray-500 text-start">
+              {t("reasonNote")}
             </p>
           </div>
         </div>
@@ -89,7 +93,7 @@ export default function RejectDialog({
             disabled={isLoading}
             className="flex-1"
           >
-            إلغاء
+            {tCommon("cancel")}
           </Button>
           <Button
             variant="destructive"
@@ -100,12 +104,12 @@ export default function RejectDialog({
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin ml-2" />
-                جاري الرفض...
+                {t("confirmingButton")}
               </>
             ) : (
               <>
                 {/* <X className="w-4 h-4 ml-2" /> */}
-                تأكيد الرفض
+                {t("confirmButton")}
               </>
             )}
           </Button>

@@ -66,7 +66,7 @@ export function ConsultantWalletPage() {
   const showFreshUserBanner = isHistoryReady && !hasHistoryData;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-6" dir="rtl">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-6">
       {/* ── header ── */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
@@ -83,7 +83,7 @@ export function ConsultantWalletPage() {
               size="sm"
               className="gap-1.5 border-border/60 text-muted-foreground"
               isLoading={isNavigating}
-              loadingText="جارٍ الانتقال..."
+              loadingText={t("shared.navigating")}
               onClick={() => push("/profile/financial/bank-account")}
             >
               <Plus className="h-4 w-4" />
@@ -95,7 +95,7 @@ export function ConsultantWalletPage() {
               size="sm"
               className="gap-1.5 border-border/60 text-muted-foreground"
               isLoading={isNavigating}
-              loadingText="جارٍ الانتقال..."
+              loadingText={t("shared.navigating")}
               onClick={() => push("/profile/financial/bank-account")}
             >
               <Eye className="h-4 w-4" />

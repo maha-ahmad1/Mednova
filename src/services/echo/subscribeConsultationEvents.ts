@@ -158,6 +158,11 @@ const handleConsultationEvent = (
       eventKey,
       notificationId: notification.id,
     });
+    // TEMP DEBUG - remove after diagnosing sound issue
+    console.log("🔔 [SoundDebug] Notification received (consultation:requested)", {
+      notificationId: notification.id,
+      consultationId: event.id,
+    });
     params.addNotification(notification);
 
     toast.info(event.message, {
@@ -196,6 +201,11 @@ const handleConsultationEvent = (
       userId: event.patient_id,
       eventKey,
       notificationId: notification.id,
+    });
+    // TEMP DEBUG - remove after diagnosing sound issue
+    console.log("🔔 [SoundDebug] Notification received (consultation:updated)", {
+      notificationId: notification.id,
+      consultationId: event.id,
     });
     params.addNotification(notification);
 
@@ -255,6 +265,11 @@ export const subscribeConsultationEvents = (
       consultationId: messageEvent.consultation_id,
       userId: messageEvent.sender_id,
       notificationId: notification.id,
+    });
+    // TEMP DEBUG - remove after diagnosing sound issue
+    console.log("🔔 [SoundDebug] Notification received (consultation:message)", {
+      notificationId: notification.id,
+      consultationId: messageEvent.consultation_id,
     });
     params.addNotification(notification);
   });

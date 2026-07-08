@@ -127,30 +127,45 @@ export const scheduleSchema = z
     }
   );
 
-export const personal1Schema = z.object({
-  full_name: z.string().min(2, "الاسم يجب أن يكون أكثر من حرفين"),
-  email: z.string().email("بريد إلكتروني غير صالح"),
-  phone: z.string().min(8, "رقم الهاتف قصير جدًا"),
-  birth_date: z
-    .string()
-    .refine((val) => !isNaN(Date.parse(val)), "تاريخ غير صالح"),
-});
+type PatientInfoValidationMessages = {
+  fullNameMin: string;
+  emailInvalid: string;
+  phoneMin: string;
+  birthDateInvalid: string;
+  emergencyContactMin: string;
+  genderRequired: string;
+  countryRequired: string;
+  cityRequired: string;
+  addressMin: string;
+  imageTooLarge: string;
+};
 
-export const personal2Schema = z.object({
-  emergency_contact: z.string().min(8, "رقم جهة الاتصال قصير جدًا"),
-  gender: z.enum(["male", "female"] as const, { message: "الجنس مطلوب" }),
-  country: z.string().min(2, "الدولة مطلوبة"),
-  city: z.string().min(2, "المدينة مطلوبة"),
-  formatted_address: z.string().min(3, "العنوان يجب أن يكون أكثر من 3 أحرف"),
-  relationship: z.string().optional(),
-  image: z
-    .instanceof(File)
-    .optional()
-    .or(z.null())
-    .refine((file) => !file || file.size < 5 * 1024 * 1024, {
-      message: "الصورة كبيرة جدًا (أقل من 5MB)",
-    }),
-});
+export const createPersonal1Schema = (messages: PatientInfoValidationMessages) =>
+  z.object({
+    full_name: z.string().min(2, messages.fullNameMin),
+    email: z.string().email(messages.emailInvalid),
+    phone: z.string().min(8, messages.phoneMin),
+    birth_date: z
+      .string()
+      .refine((val) => !isNaN(Date.parse(val)), messages.birthDateInvalid),
+  });
+
+export const createPersonal2Schema = (messages: PatientInfoValidationMessages) =>
+  z.object({
+    emergency_contact: z.string().min(8, messages.emergencyContactMin),
+    gender: z.enum(["male", "female"] as const, { message: messages.genderRequired }),
+    country: z.string().min(2, messages.countryRequired),
+    city: z.string().min(2, messages.cityRequired),
+    formatted_address: z.string().min(3, messages.addressMin),
+    relationship: z.string().optional(),
+    image: z
+      .instanceof(File)
+      .optional()
+      .or(z.null())
+      .refine((file) => !file || file.size < 5 * 1024 * 1024, {
+        message: messages.imageTooLarge,
+      }),
+  });
 
 export const centerSchema = z.object({
   name_center: z.string().min(1, "اسم المركز مطلوب"),

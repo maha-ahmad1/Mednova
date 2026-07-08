@@ -3,8 +3,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useMemo } from "react";
 import { Info, CheckCircle2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,20 +16,28 @@ import { useAddBankAccount } from "../hooks/useAddBankAccount";
 import { useUpdateBankAccount } from "../hooks/useUpdateBankAccount";
 import type { BankAccount } from "@/features/financial/types";
 
-const bankAccountSchema = z.object({
-  bank_name: z.string().min(1, "اسم البنك مطلوب"),
-  account_holder_name: z.string().min(3, "اسم صاحب الحساب مطلوب"),
-  account_number: z.string().min(5, "رقم الحساب مطلوب"),
-  iban: z
-    .string()
-    .regex(/^OM\d{21}$/, "رقم الآيبان يجب أن يبدأ بـ OM ويتبعه 21 رقماً"),
-  swift_code: z
-    .string()
-    .min(8, "رمز SWIFT مطلوب")
-    .max(11, "رمز SWIFT طويل جداً"),
-});
+type BankAccountValidationMessages = {
+  bankNameRequired: string;
+  accountHolderRequired: string;
+  accountNumberRequired: string;
+  ibanInvalid: string;
+  swiftRequired: string;
+  swiftTooLong: string;
+};
 
-type BankAccountFormValues = z.infer<typeof bankAccountSchema>;
+const createBankAccountSchema = (messages: BankAccountValidationMessages) =>
+  z.object({
+    bank_name: z.string().min(1, messages.bankNameRequired),
+    account_holder_name: z.string().min(3, messages.accountHolderRequired),
+    account_number: z.string().min(5, messages.accountNumberRequired),
+    iban: z.string().regex(/^OM\d{21}$/, messages.ibanInvalid),
+    swift_code: z
+      .string()
+      .min(8, messages.swiftRequired)
+      .max(11, messages.swiftTooLong),
+  });
+
+type BankAccountFormValues = z.infer<ReturnType<typeof createBankAccountSchema>>;
 
 interface AddBankAccountFormProps {
   onCancel?: () => void;
@@ -37,10 +46,25 @@ interface AddBankAccountFormProps {
 
 export function AddBankAccountForm({ onCancel, existingAccount }: AddBankAccountFormProps) {
   const t = useTranslations("financial.withdraw.bankAccount");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
   const { push, back } = useNavigationLoader();
   const addMutation = useAddBankAccount();
   const updateMutation = useUpdateBankAccount();
   const { mutateAsync, isPending } = existingAccount ? updateMutation : addMutation;
+
+  const bankAccountSchema = useMemo(
+    () =>
+      createBankAccountSchema({
+        bankNameRequired: t("validation.bankNameRequired"),
+        accountHolderRequired: t("validation.accountHolderRequired"),
+        accountNumberRequired: t("validation.accountNumberRequired"),
+        ibanInvalid: t("validation.ibanInvalid"),
+        swiftRequired: t("validation.swiftRequired"),
+        swiftTooLong: t("validation.swiftTooLong"),
+      }),
+    [t],
+  );
 
   const {
     register,
@@ -75,7 +99,7 @@ export function AddBankAccountForm({ onCancel, existingAccount }: AddBankAccount
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-4" dir="rtl">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 space-y-4">
       <div>
         <p className="text-xs text-muted-foreground mb-1">{t("breadcrumb")}</p>
         <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
@@ -94,7 +118,7 @@ export function AddBankAccountForm({ onCancel, existingAccount }: AddBankAccount
               <FormInput
                 label={t("fieldBank")}
                 placeholder={t("fieldBankPlaceholder")}
-                rtl
+                rtl={isRtl}
                 error={errors.bank_name?.message}
                 {...register("bank_name")}
               />
@@ -102,9 +126,9 @@ export function AddBankAccountForm({ onCancel, existingAccount }: AddBankAccount
               <div className="space-y-2">
                 <Label className="block text-sm font-medium">{t("fieldCountry")}</Label>
                 <Input
-                  value="OM - سلطنة عمان"
+                  value={t("countryValue")}
                   readOnly
-                  dir="rtl"
+                  dir={isRtl ? "rtl" : "ltr"}
                   className="p-6 cursor-not-drop bg-[#32A88D]/10 text-gray-700 border-transparent"
                 />
               </div>
@@ -114,7 +138,7 @@ export function AddBankAccountForm({ onCancel, existingAccount }: AddBankAccount
               <FormInput
                 label={t("fieldAccountHolder")}
                 placeholder={t("fieldAccountHolderPlaceholder")}
-                rtl
+                rtl={isRtl}
                 error={errors.account_holder_name?.message}
                 {...register("account_holder_name")}
               />
@@ -127,7 +151,7 @@ export function AddBankAccountForm({ onCancel, existingAccount }: AddBankAccount
               label={t("fieldAccountNumber")}
               placeholder={t("fieldAccountNumberPlaceholder")}
               inputMode="numeric"
-              rtl
+              rtl={isRtl}
               error={errors.account_number?.message}
               {...register("account_number")}
             />
@@ -147,14 +171,14 @@ export function AddBankAccountForm({ onCancel, existingAccount }: AddBankAccount
                 {isIbanTouched && isIbanValid ? (
                   <p className="text-xs text-emerald-600 flex items-center gap-1">
                     <CheckCircle2 className="h-3.5 w-3.5" />
-                    صالح
+                    {t("ibanValid")}
                   </p>
                 ) : errors.iban ? (
-                  <p className="text-sm text-destructive text-right">
+                  <p className="text-sm text-destructive text-start">
                     {errors.iban.message}
                   </p>
                 ) : (
-                  <p className="text-xs text-muted-foreground text-right">
+                  <p className="text-xs text-muted-foreground text-start">
                     {t("fieldIbanHint")}
                   </p>
                 )}
@@ -164,7 +188,7 @@ export function AddBankAccountForm({ onCancel, existingAccount }: AddBankAccount
             <FormInput
               label={t("fieldSwift")}
               placeholder={t("fieldSwiftPlaceholder")}
-              rtl
+              rtl={isRtl}
               error={errors.swift_code?.message}
               {...register("swift_code")}
             />

@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { FormPhoneInput } from "@/shared/ui/forms/components/FormPhoneInput";
 import { Loader2, Edit, User, Mail, Phone, Calendar } from "lucide-react";
@@ -37,6 +38,10 @@ export default function PatientPersonal1Card({
 }: Props) {
   const isEditing = editingCard === "personal1";
   const { data: session } = useSession();
+  const t = useTranslations("profile.patientInfo.card1");
+  const tParent = useTranslations("profile.patientInfo");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
 
   const handleChange = (field: string, value: string | File) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
@@ -65,7 +70,7 @@ export default function PatientPersonal1Card({
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
-          <h2 className="text-xl font-bold text-gray-800">البيانات الأساسية</h2>
+          <h2 className="text-xl font-bold text-gray-800">{t("title")}</h2>
         </div>
 
         {!isEditing ? (
@@ -76,7 +81,7 @@ export default function PatientPersonal1Card({
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
             <Edit className="w-4 h-4" />
-            تعديل البيانات
+            {t("editButton")}
           </Button>
         ) : (
           <div className="flex gap-2">
@@ -87,7 +92,7 @@ export default function PatientPersonal1Card({
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
             >
               {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
-              حفظ التغييرات
+              {tParent("saveChangesButton")}
             </Button>
             <Button
               onClick={cancelEdit}
@@ -95,7 +100,7 @@ export default function PatientPersonal1Card({
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
-              إلغاء
+              {tCommon("cancel")}
             </Button>
           </div>
         )}
@@ -106,17 +111,17 @@ export default function PatientPersonal1Card({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FieldDisplay
             icon={<User className="w-5 h-5" />}
-            label="الاسم الكامل"
+            label={t("fullNameLabel")}
             value={patient.full_name || "-"}
           />
           <FieldDisplay
             icon={<Mail className="w-5 h-5" />}
-            label="البريد الإلكتروني"
+            label={t("emailLabel")}
             value={patient.email || "-"}
           />
           <FieldDisplay
             icon={<Phone className="w-5 h-5" />}
-            label="رقم الهاتف"
+            label={t("phoneLabel")}
             value={
               patient.phone ? (
                 <Badge className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
@@ -131,11 +136,11 @@ export default function PatientPersonal1Card({
           />
           <FieldDisplay
             icon={<Calendar className="w-5 h-5" />}
-            label="تاريخ الميلاد"
+            label={t("birthDateLabel")}
             value={
               patient.birth_date ? (
                 <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                  {formatDate(patient.birth_date, {}, "ar-EG", "-")}
+                  {formatDate(patient.birth_date, {}, locale === "ar" ? "ar-EG" : "en-US", "-")}
                 </Badge>
               ) : (
                 "-"
@@ -148,18 +153,18 @@ export default function PatientPersonal1Card({
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
           <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-            تعديل البيانات الأساسية
+            {t("editTitle")}
           </h4>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Full Name Field */}
             <FormInput
-              label="الاسم الكامل"
+              label={t("fullNameLabel")}
               type="text"
               value={(formValues.full_name as string) || ""}
               onChange={(e) => handleChange("full_name", e.target.value)}
               className="bg-white border-gray-300 focus:border-[#32A88D]"
-              placeholder="أدخل الاسم الكامل"
+              placeholder={t("fullNamePlaceholder")}
               // icon={User}
               // iconPosition="right"
               error={getFieldError("full_name", "personal1")}
@@ -167,7 +172,7 @@ export default function PatientPersonal1Card({
 
             {/* Email Field */}
             <FormInput
-              label="البريد الإلكتروني"
+              label={t("emailLabel")}
               type="email"
               value={(formValues.email as string) || ""}
               onChange={(e) => handleChange("email", e.target.value)}
@@ -186,7 +191,7 @@ export default function PatientPersonal1Card({
                 رقم الهاتف
               </label> */}
               <FormPhoneInput
-                label=" رقم الهاتف"
+                label={t("phoneLabel")}
                 countryCodeValue={(formValues.countryCode as string) || "+968"}
                 onCountryCodeChange={(code) =>
                   setFormValues((prev) => ({ ...prev, countryCode: code }))
@@ -195,7 +200,7 @@ export default function PatientPersonal1Card({
                 onChange={(e) => handleChange("phone", e.target.value)}
                 // rtl
                 // iconPosition="right"
-                placeholder="0000 0000"
+                placeholder={t("phonePlaceholder")}
                 error={getFieldError("phone", "personal1")}
                 className="bg-white no-spinner "
               />
@@ -203,7 +208,7 @@ export default function PatientPersonal1Card({
 
             {/* Birth Date Field */}
             <FormInput
-              label="تاريخ الميلاد"
+              label={t("birthDateLabel")}
               type="date"
               value={(formValues.birth_date as string) || ""}
               onChange={(e) => handleChange("birth_date", e.target.value)}

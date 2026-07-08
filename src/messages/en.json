@@ -34,6 +34,73 @@
     "reviewDuration": "Review time: 1-2 days",
     "qualityCheck": "Quality Review"
   },
+  "sidebar": {
+    "home": "Home",
+    "myProfile": "My Profile",
+    "consultationRequests": "Consultation Requests",
+    "appointments": "Appointments",
+    "patients": "Patients",
+    "financialWallet": "Financial Wallet",
+    "reports": "Reports",
+    "help": "Help",
+    "navigating": "Navigating...",
+    "userNamePlaceholder": "User Name"
+  },
+  "profile": {
+    "patientInfo": {
+      "loading": "Loading patient data...",
+      "loadError": "An error occurred while fetching data: {error}",
+      "validationError": "Please correct the errors before saving",
+      "saveSuccess": "Changes saved successfully",
+      "saveError": "An error occurred while updating",
+      "saveChangesButton": "Save Changes",
+      "cancelButton": "Cancel",
+      "card1": {
+        "title": "Basic Information",
+        "editButton": "Edit Information",
+        "editTitle": "Edit Basic Information",
+        "fullNameLabel": "Full Name",
+        "fullNamePlaceholder": "Enter full name",
+        "emailLabel": "Email",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "0000 0000",
+        "birthDateLabel": "Date of Birth"
+      },
+      "card2": {
+        "title": "Additional Information",
+        "editButton": "Edit Information",
+        "editTitle": "Edit Additional Information",
+        "emergencyContactLabel": "Emergency Contact",
+        "emergencyContactPlaceholder": "0000 0000",
+        "relationshipLabel": "Relationship",
+        "relationshipPlaceholder": "e.g. Father/Mother/Brother",
+        "genderLabel": "Gender",
+        "genderPlaceholder": "Select gender",
+        "genderMale": "Male",
+        "genderFemale": "Female",
+        "countryLabel": "Country",
+        "countryPlaceholder": "Select country",
+        "cityLabel": "City",
+        "cityPlaceholder": "Select city",
+        "cityPlaceholderNoCountry": "Select country first",
+        "addressLabel": "Detailed Address",
+        "addressPlaceholder": "Enter full address",
+        "locationPreview": "Location Preview:"
+      },
+      "validation": {
+        "fullNameMin": "Name must be more than 2 characters",
+        "emailInvalid": "Invalid email address",
+        "phoneMin": "Phone number is too short",
+        "birthDateInvalid": "Invalid date",
+        "emergencyContactMin": "Contact number is too short",
+        "genderRequired": "Gender is required",
+        "countryRequired": "Country is required",
+        "cityRequired": "City is required",
+        "addressMin": "Address must be more than 3 characters",
+        "imageTooLarge": "Image is too large (must be under 5MB)"
+      }
+    }
+  },
   "navbar": {
     "search": "Search for user, appointment, or report...",
     "searchPlaceholder": "Search for a user, appointment, or report...",
@@ -543,6 +610,7 @@
       "withdrawalRequest": "Withdrawal Request",
       "addBankAccount": "Add Bank Account",
       "viewBankAccount": "Bank Account",
+      "navigating": "Navigating...",
       "consultationType": {
         "chat": "Chat",
         "video": "Video"
@@ -683,7 +751,20 @@
         "emptyStateTitle": "No Bank Account Added",
         "emptyStateDescription": "Add your bank account to withdraw your earnings",
         "emptyStateButton": "Add Bank Account",
-        "backButton": "Cancel"
+        "backButton": "Cancel",
+        "pendingVerificationTitle": "Please confirm your bank account",
+        "pendingVerificationDesc": "To finish adding the bank account, please enter the verification code.",
+        "continueVerificationButton": "Continue Verification",
+        "countryValue": "OM - Sultanate of Oman",
+        "ibanValid": "Valid",
+        "validation": {
+          "bankNameRequired": "Bank name is required",
+          "accountHolderRequired": "Account holder name is required",
+          "accountNumberRequired": "Account number is required",
+          "ibanInvalid": "IBAN must start with OM followed by 21 digits",
+          "swiftRequired": "SWIFT code is required",
+          "swiftTooLong": "SWIFT code is too long"
+        }
       },
       "otp": {
         "breadcrumb": "Financial Wallet › Account Verification",
@@ -693,7 +774,8 @@
         "confirmingButton": "Verifying...",
         "resendPrompt": "Didn't receive the code?",
         "resendButton": "Go back to resend",
-        "resendCooldown": "Resend ({seconds})"
+        "resendCooldown": "Resend ({seconds})",
+        "otpIncomplete": "Please enter all six digits"
       },
       "request": {
         "title": "Withdrawal Request",
@@ -733,6 +815,7 @@
         "description": "Are you sure you want to cancel the withdrawal of {amount} {currency}?",
         "warning": "This action cannot be undone.",
         "confirm": "Confirm Cancellation",
+        "cancelling": "Cancelling...",
         "back": "Go Back"
       }
     }
@@ -903,7 +986,89 @@
       }
     },
     "list": {
-      "viewFinancialDetails": "View financial details"
+      "viewFinancialDetails": "View financial details",
+      "title": "Consultation Requests",
+      "back": "Back",
+      "searchPlaceholder": "Search by patient name or symptoms...",
+      "tabVideo": "Video",
+      "tabChat": "Chat",
+      "tabAll": "All",
+      "noSearchResults": "No search results",
+      "noRequests": "No consultation requests",
+      "userImageAlt": "User image",
+      "openChat": "Open chat"
+    },
+    "view": {
+      "loading": "Loading consultation requests...",
+      "loadError": "An error occurred while fetching consultation requests",
+      "selectPrompt": "Select a consultation request",
+      "selectPromptDescWithRequests": "Select a consultation request from the list to view full details and take appropriate action",
+      "selectPromptDescEmpty": "No consultation requests currently"
+    },
+    "panel": {
+      "back": "Back",
+      "title": "Consultation Details",
+      "liveUpdateBanner": "Zoom link updated live",
+      "live": "Live",
+      "videoTitle": "Live Video Consultation",
+      "videoDescLive": "Link created live — click to join",
+      "videoDescNormal": "Click to join the Zoom session",
+      "joinNowLive": "Join Now (Live)",
+      "joinZoom": "Join Zoom Session",
+      "linkOpensNewWindow": "The link will open in a new window",
+      "liveUpdate": "Live update",
+      "therapistDataTitle": "Therapist Data",
+      "centerDataTitle": "Center Data",
+      "patientDataTitle": "Patient Data",
+      "fullNameLabel": "Full Name",
+      "consultationInfoTitle": "Consultation Information",
+      "consultationTypeLabel": "Consultation Type",
+      "typeChat": "Text Chat",
+      "typeVideo": "Video Consultation",
+      "bookingDateLabel": "Booking Date",
+      "statusLabel": "Consultation Status",
+      "openChat": "Open Chat",
+      "days": {
+        "Sunday": "Sunday",
+        "Monday": "Monday",
+        "Tuesday": "Tuesday",
+        "Wednesday": "Wednesday",
+        "Thursday": "Thursday",
+        "Friday": "Friday",
+        "Saturday": "Saturday"
+      }
+    },
+    "actions": {
+      "cancelling": "Cancelling...",
+      "cancelConsultation": "Cancel Consultation",
+      "cancelledTitle": "Consultation request cancelled",
+      "cancelledDesc": "The patient will be notified of the cancellation",
+      "completedTitle": "Consultation completed successfully",
+      "thanksNote": "Thank you for providing excellent service to the patient",
+      "accepting": "Accepting...",
+      "acceptButton": "Accept Request",
+      "joinZoomSession": "Join Zoom Session",
+      "rejectedTitle": "Consultation request rejected",
+      "rejectedDesc": "The patient will be notified of the rejection decision",
+      "acceptFailedToast": "Failed to accept the request, please try again",
+      "completeFailedToast": "Failed to complete the request, please try again",
+      "rejectFailedToast": "Failed to cancel the request, please try again"
+    },
+    "rejectDialog": {
+      "title": "Confirm Consultation Cancellation",
+      "reasonLabel": "Cancellation Reason",
+      "reasonPlaceholder": "Enter the reason for cancelling the consultation...",
+      "reasonNote": "This reason will be sent to the patient",
+      "confirmButton": "Confirm Cancellation",
+      "confirmingButton": "Cancelling...",
+      "reasonRequiredToast": "Please enter a cancellation reason"
+    },
+    "status": {
+      "pending": "Awaiting Approval",
+      "accepted": "Accepted",
+      "cancelled": "Rejected",
+      "active": "Active",
+      "completed": "Completed"
     }
   },
   "controlPanel": {

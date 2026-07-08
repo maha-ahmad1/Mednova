@@ -9,7 +9,7 @@ import { Logo } from "@/shared/ui/components/Logo";
 import { AuthActions } from "./AuthActions";
 import MobileMenu from "./MobileMenu";
 import { DesktopNavLinks } from "./DesktopNavLinks";
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export interface NavbarProps {
   variant?: "landing" | "dashboard";
@@ -53,7 +53,7 @@ export default function Navbar({
               </nav>
             </div>
           )}
-{/* 
+          {/* 
           {variant === "dashboard" && (
             <div className="relative w-full max-w-md">
               <Search className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2" />
@@ -65,9 +65,10 @@ export default function Navbar({
             </div>
           )} */}
         </div>
-
-        <LanguageSwitcher />
-        <AuthActions />
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <AuthActions />
+        </div>
       </header>
 
       <MobileMenu

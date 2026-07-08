@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { ArrowDownCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,6 +20,8 @@ type StatusFilter = WithdrawalStatus | "all";
 
 export function WithdrawalsTable() {
   const t = useTranslations("financial.withdrawals");
+  const locale = useLocale();
+  const dateLocale = locale === "ar" ? "ar-OM" : "en-US";
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [cancelTarget, setCancelTarget] = useState<Withdrawal | null>(null);
@@ -81,12 +83,12 @@ export function WithdrawalsTable() {
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 text-right font-medium">{t("colId")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("colAmount")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("colBankAccount")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("colStatus")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("colDate")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("colActions")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("colId")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("colAmount")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("colBankAccount")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("colStatus")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("colDate")}</th>
+              <th className="px-4 py-3 text-start font-medium">{t("colActions")}</th>
             </tr>
           </thead>
 
@@ -146,7 +148,7 @@ export function WithdrawalsTable() {
                     <StatusBadge status={wd.status} label={wd.status_label} />
                   </td>
                   <td className="px-4 py-3 text-muted-foreground text-xs">
-                    {formatDate(wd.created_at)}
+                    {formatDate(wd.created_at, undefined, dateLocale)}
                   </td>
                   <td className="px-4 py-3">
                     {wd.status === "pending" && (

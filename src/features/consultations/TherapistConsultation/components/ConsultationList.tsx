@@ -40,6 +40,8 @@ export default function ConsultationList({
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "video" | "chat">("all");
   const t = useTranslations("consultations.list");
+  const tStatus = useTranslations("consultations.status");
+  const getStatusLabel = (status: string) => tStatus(status as "pending" | "accepted" | "cancelled" | "active" | "completed");
 
   const filteredRequests = requests.filter((request) => {
     if (request.status === "cancelled") {
@@ -97,7 +99,7 @@ export default function ConsultationList({
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg sm:text-xl font-bold text-gray-800 flex items-center gap-2">
               <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#32A88D]" />
-              طلبات الاستشارة
+              {t("title")}
               <Badge
                 variant="outline"
                 className="bg-[#32A88D]/10 text-[#32A88D] border-[#32A88D]/20 text-xs"
@@ -113,20 +115,20 @@ export default function ConsultationList({
                 onClick={onBackToList}
                 className="lg:hidden"
               >
-                <ChevronLeft className="w-4 h-4 ml-1" />
-                العودة
+                <ChevronLeft className="w-4 h-4 me-1" />
+                {t("back")}
               </Button>
             )}
           </div>
 
           <div className="relative mt-3 sm:mt-4">
-            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute end-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
               type="text"
-              placeholder="ابحث باسم المريض أو الأعراض..."
+              placeholder={t("searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pr-10 bg-gray-50 border-gray-200 rounded-lg sm:rounded-xl focus:border-[#32A88D] focus:ring-[#32A88D] text-sm sm:text-base"
+              className="pe-10 bg-gray-50 border-gray-200 rounded-lg sm:rounded-xl focus:border-[#32A88D] focus:ring-[#32A88D] text-sm sm:text-base"
             />
           </div>
         </CardHeader>
@@ -144,19 +146,19 @@ export default function ConsultationList({
                 value="video"
                 className="text-xs sm:text-sm data-[state=active]:bg-[#32A88D] data-[state=active]:text-white transition-all duration-200 rounded-lg sm:rounded-xl py-2"
               >
-                فيديو
+                {t("tabVideo")}
               </TabsTrigger>
               <TabsTrigger
                 value="chat"
                 className="text-xs sm:text-sm data-[state=active]:bg-[#32A88D] data-[state=active]:text-white transition-all duration-200 rounded-lg sm:rounded-xl py-2"
               >
-                محادثة
+                {t("tabChat")}
               </TabsTrigger>
               <TabsTrigger
                 value="all"
                 className="text-xs sm:text-sm data-[state=active]:bg-[#32A88D] data-[state=active]:text-white transition-all duration-200 rounded-lg sm:rounded-xl py-2"
               >
-                الكل
+                {t("tabAll")}
               </TabsTrigger>
             </TabsList>
 
@@ -168,8 +170,8 @@ export default function ConsultationList({
                     <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto mb-3 sm:mb-4" />
                     <p className="text-gray-500 text-sm sm:text-base">
                       {searchQuery
-                        ? "لا توجد نتائج للبحث"
-                        : "لا توجد طلبات استشارة"}
+                        ? t("noSearchResults")
+                        : t("noRequests")}
                     </p>
                   </div>
                 ) : (
@@ -184,12 +186,12 @@ export default function ConsultationList({
                         key={request.id}
                         className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-all duration-300 hover:bg-white hover:shadow-md group ${
                           selectedRequest?.id === request.id
-                            ? "bg-gradient-to-r from-[#32A88D]/5 to-white border-r-2 sm:border-r-4 border-r-[#32A88D] shadow-md"
+                            ? "bg-gradient-to-r from-[#32A88D]/5 to-white border-s-2 sm:border-s-4 border-s-[#32A88D] shadow-md"
                             : ""
                         }`}
                         onClick={() => onSelectRequest(request)}
                       >
-                        <div className="flex flex-row-reverse items-start gap-2 sm:gap-3">
+                        <div className="flex items-start gap-2 sm:gap-3">
                           <Avatar className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-gray-200 group-hover:border-[#32A88D]/30 transition-colors duration-300">
                             <AvatarImage
                               src={
@@ -199,7 +201,7 @@ export default function ConsultationList({
                                   : request.data.patient.image ||
                                     "/images/placeholder.svg"
                               }
-                              alt="صورة المستخدم"
+                              alt={t("userImageAlt")}
                             />
                             <AvatarFallback className="bg-[#32A88D]/10 text-[#32A88D]">
                               {displayName.charAt(0)}
@@ -207,21 +209,21 @@ export default function ConsultationList({
                           </Avatar>
 
                           <div className="flex-1 min-w-0">
-                            <div className="flex flex-row-reverse items-center justify-between mb-1 sm:mb-2">
-                              <h3 className="font-semibold text-gray-800 text-xs sm:text-sm truncate group-hover:text-[#32A88D] transition-colors duration-200 text-right">
+                            <div className="flex items-center justify-between mb-1 sm:mb-2">
+                              <h3 className="font-semibold text-gray-800 text-xs sm:text-sm truncate group-hover:text-[#32A88D] transition-colors duration-200 text-start">
                                 {displayName}
                               </h3>
-                              <div className="flex flex-row-reverse items-center gap-1">
+                              <div className="flex items-center gap-1">
                                 {getTypeIcon(request.type)}
-                                <div className="scale-75 sm:scale-100 origin-right">
-                                  {getStatusBadge(request.status)}
+                                <div className="scale-75 sm:scale-100">
+                                  {getStatusBadge(request.status, getStatusLabel)}
                                 </div>
                               </div>
                             </div>
 
-                            <div className="flex flex-row-reverse items-center justify-between gap-2">
-                              <div className="flex flex-row-reverse items-center gap-2 sm:gap-4 text-xs text-gray-500">
-                                <span className="flex flex-row-reverse items-center gap-1 text-xs">
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2 sm:gap-4 text-xs text-gray-500">
+                                <span className="flex items-center gap-1 text-xs">
                                   <Clock className="w-3 h-3" />
                                   {new Date(request.created_at).toLocaleDateString("en-US")}
                                 </span>
@@ -235,12 +237,12 @@ export default function ConsultationList({
                                   className="h-8 border-[#32A88D]/30 text-[#32A88D] hover:bg-[#32A88D]/10"
                                   onClick={(event) => event.stopPropagation()}
                                 >
-                                  <Link href="/profile/chat">فتح المحادثة</Link>
+                                  <Link href="/profile/chat">{t("openChat")}</Link>
                                 </Button>
                               )}
                             </div>
 
-                            <div className="flex flex-row-reverse mt-1.5">
+                            <div className="flex mt-1.5">
                               <Link
                                 href={`/profile/consultations/${request.type}/${request.id}`}
                                 className="text-xs text-primary hover:underline flex items-center gap-1 rtl:flex-row-reverse"

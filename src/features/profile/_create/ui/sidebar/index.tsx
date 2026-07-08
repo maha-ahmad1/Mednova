@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { sidebarMenus } from "@/constants/sidebar-menu";
 import { useSession } from "next-auth/react";
@@ -34,6 +35,7 @@ type ProfileData = TherapistProfile | CenterProfile | PatientProfile;
 
 export function Sidebar() {
   const pathname = usePathname();
+  const t = useTranslations("sidebar");
   const { data: session, status } = useSession();
   const { setImage: setStoreImage } = useProfileImageStore();
   const [image, setImage] = useState<string | null>(null);
@@ -94,7 +96,7 @@ if (status === "loading" || isLoadingProfile) {
 }
 
   const user = {
-    name: session?.user?.full_name || "اسم المستخدم",
+    name: session?.user?.full_name || t("userNamePlaceholder"),
     email: session?.user?.email || "email@example.com",
     image:
       image ||
@@ -120,9 +122,10 @@ return (
     <nav className="flex lg:flex-col flex-row gap-1 p-2 lg:p-4 bg-white flex-1 lg:flex-none">
       {menuItems.map((item) => {
         const isActive = pathname === item.href;
+        const label = t(item.labelKey);
         return (
           <Link
-            key={`${item.href}-${item.label}`}
+            key={`${item.href}-${item.labelKey}`}
             href={item.href}
             className={cn(
               "flex items-center gap-3 rounded-xl px-3 lg:px-4 py-3 lg:py-3 text-sm font-medium transition-all duration-200 justify-center lg:justify-start flex-1 lg:flex-none",
@@ -130,7 +133,7 @@ return (
                 ? "bg-[#32A88D] text-white shadow-md"
                 : "text-gray-600 hover:bg-[#32A88D]/10 hover:text-[#32A88D]"
             )}
-            title={item.label}
+            title={label}
           >
             <item.icon
               className={cn(
@@ -138,7 +141,7 @@ return (
                 isActive ? "text-white" : "text-[#32A88D]"
               )}
             />
-            <span className="hidden lg:block">{item.label}</span>
+            <span className="hidden lg:block">{label}</span>
           </Link>
         );
       })}

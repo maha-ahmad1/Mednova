@@ -20,6 +20,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslations, useLocale } from "next-intl";
 
 type CenterRegistrationCardProps = {
   details: CenterProfile["center_details"];
@@ -32,6 +33,9 @@ export function CenterRegistrationCard({
   userId,
   refetch,
 }: CenterRegistrationCardProps) {
+  const t = useTranslations("profile.centerInfo");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
   const [editing, setEditing] = useState(false);
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [localDetails, setLocalDetails] = useState(details);
@@ -106,22 +110,22 @@ export function CenterRegistrationCard({
 
   switch (field) {
     case "license_number":
-      if (!formValues.license_number) return "رقم الترخيص مطلوب";
+      if (!formValues.license_number) return t("registrationCard.licenseNumberRequired");
       break;
     case "license_authority":
-      if (!formValues.license_authority) return "جهة الترخيص مطلوبة";
+      if (!formValues.license_authority) return t("registrationCard.licenseAuthorityRequired");
       break;
     case "commercial_registration_number":
       if (formValues.has_commercial_registration && !formValues.commercial_registration_number)
-        return "رقم السجل التجاري مطلوب";
+        return t("registrationCard.commercialRegNumberRequired");
       break;
     case "commercial_registration_authority":
       if (formValues.has_commercial_registration && !formValues.commercial_registration_authority)
-        return "جهة السجل التجاري مطلوبة";
+        return t("registrationCard.commercialRegAuthorityRequired");
       break;
     case "commercial_registration_file":
       if (formValues.has_commercial_registration && !formValues.commercial_registration_file)
-        return "ملف السجل التجاري مطلوب";
+        return t("registrationCard.commercialRegFileRequired");
       break;
   }
 
@@ -138,7 +142,7 @@ export function CenterRegistrationCard({
         fieldErrors[field] = issue.message;
       });
       setServerErrors(fieldErrors);
-      toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
+      toast.error(t("registrationCard.validationError"));
       return;
     }
 
@@ -148,7 +152,7 @@ export function CenterRegistrationCard({
     };
     try {
       await update(payload);
-      toast.success("تم تحديث التراخيص والمستندات بنجاح");
+      toast.success(t("registrationCard.saveSuccess"));
       setEditing(false);
       setServerErrors({});
       refetch();
@@ -159,9 +163,9 @@ export function CenterRegistrationCard({
       const apiErrors = e?.response?.data?.data ?? {};
       if (Object.keys(apiErrors).length > 0) {
         setServerErrors(apiErrors);
-        toast.error("تحقق من الحقول قبل الحفظ");
+        toast.error(t("registrationCard.checkFieldsError"));
       } else {
-        toast.error("حدث خطأ أثناء التحديث");
+        toast.error(t("registrationCard.saveError"));
       }
     }
   };
@@ -210,7 +214,7 @@ export function CenterRegistrationCard({
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
-          <h3 className="text-xl font-bold text-gray-800">التراخيص والسجلات</h3>
+          <h3 className="text-xl font-bold text-gray-800">{t("registrationCard.title")}</h3>
         </div>
 
         {!editing ? (
@@ -221,7 +225,7 @@ export function CenterRegistrationCard({
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
             <Edit className="w-4 h-4" />
-            تعديل التراخيص
+            {t("registrationCard.editButton")}
           </Button>
         ) : (
           <div className="flex gap-2">
@@ -232,7 +236,7 @@ export function CenterRegistrationCard({
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
             >
               {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
-              حفظ التغييرات
+              {t("saveButton")}
             </Button>
             <Button
               onClick={cancelEdit}
@@ -240,7 +244,7 @@ export function CenterRegistrationCard({
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
-              إلغاء
+              {t("cancelButton")}
             </Button>
           </div>
         )}
@@ -248,24 +252,23 @@ export function CenterRegistrationCard({
 
       {!editing ? (
         <div className="grid grid-cols-1 gap-4">
-          {/* حالة السجل التجاري */}
           <FieldDisplay
             icon={<Building className="w-5 h-5" />}
-            label="السجل التجاري"
+            label={t("registrationCard.commercialRegLabel")}
             value={
               <div className="flex items-center gap-2">
                 {displayDetails?.has_commercial_registration ? (
                   <>
                     <CheckCircle className="w-5 h-5 text-green-500" />
                     <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                      مسجل تجارياً
+                      {t("registrationCard.registeredBadge")}
                     </Badge>
                   </>
                 ) : (
                   <>
                     <XCircle className="w-5 h-5 text-gray-400" />
                     <Badge variant="outline" className="text-gray-600">
-                      غير مسجل تجارياً
+                      {t("registrationCard.notRegisteredBadge")}
                     </Badge>
                   </>
                 )}
@@ -273,12 +276,11 @@ export function CenterRegistrationCard({
             }
           />
 
-          {/* بيانات السجل التجاري */}
           {displayDetails?.has_commercial_registration ? (
             <>
               <FieldDisplay
                 icon={<FileText className="w-5 h-5" />}
-                label="رقم السجل التجاري"
+                label={t("registrationCard.commercialRegNumberLabel")}
                 value={
                   <Badge className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
                     {displayDetails.commercial_registration_number}
@@ -288,17 +290,17 @@ export function CenterRegistrationCard({
 
               <FieldDisplay
                 icon={<Building className="w-5 h-5" />}
-                label="جهة السجل التجاري"
+                label={t("registrationCard.commercialRegAuthorityLabel")}
                 value={displayDetails.commercial_registration_authority || "-"}
               />
 
               <FieldDisplay
                 icon={<FileText className="w-5 h-5" />}
-                label="ملف السجل التجاري"
+                label={t("registrationCard.commercialRegFileLabel")}
                 value={
                   <FileLink
                     url={displayDetails.commercial_registration_file}
-                    label="عرض السجل التجاري"
+                    label={t("registrationCard.viewCommercialReg")}
                     icon={<FileText className="w-4 h-4" />}
                   />
                 }
@@ -306,10 +308,9 @@ export function CenterRegistrationCard({
             </>
           ) : null}
 
-          {/* بيانات الترخيص */}
           <FieldDisplay
             icon={<Shield className="w-5 h-5" />}
-            label="رقم الترخيص"
+            label={t("registrationCard.licenseNumberLabel")}
             value={
               displayDetails?.license_number ? (
                 <Badge className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
@@ -323,17 +324,17 @@ export function CenterRegistrationCard({
 
           <FieldDisplay
             icon={<Award className="w-5 h-5" />}
-            label="جهة الترخيص"
+            label={t("registrationCard.licenseAuthorityLabel")}
             value={displayDetails?.license_authority || "-"}
           />
 
           <FieldDisplay
             icon={<Shield className="w-5 h-5" />}
-            label="ملف الترخيص"
+            label={t("registrationCard.licenseFileLabel")}
             value={
               <FileLink
                 url={displayDetails?.license_file}
-                label="عرض الترخيص"
+                label={t("registrationCard.viewLicense")}
                 icon={<Shield className="w-4 h-4" />}
               />
             }
@@ -343,11 +344,10 @@ export function CenterRegistrationCard({
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
           <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-            تعديل التراخيص والسجلات
+            {t("registrationCard.editTitle")}
           </h4>
 
           <div className="space-y-6">
-            {/* السجل التجاري */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <div className="flex items-center gap-3 mb-4">
                 <Building className="w-4 h-4 text-[#32A88D]" />
@@ -364,7 +364,7 @@ export function CenterRegistrationCard({
                     className="accent-[#32A88D] w-4 h-4"
                   />
                   <span className="font-medium text-gray-700">
-                    يوجد سجل تجاري
+                    {t("registrationCard.hasCommercialReg")}
                   </span>
                 </div>
               </div>
@@ -373,7 +373,7 @@ export function CenterRegistrationCard({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <FormInput
                     type="number"
-                    label="رقم السجل التجاري"
+                    label={t("registrationCard.commercialRegNumberLabel")}
                     value={formValues.commercial_registration_number}
                     onChange={(e) =>
                       setFormValues((s) => ({
@@ -381,13 +381,13 @@ export function CenterRegistrationCard({
                         commercial_registration_number: e.target.value,
                       }))
                     }
-                    rtl
+                    rtl={isRtl}
                     error={getFieldError("commercial_registration_number")}
                     className="bg-gray-50"
-                    placeholder="أدخل رقم السجل التجاري"
+                    placeholder={t("registrationCard.commercialRegNumberPlaceholder")}
                   />
                   <FormInput
-                    label="جهة السجل التجاري"
+                    label={t("registrationCard.commercialRegAuthorityLabel")}
                     value={formValues.commercial_registration_authority}
                     onChange={(e) =>
                       setFormValues((s) => ({
@@ -395,14 +395,14 @@ export function CenterRegistrationCard({
                         commercial_registration_authority: e.target.value,
                       }))
                     }
-                    rtl
+                    rtl={isRtl}
                     error={getFieldError("commercial_registration_authority")}
                     className="bg-gray-50"
-                    placeholder="أدخل جهة السجل التجاري"
+                    placeholder={t("registrationCard.commercialRegAuthorityPlaceholder")}
                   />
                   <div className="md:col-span-2">
                     <FormFileUpload
-                      label="ملف السجل التجاري"
+                      label={t("registrationCard.commercialRegFileLabel")}
                       onChange={(e) =>
                         setFormValues((s) => ({
                           ...s,
@@ -418,16 +418,15 @@ export function CenterRegistrationCard({
               )}
             </div>
 
-            {/* الترخيص */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <h5 className="font-medium text-gray-700 mb-4 flex items-center gap-2">
                 <Shield className="w-4 h-4 text-[#32A88D]" />
-                معلومات الترخيص
+                {t("registrationCard.licenseInfoTitle")}
               </h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormInput
                   type="number"
-                  label="رقم الترخيص"
+                  label={t("registrationCard.licenseNumberLabel")}
                   value={formValues.license_number}
                   onChange={(e) =>
                     setFormValues((s) => ({
@@ -435,13 +434,13 @@ export function CenterRegistrationCard({
                       license_number: e.target.value,
                     }))
                   }
-                  rtl
+                  rtl={isRtl}
                   error={getFieldError("license_number")}
                   className="bg-gray-50"
-                  placeholder="أدخل رقم الترخيص"
+                  placeholder={t("registrationCard.licenseNumberPlaceholder")}
                 />
                 <FormInput
-                  label="جهة الترخيص"
+                  label={t("registrationCard.licenseAuthorityLabel")}
                   value={formValues.license_authority}
                   onChange={(e) =>
                     setFormValues((s) => ({
@@ -449,15 +448,15 @@ export function CenterRegistrationCard({
                       license_authority: e.target.value,
                     }))
                   }
-                  rtl
+                  rtl={isRtl}
                   error={getFieldError("license_authority")}
                   className="bg-gray-50"
-                  placeholder="أدخل جهة الترخيص"
+                  placeholder={t("registrationCard.licenseAuthorityPlaceholder")}
                 />
                 <div className="md:col-span-2">
                   <FormFileUpload
                     error={getFieldError("license_file")}
-                    label="ملف الترخيص"
+                    label={t("registrationCard.licenseFileLabel")}
                     onChange={(e) =>
                       setFormValues((s) => ({
                         ...s,
@@ -470,12 +469,11 @@ export function CenterRegistrationCard({
               </div>
             </div>
 
-            {/* عرض الملفات الحالية إن وجدت */}
             {(displayDetails?.commercial_registration_file ||
               displayDetails?.license_file) && (
               <div className="bg-white p-4 rounded-lg border border-gray-200">
                 <h5 className="font-medium text-gray-700 mb-3">
-                  الملفات الحالية:
+                  {t("registrationCard.currentFilesTitle")}
                 </h5>
                 <div className="flex flex-wrap gap-4">
                   {displayDetails.commercial_registration_file && (
@@ -487,7 +485,7 @@ export function CenterRegistrationCard({
                         rel="noopener noreferrer"
                         className="text-sm text-[#32A88D] hover:underline flex items-center gap-1"
                       >
-                        السجل التجاري الحالي
+                        {t("registrationCard.currentCommercialReg")}
                         <Download className="w-3 h-3" />
                       </a>
                     </div>
@@ -501,14 +499,14 @@ export function CenterRegistrationCard({
                         rel="noopener noreferrer"
                         className="text-sm text-[#32A88D] hover:underline flex items-center gap-1"
                       >
-                        الترخيص الحالي
+                        {t("registrationCard.currentLicense")}
                         <Download className="w-3 h-3" />
                       </a>
                     </div>
                   )}
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  رفع ملف جديد سيستبدل الملف الحالي
+                  {t("registrationCard.replaceNote")}
                 </p>
               </div>
             )}

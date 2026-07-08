@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { FormInput } from "@/shared/ui/forms"
 import { toast } from "sonner"
-import { medicalSpecialties } from "@/constants/medicalSpecialties"
+import { useLocalizedMedicalSpecialties } from "@/constants/medicalSpecialties"
 import { Badge } from "@/components/ui/badge"
 import { useUpdateCenter } from "@/features/profile/_views/hooks/useUpdateCenter"
 import type { CenterProfile } from "@/types/center"
@@ -27,6 +27,7 @@ export function CenterSpecialtiesCard({
   userId,
   refetch,
 }: CenterSpecialtiesCardProps) {
+  const medicalSpecialties = useLocalizedMedicalSpecialties()
   const [editing, setEditing] = useState(false)
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({})
   const [values, setValues] = useState({

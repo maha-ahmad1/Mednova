@@ -6,10 +6,11 @@ import { useUpdateTherapist } from "@/features/profile/_views/hooks/useUpdateThe
 import { toast } from "sonner";
 import type { TherapistFormValues } from "@/app/api/therapist";
 import type { TherapistProfile } from "@/types/therpist";
-import { medicalSpecialties } from "@/constants/medicalSpecialties";
+import { useLocalizedMedicalSpecialties } from "@/constants/medicalSpecialties";
 import { medicalSchema } from "@/lib/validation";
 import { Loader2, Edit, GraduationCap, Briefcase, University, Globe } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslations, useLocale } from "next-intl";
 
 type TherapistMedicalCardProps = {
   details: TherapistProfile["therapist_details"];
@@ -23,6 +24,10 @@ export function TherapistMedicalCard({
   userId,
   refetch,
 }: TherapistMedicalCardProps) {
+  const medicalSpecialties = useLocalizedMedicalSpecialties();
+  const t = useTranslations("profile.therapistInfo");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
   const [editing, setEditing] = useState(false);
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [values, setValues] = useState({
@@ -86,7 +91,7 @@ export function TherapistMedicalCard({
         fieldErrors[field] = issue.message;
       });
       setServerErrors(fieldErrors);
-      toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
+      toast.error(t("medicalCard.validationError"));
       return;
     }
 
@@ -99,11 +104,11 @@ export function TherapistMedicalCard({
     try {
       await update(payload);
       await refetch();
-      toast.success("تم تحديث المؤهلات بنجاح");
+      toast.success(t("medicalCard.saveSuccess"));
       setEditing(false);
       setServerErrors({});
     } catch {
-      toast.error("حدث خطأ أثناء التحديث");
+      toast.error(t("medicalCard.saveError"));
     }
   };
 
@@ -137,23 +142,23 @@ export function TherapistMedicalCard({
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
-          <h3 className="text-xl font-bold text-gray-800">المؤهلات الطبية</h3>
+          <h3 className="text-xl font-bold text-gray-800">{t("medicalCard.title")}</h3>
         </div>
-        
+
         {!editing ? (
-          <Button 
-            onClick={startEdit} 
-            variant="outline" 
+          <Button
+            onClick={startEdit}
+            variant="outline"
             size="sm"
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
             <Edit className="w-4 h-4" />
-            تعديل المؤهلات
+            {t("medicalCard.editButton")}
           </Button>
         ) : (
           <div className="flex gap-2">
-            <Button 
-              onClick={handleSave} 
+            <Button
+              onClick={handleSave}
               disabled={isUpdating}
               size="sm"
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
@@ -161,15 +166,15 @@ export function TherapistMedicalCard({
               {isUpdating && (
                 <Loader2 className="w-4 h-4 animate-spin" />
               )}
-              حفظ التغييرات
+              {t("saveButton")}
             </Button>
-            <Button 
-              onClick={cancelEdit} 
-              variant="outline" 
+            <Button
+              onClick={cancelEdit}
+              variant="outline"
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
-              إلغاء
+              {t("cancelButton")}
             </Button>
           </div>
         )}
@@ -179,7 +184,7 @@ export function TherapistMedicalCard({
         <div className="grid grid-cols-1 gap-4">
           <FieldDisplay
             icon={<GraduationCap className="w-5 h-5" />}
-            label="التخصص الطبي"
+            label={t("medicalCard.specialtyLabel")}
             value={
               displayDetails?.medical_specialties?.name ? (
                 <Badge className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
@@ -188,16 +193,16 @@ export function TherapistMedicalCard({
               ) : "-"
             }
           />
-          
+
           <FieldDisplay
             icon={<University className="w-5 h-5" />}
-            label="الجامعة"
+            label={t("medicalCard.universityLabel")}
             value={displayDetails?.university_name}
           />
-          
+
           <FieldDisplay
             icon={<GraduationCap className="w-5 h-5" />}
-            label="سنة التخرج"
+            label={t("medicalCard.graduationYearLabel")}
             value={
               displayDetails?.graduation_year ? (
                 <Badge className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
@@ -206,19 +211,23 @@ export function TherapistMedicalCard({
               ) : "-"
             }
           />
-          
+
           <FieldDisplay
             icon={<Briefcase className="w-5 h-5" />}
-            label="سنوات الخبرة"
+            label={t("medicalCard.experienceYearsLabel")}
             value={
               displayDetails?.experience_years ? (
                 <div className="flex items-center gap-2">
-                  <span>{displayDetails.experience_years} سنة</span>
+                  <span>
+                    {t("medicalCard.experienceYearsUnit", {
+                      years: displayDetails.experience_years,
+                    })}
+                  </span>
                   <div className="flex-1 bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-[#32A88D] h-2 rounded-full" 
-                      style={{ 
-                        width: `${Math.min((Number(displayDetails.experience_years) / 30) * 100, 100)}%` 
+                    <div
+                      className="bg-[#32A88D] h-2 rounded-full"
+                      style={{
+                        width: `${Math.min((Number(displayDetails.experience_years) / 30) * 100, 100)}%`
                       }}
                     ></div>
                   </div>
@@ -226,10 +235,10 @@ export function TherapistMedicalCard({
               ) : "-"
             }
           />
-          
+
           <FieldDisplay
             icon={<Globe className="w-5 h-5" />}
-            label="الدول المعتمدة"
+            label={t("medicalCard.countriesCertifiedLabel")}
             value={
               displayDetails?.countries_certified ? (
                 <div className="flex flex-wrap gap-2">
@@ -250,12 +259,12 @@ export function TherapistMedicalCard({
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
           <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-            تعديل المؤهلات الطبية
+            {t("medicalCard.editTitle")}
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormSelect
-              label="التخصص الطبي"
-              placeholder="اختر التخصص"
+              label={t("medicalCard.specialtyLabel")}
+              placeholder={t("medicalCard.specialtyPlaceholder")}
               options={medicalSpecialties.map((s) => ({
                 value: s.id.toString(),
                 label: s.name,
@@ -264,36 +273,36 @@ export function TherapistMedicalCard({
               onValueChange={(val) =>
                 setValues((v) => ({ ...v, medical_specialties_id: val }))
               }
-              rtl
+              rtl={isRtl}
               error={getFieldError("medical_specialties_id")}
               className="bg-white"
             />
 
             <FormInput
-              label="اسم الجامعة"
+              label={t("medicalCard.universityLabel")}
               value={values.university_name}
               onChange={(e) =>
                 setValues((v) => ({ ...v, university_name: e.target.value }))
               }
-              rtl
+              rtl={isRtl}
               error={getFieldError("university_name")}
               className="bg-white"
             />
 
             <FormInput
-              label="سنة التخرج"
+              label={t("medicalCard.graduationYearLabel")}
               type="number"
               value={values.graduation_year}
               onChange={(e) =>
                 setValues((v) => ({ ...v, graduation_year: e.target.value }))
               }
-              rtl
+              rtl={isRtl}
               className="no-spinner bg-white"
               error={getFieldError("graduation_year")}
             />
 
             <FormInput
-              label="عدد سنوات الخبرة"
+              label={t("medicalCard.experienceYearsLabel")}
               type="number"
               value={values.experience_years}
               onChange={(e) =>
@@ -302,22 +311,22 @@ export function TherapistMedicalCard({
                   experience_years: e.target.value.replace(/^0+/, ""),
                 }))
               }
-              rtl
+              rtl={isRtl}
               className="no-spinner bg-white"
               error={getFieldError("experience_years")}
             />
 
             <div className="md:col-span-2">
               <FormInput
-                label="الدولة المعتمدة"
+                label={t("medicalCard.countriesCertifiedLabel")}
                 value={values.countries_certified}
                 onChange={(e) =>
                   setValues((v) => ({ ...v, countries_certified: e.target.value }))
                 }
-                rtl
+                rtl={isRtl}
                 error={getFieldError("countries_certified")}
                 className="bg-white"
-                placeholder="مثال: السعودية، الإمارات، عمان"
+                placeholder={t("medicalCard.countriesCertifiedPlaceholder")}
               />
             </div>
           </div>

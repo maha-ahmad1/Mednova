@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { isAxiosError } from "axios";
 import { ZodTypeAny } from "zod";
 import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector";
+import { useTranslations, useLocale } from "next-intl";
 
 type TherapistScheduleCardProps = {
   details: TherapistProfile;
@@ -20,21 +21,24 @@ type TherapistScheduleCardProps = {
   refetch: () => void;
 };
 
-const days = [
-  { key: "Sunday", label: "الأحد" },
-  { key: "Monday", label: "الإثنين" },
-  { key: "Tuesday", label: "الثلاثاء" },
-  { key: "Wednesday", label: "الأربعاء" },
-  { key: "Thursday", label: "الخميس" },
-  { key: "Friday", label: "الجمعة" },
-  { key: "Saturday", label: "السبت" },
-];
+const dayKeys = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+] as const;
 
 export function TherapistscheduleCard({
   details,
   userId,
   refetch,
 }: TherapistScheduleCardProps) {
+  const t = useTranslations("profile.therapistInfo");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
   const schedule = details?.schedules?.[0];
 
   const [editing, setEditing] = useState(false);
@@ -132,7 +136,7 @@ export function TherapistscheduleCard({
         fieldErrors[field] = issue.message;
       });
       setServerErrors(fieldErrors);
-      toast.error("يرجى تصحيح الأخطاء قبل الحفظ");
+      toast.error(t("scheduleCard.validationError"));
       return;
     }
 
@@ -145,7 +149,7 @@ export function TherapistscheduleCard({
 
     try {
       await update(payload);
-      toast.success("تم تحديث دوام العمل بنجاح");
+      toast.success(t("scheduleCard.saveSuccess"));
       setEditing(false);
       setServerErrors({});
       refetch();
@@ -154,12 +158,12 @@ export function TherapistscheduleCard({
         const apiErrors = error.response?.data?.data || {};
         if (apiErrors && Object.keys(apiErrors).length > 0) {
           setServerErrors(apiErrors);
-          toast.error("تحقق من الحقول قبل الحفظ");
+          toast.error(t("scheduleCard.checkFieldsError"));
         } else {
-          toast.error("حدث خطأ أثناء التحديث");
+          toast.error(t("scheduleCard.saveError"));
         }
       } else {
-        toast.error("حدث خطأ غير متوقع");
+        toast.error(t("scheduleCard.unexpectedError"));
       }
     }
   };
@@ -183,15 +187,20 @@ export function TherapistscheduleCard({
 
   const formatTime = (time: string) => {
     if (!time) return "-";
-    return new Date(`2000-01-01T${time}`).toLocaleTimeString("ar-EG", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    return new Date(`2000-01-01T${time}`).toLocaleTimeString(
+      locale === "ar" ? "ar-EG" : "en-US",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      },
+    );
   };
 
   const getDayLabel = (dayKey: string) => {
-    return days.find((d) => d.key === dayKey)?.label || dayKey;
+    return dayKeys.includes(dayKey as (typeof dayKeys)[number])
+      ? t(`scheduleCard.days.${dayKey}`)
+      : dayKey;
   };
 
   return (
@@ -199,7 +208,7 @@ export function TherapistscheduleCard({
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
-          <h3 className="text-xl font-bold text-gray-800">دوام العمل</h3>
+          <h3 className="text-xl font-bold text-gray-800">{t("scheduleCard.title")}</h3>
         </div>
 
         {!editing ? (
@@ -210,7 +219,7 @@ export function TherapistscheduleCard({
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
             <Edit className="w-4 h-4" />
-            تعديل الدوام
+            {t("scheduleCard.editButton")}
           </Button>
         ) : (
           <div className="flex gap-2">
@@ -221,7 +230,7 @@ export function TherapistscheduleCard({
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
             >
               {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
-              حفظ التغييرات
+              {t("saveButton")}
             </Button>
             <Button
               onClick={cancelEdit}
@@ -229,7 +238,7 @@ export function TherapistscheduleCard({
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
-              إلغاء
+              {t("cancelButton")}
             </Button>
           </div>
         )}
@@ -239,7 +248,7 @@ export function TherapistscheduleCard({
         <div className="grid grid-cols-1 gap-4">
           <FieldDisplay
             icon={<Calendar className="w-5 h-5" />}
-            label="أيام العمل"
+            label={t("scheduleCard.workDaysLabel")}
             value={
               values.day_of_week.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
@@ -260,7 +269,7 @@ export function TherapistscheduleCard({
 
           <FieldDisplay
             icon={<Calendar className="w-5 h-5" />}
-            label="المنطقة الزمنية"
+            label={t("scheduleCard.timezoneLabel")}
             value={
               values.timezone ? (
                 <Badge className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm">
@@ -274,7 +283,7 @@ export function TherapistscheduleCard({
 
           <FieldDisplay
             icon={<Sun className="w-5 h-5" />}
-            label="دوام الصباح"
+            label={t("scheduleCard.morningShiftLabel")}
             value={
               values.start_time_morning && values.end_time_morning ? (
                 <div className="flex items-center gap-2">
@@ -291,7 +300,7 @@ export function TherapistscheduleCard({
 
           <FieldDisplay
             icon={<Moon className="w-5 h-5" />}
-            label="دوام المساء"
+            label={t("scheduleCard.eveningShiftLabel")}
             value={
               values.is_have_evening_time &&
               values.start_time_evening &&
@@ -303,7 +312,7 @@ export function TherapistscheduleCard({
                   </Badge>
                 </div>
               ) : (
-                "لا يوجد دوام مسائي"
+                t("scheduleCard.noEveningShift")
               )
             }
           />
@@ -312,13 +321,13 @@ export function TherapistscheduleCard({
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
           <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-            تعديل دوام العمل
+            {t("scheduleCard.editTitle")}
           </h4>
 
           <div className="space-y-6">
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <label className="text-sm font-medium text-gray-700 mb-3 block">
-                المنطقة الزمنية
+                {t("scheduleCard.timezoneLabel")}
               </label>
               <TimeZoneSelector
                 selectedTimeZone={values.timezone}
@@ -333,25 +342,24 @@ export function TherapistscheduleCard({
                 </p>
               )}
             </div>
-            {/* أيام العمل */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <label className=" text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#32A88D]" />
-                أيام العمل
+                {t("scheduleCard.workDaysLabel")}
               </label>
               <div className="flex flex-wrap gap-2">
-                {days.map((d) => (
+                {dayKeys.map((dayKey) => (
                   <button
-                    key={d.key}
+                    key={dayKey}
                     type="button"
-                    onClick={() => toggleDay(d.key)}
+                    onClick={() => toggleDay(dayKey)}
                     className={`px-4 py-2 border rounded-xl transition-all duration-200 flex items-center gap-2 ${
-                      values.day_of_week.includes(d.key)
+                      values.day_of_week.includes(dayKey)
                         ? "bg-[#32A88D] text-white border-[#32A88D] shadow-md"
                         : "bg-white text-gray-700 border-gray-300 hover:border-[#32A88D] hover:text-[#32A88D]"
                     }`}
                   >
-                    {d.label}
+                    {t(`scheduleCard.days.${dayKey}`)}
                   </button>
                 ))}
               </div>
@@ -362,15 +370,14 @@ export function TherapistscheduleCard({
               )}
             </div>
 
-            {/* دوام الصباح */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <label className=" text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                 <Sun className="w-4 h-4 text-amber-500" />
-                دوام الصباح
+                {t("scheduleCard.morningShiftLabel")}
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormInput
-                  label="وقت البدء"
+                  label={t("scheduleCard.startTimeLabel")}
                   type="time"
                   value={values.start_time_morning}
                   onChange={(e) =>
@@ -379,13 +386,13 @@ export function TherapistscheduleCard({
                       start_time_morning: e.target.value,
                     }))
                   }
-                  rtl
+                  rtl={isRtl}
                   error={getFieldError("start_time_morning")}
                   className="bg-gray-50"
                 />
 
                 <FormInput
-                  label="وقت الانتهاء"
+                  label={t("scheduleCard.endTimeLabel")}
                   type="time"
                   value={values.end_time_morning}
                   onChange={(e) =>
@@ -394,14 +401,13 @@ export function TherapistscheduleCard({
                       end_time_morning: e.target.value,
                     }))
                   }
-                  rtl
+                  rtl={isRtl}
                   error={getFieldError("end_time_morning")}
                   className="bg-gray-50"
                 />
               </div>
             </div>
 
-            {/* دوام المساء */}
             <div className="bg-white p-4 rounded-lg border border-gray-200">
               <div className="flex items-center gap-3 mb-4">
                 <Moon className="w-4 h-4 text-indigo-500" />
@@ -418,7 +424,7 @@ export function TherapistscheduleCard({
                     className="accent-[#32A88D] w-4 h-4"
                   />
                   <span className="font-medium text-gray-700">
-                    يوجد دوام مسائي
+                    {t("scheduleCard.hasEveningShift")}
                   </span>
                 </div>
               </div>
@@ -426,7 +432,7 @@ export function TherapistscheduleCard({
               {values.is_have_evening_time === 1 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormInput
-                    label="وقت البدء"
+                    label={t("scheduleCard.startTimeLabel")}
                     type="time"
                     value={values.start_time_evening}
                     onChange={(e) =>
@@ -435,13 +441,13 @@ export function TherapistscheduleCard({
                         start_time_evening: e.target.value,
                       }))
                     }
-                    rtl
+                    rtl={isRtl}
                     error={getFieldError("start_time_evening")}
                     className="bg-gray-50"
                   />
 
                   <FormInput
-                    label="وقت الانتهاء"
+                    label={t("scheduleCard.endTimeLabel")}
                     type="time"
                     value={values.end_time_evening}
                     onChange={(e) =>
@@ -450,7 +456,7 @@ export function TherapistscheduleCard({
                         end_time_evening: e.target.value,
                       }))
                     }
-                    rtl
+                    rtl={isRtl}
                     error={getFieldError("end_time_evening")}
                     className="bg-gray-50"
                   />

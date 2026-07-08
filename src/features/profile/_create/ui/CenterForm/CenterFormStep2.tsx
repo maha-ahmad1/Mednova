@@ -8,7 +8,7 @@ import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { useCallback } from "react";
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
-import { medicalSpecialties } from "@/constants/medicalSpecialties";
+import { useLocalizedMedicalSpecialties } from "@/constants/medicalSpecialties";
 import { Video, MessageSquare } from "lucide-react";
 import { FormSelect } from "@/shared/ui/forms/components/FormSelect";
 import { CustomCheckbox } from "@/shared/ui/forms/components/CustomCheckbox";
@@ -91,6 +91,7 @@ export function CenterFormStep2({
   updateFormData,
   globalErrors,
 }: CenterStep2Props) {
+  const medicalSpecialties = useLocalizedMedicalSpecialties();
   const methods = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
     mode: "onChange",

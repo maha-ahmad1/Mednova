@@ -8,6 +8,7 @@ import { useUpdateTherapist } from "@/features/profile/_views/hooks/useUpdateThe
 import { therapistLicensesSchema } from "@/lib/validation";
 import { Loader2, Edit, FileText, Shield, Award, Download } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslations, useLocale } from "next-intl";
 
 type TherapistLicensesCardProps = {
   details: TherapistProfile["therapist_details"];
@@ -22,6 +23,9 @@ export function TherapistLicensesCard({
   refetch,
   serverErrors = {},
 }: TherapistLicensesCardProps) {
+  const t = useTranslations("profile.therapistInfo");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
   const [editing, setEditing] = useState(false);
   const [formValues, setFormValues] = useState({
     license_number: details?.license_number || "",
@@ -61,11 +65,11 @@ export function TherapistLicensesCard({
 
     try {
       await update(payload);
-      toast.success("تم تحديث التراخيص والمستندات بنجاح");
+      toast.success(t("licensesCard.saveSuccess"));
       setEditing(false);
       refetch();
     } catch {
-      toast.error("حدث خطأ أثناء التحديث");
+      toast.error(t("licensesCard.saveError"));
     }
   };
 
@@ -110,23 +114,23 @@ export function TherapistLicensesCard({
       <div className="flex justify-between items-start mb-6">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-[#32A88D] rounded-full"></div>
-          <h3 className="text-xl font-bold text-gray-800">التراخيص والمستندات</h3>
+          <h3 className="text-xl font-bold text-gray-800">{t("licensesCard.title")}</h3>
         </div>
-        
+
         {!editing ? (
-          <Button 
-            onClick={startEdit} 
-            variant="outline" 
+          <Button
+            onClick={startEdit}
+            variant="outline"
             size="sm"
             className="border-[#32A88D] text-[#32A88D] hover:bg-[#32A88D]/10 rounded-xl px-4 py-2 flex items-center gap-2"
           >
             <Edit className="w-4 h-4" />
-            تعديل المستندات
+            {t("licensesCard.editButton")}
           </Button>
         ) : (
           <div className="flex gap-2">
-            <Button 
-              onClick={handleSave} 
+            <Button
+              onClick={handleSave}
               disabled={isUpdating}
               size="sm"
               className="bg-[#32A88D] hover:bg-[#32A88D]/90 text-white px-6 py-2 rounded-xl transition-colors duration-200 flex items-center gap-2"
@@ -134,15 +138,15 @@ export function TherapistLicensesCard({
               {isUpdating && (
                 <Loader2 className="w-4 h-4 animate-spin" />
               )}
-              حفظ التغييرات
+              {t("saveButton")}
             </Button>
-            <Button 
-              onClick={cancelEdit} 
-              variant="outline" 
+            <Button
+              onClick={cancelEdit}
+              variant="outline"
               size="sm"
               className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-4 py-2"
             >
-              إلغاء
+              {t("cancelButton")}
             </Button>
           </div>
         )}
@@ -152,7 +156,7 @@ export function TherapistLicensesCard({
         <div className="grid grid-cols-1 gap-4">
           <FieldDisplay
             icon={<Shield className="w-5 h-5" />}
-            label="رقم الترخيص"
+            label={t("licensesCard.licenseNumberLabel")}
             value={
               details?.license_number ? (
                 <Badge className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
@@ -161,32 +165,32 @@ export function TherapistLicensesCard({
               ) : "-"
             }
           />
-          
+
           <FieldDisplay
             icon={<FileText className="w-5 h-5" />}
-            label="جهة الترخيص"
+            label={t("licensesCard.licenseAuthorityLabel")}
             value={details?.license_authority || "-"}
           />
-          
+
           <FieldDisplay
             icon={<Award className="w-5 h-5" />}
-            label="ملف الشهادة"
+            label={t("licensesCard.certificateFileLabel")}
             value={
-              <FileLink 
+              <FileLink
                 url={details?.certificate_file ?? undefined}
-                label="عرض الشهادة"
+                label={t("licensesCard.viewCertificate")}
                 icon={<Award className="w-4 h-4" />}
               />
             }
           />
-          
+
           <FieldDisplay
             icon={<Shield className="w-5 h-5" />}
-            label="ملف الترخيص"
+            label={t("licensesCard.licenseFileLabel")}
             value={
-              <FileLink 
+              <FileLink
                 url={details?.license_file ?? undefined}
-                label="عرض الترخيص"
+                label={t("licensesCard.viewLicense")}
                 icon={<Shield className="w-4 h-4" />}
               />
             }
@@ -196,25 +200,25 @@ export function TherapistLicensesCard({
         <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-200">
           <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-            تعديل التراخيص والمستندات
+            {t("licensesCard.editTitle")}
           </h4>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormInput
-              label="رقم الترخيص"
+              label={t("licensesCard.licenseNumberLabel")}
               value={formValues.license_number}
               onChange={(e) =>
                 setFormValues((s) => ({ ...s, license_number: e.target.value }))
               }
               error={getFieldError("license_number")}
-              rtl
+              rtl={isRtl}
               type="number"
               className="no-spinner bg-white"
-              placeholder="أدخل رقم الترخيص"
+              placeholder={t("licensesCard.licenseNumberPlaceholder")}
             />
-            
+
             <FormInput
-              label="جهة الترخيص"
+              label={t("licensesCard.licenseAuthorityLabel")}
               value={formValues.license_authority}
               onChange={(e) =>
                 setFormValues((s) => ({
@@ -223,14 +227,14 @@ export function TherapistLicensesCard({
                 }))
               }
               error={getFieldError("license_authority")}
-              rtl
+              rtl={isRtl}
               className="bg-white"
-              placeholder="أدخل جهة الترخيص"
+              placeholder={t("licensesCard.licenseAuthorityPlaceholder")}
             />
-            
+
             <div className="md:col-span-2">
               <FormFileUpload
-                label="ملف الشهادة"
+                label={t("licensesCard.certificateFileLabel")}
                 onChange={(e) =>
                   setFormValues((s) => ({
                     ...s,
@@ -241,10 +245,10 @@ export function TherapistLicensesCard({
                 className="bg-white"
               />
             </div>
-            
+
             <div className="md:col-span-2">
               <FormFileUpload
-                label="ملف الترخيص"
+                label={t("licensesCard.licenseFileLabel")}
                 onChange={(e) =>
                   setFormValues((s) => ({
                     ...s,
@@ -255,11 +259,10 @@ export function TherapistLicensesCard({
                 className="bg-white"
               />
             </div>
-            
-            {/* عرض الملفات الحالية إن وجدت */}
+
             {(details?.certificate_file || details?.license_file) && (
               <div className="md:col-span-2 bg-white p-4 rounded-lg border border-gray-200">
-                <h5 className="font-medium text-gray-700 mb-3">الملفات الحالية:</h5>
+                <h5 className="font-medium text-gray-700 mb-3">{t("licensesCard.currentFilesTitle")}</h5>
                 <div className="flex flex-wrap gap-4">
                   {details.certificate_file && (
                     <div className="flex items-center gap-2">
@@ -270,7 +273,7 @@ export function TherapistLicensesCard({
                         rel="noopener noreferrer"
                         className="text-sm text-[#32A88D] hover:underline flex items-center gap-1"
                       >
-                        الشهادة الحالية
+                        {t("licensesCard.currentCertificate")}
                         <Download className="w-3 h-3" />
                       </a>
                     </div>
@@ -284,14 +287,14 @@ export function TherapistLicensesCard({
                         rel="noopener noreferrer"
                         className="text-sm text-[#32A88D] hover:underline flex items-center gap-1"
                       >
-                        الترخيص الحالي
+                        {t("licensesCard.currentLicense")}
                         <Download className="w-3 h-3" />
                       </a>
                     </div>
                   )}
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  رفع ملف جديد سيستبدل الملف الحالي
+                  {t("licensesCard.replaceNote")}
                 </p>
               </div>
             )}

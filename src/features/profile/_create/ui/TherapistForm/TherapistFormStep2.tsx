@@ -221,7 +221,7 @@ import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard"
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave"
 import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors"
 import { useCallback } from "react"
-import { medicalSpecialties } from "@/constants/medicalSpecialties"
+import { useLocalizedMedicalSpecialties } from "@/constants/medicalSpecialties"
 import { FormSelect } from "@/shared/ui/forms"
 
 const step2Schema = z.object({
@@ -252,6 +252,7 @@ const currencyOptions = [
 ]
 
 export function TherapistFormStep2({ onNext, onBack, formData, updateFormData, globalErrors }: TherapistStep2Props) {
+  const medicalSpecialties = useLocalizedMedicalSpecialties()
   const methods = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
     mode: "onChange",

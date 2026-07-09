@@ -435,7 +435,7 @@ function ChatInterface({ chatRequest, onBack }: ChatInterfaceProps) {
   }
 
   return (
-    <Card className="h-[900px] flex flex-col">
+    <Card className="h-full flex flex-col">
       <ChatHeader otherUser={otherUser} onBack={onBack} />
 
       <CardContent className="flex-1 p-0 flex flex-col">

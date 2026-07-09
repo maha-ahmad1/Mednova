@@ -1,7 +1,12 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Send, Loader2, Paperclip } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { FileUploadMenu } from "./FileUploadMenu";
 import { FilePreview } from "./FilePreview";
 
@@ -40,6 +45,8 @@ export function MessageInput({
   disabled = false,
 }: MessageInputProps) {
   const t = useTranslations("chat.input");
+  const locale = useLocale();
+  const dir = locale === "ar" ? "rtl" : "ltr";
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -58,23 +65,25 @@ export function MessageInput({
             onChange={onFileChange}
             disabled={disabled}
           />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onSetShowUploadMenu((s) => !s)}
-            className="p-2"
-            disabled={disabled}
-          >
-            <Paperclip className="w-4 h-4" />
-          </Button>
-
-          {showUploadMenu && (
-            <FileUploadMenu
-              onSelectImage={() => onOpenFilePicker("image")}
-              onSelectFile={() => onOpenFilePicker("file")}
-              onClose={() => onSetShowUploadMenu(false)}
-            />
-          )}
+          <DropdownMenu dir={dir} open={showUploadMenu} onOpenChange={onSetShowUploadMenu}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="p-2" disabled={disabled}>
+                <Paperclip className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="top"
+              align="start"
+              sideOffset={8}
+              className="w-auto min-w-0 border-none bg-transparent p-0 shadow-none"
+            >
+              <FileUploadMenu
+                onSelectImage={() => onOpenFilePicker("image")}
+                onSelectFile={() => onOpenFilePicker("file")}
+                onClose={() => onSetShowUploadMenu(false)}
+              />
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <FilePreview

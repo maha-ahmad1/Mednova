@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import * as z from "zod";
+import { useTranslations, useLocale } from "next-intl";
 import {
   InputOTP,
   InputOTPGroup,
@@ -15,21 +16,33 @@ import { verifyToken, forgotPassword } from "@/features/auth/api/authApi";
 import type { AxiosError } from "axios";
 import { useResetPasswordStore } from "@/features/auth/store/useResetPasswordStore";
 import { FormSubmitButton } from "@/shared/ui/forms";
-const otpSchema = z.object({
-  token: z.string().length(4, "يجب إدخال جميع الأرقام الأربعة"),
-});
 
-type OtpFormData = z.infer<typeof otpSchema>;
+function createOtpSchema(t: (key: string) => string) {
+  return z.object({
+    token: z.string().length(4, t("validation.tokenIncomplete")),
+  });
+}
+
+type OtpFormData = z.infer<ReturnType<typeof createOtpSchema>>;
 
 // interface OtpInputsProps {
 //   email: string;
 // }
 
 export function OtpInputs() {
+  const locale = useLocale();
+  return <OtpInputsInner key={locale} />;
+}
+
+function OtpInputsInner() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isResending, setIsResending] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(0);
   const { email, setToken } = useResetPasswordStore();
+  const t = useTranslations("codeVerification");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
+  const otpSchema = useMemo(() => createOtpSchema(t), [t]);
 
   const router = useRouter();
   // const searchParams = useSearchParams()
@@ -65,7 +78,7 @@ export function OtpInputs() {
 
         router.push("/reset-password");
       } else {
-        setServerError(data.message || "حدث خطأ غير متوقع");
+        setServerError(data.message || t("defaultError"));
       }
     },
     onError: (
@@ -80,16 +93,16 @@ export function OtpInputs() {
         const responseData = error.response.data;
 
         const backendError =
-          responseData.data?.error || 
-          responseData.data?.errors?.token?.[0] || 
-          responseData.message || 
-          "حدث خطأ غير متوقع";
+          responseData.data?.error ||
+          responseData.data?.errors?.token?.[0] ||
+          responseData.message ||
+          t("defaultError");
 
         setServerError(backendError);
       } else if (error.request) {
-        setServerError("لا يوجد اتصال بالخادم");
+        setServerError(t("noConnection"));
       } else {
-        setServerError("حدث خطأ غير متوقع");
+        setServerError(t("defaultError"));
       }
     },
   });
@@ -111,7 +124,7 @@ export function OtpInputs() {
     },
     onError: () => {
       setIsResending(false);
-      setServerError("فشل في إعادة إرسال الرمز");
+      setServerError(t("resendError"));
     },
   });
 
@@ -134,19 +147,19 @@ export function OtpInputs() {
 
   return (
     <div className="w-full h-full flex flex-col justify-center border-0 shadow-none bg-transparent mt-14">
-      <div className="space-y-2" dir="rtl">
+      <div className="space-y-2" dir={isRtl ? "rtl" : "ltr"}>
         {serverError && (
-          <div className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-right text-sm">
+          <div className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-sm">
             {serverError}
           </div>
         )}
-        <div className="text-2xl font-bold text-foreground text-right">
-          تأكيد الرمز
+        <div className="text-2xl font-bold text-foreground">
+          {t("title")}
         </div>
         <div className="text-md">
-          أدخل رمز التحقق المرسل إلى بريدك الإلكتروني
+          {t("description")}
         </div>
-        {/* <div className="text-sm text-gray-600 text-right">{email}</div> */}
+        {/* <div className="text-sm text-gray-600">{email}</div> */}
       </div>
 
       <div className="space-y-6 flex-1 flex flex-col justify-center">
@@ -174,7 +187,7 @@ export function OtpInputs() {
                             ? "border-[#32A88D] text-[#4B5563] bg-[#F0FDF4] "
                             : "border-gray-300 text-gray-800 "
                         }
-                        focus:ring-2 focus:ring-[#32A88D] focus:border-[#32A88D] transition-all 
+                        focus:ring-2 focus:ring-[#32A88D] focus:border-[#32A88D] transition-all
                       `}
                     />
                   ))}
@@ -194,13 +207,13 @@ export function OtpInputs() {
             size="lg"
             // disabled={!isValid || mutation.isPending}
           >
-            {mutation.isPending ? "جاري التحقق..." : "تأكيد الرمز"}
+            {mutation.isPending ? t("confirming") : t("confirmButton")}
           </FormSubmitButton>
         </form>
 
-        <div className="space-y-2" dir="rtl">
+        <div className="space-y-2" dir={isRtl ? "rtl" : "ltr"}>
           <p className="text-sm text-muted-foreground">
-            لم تستلم الرمز؟{" "}
+            {t("resendPrompt")}{" "}
             <button
               type="button"
               onClick={handleResendCode}
@@ -212,10 +225,10 @@ export function OtpInputs() {
               } font-medium`}
             >
               {isResending
-                ? "جاري الإرسال..."
+                ? t("resending")
                 : resendCountdown > 0
-                ? `إعادة الإرسال (${resendCountdown})`
-                : "إعادة إرسال الرمز"}
+                ? t("resendWithCountdown", { countdown: resendCountdown })
+                : t("resend")}
             </button>
           </p>
         </div>

@@ -9,7 +9,7 @@ import { usePathname } from "@/i18n/navigation";
 
 const MASCOT_SRC = "/images/home/mascot-turtle-v1.jpeg";
 
-export const WHATSAPP_NUMBER = "+96892349692";
+export const WHATSAPP_NUMBER = "96892349692";
 const SUPPORT_EMAIL = "info@mednovacare.com";
 
 const WELCOME_BADGE_SESSION_KEY = "floatingContactWelcomeShown";

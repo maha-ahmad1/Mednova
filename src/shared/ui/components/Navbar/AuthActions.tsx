@@ -25,7 +25,7 @@ export function AuthActions() {
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-4">
       <Button variant="ghost" size="icon" asChild>
         <Link href="/profile/chat" aria-label="المحادثات">
           <MessageCircle className="h-5 w-5" />

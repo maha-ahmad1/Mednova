@@ -10,7 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { User, Wallet, HelpCircle, LogOut ,Calendar} from "lucide-react";
+import { User, Wallet, HelpCircle, LogOut, Calendar } from "lucide-react";
 import { useProfileImageStore } from "@/store/useProfileImageStore";
 
 export function UserMenu() {
@@ -29,7 +29,7 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2">
+        <button className="flex items-center gap-2 cursor-pointer">
           {displayImage ? (
             <Image
               src={displayImage}
@@ -47,45 +47,55 @@ export function UserMenu() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        align="end"
-        className="text-start w-40 bg-white/80 backdrop-blur-lg p-1 me-6"
+        // align="end"
+        className="text-start w-40 bg-white/80 "
       >
         <div dir={dir} className="contents">
           <DropdownMenuItem
             className="flex items-center gap-2 px-3 py-2 rounded-md
              hover:bg-gray-100/60 text-gray-700 transition"
           >
+            <User className="w-4 h-4 shrink-0" />
+
             <Link
               href="/profile"
               className="flex-1  text-sm text-start truncate block"
             >
               {session.user.full_name}
             </Link>
-            <User className="w-4 h-4 shrink-0" />
           </DropdownMenuItem>
 
           <DropdownMenuItem className="flex gap-2">
+            <Calendar className="w-4 h-4" />
+
             <Link
               href="/profile/consultations"
               className="flex-1 text-sm text-start"
             >
               {t("consultationRequests")}
             </Link>
-            <Calendar className="w-4 h-4" />
           </DropdownMenuItem>
 
           <DropdownMenuItem className="flex gap-2">
-            <Link href="/profile/financial" className="flex-1 text-sm text-start">
+            <Wallet className="w-4 h-4" />
+
+            <Link
+              href="/profile/financial"
+              className="flex-1 text-sm text-start"
+            >
               {t("financialWallet")}
             </Link>
-            <Wallet className="w-4 h-4" />
           </DropdownMenuItem>
 
           <div className="h-px bg-gray-200 my-1" />
 
-          <DropdownMenuItem onClick={() => signOut()} className="flex gap-2">
-            <span className="flex-1 text-sm">{tNav("logout")}</span>
+          <DropdownMenuItem
+            onClick={() => signOut()}
+            className="flex gap-2 cursor-pointer"
+          >
             <LogOut className="w-4 h-4" />
+
+            <span className="flex-1 text-sm">{tNav("logout")}</span>
           </DropdownMenuItem>
         </div>
       </DropdownMenuContent>

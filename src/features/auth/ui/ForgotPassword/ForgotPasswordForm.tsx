@@ -5,9 +5,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import * as z from "zod";
+import { useMemo } from "react";
 import { Mail } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import type { AxiosError } from "axios";
 import {
   Card,
@@ -21,17 +23,28 @@ import { useResetPasswordStore } from "@/features/auth/store/useResetPasswordSto
 import { FormInput, FormSubmitButton } from "@/shared/ui/forms";
 import { forgotPassword } from "@/features/auth/api/authApi";
 
-const forgotPasswordSchema = z.object({
-  email: z.string().email("بريد إلكتروني غير صالح"),
-});
+function createForgotPasswordSchema(t: (key: string) => string) {
+  return z.object({
+    email: z.string().email(t("validation.invalidEmail")),
+  });
+}
 
-type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
+type ForgotPasswordData = z.infer<ReturnType<typeof createForgotPasswordSchema>>;
 
 export function ForgotPassword() {
+  const locale = useLocale();
+  return <ForgotPasswordInner key={locale} />;
+}
+
+function ForgotPasswordInner() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const router = useRouter();
   const { setEmail, setVerificationMethod } = useResetPasswordStore();
+  const t = useTranslations("forgotPassword");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
+  const forgotPasswordSchema = useMemo(() => createForgotPasswordSchema(t), [t]);
 
   const {
     register,
@@ -49,14 +62,12 @@ export function ForgotPassword() {
         setEmail(variables.email);
         setVerificationMethod("email");
 
-        setSuccessMessage(
-          data.message || "تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني."
-        );
+        setSuccessMessage(data.message || t("defaultSuccessMessage"));
         setServerError(null);
         router.push(`/code-verification`);
         console.log("✅ Forgot Password successful:", data.email);
       } else {
-        setServerError(data.message || "حدث خطأ أثناء إرسال البريد.");
+        setServerError(data.message || t("defaultErrorMessage"));
         setSuccessMessage(null);
       }
     },
@@ -70,7 +81,7 @@ export function ForgotPassword() {
       if (backendErrors.email) {
         setServerError(backendErrors.email);
       } else {
-        setServerError(responseData?.message || "حدث خطأ في الاتصال بالخادم");
+        setServerError(responseData?.message || t("connectionError"));
       }
 
       setSuccessMessage(null);
@@ -89,54 +100,57 @@ export function ForgotPassword() {
 
   return (
     <Card className="w-full h-full flex flex-col justify-center border-0 shadow-none bg-transparent">
-      <CardHeader className="space-y-2" dir="rtl">
+      <CardHeader className="space-y-2" dir={isRtl ? "rtl" : "ltr"}>
         <CardTitle className="text-2xl font-bold text-foreground">
-          إعادة تعيين كلمة المرور
+          {t("title")}
         </CardTitle>
         <CardDescription className="text-md">
-          أدخل بريدك الإلكتروني لإرسال رابط إعادة تعيين كلمة المرور
+          {t("description")}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6 flex-1 flex flex-col justify-center mt-[-20px]">
         <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
           {serverError && (
-            <div className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-right text-sm">
+            <div
+              className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-sm"
+              dir={isRtl ? "rtl" : "ltr"}
+            >
               {serverError}
             </div>
           )}
 
           {/* {successMessage && (
-            <div className="bg-green-100 text-green-700 border border-green-300 p-3 rounded text-right text-sm">
+            <div className="bg-green-100 text-green-700 border border-green-300 p-3 rounded text-sm">
               {successMessage}
             </div>
           )} */}
 
           <FormInput
-            label="البريد الإلكتروني"
+            label={t("emailLabel")}
             type="email"
-            placeholder="example@email.com"
+            placeholder={t("emailPlaceholder")}
             icon={Mail}
-            iconPosition="right"
-            rtl
+            iconPosition={isRtl ? "right" : "left"}
+            rtl={isRtl}
             error={errors.email?.message}
             {...register("email")}
           />
 
           <FormSubmitButton
             isLoading={mutation.isPending}
-            loadingText="جاري الإرسال..."
+            loadingText={t("sending")}
             size="lg"
             className="mt-4"
           >
-            إرسال
+            {t("sendButton")}
           </FormSubmitButton>
         </form>
 
-        <div className=" text-sm ">
-          <span className="text-gray-600">تذكرت كلمة المرور؟ </span>
+        <div className="text-sm" dir={isRtl ? "rtl" : "ltr"}>
+          <span className="text-gray-600">{t("rememberedPassword")} </span>
           <Link href="/login" className="cursor-pointer text-[#32A88D] hover:underline">
-            تسجيل الدخول
+            {t("loginNow")}
           </Link>
         </div>
       </CardContent>

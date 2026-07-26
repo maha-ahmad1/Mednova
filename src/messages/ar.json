@@ -741,6 +741,56 @@
       "unexpected": "حدث خطأ غير متوقع"
     }
   },
+  "forgotPassword": {
+    "title": "إعادة تعيين كلمة المرور",
+    "description": "أدخل بريدك الإلكتروني لإرسال رابط إعادة تعيين كلمة المرور",
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "example@email.com",
+    "sendButton": "إرسال",
+    "sending": "جاري الإرسال...",
+    "rememberedPassword": "تذكرت كلمة المرور؟",
+    "loginNow": "تسجيل الدخول",
+    "validation": {
+      "invalidEmail": "بريد إلكتروني غير صالح"
+    },
+    "defaultSuccessMessage": "تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني.",
+    "defaultErrorMessage": "حدث خطأ أثناء إرسال البريد.",
+    "connectionError": "حدث خطأ في الاتصال بالخادم"
+  },
+  "resetPassword": {
+    "title": "إعادة تعيين كلمة المرور",
+    "description": "أدخل الرمز وكلمة المرور الجديدة لتعيينها",
+    "newPasswordLabel": "كلمة المرور الجديدة",
+    "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+    "confirmPasswordLabel": "تأكيد كلمة المرور",
+    "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
+    "submitButton": "إعادة التعيين",
+    "submitting": "جارٍ إعادة التعيين...",
+    "validation": {
+      "passwordMin": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+      "passwordPattern": "يجب أن تحتوي على حرف كبير وحرف صغير ورمز",
+      "passwordMismatch": "كلمة المرور غير متطابقة"
+    },
+    "defaultError": "حدث خطأ أثناء إعادة التعيين",
+    "noConnection": "تعذر الاتصال بالخادم. تحقق من الإنترنت.",
+    "unexpectedError": "حدث خطأ غير متوقع."
+  },
+  "codeVerification": {
+    "title": "تأكيد الرمز",
+    "description": "أدخل رمز التحقق المرسل إلى بريدك الإلكتروني",
+    "confirmButton": "تأكيد الرمز",
+    "confirming": "جاري التحقق...",
+    "resendPrompt": "لم تستلم الرمز؟",
+    "resend": "إعادة إرسال الرمز",
+    "resendWithCountdown": "إعادة الإرسال ({countdown})",
+    "resending": "جاري الإرسال...",
+    "validation": {
+      "tokenIncomplete": "يجب إدخال جميع الأرقام الأربعة"
+    },
+    "defaultError": "حدث خطأ غير متوقع",
+    "noConnection": "لا يوجد اتصال بالخادم",
+    "resendError": "فشل في إعادة إرسال الرمز"
+  },
   "Auth": {
     "register": {
       "title": "إنشاء حساب جديد",

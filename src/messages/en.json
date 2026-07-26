@@ -741,6 +741,56 @@
       "unexpected": "An unexpected error occurred"
     }
   },
+  "forgotPassword": {
+    "title": "Reset Password",
+    "description": "Enter your email to receive a password reset link",
+    "emailLabel": "Email",
+    "emailPlaceholder": "example@email.com",
+    "sendButton": "Send",
+    "sending": "Sending...",
+    "rememberedPassword": "Remembered your password?",
+    "loginNow": "Sign in",
+    "validation": {
+      "invalidEmail": "Invalid email address"
+    },
+    "defaultSuccessMessage": "A reset link has been sent to your email.",
+    "defaultErrorMessage": "An error occurred while sending the email.",
+    "connectionError": "An error occurred while connecting to the server"
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "description": "Enter the code and your new password to set it",
+    "newPasswordLabel": "New Password",
+    "newPasswordPlaceholder": "Enter your new password",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "submitButton": "Reset Password",
+    "submitting": "Resetting...",
+    "validation": {
+      "passwordMin": "Password must be at least 6 characters",
+      "passwordPattern": "Password must contain an uppercase letter, a lowercase letter, and a symbol",
+      "passwordMismatch": "Passwords do not match"
+    },
+    "defaultError": "An error occurred while resetting the password",
+    "noConnection": "Could not reach the server. Check your internet connection.",
+    "unexpectedError": "An unexpected error occurred."
+  },
+  "codeVerification": {
+    "title": "Confirm Code",
+    "description": "Enter the verification code sent to your email",
+    "confirmButton": "Confirm Code",
+    "confirming": "Verifying...",
+    "resendPrompt": "Didn't receive the code?",
+    "resend": "Resend code",
+    "resendWithCountdown": "Resend ({countdown})",
+    "resending": "Sending...",
+    "validation": {
+      "tokenIncomplete": "Please enter all four digits"
+    },
+    "defaultError": "An unexpected error occurred",
+    "noConnection": "Could not reach the server",
+    "resendError": "Failed to resend the code"
+  },
   "Auth": {
     "register": {
       "title": "Create account",

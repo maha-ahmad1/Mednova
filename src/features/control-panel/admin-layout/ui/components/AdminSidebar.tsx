@@ -102,7 +102,7 @@ export function AdminSidebar({
           }}
           className={cn(
             "flex w-full flex-row-reverse items-center justify-end gap-3 rounded-lg px-3 py-2.5 text-right text-sm font-medium text-destructive transition-colors hover:bg-destructive/10",
-            collapsed && "justify-center px-2",
+            collapsed && "justify-center px-2 cursor-pointer",
           )}
           title={collapsed ? "تسجيل الخروج" : undefined}
         >

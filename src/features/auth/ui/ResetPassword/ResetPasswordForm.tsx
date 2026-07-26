@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import * as z from "zod";
+import { useTranslations, useLocale } from "next-intl";
 import { useResetPasswordStore } from "@/features/auth/store/useResetPasswordStore";
 import type { AxiosError } from "axios";
 
@@ -19,29 +20,40 @@ import {
 import { FormPasswordInput, FormSubmitButton } from "@/shared/ui/forms";
 import { resetPassword } from "@/features/auth/api/authApi";
 
-const resetPasswordSchema = z
-  .object({
-    password: z
-      .string()
-      .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
-        "يجب أن تحتوي على حرف كبير وحرف صغير ورمز"
-      ),
-    password_confirmation: z.string(),
-  })
-  .refine((data) => data.password === data.password_confirmation, {
-    message: "كلمة المرور غير متطابقة",
-    path: ["password_confirmation"],
-  });
+function createResetPasswordSchema(t: (key: string) => string) {
+  return z
+    .object({
+      password: z
+        .string()
+        .min(6, t("validation.passwordMin"))
+        .regex(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
+          t("validation.passwordPattern")
+        ),
+      password_confirmation: z.string(),
+    })
+    .refine((data) => data.password === data.password_confirmation, {
+      message: t("validation.passwordMismatch"),
+      path: ["password_confirmation"],
+    });
+}
 
-type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+type ResetPasswordFormData = z.infer<ReturnType<typeof createResetPasswordSchema>>;
 
 export function ResetPasswordForm() {
+  const locale = useLocale();
+  return <ResetPasswordFormInner key={locale} />;
+}
+
+function ResetPasswordFormInner() {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const { email, token, verification_method, resetAll } =
     useResetPasswordStore();
+  const t = useTranslations("resetPassword");
+  const locale = useLocale();
+  const isRtl = locale === "ar";
+  const resetPasswordSchema = useMemo(() => createResetPasswordSchema(t), [t]);
 
   const {
     register,
@@ -59,7 +71,7 @@ export function ResetPasswordForm() {
         resetAll();
         router.push("/login");
       } else {
-        setServerError(data.message || "حدث خطأ أثناء إعادة التعيين");
+        setServerError(data.message || t("defaultError"));
       }
     },
   onError: (error:AxiosError<{ message?: string; data?: { error?: string; errors?: Record<string, string[]> } }>) => {
@@ -73,13 +85,13 @@ export function ResetPasswordForm() {
         responseData?.data?.errors?.password?.[0] ||
         responseData?.data?.errors?.password_confirmation?.[0] ||
         responseData?.message ||
-        "حدث خطأ أثناء الاتصال بالخادم";
+        t("defaultError");
 
       setServerError(backendError);
     } else if (error.request) {
-      setServerError("تعذر الاتصال بالخادم. تحقق من الإنترنت.");
+      setServerError(t("noConnection"));
     } else {
-      setServerError("حدث خطأ غير متوقع.");
+      setServerError(t("unexpectedError"));
     }
   },
   });
@@ -97,45 +109,49 @@ export function ResetPasswordForm() {
 
   return (
     <Card className="w-full h-full flex flex-col justify-center border-0 shadow-none bg-transparent">
-      <CardHeader dir="rtl" className="space-y-2">
+      <CardHeader dir={isRtl ? "rtl" : "ltr"} className="space-y-2">
         <CardTitle className="text-2xl font-bold text-foreground">
-          إعادة تعيين كلمة المرور
+          {t("title")}
         </CardTitle>
         <CardDescription className="text-md">
-          أدخل الرمز وكلمة المرور الجديدة لتعيينها
+          {t("description")}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6 flex-1 flex flex-col justify-center mt-[-30px]">
-        <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} dir="rtl">
+        <form
+          className="space-y-5"
+          onSubmit={handleSubmit(onSubmit)}
+          dir={isRtl ? "rtl" : "ltr"}
+        >
           {serverError && (
-            <div className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-right text-sm">
+            <div className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-sm">
               {serverError}
             </div>
           )}
 
           <FormPasswordInput
-            label="كلمة المرور الجديدة"
-            placeholder="أدخل كلمة المرور الجديدة"
-            rtl
+            label={t("newPasswordLabel")}
+            placeholder={t("newPasswordPlaceholder")}
+            rtl={isRtl}
             error={errors.password?.message}
             {...register("password")}
           />
 
           <FormPasswordInput
-            label="تأكيد كلمة المرور"
-            placeholder="أعد إدخال كلمة المرور"
-            rtl
+            label={t("confirmPasswordLabel")}
+            placeholder={t("confirmPasswordPlaceholder")}
+            rtl={isRtl}
             error={errors.password_confirmation?.message}
             {...register("password_confirmation")}
           />
 
           <FormSubmitButton
             isLoading={mutation.isPending}
-            loadingText="جارٍ إعادة التعيين..."
+            loadingText={t("submitting")}
             disabled={!isValid}
           >
-            إعادة التعيين
+            {t("submitButton")}
           </FormSubmitButton>
         </form>
       </CardContent>

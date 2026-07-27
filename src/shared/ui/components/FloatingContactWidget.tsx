@@ -132,7 +132,7 @@ export function FloatingContactWidget() {
       {open && (
         <div className="flex flex-col items-end gap-3">
           <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            href={`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}`}
             target="_blank"
             rel="noopener noreferrer"
             className="animate-contact-pop-in motion-safe:hover:scale-[1.03] flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2.5 shadow-md transition-[transform,box-shadow] duration-150 hover:shadow-lg"

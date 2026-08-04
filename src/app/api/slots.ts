@@ -1,11 +1,4 @@
-import axios from "axios";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
-
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { "Content-Type": "application/json" },
-});
+import type { AxiosInstance } from "axios";
 
 export interface CheckAvailableSlotsParams {
   consultant_id: string | number;
@@ -29,25 +22,14 @@ export interface AvailableSlotsResponse {
 
 export const slotsApi = {
   checkAvailableSlots: async (
+    axios: AxiosInstance,
     params: CheckAvailableSlotsParams,
-    token?: string
   ): Promise<AvailableSlotsResponse> => {
-    console.log("Token in API call:", token);
-    
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-    
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-    
-    const response = await apiClient.post(
+    const response = await axios.post(
       "/api/consultation-request/video/check-available-slots",
       params,
-      { headers }
     );
-    
+
     return response.data;
   },
 };

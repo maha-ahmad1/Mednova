@@ -11,6 +11,7 @@ import { getProviderSpecializationLabel } from "@/features/service-provider/util
 import { ar, enUS } from "date-fns/locale";
 import { format } from "date-fns";
 import { slotsApi, type CheckAvailableSlotsParams } from "@/app/api/slots";
+import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import {
   formatTime,
   detectUserTimeZone,
@@ -51,6 +52,7 @@ export function useBookingLogic({
 
   const { data: session, status } = useSession();
   const { push } = useNavigationLoader();
+  const axiosInstance = useAxiosInstance();
 
   const { data: provider, isLoading: isLoadingProvider } =
     useFetcher<ServiceProvider | null>(
@@ -71,14 +73,6 @@ export function useBookingLogic({
       ? "therapist"
       : "rehabilitation_center";
   }, [currentConsultation, provider]);
-
-  // دالة للحصول على التوكن بشكل آمن
-  const getAuthToken = useCallback(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("auth_token") || "";
-    }
-    return "";
-  }, []);
 
   const ensureDate = useCallback(
     (date: Date | string | null | undefined): Date | null => {
@@ -141,11 +135,10 @@ export function useBookingLogic({
           timezone: timezone,
         };
 
-        const token = getAuthToken();
         console.log("جاري طلب الأوقات المتاحة من API...");
 
         // استدعاء الـ API الحقيقي
-        const response = await slotsApi.checkAvailableSlots(params, token);
+        const response = await slotsApi.checkAvailableSlots(axiosInstance, params);
 
         console.log("استجابة API للأوقات المتاحة:", response);
 
@@ -191,7 +184,7 @@ export function useBookingLogic({
       consultantType,
       patientId,
       session?.user?.id,
-      getAuthToken,
+      axiosInstance,
       ensureDate,
     ],
   );

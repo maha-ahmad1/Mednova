@@ -6,6 +6,7 @@ import { slotsApi, CheckAvailableSlotsParams } from "@/app/api/slots";
 import { format, parseISO } from "date-fns";
 import { ar } from "date-fns/locale";
 import { useSession } from "next-auth/react";
+import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 
 interface UseAvailableSlotsParams
   extends Omit<CheckAvailableSlotsParams, "date" | "day"> {
@@ -24,6 +25,7 @@ export const useAvailableSlots = ({
 }: UseAvailableSlotsParams) => {
   const { data: session } = useSession();
   const token = session?.accessToken;
+  const axiosInstance = useAxiosInstance();
 
   // ------------------------
   // 1) استخدام useMemo مع التخزين المؤقت
@@ -78,7 +80,7 @@ export const useAvailableSlots = ({
       }
       
       try {
-        const response = await slotsApi.checkAvailableSlots(params, token!);
+        const response = await slotsApi.checkAvailableSlots(axiosInstance, params);
         
         // التحقق من وجود بيانات صحيحة
         if (!response.success || !response.data?.available_slots) {

@@ -4,6 +4,10 @@ import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 import type { UserT } from "@/types/next-auth";
 
+
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -20,8 +24,8 @@ export const authOptions: NextAuthOptions = {
           const isControlPanelLogin =
             credentials.login_context === "control-panel";
           const loginUrl = isControlPanelLogin
-            ? "https://api.mednovacare.com/api/control-panel/auth/login"
-            : "https://api.mednovacare.com/api/auth/login";
+            ? `${API_URL}/api/control-panel/auth/login`
+            : `${API_URL}/api/auth/login`;
 
           const res = await fetch(loginUrl, {
             method: "POST",

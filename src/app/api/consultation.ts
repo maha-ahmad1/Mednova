@@ -1,4 +1,4 @@
- import axios from "axios";
+import type { AxiosInstance } from "axios";
 
 export interface UpdateStatusValues {
   id: string | number;
@@ -8,25 +8,11 @@ export interface UpdateStatusValues {
   action_reason?: string;
 }
 
- const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
-
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { "Content-Type": "application/json" },
-});
-
 export const consultationApi = {
-
-  updateStatus: async (
-    params: UpdateStatusValues,
-    token?: string
-  ) => {
-    const response = await apiClient.post(
+  updateStatus: async (axios: AxiosInstance, params: UpdateStatusValues) => {
+    const response = await axios.post(
       "/api/consultation-request/update-status-request",
       params,
-      {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      }
     );
     return response.data;
   },

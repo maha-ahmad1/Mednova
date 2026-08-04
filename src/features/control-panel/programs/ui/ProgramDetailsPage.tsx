@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProgramDetails } from "../hooks/useProgramDetails";
+import { apiOrigin } from "@/lib/apiConfig";
 
 interface ProgramDetailsPageProps {
   programId: string;
@@ -44,7 +45,7 @@ export function ProgramDetailsPage({ programId }: ProgramDetailsPageProps) {
       return videoPath;
     }
 
-    return `https://api.mednovacare.com${videoPath.startsWith("/") ? "" : "/"}${videoPath}`;
+    return `${apiOrigin}${videoPath.startsWith("/") ? "" : "/"}${videoPath}`;
   };
 
   if (isLoading) {

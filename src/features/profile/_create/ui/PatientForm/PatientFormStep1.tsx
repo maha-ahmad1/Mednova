@@ -30,11 +30,11 @@ const patientSchema = z.object({
   emergency_phone: z
     .string()
     .min(1, "رقم الطوارئ مطلوب")
-    .regex(/^\d{8,9}$/, "رقم الطوارئ يجب أن يحتوي على 8 أو 9 أرقام"),
+    .regex(/^\d{6,10}$/, "رقم الهاتف غير صحيح"),
   // phone: z
   //   .string()
   //   .min(1, "رقم الهاتف مطلوب")
-  //   .regex(/^\d{8,9}$/, "رقم الهاتف يجب أن يحتوي على 8 أو 9 أرقام"),
+  //   .regex(/^\d{6,10}$/, "رقم الهاتف غير صحيح"),
   phone: z.string().min(1, "رقم الهاتف مطلوب"),
   relationship: z.string().min(1, "العلاقة مطلوبة"),
   birth_date: z.string().min(1, "تاريخ الميلاد مطلوب"),

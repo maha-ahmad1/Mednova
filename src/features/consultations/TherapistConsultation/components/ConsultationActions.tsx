@@ -12,14 +12,12 @@ import { useConsultationStore } from "@/store/consultationStore";
 interface ConsultationActionsProps {
   request: ConsultationRequest;
   onRequestUpdate: (request: ConsultationRequest) => void;
-  token?: string;
   userRole?: "consultable" | "patient" | undefined;
 }
 
 export default function ConsultationActions({
   request,
   onRequestUpdate,
-  token,
   userRole,
 }: ConsultationActionsProps) {
   const t = useTranslations("consultations.actions");
@@ -40,7 +38,7 @@ export default function ConsultationActions({
   };
 
   const { acceptRequest, startConsultation, rejectRequest, isProcessing } =
-    useConsultationRequestActions(token, userRole);
+    useConsultationRequestActions(userRole);
 
   const handleAccept = async () => {
     try {

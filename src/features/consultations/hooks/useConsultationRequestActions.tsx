@@ -4,33 +4,31 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { ConsultationRequest } from "@/types/consultation";
 import { consultationApi } from "@/app/api/consultation";
+import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import type { AxiosError } from "axios";
 
 export const useConsultationRequestActions = (
-  token?: string,
   userRole: "consultable" | "patient" = "consultable"
 ) => {
   const queryClient = useQueryClient();
+  const axiosInstance = useAxiosInstance();
 
   const updateStatusMutation = useMutation({
     mutationFn: async (params: {
       request: ConsultationRequest;
       status: "accepted" | "completed" | "cancelled";
       reason?: string;
-      
+
     }) => {
       const { request, status, reason } = params;
 
-      return await consultationApi.updateStatus(
-        {
-          id: request.id,
-          status,
-          action_by: userRole,
-          consultant_nature: request.type,
-          action_reason: reason,
-        },
-        token
-      );
+      return await consultationApi.updateStatus(axiosInstance, {
+        id: request.id,
+        status,
+        action_by: userRole,
+        consultant_nature: request.type,
+        action_reason: reason,
+      });
     },
 
     onSuccess: (_, variables) => {

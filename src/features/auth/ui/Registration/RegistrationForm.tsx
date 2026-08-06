@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/card";
 import { User, Briefcase, Building2, Mail, Phone } from "lucide-react";
 import type { AxiosError } from "axios";
+import { DEFAULT_COUNTRY_CODES } from "@/utils/phone";
 
 function createRegistrationSchema(t: (key: string) => string) {
   return z
@@ -68,7 +69,7 @@ export function RegistrationForm() {
 }
 
 function RegistrationFormInner() {
-  const [countryCode, setCountryCode] = useState("+968");
+  const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_CODES[0]);
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
   const locale = useLocale();
@@ -166,22 +167,23 @@ function RegistrationFormInner() {
               </div>
             )}
 
-            <FormInput
-              label={t("register.fullName")}
-              placeholder={t("register.fullNamePlaceholder")}
-              icon={User}
-              iconPosition={isRtl ? "right" : "left"}
-              rtl={isRtl}
-              error={errors.full_name?.message}
-              {...methods.register("full_name")}
-            />
-
+            <div className="pt-6 lg:pt-0">
+              <FormInput
+                label={t("register.fullName")}
+                placeholder={t("register.fullNamePlaceholder")}
+                icon={User}
+                iconPosition="left"
+                rtl={isRtl}
+                error={errors.full_name?.message}
+                {...methods.register("full_name")}
+              />
+            </div>
             <FormInput
               label={t("register.email")}
               type="email"
               placeholder={t("register.emailPlaceholder")}
               icon={Mail}
-              iconPosition={isRtl ? "right" : "left"}
+              iconPosition="left"
               rtl={isRtl}
               error={errors.email?.message}
               {...methods.register("email")}
@@ -195,7 +197,7 @@ function RegistrationFormInner() {
                   label={t("register.phone")}
                   placeholder={t("register.phonePlaceholder")}
                   icon={Phone}
-                  iconPosition={isRtl ? "right" : "left"}
+                  iconPosition="left"
                   countryCodeValue={countryCode}
                   onCountryCodeChange={setCountryCode}
                   error={errors.phone?.message}
@@ -264,7 +266,9 @@ function RegistrationFormInner() {
         </FormProvider>
 
         <div dir={isRtl ? "rtl" : "ltr"}>
-          <span className="text-[#4B5563] text-md">{t("register.hasAccount")} </span>
+          <span className="text-[#4B5563] text-md">
+            {t("register.hasAccount")}{" "}
+          </span>
           <Link href="/login" className="text-[#32A88D] hover:underline">
             {t("register.login")}
           </Link>

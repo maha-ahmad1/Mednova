@@ -3,7 +3,12 @@
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { FormInput, FormSelect, ProfileImageUpload } from "@/shared/ui/forms";
+import {
+  FormInput,
+  FormSelect,
+  FormCitySelect,
+  ProfileImageUpload,
+} from "@/shared/ui/forms";
 import { useState, useEffect } from "react";
 import {
   Card,
@@ -22,6 +27,7 @@ import { showSuccessToast } from "@/lib/toastUtils";
 import { toast } from "sonner";
 import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { countries } from "@/constants/countries";
+import { DEFAULT_COUNTRY_CODES } from "@/utils/phone";
 import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 
 const patientStep2Schema = z.object({
@@ -94,7 +100,7 @@ export function PatientFormStep2({
 
   const [networkError, setNetworkError] = useState(false);
   const { push, replace } = useNavigationLoader();
-  const [countryCode] = useState(formData.countryCode || "+968");
+  const [countryCode] = useState(formData.countryCode || DEFAULT_COUNTRY_CODES[0]);
 
   const methods = useForm<PatientStep2FormData>({
     resolver: zodResolver(patientStep2Schema),
@@ -380,16 +386,11 @@ export function PatientFormStep2({
                     (c) => c.name === country,
                   );
                   return (
-                    <FormSelect
+                    <FormCitySelect
                       label="المدينة"
+                      cities={selectedCountry?.cities || []}
                       value={field.value}
                       onValueChange={field.onChange}
-                      options={
-                        selectedCountry?.cities.map((city) => ({
-                          value: city,
-                          label: city,
-                        })) || []
-                      }
                       error={fieldState.error?.message}
                       rtl
                     />

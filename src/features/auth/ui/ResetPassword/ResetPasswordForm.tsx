@@ -28,7 +28,7 @@ function createResetPasswordSchema(t: (key: string) => string) {
         .min(6, t("validation.passwordMin"))
         .regex(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
-          t("validation.passwordPattern")
+          t("validation.passwordPattern"),
         ),
       password_confirmation: z.string(),
     })
@@ -38,7 +38,9 @@ function createResetPasswordSchema(t: (key: string) => string) {
     });
 }
 
-type ResetPasswordFormData = z.infer<ReturnType<typeof createResetPasswordSchema>>;
+type ResetPasswordFormData = z.infer<
+  ReturnType<typeof createResetPasswordSchema>
+>;
 
 export function ResetPasswordForm() {
   const locale = useLocale();
@@ -74,26 +76,31 @@ function ResetPasswordFormInner() {
         setServerError(data.message || t("defaultError"));
       }
     },
-  onError: (error:AxiosError<{ message?: string; data?: { error?: string; errors?: Record<string, string[]> } }>) => {
-    console.error(" خطأ في الاتصال أو من السيرفر:", error);
+    onError: (
+      error: AxiosError<{
+        message?: string;
+        data?: { error?: string; errors?: Record<string, string[]> };
+      }>,
+    ) => {
+      console.error(" خطأ في الاتصال أو من السيرفر:", error);
 
-    if (error.response) {
-      const responseData = error.response.data;
+      if (error.response) {
+        const responseData = error.response.data;
 
-      const backendError =
-        responseData?.data?.error ||
-        responseData?.data?.errors?.password?.[0] ||
-        responseData?.data?.errors?.password_confirmation?.[0] ||
-        responseData?.message ||
-        t("defaultError");
+        const backendError =
+          responseData?.data?.error ||
+          responseData?.data?.errors?.password?.[0] ||
+          responseData?.data?.errors?.password_confirmation?.[0] ||
+          responseData?.message ||
+          t("defaultError");
 
-      setServerError(backendError);
-    } else if (error.request) {
-      setServerError(t("noConnection"));
-    } else {
-      setServerError(t("unexpectedError"));
-    }
-  },
+        setServerError(backendError);
+      } else if (error.request) {
+        setServerError(t("noConnection"));
+      } else {
+        setServerError(t("unexpectedError"));
+      }
+    },
   });
 
   const onSubmit = (data: ResetPasswordFormData) => {
@@ -129,15 +136,15 @@ function ResetPasswordFormInner() {
               {serverError}
             </div>
           )}
-
-          <FormPasswordInput
-            label={t("newPasswordLabel")}
-            placeholder={t("newPasswordPlaceholder")}
-            rtl={isRtl}
-            error={errors.password?.message}
-            {...register("password")}
-          />
-
+          <div className="pt-6 lg:pt-0">
+            <FormPasswordInput
+              label={t("newPasswordLabel")}
+              placeholder={t("newPasswordPlaceholder")}
+              rtl={isRtl}
+              error={errors.password?.message}
+              {...register("password")}
+            />
+          </div>
           <FormPasswordInput
             label={t("confirmPasswordLabel")}
             placeholder={t("confirmPasswordPlaceholder")}

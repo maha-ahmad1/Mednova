@@ -7,9 +7,11 @@ import {
   FormPhoneInput,
   FormFileUpload,
   FormSelect,
+  FormCitySelect,
   FormInput,
 } from "@/shared/ui/forms";
 import { countries } from "@/constants/countries";
+import { DEFAULT_COUNTRY_CODES } from "@/utils/phone";
 import type { PatientProfile } from "@/types/patient";
 import {
   Loader2,
@@ -61,7 +63,7 @@ export default function PatientPersonal2Card({
   useEffect(() => {
     if (isEditing) {
       const emergencyFull = patient.patient_details?.emergency_phone ?? "";
-      let emergencyCountryCode = "+968";
+      let emergencyCountryCode = DEFAULT_COUNTRY_CODES[0];
       let emergencyNumber = "";
 
       if (emergencyFull.startsWith("+")) {
@@ -280,7 +282,7 @@ export default function PatientPersonal2Card({
               <FormPhoneInput
                 label=""
                 countryCodeValue={
-                  (formValues.emergencyCountryCode as string) || "+968"
+                  (formValues.emergencyCountryCode as string) || DEFAULT_COUNTRY_CODES[0]
                 }
                 onCountryCodeChange={(code) =>
                   handleChange("emergencyCountryCode", code)
@@ -342,19 +344,16 @@ export default function PatientPersonal2Card({
             />
 
             {/* City */}
-            <FormSelect
+            <FormCitySelect
               label={t("cityLabel")}
               placeholder={
                 (formValues.country as string)
                   ? t("cityPlaceholder")
                   : t("cityPlaceholderNoCountry")
               }
+              cities={selectedCountry?.cities || []}
               value={(formValues.city as string) || ""}
               onValueChange={(val) => handleChange("city", val)}
-              options={(selectedCountry?.cities || []).map((c) => ({
-                value: c,
-                label: c,
-              }))}
               rtl={isRtl}
               error={getFieldError("city", "personal2")}
               className="bg-white"

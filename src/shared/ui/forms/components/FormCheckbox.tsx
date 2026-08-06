@@ -15,7 +15,7 @@ const FormCheckbox = React.forwardRef<HTMLInputElement, FormCheckboxProps>(
 
     return (
       <div className={cn("space-y-2", containerClassName)} dir={rtl ? "rtl" : "ltr"}>
-        <div className={cn("flex items-start gap-2", rtl )}>
+        <div className="flex items-start gap-2">
           <input
             type="checkbox"
             id={checkboxId}

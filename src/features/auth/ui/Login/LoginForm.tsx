@@ -34,9 +34,7 @@ type BackendErrorResponse = {
   status?: string;
 };
 
-function createLoginSchema(
-  t: (key: string) => string,
-) {
+function createLoginSchema(t: (key: string) => string) {
   return z.object({
     email: z.string().email(t("validation.invalidEmail")),
     password: z
@@ -158,8 +156,7 @@ function LoginFormInner() {
         // ✅ معالجة الحالة الثالثة: رسالة عامة
         else if (backendData?.message) {
           setServerError(backendData.message);
-        }
-        else {
+        } else {
           setServerError(t("errors.unexpected"));
         }
       } else {
@@ -234,7 +231,9 @@ function LoginFormInner() {
         <CardTitle className="text-2xl font-bold text-foreground">
           {t("title")}
         </CardTitle>
-        <CardDescription className="text-md">{t("description")}</CardDescription>
+        <CardDescription className="text-md">
+          {t("description")}
+        </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6 flex-1 flex flex-col justify-center mt-[-30px]">
@@ -255,18 +254,18 @@ function LoginFormInner() {
               {serverError}
             </div>
           )}
-
-          <FormInput
-            label={t("email")}
-            type="email"
-            placeholder={t("emailPlaceholder")}
-            icon={Mail}
-            iconPosition={isRtl ? "right" : "left"}
-            rtl={isRtl}
-            error={errors.email?.message}
-            {...register("email")}
-          />
-
+          <div className="pt-6 lg:pt-0">
+            <FormInput
+              label={t("email")}
+              type="email"
+              placeholder={t("emailPlaceholder")}
+              icon={Mail}
+              iconPosition="left"
+              rtl={isRtl}
+              error={errors.email?.message}
+              {...register("email")}
+            />
+          </div>
           <FormPasswordInput
             label={t("password")}
             placeholder={t("passwordPlaceholder")}
@@ -275,10 +274,7 @@ function LoginFormInner() {
             {...register("password")}
           />
 
-          <div
-            className="flex items-start gap-2"
-            dir={isRtl ? "rtl" : "ltr"}
-          >
+          <div className="flex items-start gap-2" dir={isRtl ? "rtl" : "ltr"}>
             <input
               type="checkbox"
               id="terms"
@@ -339,4 +335,3 @@ function LoginFormInner() {
     </Card>
   );
 }
-

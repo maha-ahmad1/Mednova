@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: "api.mednovacare.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "staging.mednovacare.com",
+        pathname: "/**",
+      },
     ],
   },
 };

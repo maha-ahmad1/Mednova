@@ -18,7 +18,7 @@ import { TherapistFormValues } from "@/app/api/therapist";
 import { personalSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
 import Image from "next/image";
-import { buildFullPhoneNumber, parsePhoneNumber } from "@/utils/phone";
+import { buildFullPhoneNumber, parsePhoneNumber, DEFAULT_COUNTRY_CODES } from "@/utils/phone";
 import { useTranslations, useLocale } from "next-intl";
 
 interface TherapistPersonalCardProps {
@@ -47,7 +47,7 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [localProfile, setLocalProfile] =
     useState<Partial<TherapistProfile> | null>(null);
-  const [countryCode, setCountryCode] = useState("+968");
+  const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_CODES[0]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const { update, isUpdating } = useUpdateTherapist();

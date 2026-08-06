@@ -16,7 +16,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 // import { getStatusBadge, getTypeIcon } from "@/lib/consultation-helpers";
 import ConsultationActions from "./ConsultationActions";
-import { useSession } from "next-auth/react";
 import { useEffect, useCallback } from "react"; // أضف useEffect
 import { useConsultationStore } from "@/store/consultationStore";
 import { Badge } from "@/components/ui/badge";
@@ -64,7 +63,6 @@ export default function ConsultationDetails({
   onRequestUpdate,
   userRole,
 }: ConsultationDetailsProps) {
-  const { data: session } = useSession();
   const t = useTranslations("consultations.panel");
   const tDays = useTranslations("consultations.panel.days");
   const tStatus = useTranslations("consultations.status");
@@ -358,7 +356,6 @@ const shouldShowZoomButton = () => {
       <ConsultationActions
         request={displayRequest} // ✅ استخدم displayRequest
         onRequestUpdate={onRequestUpdate}
-        token={session?.accessToken}
         userRole={userRole}
       />
     </div>

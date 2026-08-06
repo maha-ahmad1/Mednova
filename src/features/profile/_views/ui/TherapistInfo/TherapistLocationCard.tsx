@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { FormInput, FormSelect } from "@/shared/ui/forms";
+import { FormInput, FormSelect, FormCitySelect } from "@/shared/ui/forms";
 import { toast } from "sonner";
 import { countries } from "@/constants/countries";
 import type { TherapistProfile } from "@/types/therpist";
@@ -234,19 +234,16 @@ export function TherapistLocationCard({
               className="bg-white"
             />
 
-            <FormSelect
+            <FormCitySelect
               label={t("locationCard.cityLabel")}
               placeholder={
                 values.country
                   ? t("locationCard.cityPlaceholder")
                   : t("locationCard.cityPlaceholderNoCountry")
               }
+              cities={selectedCountry?.cities || []}
               value={values.city}
               onValueChange={(val) => setValues((v) => ({ ...v, city: val }))}
-              options={(selectedCountry?.cities || []).map((c) => ({
-                value: c,
-                label: c,
-              }))}
               rtl={isRtl}
               error={getFieldError("city")}
               className="bg-white"

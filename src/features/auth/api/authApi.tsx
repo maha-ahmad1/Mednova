@@ -1,12 +1,12 @@
 import axios from "axios";
 
 export interface RegistrationData {
-  full_name: string;  
+  full_name: string;
   email: string;
   phone: string;
   password: string;
-  password_confirmation: string; 
-  type_account: string;  
+  password_confirmation: string;
+  type_account: string;
 }
 export interface LoginData {
   email: string;
@@ -14,69 +14,62 @@ export interface LoginData {
 }
 
 const api = axios.create({
-  baseURL: "https://api.mednovacare.com/api",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-
 export const registerUser = async (data: RegistrationData) => {
-  const response = await api.post(
-    "/auth/register",
-    data,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await api.post("/auth/register", data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   return response.data;
 };
 
-
 export const loginUser = async (data: LoginData) => {
-   console.log("Sending login data:", data);
   const response = await api.post("/auth/login", data, {
     headers: { "Content-Type": "application/json" },
   });
   return response.data;
 };
 
-
-export const forgotPassword = async (data: { email: string; verification_method: string }) => {
+export const forgotPassword = async (data: {
+  email: string;
+  verification_method: string;
+}) => {
   const response = await api.post("/auth/forgot-password", data, {
     headers: { "Content-Type": "application/json" },
   });
   return response.data;
 };
 
-
-export const verifyToken = async (data: { email: string; token: string; verification_method: string }) => {
+export const verifyToken = async (data: {
+  email: string;
+  token: string;
+  verification_method: string;
+}) => {
   const response = await api.post("/auth/verifyToken", data, {
-   headers: {
-    "Content-Type": "application/json; charset=utf-8",
-    "Accept": "application/json",
-  },
-  // transformRequest: [(data) => {
-  //   // Ensure data is properly encoded
-  //   return JSON.stringify(data);
-  // }],
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      Accept: "application/json",
+    },
   });
   return response.data;
 };
 
-
 export const resetPassword = async (data: {
-  email: string
-  token: string
-  password: string
-  password_confirmation: string
-  verification_method: string
+  email: string;
+  token: string;
+  password: string;
+  password_confirmation: string;
+  verification_method: string;
 }) => {
   const response = await api.post("/auth/reset-password", data, {
     headers: { "Content-Type": "application/json" },
-  })
-  return response.data
-}
+  });
+  return response.data;
+};

@@ -7,7 +7,7 @@ import { FormStepCard } from "@/shared/ui/forms/components/FormStepCard";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { countries } from "@/constants/countries";
-import { FormSelect } from "@/shared/ui/forms";
+import { FormSelect, FormCitySelect } from "@/shared/ui/forms";
 import TimeZoneSelector from "@/features/consultationtype/video/ui/components/DateTimeSelector/TimeZoneSelector";
 import { useStepFormAutosave } from "@/features/profile/_create/hooks/useStepFormAutosave";
 import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
@@ -173,16 +173,11 @@ export function TherapistFormStep4({
                       (c) => c.name === country
                     );
                     return (
-                      <FormSelect
+                      <FormCitySelect
                         label="المدينة"
+                        cities={selectedCountry?.cities || []}
                         value={field.value}
                         onValueChange={field.onChange}
-                        options={
-                          selectedCountry?.cities.map((city) => ({
-                            value: city,
-                            label: city,
-                          })) || []
-                        }
                         error={fieldState.error?.message}
                         rtl
                       />

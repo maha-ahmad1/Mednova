@@ -22,7 +22,7 @@ import type { CenterProfile } from "@/types/center";
 import { useUpdateCenter } from "@/features/profile/_views/hooks/useUpdateCenter";
 import { centerSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
-import { buildFullPhoneNumber, parsePhoneNumber } from "@/utils/phone";
+import { buildFullPhoneNumber, parsePhoneNumber, DEFAULT_COUNTRY_CODES } from "@/utils/phone";
 import { formatDate } from "@/utils/dateUtils";
 import { useTranslations, useLocale } from "next-intl";
 
@@ -61,7 +61,7 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [localProfile, setLocalProfile] =
     useState<Partial<CenterProfile> | null>(null);
-  const [countryCode, setCountryCode] = useState("+968");
+  const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_CODES[0]);
 
   const { update, isUpdating } = useUpdateCenter({
     onValidationError: (errs) => setServerErrors(errs || {}),

@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import type { PatientProfile } from "@/types/patient";
 import { FormInput } from "@/shared/ui/forms";
 import { formatDate } from "@/utils/dateUtils";
+import { DEFAULT_COUNTRY_CODES } from "@/utils/phone";
 
 interface Props {
   patient: PatientProfile;
@@ -192,7 +193,7 @@ export default function PatientPersonal1Card({
               </label> */}
               <FormPhoneInput
                 label={t("phoneLabel")}
-                countryCodeValue={(formValues.countryCode as string) || "+968"}
+                countryCodeValue={(formValues.countryCode as string) || DEFAULT_COUNTRY_CODES[0]}
                 onCountryCodeChange={(code) =>
                   setFormValues((prev) => ({ ...prev, countryCode: code }))
                 }

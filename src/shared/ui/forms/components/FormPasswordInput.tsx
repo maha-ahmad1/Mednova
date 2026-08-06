@@ -64,7 +64,7 @@ const FormPasswordInput = React.forwardRef<
             ref={ref}
             type={showPassword ? "text" : "password"}
             className={cn(
-              showToggle && (rtl ? "pl-10" : "pr-10"),
+              showToggle && "pe-10",
               rtl && "text-right",
               error && "border-destructive focus-visible:ring-destructive",
               className,
@@ -80,10 +80,7 @@ const FormPasswordInput = React.forwardRef<
               type="button"
               variant="ghost"
               size="sm"
-              className={cn(
-                "absolute top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-transparent",
-                rtl ? "left-2" : "right-2"
-              )}
+              className="absolute top-1/2 end-2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-transparent"
               onClick={togglePasswordVisibility}
               tabIndex={-1}
             >

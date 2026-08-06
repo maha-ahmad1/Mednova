@@ -125,7 +125,7 @@ function ForgotPasswordInner() {
               {successMessage}
             </div>
           )} */}
-
+          <div className="pt-6 lg:pt-0">
           <FormInput
             label={t("emailLabel")}
             type="email"
@@ -136,6 +136,7 @@ function ForgotPasswordInner() {
             error={errors.email?.message}
             {...register("email")}
           />
+          </div>
 
           <FormSubmitButton
             isLoading={mutation.isPending}

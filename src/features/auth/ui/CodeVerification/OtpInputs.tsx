@@ -146,8 +146,8 @@ function OtpInputsInner() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-center border-0 shadow-none bg-transparent mt-14">
-      <div className="space-y-2" dir={isRtl ? "rtl" : "ltr"}>
+    <div className="w-full h-full flex flex-col justify-center px-4 lg:px-0 border-0 shadow-none bg-transparent mt-14">
+      <div className="space-y-2 " dir={isRtl ? "rtl" : "ltr"}>
         {serverError && (
           <div className="bg-red-100 text-red-600 border border-red-300 p-3 rounded text-sm">
             {serverError}
@@ -156,7 +156,7 @@ function OtpInputsInner() {
         <div className="text-2xl font-bold text-foreground">
           {t("title")}
         </div>
-        <div className="text-md">
+        <div className="text-md pt-2 lg:pt-0 pb-10 lg:pb-0">
           {t("description")}
         </div>
         {/* <div className="text-sm text-gray-600">{email}</div> */}
@@ -164,11 +164,11 @@ function OtpInputsInner() {
 
       <div className="space-y-6 flex-1 flex flex-col justify-center">
         <form
-          className="space-y-5 mt-[-20px]"
+          className="space-y-5  mt-[-20px]"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className="space-y-2">
-            <div className="flex justify-center" dir="ltr">
+          <div className="space-y-2 ">
+            <div className="flex justify-center " dir="ltr">
               <InputOTP
                 maxLength={4}
                 value={token}
@@ -176,12 +176,12 @@ function OtpInputsInner() {
                   setValue("token", value, { shouldValidate: true })
                 }
               >
-                <InputOTPGroup className="flex gap-4">
+                <InputOTPGroup className="flex gap-4 ">
                   {[0, 1, 2, 3].map((i) => (
                     <InputOTPSlot
                       key={i}
                       index={i}
-                      className={`w-16 h-16 text-lg font-bold text-center border-2 rounded-lg
+                      className={`w-16 h-16  text-lg font-bold text-center border-2 rounded-lg
                         ${
                           token[i]
                             ? "border-[#32A88D] text-[#4B5563] bg-[#F0FDF4] "

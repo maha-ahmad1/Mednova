@@ -1,4 +1,29 @@
-export const DEFAULT_COUNTRY_CODES = ["+968", "+966", "+971", "+965", "+974", "+973"] as const;
+export const ARAB_COUNTRY_CODES = [
+  { code: "+968", label: "عُمان", flag: "🇴🇲" },
+  { code: "+971", label: "الإمارات", flag: "🇦🇪" },
+  { code: "+966", label: "السعودية", flag: "🇸🇦" },
+  { code: "+974", label: "قطر", flag: "🇶🇦" },
+  { code: "+973", label: "البحرين", flag: "🇧🇭" },
+  { code: "+965", label: "الكويت", flag: "🇰🇼" },
+  { code: "+967", label: "اليمن", flag: "🇾🇪" },
+  { code: "+962", label: "الأردن", flag: "🇯🇴" },
+  { code: "+961", label: "لبنان", flag: "🇱🇧" },
+  { code: "+963", label: "سوريا", flag: "🇸🇾" },
+  { code: "+964", label: "العراق", flag: "🇮🇶" },
+  { code: "+970", label: "فلسطين", flag: "🇵🇸" },
+  { code: "+20", label: "مصر", flag: "🇪🇬" },
+  { code: "+218", label: "ليبيا", flag: "🇱🇾" },
+  { code: "+216", label: "تونس", flag: "🇹🇳" },
+  { code: "+213", label: "الجزائر", flag: "🇩🇿" },
+  { code: "+212", label: "المغرب", flag: "🇲🇦" },
+  { code: "+249", label: "السودان", flag: "🇸🇩" },
+  { code: "+269", label: "جزر القمر", flag: "🇰🇲" },
+  { code: "+253", label: "جيبوتي", flag: "🇩🇯" },
+  { code: "+222", label: "موريتانيا", flag: "🇲🇷" },
+  { code: "+252", label: "الصومال", flag: "🇸🇴" },
+] as const;
+
+export const DEFAULT_COUNTRY_CODES: string[] = ARAB_COUNTRY_CODES.map((c) => c.code);
 
 export type PhoneParseOptions = {
   defaultCountryCode?: string;

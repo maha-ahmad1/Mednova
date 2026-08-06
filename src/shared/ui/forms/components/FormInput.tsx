@@ -51,12 +51,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         )}
         <div className="relative">
           {Icon && iconPosition === "left" && (
-            <div
-              className={cn(
-                "absolute top-1/2 -translate-y-1/2 flex items-center pointer-events-none",
-                rtl ? "right-3" : "left-3"
-              )}
-            >
+            <div className="absolute top-1/2 end-2 -translate-y-1/2 flex items-center pointer-events-none">
               <Icon className="h-4 w-4 text-muted-foreground" />
             </div>
           )}
@@ -64,8 +59,8 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             id={inputId}
             ref={ref}
             className={cn(
-              Icon && iconPosition === "left" && (rtl ? "pr-10" : "pl-10"),
-              Icon && iconPosition === "right" && (rtl ? "pl-10" : "pr-10"),
+              Icon && iconPosition === "left" && "ps-10",
+              Icon && iconPosition === "right" && "pe-10",
               rtl && "text-right",
               error && "border-destructive focus-visible:ring-destructive",
               props.readOnly &&
@@ -79,12 +74,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
             {...props}
           />
           {Icon && iconPosition === "right" && (
-            <div
-              className={cn(
-                "absolute top-1/2 -translate-y-1/2 flex items-center pointer-events-none",
-                rtl ? "left-3" : "right-3"
-              )}
-            >
+            <div className="absolute top-1/2 end-3 -translate-y-1/2 flex items-center pointer-events-none">
               <Icon className="h-4 w-4 text-muted-foreground" />
             </div>
           )}

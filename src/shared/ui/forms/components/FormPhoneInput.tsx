@@ -5,11 +5,12 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { FormInput, type FormInputProps } from "./FormInput"
-import { DEFAULT_COUNTRY_CODES } from "@/utils/phone"
+import { ARAB_COUNTRY_CODES, DEFAULT_COUNTRY_CODES } from "@/utils/phone"
 
 export interface CountryCode {
   code: string
   label?: string
+  flag?: string
 }
 
 export interface FormPhoneInputProps extends Omit<FormInputProps, "type"> {
@@ -19,14 +20,18 @@ export interface FormPhoneInputProps extends Omit<FormInputProps, "type"> {
   countryCodeValue?: string
 }
 
-const defaultCountryCodes: CountryCode[] = DEFAULT_COUNTRY_CODES.map((code) => ({ code }))
+const defaultCountryCodes: CountryCode[] = ARAB_COUNTRY_CODES.map(({ code, label, flag }) => ({
+  code,
+  label: `${flag} ${label} (${code})`,
+  flag,
+}))
 
 const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
   (
     {
       label,
       countryCodes = defaultCountryCodes,
-      defaultCountryCode = "+968",
+      defaultCountryCode = DEFAULT_COUNTRY_CODES[0],
       onCountryCodeChange,
       countryCodeValue,
       rtl = false,
@@ -62,7 +67,7 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
             <SelectTrigger className="w-24 py-6">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="max-h-[220px] overflow-y-auto">
               {countryCodes.map((country: CountryCode) => (
                 <SelectItem key={country.code} value={country.code}>
                   {country.label || country.code}
@@ -72,7 +77,7 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
           </Select>
           <FormInput
             ref={ref}
-            type="number"
+            type="tel"
             className="no-spinner "
             containerClassName="flex-1"
             rtl={rtl}

@@ -1,30 +1,38 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { cn } from "@/lib/utils"
-import { FormInput, type FormInputProps } from "./FormInput"
-import { ARAB_COUNTRY_CODES, DEFAULT_COUNTRY_CODES } from "@/utils/phone"
+import * as React from "react";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { FormInput, type FormInputProps } from "./FormInput";
+import { ARAB_COUNTRY_CODES, DEFAULT_COUNTRY_CODES } from "@/utils/phone";
 
 export interface CountryCode {
-  code: string
-  label?: string
-  flag?: string
+  code: string;
+  label?: string;
+  flag?: string;
 }
 
 export interface FormPhoneInputProps extends Omit<FormInputProps, "type"> {
-  countryCodes?: CountryCode[]
-  defaultCountryCode?: string
-  onCountryCodeChange?: (code: string) => void
-  countryCodeValue?: string
+  countryCodes?: CountryCode[];
+  defaultCountryCode?: string;
+  onCountryCodeChange?: (code: string) => void;
+  countryCodeValue?: string;
 }
 
-const defaultCountryCodes: CountryCode[] = ARAB_COUNTRY_CODES.map(({ code, label, flag }) => ({
-  code,
-  label: `${flag} ${label} (${code})`,
-  flag,
-}))
+const defaultCountryCodes: CountryCode[] = ARAB_COUNTRY_CODES.map(
+  ({ code, label, flag }) => ({
+    code,
+    label: `${flag} ${label} (${code})`,
+    flag,
+  }),
+);
 
 const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
   (
@@ -40,41 +48,54 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
     },
     ref,
   ) => {
-    const [internalCountryCode, setInternalCountryCode] = React.useState(defaultCountryCode)
-    const currentCountryCode = countryCodeValue ?? internalCountryCode
+    const [internalCountryCode, setInternalCountryCode] =
+      React.useState(defaultCountryCode);
+    const currentCountryCode = countryCodeValue ?? internalCountryCode;
 
     const handleCountryCodeChange = (code: string) => {
-      setInternalCountryCode(code)
-      onCountryCodeChange?.(code)
-    }
+      setInternalCountryCode(code);
+      onCountryCodeChange?.(code);
+    };
 
     // ✅ تزامن مع القيمة القادمة من الـ parent
     React.useEffect(() => {
       if (countryCodeValue) {
-        setInternalCountryCode(countryCodeValue)
+        setInternalCountryCode(countryCodeValue);
       }
-    }, [countryCodeValue])
+    }, [countryCodeValue]);
 
     return (
-      <div className={cn("space-y-2", containerClassName)} dir={rtl ? "rtl" : "ltr"}>
+      <div
+        className={cn("space-y-2", containerClassName)}
+        dir={rtl ? "rtl" : "ltr"}
+      >
         {label && (
-          <Label dir="rtl" htmlFor={inputProps.id} className={cn("block", rtl && "text-right")}>
+          <Label
+            dir="rtl"
+            htmlFor={inputProps.id}
+            className={cn("block", rtl && "text-right")}
+          >
             {label}
           </Label>
         )}
         <div className="flex gap-2">
-          <Select value={currentCountryCode} onValueChange={handleCountryCodeChange}>
-            <SelectTrigger className="w-24 py-6">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="max-h-[220px] overflow-y-auto">
-              {countryCodes.map((country: CountryCode) => (
-                <SelectItem key={country.code} value={country.code}>
-                  {country.label || country.code}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div translate="no" className="notranslate">
+            <Select
+              value={currentCountryCode}
+              onValueChange={handleCountryCodeChange}
+            >
+              <SelectTrigger className="w-24 py-6">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="max-h-[220px] overflow-y-auto">
+                {countryCodes.map((country: CountryCode) => (
+                  <SelectItem key={country.code} value={country.code}>
+                    {country.label || country.code}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <FormInput
             ref={ref}
             type="tel"
@@ -85,10 +106,10 @@ const FormPhoneInput = React.forwardRef<HTMLInputElement, FormPhoneInputProps>(
           />
         </div>
       </div>
-    )
+    );
   },
-)
+);
 
-FormPhoneInput.displayName = "FormPhoneInput"
+FormPhoneInput.displayName = "FormPhoneInput";
 
-export { FormPhoneInput }
+export { FormPhoneInput };

@@ -19,6 +19,7 @@ import { personalSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
 import Image from "next/image";
 import { buildFullPhoneNumber, parsePhoneNumber, DEFAULT_COUNTRY_CODES } from "@/utils/phone";
+import { isValidPhoneLength, phoneLengthErrorMessage } from "@/utils/phoneValidation";
 import { useTranslations, useLocale } from "next-intl";
 
 interface TherapistPersonalCardProps {
@@ -103,6 +104,16 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
       return;
     }
 
+    if (
+      typeof formValues.phone === "string" &&
+      formValues.phone &&
+      !isValidPhoneLength(countryCode, formValues.phone)
+    ) {
+      setServerErrors({ phone: phoneLengthErrorMessage(countryCode) });
+      toast.error(t("personalCard.validationError"));
+      return;
+    }
+
     try {
       const phoneWithCode = buildFullPhoneNumber(
         countryCode,
@@ -162,6 +173,14 @@ export const TherapistPersonalCard: React.FC<TherapistPersonalCardProps> = ({
 
   const getFieldError = (field: keyof typeof formValues) => {
     const serverError = serverErrors[String(field)];
+
+    if (field === "phone") {
+      const ph = (formValues.phone as string) || "";
+      if (ph && !isValidPhoneLength(countryCode, ph)) {
+        return serverError ?? phoneLengthErrorMessage(countryCode);
+      }
+    }
+
     const shape = personalSchema.shape as Record<string, z.ZodTypeAny>;
     const parser = shape[String(field)];
     const rawValue = formValues[field];

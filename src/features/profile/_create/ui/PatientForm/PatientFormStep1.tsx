@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { FormInput } from "@/shared/ui/forms";
 import { Mail, User, Phone, Heart, WifiOff, RefreshCw } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -20,27 +20,33 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { FormPhoneInput } from "@/shared/ui/forms";
 import { parsePhoneNumber } from "@/utils/phone";
+import { isValidPhoneLength, phoneLengthErrorMessage } from "@/utils/phoneValidation";
 import { useApplyGlobalFormErrors } from "@/hooks/useApplyGlobalFormErrors";
 
 
 
-const patientSchema = z.object({
-  full_name: z.string().min(1, "الاسم الكامل مطلوب"),
-  email: z.string().email("بريد إلكتروني غير صالح"),
-  emergency_phone: z
-    .string()
-    .min(1, "رقم الطوارئ مطلوب")
-    .regex(/^\d{6,10}$/, "رقم الهاتف غير صحيح"),
-  // phone: z
-  //   .string()
-  //   .min(1, "رقم الهاتف مطلوب")
-  //   .regex(/^\d{6,10}$/, "رقم الهاتف غير صحيح"),
-  phone: z.string().min(1, "رقم الهاتف مطلوب"),
-  relationship: z.string().min(1, "العلاقة مطلوبة"),
-  birth_date: z.string().min(1, "تاريخ الميلاد مطلوب"),
-});
+function createPatientSchema(emergencyCountryCode: string) {
+  return z.object({
+    full_name: z.string().min(1, "الاسم الكامل مطلوب"),
+    email: z.string().email("بريد إلكتروني غير صالح"),
+    emergency_phone: z
+      .string()
+      .min(1, "رقم الطوارئ مطلوب")
+      .superRefine((val, ctx) => {
+        if (!isValidPhoneLength(emergencyCountryCode, val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: phoneLengthErrorMessage(emergencyCountryCode),
+          });
+        }
+      }),
+    phone: z.string().min(1, "رقم الهاتف مطلوب"),
+    relationship: z.string().min(1, "العلاقة مطلوبة"),
+    birth_date: z.string().min(1, "تاريخ الميلاد مطلوب"),
+  });
+}
 
-type PatientFormData = z.infer<typeof patientSchema> & {
+type PatientFormData = z.infer<ReturnType<typeof createPatientSchema>> & {
   countryCode?: string;
   emergency_phone: string;
 };
@@ -67,6 +73,11 @@ export function PatientFormStep1({
   );
   const [emergencyCountryCode, setEmergencyCountryCode] = useState(
     initialEmergencyPhone.countryCode,
+  );
+
+  const patientSchema = useMemo(
+    () => createPatientSchema(emergencyCountryCode),
+    [emergencyCountryCode],
   );
 
   const methods = useForm<PatientFormData>({

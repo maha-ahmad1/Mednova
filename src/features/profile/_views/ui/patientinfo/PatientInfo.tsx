@@ -15,6 +15,7 @@ import type { PatientProfile } from "@/types/patient";
 import type { ZodTypeAny } from "zod";
 import { signIn } from "next-auth/react";
 import { buildFullPhoneNumber, parsePhoneNumber } from "@/utils/phone";
+import { isValidPhoneLength, phoneLengthErrorMessage } from "@/utils/phoneValidation";
 
 export default function PatientInfo() {
   const { data: session } = useSession();
@@ -135,14 +136,30 @@ export default function PatientInfo() {
     const serverError = serverErrors[field];
     let clientError: string | undefined;
 
-    const schema = card === "personal1" ? personal1Schema : personal2Schema;
+    if (field === "phone" && card === "personal1") {
+      const cc = formValues.countryCode as string | undefined;
+      const ph = (formValues.phone as string) || "";
+      if (ph && cc && !isValidPhoneLength(cc, ph)) {
+        clientError = phoneLengthErrorMessage(cc);
+      }
+    } else if (field === "emergency_contact" && card === "personal2") {
+      const cc = formValues.emergencyCountryCode as string | undefined;
+      const ph = (formValues.emergency_contact as string) || "";
+      if (ph && cc && !isValidPhoneLength(cc, ph)) {
+        clientError = phoneLengthErrorMessage(cc);
+      }
+    }
 
-    const fieldSchema = (schema.shape as Record<string, ZodTypeAny | undefined>)[field];
-    if (fieldSchema) {
-      const rawValue = formValues[field];
-      const valueForParse = field === "image" ? rawValue ?? null : rawValue ?? "";
-      const result = fieldSchema.safeParse(valueForParse);
-      clientError = result.error?.issues[0]?.message;
+    if (!clientError) {
+      const schema = card === "personal1" ? personal1Schema : personal2Schema;
+
+      const fieldSchema = (schema.shape as Record<string, ZodTypeAny | undefined>)[field];
+      if (fieldSchema) {
+        const rawValue = formValues[field];
+        const valueForParse = field === "image" ? rawValue ?? null : rawValue ?? "";
+        const result = fieldSchema.safeParse(valueForParse);
+        clientError = result.error?.issues[0]?.message;
+      }
     }
 
     return serverError ?? clientError;
@@ -166,6 +183,24 @@ export default function PatientInfo() {
         setServerErrors(fieldErrors);
         toast.error(t("validationError"));
         return;
+      }
+
+      if (card === "personal1") {
+        const cc = formValues.countryCode as string | undefined;
+        const ph = formValues.phone as string | undefined;
+        if (cc && ph && !isValidPhoneLength(cc, ph)) {
+          setServerErrors({ phone: phoneLengthErrorMessage(cc) });
+          toast.error(t("validationError"));
+          return;
+        }
+      } else if (card === "personal2") {
+        const cc = formValues.emergencyCountryCode as string | undefined;
+        const ph = formValues.emergency_contact as string | undefined;
+        if (cc && ph && !isValidPhoneLength(cc, ph)) {
+          setServerErrors({ emergency_contact: phoneLengthErrorMessage(cc) });
+          toast.error(t("validationError"));
+          return;
+        }
       }
 
       if (card === "personal1") {

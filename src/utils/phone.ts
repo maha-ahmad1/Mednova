@@ -17,10 +17,6 @@ export const ARAB_COUNTRY_CODES = [
   { code: "+213", label: "الجزائر", flag: "🇩🇿" },
   { code: "+212", label: "المغرب", flag: "🇲🇦" },
   { code: "+249", label: "السودان", flag: "🇸🇩" },
-  { code: "+269", label: "جزر القمر", flag: "🇰🇲" },
-  { code: "+253", label: "جيبوتي", flag: "🇩🇯" },
-  { code: "+222", label: "موريتانيا", flag: "🇲🇷" },
-  { code: "+252", label: "الصومال", flag: "🇸🇴" },
 ] as const;
 
 export const DEFAULT_COUNTRY_CODES: string[] = ARAB_COUNTRY_CODES.map((c) => c.code);

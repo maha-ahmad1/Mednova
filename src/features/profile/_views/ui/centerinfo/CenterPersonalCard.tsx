@@ -23,6 +23,7 @@ import { useUpdateCenter } from "@/features/profile/_views/hooks/useUpdateCenter
 import { centerSchema } from "@/lib/validation";
 import type { QueryObserverResult } from "@tanstack/react-query";
 import { buildFullPhoneNumber, parsePhoneNumber, DEFAULT_COUNTRY_CODES } from "@/utils/phone";
+import { isValidPhoneLength, phoneLengthErrorMessage } from "@/utils/phoneValidation";
 import { formatDate } from "@/utils/dateUtils";
 import { useTranslations, useLocale } from "next-intl";
 
@@ -117,6 +118,16 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
       return;
     }
 
+    if (
+      typeof formValues.phone === "string" &&
+      formValues.phone &&
+      !isValidPhoneLength(countryCode, formValues.phone)
+    ) {
+      setServerErrors({ phone: phoneLengthErrorMessage(countryCode) });
+      toast.error(t("personalCard.validationError"));
+      return;
+    }
+
     try {
       const phoneWithCode = buildFullPhoneNumber(
         countryCode,
@@ -158,6 +169,14 @@ export const CenterPersonalCard: React.FC<CenterPersonalCardProps> = ({
 
   const getFieldError = (field: string) => {
     const serverError = serverErrors[field];
+
+    if (field === "phone") {
+      const ph = (formValues.phone as string) || "";
+      if (ph && !isValidPhoneLength(countryCode, ph)) {
+        return serverError ?? phoneLengthErrorMessage(countryCode);
+      }
+    }
+
     const shape = centerSchema.shape as Record<string, z.ZodTypeAny>;
     const rawValue = (formValues as Record<string, unknown>)[field];
     const valueForParse =

@@ -31,8 +31,9 @@ import {
 import { User, Briefcase, Building2, Mail, Phone } from "lucide-react";
 import type { AxiosError } from "axios";
 import { DEFAULT_COUNTRY_CODES } from "@/utils/phone";
+import { isValidPhoneLength, phoneLengthErrorMessage } from "@/utils/phoneValidation";
 
-function createRegistrationSchema(t: (key: string) => string) {
+function createRegistrationSchema(t: (key: string) => string, countryCode: string) {
   return z
     .object({
       full_name: z.string().min(1, t("register.validation.fullNameRequired")),
@@ -56,6 +57,15 @@ function createRegistrationSchema(t: (key: string) => string) {
     .refine((data) => data.password === data.password_confirmation, {
       message: t("register.validation.passwordsMismatch"),
       path: ["password_confirmation"],
+    })
+    .superRefine((data, ctx) => {
+      if (data.phone && !isValidPhoneLength(countryCode, data.phone)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["phone"],
+          message: phoneLengthErrorMessage(countryCode),
+        });
+      }
     });
 }
 
@@ -76,7 +86,10 @@ function RegistrationFormInner() {
   const t = useTranslations("Auth");
   const isRtl = locale === "ar";
 
-  const registrationSchema = useMemo(() => createRegistrationSchema(t), [t]);
+  const registrationSchema = useMemo(
+    () => createRegistrationSchema(t, countryCode),
+    [t, countryCode],
+  );
 
   const accountTypeOptions = useMemo(
     () => [

@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useMemo } from "react";
-import { signOut, useSession } from "next-auth/react";
+import { getSession, signOut, useSession } from "next-auth/react";
 import { useLocale } from "next-intl";
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
@@ -26,8 +26,20 @@ export const useAxiosInstance = () => {
 
     instance.interceptors.response.use(
       (response) => response,
-      (error) => {
+      async (error) => {
         if (error?.response?.status === 401) {
+          const originalRequest = error.config;
+          const currentSession = await getSession();
+
+          if (currentSession?.accessToken && !originalRequest._retry) {
+            originalRequest._retry = true;
+            originalRequest.headers = {
+              ...originalRequest.headers,
+              Authorization: `Bearer ${currentSession.accessToken}`,
+            };
+            return instance(originalRequest);
+          }
+
           signOut({ callbackUrl: "/login" });
         }
         return Promise.reject(error);

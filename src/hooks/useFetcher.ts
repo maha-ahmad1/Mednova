@@ -1,8 +1,9 @@
 import { useQuery, QueryKey, UseQueryOptions } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import { useAxiosInstance } from '@/lib/axios/axiosInstance';
 
 export const useFetcher = < T,
-  P extends Record<string, unknown> = Record<string, never>>(  
+  P extends Record<string, unknown> = Record<string, never>>(
   key: QueryKey,
   endpoint: string | null,
   options?: {
@@ -13,6 +14,7 @@ export const useFetcher = < T,
   }
 ) => {
   const axiosInstance = useAxiosInstance();
+  const { status } = useSession();
 
   return useQuery<T | null, Error>({
     queryKey: options?.params ? [...key, options.params] : key,
@@ -24,7 +26,7 @@ export const useFetcher = < T,
       );
       return response.data.data;
     },
-    enabled: !!endpoint && (options?.enabled ?? true),
+    enabled: !!endpoint && status === "authenticated" && (options?.enabled ?? true),
     staleTime: 1000 * 60 * (options?.staleTime || 5),
     refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
   });

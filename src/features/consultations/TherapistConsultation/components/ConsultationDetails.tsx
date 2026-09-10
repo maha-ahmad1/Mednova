@@ -19,8 +19,10 @@ import ConsultationActions from "./ConsultationActions";
 import { useEffect, useCallback } from "react"; // أضف useEffect
 import { useConsultationStore } from "@/store/consultationStore";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { History } from "lucide-react";
 import { getStatusBadge, getTypeIcon } from "@/features/consultations/utils/consultation-helpers";
+import MeasurementPanel from "@/features/measurements/ui/MeasurementPanel";
 
 // Formats the appointment day/time using the caller's translated day names
 const formatAppointmentDateTime = (
@@ -66,6 +68,7 @@ export default function ConsultationDetails({
   const t = useTranslations("consultations.panel");
   const tDays = useTranslations("consultations.panel.days");
   const tStatus = useTranslations("consultations.status");
+  const tMeasurements = useTranslations("measurements");
   const getStatusLabel = (status: string) => tStatus(status as "pending" | "accepted" | "cancelled" | "active" | "completed");
   const getDayLabel = (day: string) => {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -190,11 +193,7 @@ const shouldShowZoomButton = () => {
               onClick={() =>
                 window.open(String(displayRequest.video_room_link), "_blank")
               }
-              className={`w-full ${
-                isZoomLinkFromPusher()
-                  ? "bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
-                  : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-              } text-white py-3 sm:py-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 transition-all`}
+              className=" cursor-pointer w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white py-3 sm:py-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 transition-all"
             >
               <VideoIcon className="w-5 h-5" />
               <span className="font-semibold">
@@ -292,6 +291,15 @@ const shouldShowZoomButton = () => {
               />
               <InfoCard icon={Phone} label="رقم الهاتف" value={patient.phone} /> */}
             </div>
+            {!!patient?.id && (
+              <Link
+                href={`/profile/consultations/patients/${patient.id}/measurements?patientName=${encodeURIComponent(patient.full_name)}`}
+                className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[#32A88D] hover:underline"
+              >
+                <History className="w-4 h-4" />
+                {tMeasurements("historyLinkText")}
+              </Link>
+            )}
           </div>
         </>
       )}
@@ -344,7 +352,7 @@ const shouldShowZoomButton = () => {
       {displayRequest.type === "chat" &&
         ["accepted", "active", "completed"].includes(displayRequest.status) && (
           <div className="mb-6 sm:mb-8">
-            <Button asChild className="w-full bg-[#32A88D] hover:bg-[#2a8a7a] text-white py-3">
+            <Button asChild className=" cursor-pointer  w-full bg-[#32A88D] hover:bg-[#2a8a7a] text-white py-3">
               <Link href="/profile/chat">
                 <MessageCircle className="w-5 h-5 ml-2" />
                 {t("openChat")}
@@ -358,6 +366,7 @@ const shouldShowZoomButton = () => {
         onRequestUpdate={onRequestUpdate}
         userRole={userRole}
       />
+      <MeasurementPanel request={displayRequest} userRole={userRole} />
     </div>
   );
 

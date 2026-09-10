@@ -1200,7 +1200,7 @@
       "colRefund": "الاسترجاع",
       "colDate": "التاريخ",
       "loadError": "تعذر تحميل المدفوعات. حاول مرة أخرى.",
-      "emptyTitle": "لا توجد مدفوعات",
+      "emptyTitle": "لا توجد مدفوعات بعد",
       "emptyDescription": "ستظهر هنا مدفوعاتك عند إتمام أي استشارة",
       "methodVisa": "Visa",
       "methodMastercard": "ماستركارد",
@@ -1542,7 +1542,8 @@
       "rejectedDesc": "سيتم إعلام المريض بقرار الرفض",
       "acceptFailedToast": "فشل قبول الطلب، حاول مرة أخرى",
       "completeFailedToast": "فشل اكمال الطلب، حاول مرة أخرى",
-      "rejectFailedToast": "فشل الغاء الطلب، حاول مرة أخرى"
+      "rejectFailedToast": "فشل الغاء الطلب، حاول مرة أخرى",
+      "zoomAvailableSoonNote": "سيصبح Zoom متاحًا قبل موعد الاستشارة بـ 5 دقائق"
     },
     "rejectDialog": {
       "title": "تأكيد إلغاء الاستشارة",
@@ -1559,6 +1560,95 @@
       "cancelled": "مرفوض",
       "active": "نشطة",
       "completed": "مكتمل"
+    }
+  },
+  "measurements": {
+    "triggerButton": "طلب قياس",
+    "dialogTitle": "طلب قياس المدى الحركي",
+    "exerciseTypeLabel": "نوع التمرين",
+    "exerciseTypePlaceholder": "اختر تمريناً",
+    "exerciseTypes": {
+      "shoulderFlexion": "ثني الكتف",
+      "elbowExtension": "بسط المرفق",
+      "wristRotation": "دوران الرسغ",
+      "kneeFlexion": "ثني الركبة"
+    },
+    "affectedSideLabel": "الجانب المصاب",
+    "affectedSideOptions": {
+      "left": "أيسر",
+      "right": "أيمن",
+      "both": "كلاهما"
+    },
+    "targetRomLabel": "المدى الحركي المستهدف (بالدرجات)",
+    "targetRepsLabel": "عدد التكرارات المستهدف",
+    "durationLabel": "مدة الجلسة",
+    "durationOptions": {
+      "oneMin": "دقيقة واحدة",
+      "twoMin": "دقيقتان",
+      "fiveMin": "5 دقائق",
+      "custom": "مخصص"
+    },
+    "customDurationLabel": "مدة مخصصة (بالدقائق)",
+    "guidance": "ستُفتح جلسة القياس على منصة خارجية، وستظهر النتائج هنا تلقائياً عند انتهاء الجلسة.",
+    "submitButton": "بدء القياس",
+    "submitting": "جاري البدء...",
+    "cancelButton": "إلغاء",
+    "requestSuccess": "تم إرسال طلب القياس بنجاح",
+    "joinButton": "الانضمام للجلسة",
+    "copyLinkAriaLabel": "نسخ رابط المريض",
+    "linkCopied": "تم نسخ الرابط",
+    "cancelMeasurementButton": "إلغاء القياس",
+    "cancelling": "جاري الإلغاء...",
+    "cancelSuccess": "تم إلغاء القياس بنجاح",
+    "expiredLabel": "انتهت مهلة الانضمام",
+    "romLabel": "المدى الحركي",
+    "repsLabel": "عدد التكرارات",
+    "accuracyLabel": "الدقة",
+    "resultDurationLabel": "المدة",
+    "pusher": {
+      "completed": "اكتمل قياس {exercise} بنجاح",
+      "abandoned": "انتهى قياس {exercise} قبل اكتماله",
+      "cancelled": "تم إلغاء قياس {exercise}"
+    },
+    "endReasons": {
+      "completed": "اكتملت الجلسة بشكل طبيعي",
+      "stopped_by_therapist": "أوقفها المعالج",
+      "stopped_by_patient": "أوقفها المريض",
+      "pain": "تم الإيقاف بسبب الشعور بالألم",
+      "disconnected": "انقطع الاتصال أثناء الجلسة",
+      "timeout": "انتهت مهلة الجلسة",
+      "technical_error": "حدث خطأ تقني",
+      "cancelled_by_doctor": "تم الإلغاء من قبل المختص",
+      "unknown": "لم تكتمل الجلسة"
+    },
+    "errors": {
+      "exerciseTypeRequired": "يرجى اختيار نوع التمرين",
+      "affectedSideRequired": "يرجى اختيار الجانب المصاب",
+      "targetRomRange": "يجب أن يكون المدى الحركي المستهدف بين 1 و360 درجة",
+      "targetRepsRange": "يجب أن يكون عدد التكرارات بين 1 و100",
+      "customDurationRequired": "يرجى إدخال مدة مخصصة بين 1 و60 دقيقة"
+    },
+    "apiMessages": {
+      "NOT_FOUND": "الاستشارة غير موجودة",
+      "ERROR_OCCURRED": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+      "CREATE_SUCCESS": "تم الإنشاء بنجاح",
+      "STATUS_UPDATED": "تم تحديث الحالة",
+      "DATA_RETRIEVED_SUCCESSFULLY": "تم استرجاع البيانات بنجاح",
+      "UNAUTHORIZED_CONSULTATION_ACTION": "غير مصرح لك بتنفيذ هذا الإجراء على هذه الاستشارة"
+    },
+    "historyLinkText": "عرض سجل قياسات المريض",
+    "history": {
+      "pageTitle": "سجل قياسات المريض",
+      "pageSubtitle": "السجل الكامل لقياسات {name}",
+      "colDate": "التاريخ",
+      "colExercise": "التمرين",
+      "colSide": "الجانب",
+      "colStatus": "الحالة",
+      "colRom": "المدى الحركي",
+      "colAccuracy": "الدقة",
+      "emptyTitle": "لا توجد قياسات بعد",
+      "emptyDescription": "لا يوجد لهذا المريض أي سجل قياسات محفوظ.",
+      "loadError": "تعذر تحميل سجل القياسات."
     }
   },
   "chat": {

@@ -1200,7 +1200,7 @@
       "colRefund": "Refund",
       "colDate": "Date",
       "loadError": "Failed to load payments. Please try again.",
-      "emptyTitle": "No Payments",
+      "emptyTitle": "No payments yet",
       "emptyDescription": "Your payments will appear here when you complete a consultation",
       "methodVisa": "Visa",
       "methodMastercard": "Mastercard",
@@ -1542,7 +1542,8 @@
       "rejectedDesc": "The patient will be notified of the rejection decision",
       "acceptFailedToast": "Failed to accept the request, please try again",
       "completeFailedToast": "Failed to complete the request, please try again",
-      "rejectFailedToast": "Failed to cancel the request, please try again"
+      "rejectFailedToast": "Failed to cancel the request, please try again",
+      "zoomAvailableSoonNote": "Zoom will be available 5 minutes before the consultation."
     },
     "rejectDialog": {
       "title": "Confirm Consultation Cancellation",
@@ -1559,6 +1560,95 @@
       "cancelled": "Rejected",
       "active": "Active",
       "completed": "Completed"
+    }
+  },
+  "measurements": {
+    "triggerButton": "Request measurement",
+    "dialogTitle": "Request a Measurement",
+    "exerciseTypeLabel": "Exercise Type",
+    "exerciseTypePlaceholder": "Select an exercise",
+    "exerciseTypes": {
+      "shoulderFlexion": "Shoulder Flexion",
+      "elbowExtension": "Elbow Extension",
+      "wristRotation": "Wrist Rotation",
+      "kneeFlexion": "Knee Flexion"
+    },
+    "affectedSideLabel": "Affected Side",
+    "affectedSideOptions": {
+      "left": "Left",
+      "right": "Right",
+      "both": "Both"
+    },
+    "targetRomLabel": "Target ROM (degrees)",
+    "targetRepsLabel": "Target Repetitions",
+    "durationLabel": "Session Duration",
+    "durationOptions": {
+      "oneMin": "1 minute",
+      "twoMin": "2 minutes",
+      "fiveMin": "5 minutes",
+      "custom": "Custom"
+    },
+    "customDurationLabel": "Custom duration (minutes)",
+    "guidance": "A measurement session will open on an external platform. Results will return here automatically once the session ends.",
+    "submitButton": "Start measurement",
+    "submitting": "Starting...",
+    "cancelButton": "Cancel",
+    "requestSuccess": "Measurement request sent successfully",
+    "joinButton": "Join Session",
+    "copyLinkAriaLabel": "Copy patient link",
+    "linkCopied": "Link copied to clipboard",
+    "cancelMeasurementButton": "Cancel Measurement",
+    "cancelling": "Cancelling...",
+    "cancelSuccess": "Measurement cancelled successfully",
+    "expiredLabel": "Join window has expired",
+    "romLabel": "Range of Motion",
+    "repsLabel": "Repetitions",
+    "accuracyLabel": "Accuracy",
+    "resultDurationLabel": "Duration",
+    "pusher": {
+      "completed": "Measurement for {exercise} completed successfully",
+      "abandoned": "Measurement for {exercise} ended early",
+      "cancelled": "Measurement for {exercise} was cancelled"
+    },
+    "endReasons": {
+      "completed": "Session completed normally",
+      "stopped_by_therapist": "Stopped by the therapist",
+      "stopped_by_patient": "Stopped by the patient",
+      "pain": "Stopped due to reported pain",
+      "disconnected": "Session disconnected",
+      "timeout": "Session timed out",
+      "technical_error": "A technical error occurred",
+      "cancelled_by_doctor": "Cancelled by the consultant",
+      "unknown": "The session did not complete"
+    },
+    "errors": {
+      "exerciseTypeRequired": "Please select an exercise type",
+      "affectedSideRequired": "Please select the affected side",
+      "targetRomRange": "Target ROM must be between 1 and 360 degrees",
+      "targetRepsRange": "Target repetitions must be between 1 and 100",
+      "customDurationRequired": "Please enter a custom duration between 1 and 60 minutes"
+    },
+    "apiMessages": {
+      "NOT_FOUND": "Consultation not found",
+      "ERROR_OCCURRED": "An error occurred. Please try again.",
+      "CREATE_SUCCESS": "Created successfully",
+      "STATUS_UPDATED": "Status updated",
+      "DATA_RETRIEVED_SUCCESSFULLY": "Data retrieved successfully",
+      "UNAUTHORIZED_CONSULTATION_ACTION": "You are not authorized to perform this action on this consultation"
+    },
+    "historyLinkText": "View patient measurement history",
+    "history": {
+      "pageTitle": "Patient Measurement History",
+      "pageSubtitle": "Full measurement history for {name}",
+      "colDate": "Date",
+      "colExercise": "Exercise",
+      "colSide": "Side",
+      "colStatus": "Status",
+      "colRom": "ROM",
+      "colAccuracy": "Accuracy",
+      "emptyTitle": "No measurements yet",
+      "emptyDescription": "This patient has no recorded measurement history.",
+      "loadError": "Failed to load measurement history."
     }
   },
   "chat": {

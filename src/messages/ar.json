@@ -2099,5 +2099,16 @@
         "configuration": []
       }
     }
+  },
+  "measurementSessionResult": {
+    "title": "انتهت جلسة القياس",
+    "reps": "عدد التكرارات",
+    "accuracy": "الدقة",
+    "affectedSide": "الجانب المصاب",
+    "romAchieved": "المدى المُحقق مقابل الهدف",
+    "viewFullHistory": "عرض السجل الكامل",
+    "downloadReport": "تحميل التقرير",
+    "downloadFailed": "تعذّر تحميل التقرير، حاول مرة أخرى",
+    "waitingForResults": "جاري استلام نتائج الجلسة..."
   }
 }

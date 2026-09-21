@@ -2099,5 +2099,16 @@
         "configuration": []
       }
     }
+  },
+  "measurementSessionResult": {
+    "title": "Measurement session completed",
+    "reps": "Repetitions",
+    "accuracy": "Accuracy",
+    "affectedSide": "Affected Side",
+    "romAchieved": "ROM achieved vs. target",
+    "viewFullHistory": "View Full History",
+    "downloadReport": "Download Report",
+    "downloadFailed": "Failed to download the report, please try again",
+    "waitingForResults": "Receiving session results..."
   }
 }

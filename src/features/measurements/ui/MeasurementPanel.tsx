@@ -3,7 +3,7 @@
 import type { ConsultationRequest } from "@/types/consultation";
 import { useConsultationMeasurements } from "../hooks/useConsultationMeasurements";
 import MeasurementStatusCard from "./MeasurementStatusCard";
-import MeasurementResultCard from "./MeasurementResultCard";
+import SessionResultPanel, { SessionResultPanelSkeleton } from "./SessionResultPanel";
 
 interface MeasurementPanelProps {
   request: ConsultationRequest;
@@ -11,13 +11,19 @@ interface MeasurementPanelProps {
 }
 
 export default function MeasurementPanel({ request, userRole }: MeasurementPanelProps) {
-  const { latest } = useConsultationMeasurements(request.type, request.id);
+  const { latest, isLoading } = useConsultationMeasurements(request.type, request.id);
 
-  if (userRole === "patient" || !latest) return null;
+  if (userRole === "patient") return null;
+
+  if (isLoading && !latest) return <SessionResultPanelSkeleton />;
+
+  if (!latest) return null;
 
   if (latest.status === "pending" || latest.status === "in_progress") {
     return <MeasurementStatusCard measurement={latest} request={request} />;
   }
 
-  return <MeasurementResultCard measurement={latest} />;
+  return (
+    <SessionResultPanel measurement={latest} patientId={request.data.patient.id} />
+  );
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
@@ -23,14 +23,14 @@ import { handleBackendFormError } from "@/lib/backendFormErrors";
 import type { ConsultationRequest } from "@/types/consultation";
 import { useRequestMeasurement } from "../hooks/useRequestMeasurement";
 import { resolveApiMessage } from "../utils/resolveApiMessage";
-import { EXERCISE_TYPES } from "../utils/exerciseTypes";
+import { EXERCISE_TYPE_CODES, EXERCISE_TYPES } from "../utils/exerciseTypes";
 import type { AffectedSide, RequestMeasurementPayload } from "../types";
 
 const DURATION_OPTIONS = ["60", "120", "300", "custom"] as const;
 
 const measurementFormSchema = z
   .object({
-    exercise_type: z.string().min(1).max(100),
+    exercise_type: z.enum(EXERCISE_TYPE_CODES),
     affected_side: z.enum(["left", "right", "both"]),
     target_rom: z.number().min(1).max(360),
     target_reps: z.number().int().min(1).max(100),
@@ -86,7 +86,6 @@ export default function MeasurementRequestDialog({
   const form = useForm<MeasurementFormValues>({
     resolver: zodResolver(measurementFormSchema),
     defaultValues: {
-      exercise_type: "",
       duration_option: "60",
     },
   });
@@ -94,18 +93,19 @@ export default function MeasurementRequestDialog({
   const {
     watch,
     setValue,
+    control,
     formState: { errors },
   } = form;
 
   const mutation = useRequestMeasurement(request.type, request.id, () => {
-    form.reset({ exercise_type: "", duration_option: "60" });
+    form.reset({ duration_option: "60" });
     setOpen(false);
   });
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (mutation.isPending) return;
     if (!nextOpen) {
-      form.reset({ exercise_type: "", duration_option: "60" });
+      form.reset({ duration_option: "60" });
     }
     setOpen(nextOpen);
   };
@@ -182,22 +182,28 @@ export default function MeasurementRequestDialog({
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
-          <FormSelect
-            label={t("measurements.exerciseTypeLabel")}
-            placeholder={t("measurements.exerciseTypePlaceholder")}
-            rtl={dir === "rtl"}
-            disabled={mutation.isPending}
-            value={watch("exercise_type")}
-            onValueChange={(value) => setValue("exercise_type", value)}
-            options={EXERCISE_TYPES.map((exerciseType) => ({
-              value: exerciseType.value,
-              label: t(`measurements.exerciseTypes.${exerciseType.labelKey}`),
-            }))}
-            error={
-              errors.exercise_type
-                ? t("measurements.errors.exerciseTypeRequired")
-                : undefined
-            }
+          <Controller
+            name="exercise_type"
+            control={control}
+            render={({ field }) => (
+              <FormSelect
+                label={t("measurements.exerciseTypeLabel")}
+                placeholder={t("measurements.exerciseTypePlaceholder")}
+                rtl={dir === "rtl"}
+                disabled={mutation.isPending}
+                value={field.value}
+                onValueChange={field.onChange}
+                options={EXERCISE_TYPES.map((exerciseType) => ({
+                  value: exerciseType.value,
+                  label: t(`measurements.exerciseTypes.${exerciseType.labelKey}`),
+                }))}
+                error={
+                  errors.exercise_type
+                    ? t("measurements.errors.exerciseTypeRequired")
+                    : undefined
+                }
+              />
+            )}
           />
 
           <div className="flex flex-col gap-2">

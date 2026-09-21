@@ -1568,10 +1568,14 @@
     "exerciseTypeLabel": "نوع التمرين",
     "exerciseTypePlaceholder": "اختر تمريناً",
     "exerciseTypes": {
-      "shoulderFlexion": "ثني الكتف",
-      "elbowExtension": "بسط المرفق",
-      "wristRotation": "دوران الرسغ",
-      "kneeFlexion": "ثني الركبة"
+      "shoulderFlexion": "تأهيل الكتف",
+      "elbowFlexion": "ثني المرفق",
+      "hipFlexion": "ثني الورك",
+      "kneeFlexion": "ثني الركبة",
+      "ankleDorsiflexion": "تأهيل الكاحل",
+      "wristRehab": "تأهيل اليد",
+      "balance": "تمرين التوازن",
+      "handGrip": "قبضة اليد"
     },
     "affectedSideLabel": "الجانب المصاب",
     "affectedSideOptions": {

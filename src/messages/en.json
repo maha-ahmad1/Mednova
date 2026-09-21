@@ -1568,10 +1568,14 @@
     "exerciseTypeLabel": "Exercise Type",
     "exerciseTypePlaceholder": "Select an exercise",
     "exerciseTypes": {
-      "shoulderFlexion": "Shoulder Flexion",
-      "elbowExtension": "Elbow Extension",
-      "wristRotation": "Wrist Rotation",
-      "kneeFlexion": "Knee Flexion"
+      "shoulderFlexion": "Shoulder Rehab",
+      "elbowFlexion": "Elbow Flexion",
+      "hipFlexion": "Hip Flexion",
+      "kneeFlexion": "Knee Flexion",
+      "ankleDorsiflexion": "Ankle Rehab",
+      "wristRehab": "Hand Rehab",
+      "balance": "Balance Exercise",
+      "handGrip": "Hand Grip"
     },
     "affectedSideLabel": "Affected Side",
     "affectedSideOptions": {

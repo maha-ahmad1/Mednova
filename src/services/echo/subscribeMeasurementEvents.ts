@@ -18,11 +18,11 @@ interface SubscribeMeasurementEventsParams {
   t: (key: string, values?: Record<string, string | number | Date>) => string;
 }
 
-// exercise_type on the wire is the raw snake_case backend value (e.g.
-// "shoulder_flexion"), but the i18n keys under measurements.exerciseTypes.*
+// exercise_type on the wire is the canonical UPPER_SNAKE_CASE machine code
+// (e.g. "SHOULDER_FLEXION"), but the i18n keys under measurements.exerciseTypes.*
 // are camelCase (see exerciseTypes.ts) — go through that mapping rather than
 // assuming the raw value doubles as a translation key. Falls back to the raw
-// value for exercise types outside the known list (backend has no enum).
+// value for exercise types outside the known list.
 const resolveExerciseLabel = (
   exerciseType: string,
   t: (key: string, values?: Record<string, string | number | Date>) => string,

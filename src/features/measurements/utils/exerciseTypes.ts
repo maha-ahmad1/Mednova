@@ -1,10 +1,28 @@
-// TODO: backend has NOT provided an authoritative list — `exercise_type` is validated
-// server-side only by `max:100` (free string, no enum). This constant is a placeholder
-// until product/backend confirms the real list Thero supports. Keep this file isolated
-// so swapping the list later is a one-file change.
-export const EXERCISE_TYPES = [
-  { value: "shoulder_flexion", labelKey: "shoulderFlexion" },
-  { value: "elbow_extension", labelKey: "elbowExtension" },
-  { value: "wrist_rotation", labelKey: "wristRotation" },
-  { value: "knee_flexion", labelKey: "kneeFlexion" },
+// Canonical machine codes stabilized by Thero's backend refactor — replaces the old
+// free-text/placeholder list to kill the substring-matching bug it caused. Always send
+// the code (e.g. "SHOULDER_FLEXION") as `exercise_type`, never the display label.
+// NOTE: Arabic labels in messages/ar.json for these keys are a draft translation and
+// have not been clinically reviewed — confirm with Nada / the clinical lead before ship.
+export const EXERCISE_TYPE_CODES = [
+  "SHOULDER_FLEXION",
+  "ELBOW_FLEXION",
+  "HIP_FLEXION",
+  "KNEE_FLEXION",
+  "ANKLE_DORSIFLEXION",
+  "WRIST_REHAB",
+  "BALANCE",
+  "HAND_GRIP",
 ] as const;
+
+export type ExerciseTypeCode = (typeof EXERCISE_TYPE_CODES)[number];
+
+export const EXERCISE_TYPES: { value: ExerciseTypeCode; labelKey: string }[] = [
+  { value: "SHOULDER_FLEXION", labelKey: "shoulderFlexion" },
+  { value: "ELBOW_FLEXION", labelKey: "elbowFlexion" },
+  { value: "HIP_FLEXION", labelKey: "hipFlexion" },
+  { value: "KNEE_FLEXION", labelKey: "kneeFlexion" },
+  { value: "ANKLE_DORSIFLEXION", labelKey: "ankleDorsiflexion" },
+  { value: "WRIST_REHAB", labelKey: "wristRehab" },
+  { value: "BALANCE", labelKey: "balance" },
+  { value: "HAND_GRIP", labelKey: "handGrip" },
+];

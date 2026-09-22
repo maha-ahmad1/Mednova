@@ -11,10 +11,12 @@ export const useFetcher = < T,
     enabled?: boolean;
     params?: P;
     refetchOnWindowFocus?: boolean;
+    requiresAuth?: boolean;
   }
 ) => {
   const axiosInstance = useAxiosInstance();
   const { status } = useSession();
+  const requiresAuth = options?.requiresAuth ?? true;
 
   return useQuery<T | null, Error>({
     queryKey: options?.params ? [...key, options.params] : key,
@@ -26,7 +28,10 @@ export const useFetcher = < T,
       );
       return response.data.data;
     },
-    enabled: !!endpoint && status === "authenticated" && (options?.enabled ?? true),
+    enabled:
+      !!endpoint &&
+      (!requiresAuth || status === "authenticated") &&
+      (options?.enabled ?? true),
     staleTime: 1000 * 60 * (options?.staleTime || 5),
     refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
   });

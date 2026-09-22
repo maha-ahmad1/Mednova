@@ -37,9 +37,14 @@ export default function SpecialistProfile(): React.ReactNode {
   const [isBioClamped, setIsBioClamped] = useState(false);
   const bioRef = useRef<HTMLParagraphElement>(null);
 
-  const { data: rawProvider, isLoading, error } = useFetcher<ServiceProvider | null>(
+  const {
+    data: rawProvider,
+    isLoading,
+    error,
+  } = useFetcher<ServiceProvider | null>(
     ["providerProfile", params.id],
-    params.id ? `/api/customer/${params.id}` : null
+    params.id ? `/api/customer/${params.id}` : null,
+    { requiresAuth: false },
   );
 
   const provider = rawProvider
@@ -60,7 +65,8 @@ export default function SpecialistProfile(): React.ReactNode {
       })
     : null;
   const { data: session } = useSession();
-  const currentUserId = typeof session?.user?.id === "number" ? session.user.id : 0;
+  const currentUserId =
+    typeof session?.user?.id === "number" ? session.user.id : 0;
 
   useEffect(() => {
     if (!rawProvider || !params.id) return;
@@ -83,7 +89,10 @@ export default function SpecialistProfile(): React.ReactNode {
   const scrollToReviews = () => {
     setActiveTab("reviews");
     setTimeout(() => {
-      reviewsTabRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      reviewsTabRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }, 50);
   };
 
@@ -138,12 +147,18 @@ export default function SpecialistProfile(): React.ReactNode {
                 className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mt-4"
               >
                 <TabsList className="grid w-full grid-cols-2 mb-8">
-                  <TabsTrigger value="reviews" className="text-lg flex items-center gap-2">
+                  <TabsTrigger
+                    value="reviews"
+                    className="text-lg flex items-center gap-2"
+                  >
                     <Star className="w-5 h-5" />
                     {t("reviewsTab")}
                   </TabsTrigger>
 
-                  <TabsTrigger value="bio" className="text-lg flex items-center gap-2">
+                  <TabsTrigger
+                    value="bio"
+                    className="text-lg flex items-center gap-2"
+                  >
                     <BookOpen className="w-5 h-5" />
                     {t("bioTab")}
                   </TabsTrigger>
@@ -158,7 +173,9 @@ export default function SpecialistProfile(): React.ReactNode {
                     </div>
 
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-800 mb-4">{t("aboutTitle")}</h3>
+                      <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                        {t("aboutTitle")}
+                      </h3>
                       <p
                         ref={bioRef}
                         className={cn(
@@ -187,8 +204,12 @@ export default function SpecialistProfile(): React.ReactNode {
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-4">
                           <div className="text-center">
-                            <div className="text-4xl font-bold text-gray-800">{provider.rating.toFixed(1)}</div>
-                            <div className="text-gray-500">{t("outOfFive")}</div>
+                            <div className="text-4xl font-bold text-gray-800">
+                              {provider.rating.toFixed(1)}
+                            </div>
+                            <div className="text-gray-500">
+                              {t("outOfFive")}
+                            </div>
                           </div>
                           <div>
                             <div className="flex items-center gap-1">
@@ -203,7 +224,10 @@ export default function SpecialistProfile(): React.ReactNode {
                                 />
                               ))}
                             </div>
-                            <div className="text-gray-600 mt-1">({provider.reviewsCount} {t("reviewsCountSuffix")})</div>
+                            <div className="text-gray-600 mt-1">
+                              ({provider.reviewsCount} {t("reviewsCountSuffix")}
+                              )
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -226,7 +250,9 @@ export default function SpecialistProfile(): React.ReactNode {
               <div className="sticky top-8 space-y-6">
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">{t("chooseSessionTime")}</h3>
+                    <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
+                      {t("chooseSessionTime")}
+                    </h3>
 
                     <ScheduleCard provider={provider} />
 

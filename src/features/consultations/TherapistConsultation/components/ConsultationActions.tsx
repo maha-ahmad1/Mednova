@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Check, Video, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,11 @@ import type { ConsultationRequest } from "@/types/consultation";
 import RejectDialog from "./RejectDialog";
 import { useConsultationRequestActions } from "../../hooks/useConsultationRequestActions";
 import { useConsultationStore } from "@/store/consultationStore";
+import MeasurementRequestDialog from "@/features/measurements/ui/MeasurementRequestDialog";
+
+// Zoom becomes joinable this many minutes before the scheduled appointment time.
+const ZOOM_JOINABLE_LEAD_MS = 5 * 60 * 1000;
+
 interface ConsultationActionsProps {
   request: ConsultationRequest;
   onRequestUpdate: (request: ConsultationRequest) => void;
@@ -36,6 +41,60 @@ export default function ConsultationActions({
         | undefined)
     );
   };
+
+  // Reuses the same "requested_time" appointment field parsed the same way as
+  // AppointmentInfoCard/ConsultationDetails (space-separated datetime -> ISO).
+  const requestedTime = latestRequest.data.appointment?.requested_time;
+  const appointmentTimestamp = useMemo(() => {
+    if (!requestedTime) return null;
+    const parsed = new Date(requestedTime.replace(" ", "T")).getTime();
+    return Number.isNaN(parsed) ? null : parsed;
+  }, [requestedTime]);
+
+  // Fails open (joinable) when there's no appointment time to check against,
+  // matching the previous behavior of not time-gating the button at all.
+  const computeIsZoomTimeReached = (timestamp: number | null) =>
+    timestamp === null ? true : Date.now() >= timestamp - ZOOM_JOINABLE_LEAD_MS;
+
+  const [isZoomTimeReached, setIsZoomTimeReached] = useState(() =>
+    computeIsZoomTimeReached(appointmentTimestamp)
+  );
+
+  // `ConsultationActions` isn't remounted when the user switches between
+  // consultations in the list — only `request` (and so `appointmentTimestamp`)
+  // changes. Without this, `isZoomTimeReached` from the previously-viewed
+  // consultation would carry over. Comparing against the last-seen timestamp
+  // during render (React's documented pattern for resetting state on a prop
+  // change without a full remount) resets it synchronously, before paint, so
+  // there's no stale-state flash when switching back to an earlier consultation.
+  const [lastSeenTimestamp, setLastSeenTimestamp] = useState(appointmentTimestamp);
+  if (lastSeenTimestamp !== appointmentTimestamp) {
+    setLastSeenTimestamp(appointmentTimestamp);
+    setIsZoomTimeReached(computeIsZoomTimeReached(appointmentTimestamp));
+  }
+
+  useEffect(() => {
+    if (appointmentTimestamp === null || isZoomTimeReached) return;
+
+    const msUntilJoinable =
+      appointmentTimestamp - ZOOM_JOINABLE_LEAD_MS - Date.now();
+    if (msUntilJoinable <= 0) {
+      setIsZoomTimeReached(true);
+      return;
+    }
+
+    // Single scheduled timeout for the exact moment the window opens —
+    // no per-second ticking/re-rendering. Re-running this effect (because
+    // appointmentTimestamp changed) clears this timer via the cleanup below
+    // before scheduling a new one for the newly-selected consultation.
+    const timerId = setTimeout(() => setIsZoomTimeReached(true), msUntilJoinable);
+    return () => clearTimeout(timerId);
+  }, [appointmentTimestamp, isZoomTimeReached]);
+
+  const isZoomVisible =
+    request.type === "video" &&
+    (latestRequest.status === "active" || latestRequest.status === "accepted");
+  const isZoomJoinable = latestRequest.status === "active" || isZoomTimeReached;
 
   const { acceptRequest, startConsultation, rejectRequest, isProcessing } =
     useConsultationRequestActions(userRole);
@@ -120,8 +179,8 @@ export default function ConsultationActions({
           </div>
         )}
 
-        {request.status === "active" && request.type === "video" &&  getVideoRoomLink(latestRequest) && (
-          <div className="w-full">
+        {isZoomVisible && (
+          <div className="w-full mb-3">
             {/* <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg sm:rounded-xl mb-3 sm:mb-4">
               <Video className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
               <div className="flex-1">
@@ -156,11 +215,17 @@ export default function ConsultationActions({
               onClick={() =>
                 window.open(String(getVideoRoomLink(latestRequest)), "_blank")
               }
-              className="w-full mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center justify-center gap-2"
+              disabled={!isZoomJoinable}
+              className=" cursor-pointer  w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center justify-center gap-2"
             >
               <Video className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="font-semibold">{t("joinZoomSession")}</span>
             </Button>
+            {!isZoomJoinable && (
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                {t("zoomAvailableSoonNote")}
+              </p>
+            )}
           </div>
         )}
 
@@ -170,19 +235,6 @@ export default function ConsultationActions({
   return (
     <>
       <div className="flex flex-wrap gap-2 sm:gap-3 pt-4 sm:pt-6 border-t border-gray-200">
-        {/* {latestRequest.type === "video" &&
-          getVideoRoomLink(latestRequest) &&
-          latestRequest.status === "active" && ( // فقط active
-            <Button
-              onClick={() =>
-                window.open(String(getVideoRoomLink(latestRequest)), "_blank")
-              }
-              className="w-full mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center justify-center gap-2"
-            >
-              <Video className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="font-semibold">{t("joinZoomSession")}</span>
-            </Button>
-          )} */}
         {request.status === "pending" && (
           <>
             <Button
@@ -234,18 +286,28 @@ export default function ConsultationActions({
           </Button>
         )} */}
 
-        {request.status === "active" && request.type === "video" &&  getVideoRoomLink(latestRequest) && (
-          <div className="w-full">
+        {isZoomVisible && (
+          <div className="w-full mb-3">
              <Button
               onClick={() =>
                 window.open(String(getVideoRoomLink(latestRequest)), "_blank")
               }
-              className="w-full mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center justify-center gap-2"
+              disabled={!isZoomJoinable}
+              className="cursor-pointer w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center justify-center gap-2"
             >
               <Video className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="font-semibold">{t("joinZoomSession")}</span>
             </Button>
+            {!isZoomJoinable && (
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                {t("zoomAvailableSoonNote")}
+              </p>
+            )}
           </div>
+        )}
+
+        {request.status === "active" && (
+          <MeasurementRequestDialog request={request} />
         )}
 
         {request.status === "completed" && (

@@ -4,12 +4,14 @@ import { useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query";
 import { getEcho } from "@/lib/echo";
 import { useConsultationStore } from "@/store/consultationStore";
 import { useNotificationStore } from "@/store/notificationStore";
 import { subscribeConsultationEvents } from "@/services/echo/subscribeConsultationEvents";
 import { subscribeAccountEvents } from "@/services/echo/subscribeAccountEvents";
 import { subscribeSystemEvents } from "@/services/echo/subscribeSystemEvents";
+import { subscribeMeasurementEvents } from "@/services/echo/subscribeMeasurementEvents";
 import { useEventDeduplicator } from "@/hooks/useEventDeduplicator";
 
 export const useEchoNotifications = (): void => {
@@ -18,6 +20,8 @@ export const useEchoNotifications = (): void => {
   const pathname = usePathname();
   const pathnameRef = useRef(pathname);
   const t = useTranslations("accountStatus");
+  const tRoot = useTranslations();
+  const queryClient = useQueryClient();
 
   const addRequest = useConsultationStore((state) => state.addRequest);
   const updateRequest = useConsultationStore((state) => state.updateRequest);
@@ -123,6 +127,12 @@ export const useEchoNotifications = (): void => {
       addNotification,
     });
 
+    subscribeMeasurementEvents({
+      channel,
+      queryClient,
+      t: tRoot,
+    });
+
     return () => {
       if (echoRef.current && channelNameRef.current) {
         echoRef.current.leave(channelNameRef.current);
@@ -143,5 +153,7 @@ export const useEchoNotifications = (): void => {
     update,
     deduplicator,
     t,
+    tRoot,
+    queryClient,
   ]);
 };

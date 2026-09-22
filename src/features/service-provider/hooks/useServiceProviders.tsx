@@ -40,6 +40,6 @@ export const useServiceProviders = (
   return useFetcher<ServiceProvider[]>(
     ["serviceProviders", type, JSON.stringify(searchParams)],
     endpoint,
-    
+    { requiresAuth: false },
   );
 };

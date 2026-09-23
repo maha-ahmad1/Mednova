@@ -48,20 +48,6 @@ export const getPatientMeasurementHistory = async (
   return res.data;
 };
 
-// TODO: backend endpoint not built yet — GET /api/measurements/{measurementId}/report
-// is specified by product but doesn't exist server-side. Calls to this will 404 until
-// the backend team ships it; callers must fail gracefully (see SessionResultPanel.tsx).
-export const downloadMeasurementReport = async (
-  axios: AxiosInstance,
-  measurementId: string,
-): Promise<Blob> => {
-  const res = await axios.get<Blob>(
-    `/api/measurements/${measurementId}/report`,
-    { responseType: "blob" },
-  );
-  return res.data;
-};
-
 export const cancelMeasurement = async (
   axios: AxiosInstance,
   type: "video" | "chat",

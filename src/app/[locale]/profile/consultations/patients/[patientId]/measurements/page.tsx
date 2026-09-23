@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import MeasurementHistoryTable from "@/features/measurements/ui/MeasurementHistoryTable";
+import DownloadPatientReportButton from "@/features/measurements/ui/DownloadPatientReportButton";
 
 interface PageProps {
   params: Promise<{ patientId: string }>;
@@ -23,15 +24,18 @@ export default async function PatientMeasurementHistoryPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 sm:py-8 space-y-4 sm:space-y-6">
-      <div>
-        <h1 className="text-lg sm:text-xl font-bold text-gray-800">
-          {t("pageTitle")}
-        </h1>
-        {patientName && (
-          <p className="text-sm text-muted-foreground mt-1">
-            {t("pageSubtitle", { name: patientName })}
-          </p>
-        )}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="text-lg sm:text-xl font-bold text-gray-800">
+            {t("pageTitle")}
+          </h1>
+          {patientName && (
+            <p className="text-sm text-muted-foreground mt-1">
+              {t("pageSubtitle", { name: patientName })}
+            </p>
+          )}
+        </div>
+        <DownloadPatientReportButton patientId={patientId} />
       </div>
 
       <MeasurementHistoryTable patientId={patientId} />

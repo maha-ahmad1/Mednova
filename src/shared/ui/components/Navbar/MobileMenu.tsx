@@ -8,6 +8,7 @@ import { X, ChevronDown, Search } from "lucide-react";
 import { NavLinks, NavLink } from "./NavLinks";
 import { useTranslations } from 'next-intl';
 import { Input } from "@/components/ui/input";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -35,14 +36,19 @@ export default function MobileMenu({
         {/* الهيدر */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <Logo />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="text-gray-600 hover:text-[#32A88D] rounded-xl"
-          >
-            <X className="w-6 h-6" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <div className="min-[360px]:hidden">
+              <LanguageSwitcher />
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="text-gray-600 hover:text-[#32A88D] rounded-xl"
+            >
+              <X className="w-6 h-6" />
+            </Button>
+          </div>
         </div>
 
         {/* شريط البحث (للوحة التحكم فقط) */}

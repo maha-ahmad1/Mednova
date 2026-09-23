@@ -24,3 +24,28 @@ export function formatShortDate(isoDate: string | undefined | null): string {
 export function formatFullDate(isoDate: string | undefined | null): string {
   return formatDate(isoDate, { year: "numeric", month: "long", day: "numeric" });
 }
+
+const DEFAULT_LOCALIZED_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+};
+
+/**
+ * Locale-aware date formatter used to keep dates consistent across pages
+ * (e.g. the consultations list and the consultation details page).
+ */
+export function formatLocalizedDate(
+  isoDate: string | undefined | null,
+  locale: string,
+  options: Intl.DateTimeFormatOptions = DEFAULT_LOCALIZED_DATE_OPTIONS,
+  fallback = "—"
+): string {
+  if (!isoDate) return fallback;
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) return fallback;
+  return new Intl.DateTimeFormat(locale, {
+    numberingSystem: "latn",
+    ...options,
+  }).format(date);
+}

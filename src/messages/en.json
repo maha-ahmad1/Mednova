@@ -1262,7 +1262,7 @@
         "confirmButton": "Confirm",
         "confirmingButton": "Verifying...",
         "resendPrompt": "Didn't receive the code?",
-        "resendButton": "Go back to resend",
+        "resendButton": "Resend",
         "resendCooldown": "Resend ({seconds})",
         "otpIncomplete": "Please enter all six digits"
       },
@@ -1375,6 +1375,7 @@
       "retry": "Retry",
       "header": {
         "breadcrumb": "Consultation Details",
+        "back": "Back",
         "idBadge": "#{id}",
         "typeVideo": "Video",
         "typeChat": "Chat"
@@ -1599,6 +1600,8 @@
     "cancelButton": "Cancel",
     "requestSuccess": "Measurement request sent successfully",
     "joinButton": "Join Session",
+    "specialistLinkLabel": "Specialist link (for you to join)",
+    "patientLinkLabel": "Patient link (share with the patient)",
     "copyLinkAriaLabel": "Copy patient link",
     "linkCopied": "Link copied to clipboard",
     "cancelMeasurementButton": "Cancel Measurement",
@@ -1609,6 +1612,20 @@
     "repsLabel": "Repetitions",
     "accuracyLabel": "Accuracy",
     "resultDurationLabel": "Duration",
+    "sectionTitle": "Smart Glove Motion Measurement",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details",
+    "collapsedSummary": {
+      "success": "Last session completed — accuracy {accuracy}%",
+      "expired": "The last session timed out before completing the measurement",
+      "cancelledByDoctor": "The last session was cancelled by the doctor",
+      "cancelledByPatient": "The patient cancelled the last session",
+      "unknown": "The last session has ended"
+    },
+    "patientNotice": {
+      "inProgress": "Your therapist is currently running a motion measurement session",
+      "shared": "Your measurement session results were shared with your therapist"
+    },
     "pusher": {
       "completed": "Measurement for {exercise} completed successfully",
       "abandoned": "Measurement for {exercise} ended early",
@@ -1644,6 +1661,7 @@
     "history": {
       "pageTitle": "Patient Measurement History",
       "pageSubtitle": "Full measurement history for {name}",
+      "downloadFullReport": "Download Full Report",
       "colDate": "Date",
       "colExercise": "Exercise",
       "colSide": "Side",
@@ -2102,6 +2120,10 @@
   },
   "measurementSessionResult": {
     "title": "Measurement session completed",
+    "titleExpired": "The session timed out before the measurement was completed",
+    "titleCancelledByDoctor": "The session was cancelled by the doctor",
+    "titleCancelledByPatient": "The patient cancelled the session",
+    "titleUnknown": "The session has ended",
     "reps": "Repetitions",
     "accuracy": "Accuracy",
     "affectedSide": "Affected Side",
@@ -2109,6 +2131,7 @@
     "viewFullHistory": "View Full History",
     "downloadReport": "Download Report",
     "downloadFailed": "Failed to download the report, please try again",
+    "downloadMissingFilters": "Cannot download the report without a patient or a complete consultation",
     "waitingForResults": "Receiving session results..."
   }
 }

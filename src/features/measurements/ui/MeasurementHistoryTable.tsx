@@ -18,6 +18,10 @@ interface MeasurementHistoryTableProps {
 const SKELETON_ROWS = 6;
 const EM_DASH = "—";
 
+// Per-row report download (entry point C) is not wired here: `Measurement` has
+// no `consultation_id`/`consultation_type` fields, and the report endpoint
+// requires both together — this needs a backend response field addition first.
+
 export default function MeasurementHistoryTable({
   patientId,
 }: MeasurementHistoryTableProps) {

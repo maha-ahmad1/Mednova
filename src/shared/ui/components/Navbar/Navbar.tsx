@@ -66,7 +66,9 @@ export default function Navbar({
           )} */}
         </div>
         <div className="flex items-center gap-2">
-          <LanguageSwitcher />
+          <div className="hidden min-[360px]:block">
+            <LanguageSwitcher />
+          </div>
           <AuthActions />
         </div>
       </header>

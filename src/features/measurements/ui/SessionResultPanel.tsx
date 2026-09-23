@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { CheckCircle2, Download } from "lucide-react";
+import { CheckCircle2, Clock, Download, HelpCircle, Loader2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,27 +10,58 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/utils/dateUtils";
-import { useAxiosInstance } from "@/lib/axios/axiosInstance";
+import type { ConsultationType } from "@/types/consultation";
 import { EXERCISE_TYPES } from "../utils/exerciseTypes";
 import { getMeasurementStatusBadgeClass } from "../utils/mapMeasurementStatus";
-import { downloadMeasurementReport } from "../api/measurementApi";
+import { mapSessionOutcome, type SessionOutcome } from "../utils/mapSessionOutcome";
+import { useDownloadMeasurementReport } from "../hooks/useDownloadMeasurementReport";
 import type { AffectedSide, Measurement } from "../types";
 
 interface SessionResultPanelProps {
   measurement: Measurement;
   patientId: number;
+  consultationId: number;
+  consultationType: ConsultationType;
 }
 
-const KNOWN_END_REASONS = new Set([
-  "completed",
-  "stopped_by_therapist",
-  "stopped_by_patient",
-  "pain",
-  "disconnected",
-  "timeout",
-  "technical_error",
-  "cancelled_by_doctor",
-]);
+const OUTCOME_HEADER_KEY: Record<SessionOutcome, string> = {
+  success: "measurementSessionResult.title",
+  expired: "measurementSessionResult.titleExpired",
+  cancelled_by_doctor: "measurementSessionResult.titleCancelledByDoctor",
+  cancelled_by_patient: "measurementSessionResult.titleCancelledByPatient",
+  unknown: "measurementSessionResult.titleUnknown",
+};
+
+const OUTCOME_ICON: Record<SessionOutcome, typeof CheckCircle2> = {
+  success: CheckCircle2,
+  expired: Clock,
+  cancelled_by_doctor: XCircle,
+  cancelled_by_patient: XCircle,
+  unknown: HelpCircle,
+};
+
+const OUTCOME_ICON_CLASS: Record<SessionOutcome, string> = {
+  success: "text-[#32A88D]",
+  expired: "text-amber-600",
+  // Doctor-initiated cancellation is an expected, intentional action, not a
+  // problem state — kept neutral/gray so it doesn't read as alarming next to
+  // patient-initiated cancellation (kept red: unexpected, may need follow-up).
+  cancelled_by_doctor: "text-gray-500",
+  cancelled_by_patient: "text-red-600",
+  unknown: "text-gray-400",
+};
+
+// Same distinction as OUTCOME_ICON_CLASS, applied as a border-inline-start
+// accent on the outer card so outcomes are distinguishable beyond icon/text
+// color alone (audit P0-2). Reuses the exact border-s-* accent pattern
+// already used for the selected-item state in ConsultationList.tsx.
+const OUTCOME_ACCENT_CLASS: Record<SessionOutcome, string> = {
+  success: "border-s-4 border-s-[#32A88D]",
+  expired: "border-s-4 border-s-amber-400",
+  cancelled_by_doctor: "border-s-4 border-s-gray-400",
+  cancelled_by_patient: "border-s-4 border-s-red-400",
+  unknown: "border-s-4 border-s-gray-300",
+};
 
 function ProgressMetric({
   label,
@@ -74,11 +106,13 @@ function MetricTile({ label, value }: { label: string; value: string }) {
 export default function SessionResultPanel({
   measurement,
   patientId,
+  consultationId,
+  consultationType,
 }: SessionResultPanelProps) {
   const t = useTranslations();
   const locale = useLocale();
-  const axios = useAxiosInstance();
   const dateLocale = locale === "ar" ? "ar-OM" : "en-US";
+  const { download, isDownloading } = useDownloadMeasurementReport();
 
   const exerciseTypeConfig = EXERCISE_TYPES.find(
     (entry) => entry.value === measurement.exercise_type,
@@ -91,60 +125,57 @@ export default function SessionResultPanel({
     `measurements.affectedSideOptions.${measurement.affected_side as AffectedSide}`,
   );
 
-  const hasResultData =
-    measurement.measured_rom !== null && measurement.reps_completed !== null;
-  const showMetrics =
-    measurement.status === "completed" ||
-    (measurement.status === "abandoned" && hasResultData);
-  const showExplanation =
-    measurement.status === "cancelled" ||
-    (measurement.status === "abandoned" && !hasResultData);
+  const outcome = mapSessionOutcome(measurement.end_reason);
+  const hasPartialData = (measurement.reps_completed ?? 0) > 0;
 
-  const endReasonLabel =
-    measurement.end_reason && KNOWN_END_REASONS.has(measurement.end_reason)
-      ? t(`measurements.endReasons.${measurement.end_reason}`)
-      : t("measurements.endReasons.unknown");
+  // success shows the full metrics/ROM/download set; expired and both
+  // cancellation outcomes show them only when reps were actually recorded;
+  // unknown never shows result data, per the outcome table this panel implements.
+  const showResultsData = outcome === "success" || hasPartialData;
+  const showRomBar = outcome === "success";
 
-  const handleDownloadReport = async () => {
-    try {
-      const blob = await downloadMeasurementReport(axios, measurement.measurement_id);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `measurement-report-${measurement.measurement_id}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    } catch {
-      // TODO: depends on the backend endpoint GET /api/measurements/{id}/report, which
-      // does not exist yet — this will 404 until the backend team ships it.
-      toast.error(t("measurementSessionResult.downloadFailed"));
-    }
+  const OutcomeIcon = OUTCOME_ICON[outcome];
+
+  // Stopgap toast only — the persistent notification-bell entry for
+  // patient-initiated cancellation is a follow-up pending a backend-created
+  // notification type for this event; it cannot be built from the frontend alone.
+  const patientCancelToastFiredFor = useRef<string | null>(null);
+  useEffect(() => {
+    if (outcome !== "cancelled_by_patient") return;
+    if (patientCancelToastFiredFor.current === measurement.measurement_id) return;
+    patientCancelToastFiredFor.current = measurement.measurement_id;
+    toast.info(t("measurementSessionResult.titleCancelledByPatient"));
+  }, [outcome, measurement.measurement_id, t]);
+
+  const handleDownloadReport = () => {
+    // A consultation-scoped report returns every measurement for this
+    // consultation, not just the one shown here — expected if a single
+    // bridge session covers more than one exercise, not a bug.
+    download({ consultation_id: consultationId, consultation_type: consultationType });
   };
 
   return (
-    <Card className="bg-gradient-to-b from-white to-gray-50/50 border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg mt-4 sm:mt-6">
+    <Card
+      className={`bg-gradient-to-b from-white to-gray-50/50 border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg mt-4 sm:mt-6 ${OUTCOME_ACCENT_CLASS[outcome]}`}
+    >
       <CardContent className="p-4 sm:p-6 flex flex-col gap-4">
-        {measurement.status === "completed" && (
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-[#32A88D] shrink-0" />
-            <div>
-              <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                {t("measurementSessionResult.title")}
+        <div className="flex items-center gap-2">
+          <OutcomeIcon className={`w-5 h-5 shrink-0 ${OUTCOME_ICON_CLASS[outcome]}`} />
+          <div>
+            <p className="font-semibold text-gray-800 text-sm sm:text-base">
+              {t(OUTCOME_HEADER_KEY[outcome])}
+            </p>
+            {measurement.completed_at && (
+              <p className="text-xs text-gray-500">
+                {formatDate(
+                  measurement.completed_at,
+                  { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" },
+                  dateLocale,
+                )}
               </p>
-              {measurement.completed_at && (
-                <p className="text-xs text-gray-500">
-                  {formatDate(
-                    measurement.completed_at,
-                    { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" },
-                    dateLocale,
-                  )}
-                </p>
-              )}
-            </div>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="flex items-center justify-between gap-2">
           <div>
@@ -163,34 +194,30 @@ export default function SessionResultPanel({
           </Badge>
         </div>
 
-        {showMetrics && (
-          <>
-            <div className="flex gap-3">
-              <MetricTile
-                label={t("measurementSessionResult.reps")}
-                value={String(measurement.reps_completed ?? 0)}
-              />
-              <MetricTile
-                label={t("measurementSessionResult.accuracy")}
-                value={
-                  measurement.accuracy_percentage !== null
-                    ? `${measurement.accuracy_percentage}%`
-                    : "-"
-                }
-              />
-            </div>
-
-            <ProgressMetric
-              label={t("measurementSessionResult.romAchieved")}
-              value={measurement.measured_rom ?? 0}
-              target={measurement.target_rom}
-              unit="°"
+        {showResultsData && (
+          <div className="flex gap-3">
+            <MetricTile
+              label={t("measurementSessionResult.reps")}
+              value={String(measurement.reps_completed ?? 0)}
             />
-          </>
+            <MetricTile
+              label={t("measurementSessionResult.accuracy")}
+              value={
+                measurement.accuracy_percentage !== null
+                  ? `${measurement.accuracy_percentage}%`
+                  : "-"
+              }
+            />
+          </div>
         )}
 
-        {showExplanation && (
-          <p className="text-xs sm:text-sm text-muted-foreground">{endReasonLabel}</p>
+        {showRomBar && (
+          <ProgressMetric
+            label={t("measurementSessionResult.romAchieved")}
+            value={measurement.measured_rom ?? 0}
+            target={measurement.target_rom}
+            unit="°"
+          />
         )}
 
         <div className="flex flex-col sm:flex-row gap-2 pt-1">
@@ -205,14 +232,21 @@ export default function SessionResultPanel({
               {t("measurementSessionResult.viewFullHistory")}
             </Link>
           </Button>
-          <Button
-            type="button"
-            onClick={handleDownloadReport}
-            className="cursor-pointer flex-1 bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white flex items-center justify-center gap-2"
-          >
-            <Download className="w-4 h-4" />
-            {t("measurementSessionResult.downloadReport")}
-          </Button>
+          {showResultsData && (
+            <Button
+              type="button"
+              onClick={handleDownloadReport}
+              disabled={isDownloading}
+              className="cursor-pointer flex-1 bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white flex items-center justify-center gap-2"
+            >
+              {isDownloading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              {t("measurementSessionResult.downloadReport")}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

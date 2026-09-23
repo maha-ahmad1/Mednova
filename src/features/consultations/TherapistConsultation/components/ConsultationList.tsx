@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Search, MessageCircle, ChevronLeft, Clock, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "@/i18n/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { ConsultationRequest } from "@/types/consultation";
+import { formatLocalizedDate } from "@/utils/dateUtils";
 // import {
 //   getStatusBadge,
 //   getTypeIcon,
@@ -40,6 +41,7 @@ export default function ConsultationList({
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "video" | "chat">("all");
   const t = useTranslations("consultations.list");
+  const locale = useLocale();
   const tStatus = useTranslations("consultations.status");
   const getStatusLabel = (status: string) => tStatus(status as "pending" | "accepted" | "cancelled" | "active" | "completed");
 
@@ -94,8 +96,8 @@ export default function ConsultationList({
         isMobile && selectedRequest ? "hidden" : "block"
       }`}
     >
-      <Card className="bg-gradient-to-b from-white to-gray-50/50 border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg">
-        <CardHeader className="pb-3 sm:pb-4 border-b border-gray-100">
+      <Card className="rounded-none border-0 bg-white shadow-none md:rounded-2xl md:border md:border-gray-200 md:bg-gradient-to-b md:from-white md:to-gray-50/50 md:shadow-lg">
+        <CardHeader className="px-4 pt-3 pb-0 border-b-0 md:px-6 md:pt-6 md:pb-4 md:border-b md:border-gray-100">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg sm:text-xl font-bold text-gray-800 flex items-center gap-2">
               <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#32A88D]" />
@@ -120,147 +122,159 @@ export default function ConsultationList({
               </Button>
             )}
           </div>
+        </CardHeader>
 
-          <div className="relative mt-3 sm:mt-4">
+        {/* Search + tabs: sticky under the app header on mobile while scrolling */}
+        <div className="sticky top-0 z-10 -mx-4 bg-white px-4 pb-1 pt-2 md:static md:mx-0 md:bg-transparent md:px-6 md:pt-4 md:pb-4">
+          <div className="relative">
             <Search className="absolute end-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
               type="text"
               placeholder={t("searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pe-10 bg-gray-50 border-gray-200 rounded-lg sm:rounded-xl focus:border-[#32A88D] focus:ring-[#32A88D] text-sm sm:text-base"
+              className="pe-10 h-11 bg-gray-50 border-gray-200 rounded-lg md:rounded-xl focus:border-[#32A88D] focus:ring-[#32A88D] text-sm sm:text-base"
             />
           </div>
-        </CardHeader>
 
-        <CardContent className="p-0">
           <Tabs
             value={activeTab}
             onValueChange={(value) =>
               setActiveTab(value as "all" | "video" | "chat")
             }
-            className="w-full"
+            className="w-full mt-2"
           >
-            <TabsList className="grid w-full grid-cols-3 p-1 sm:p-2 bg-gray-50 rounded-t-xl sm:rounded-t-2xl border-b border-gray-100">
+            <TabsList className="grid w-full grid-cols-3 p-1 bg-gray-50 rounded-lg md:rounded-xl">
               <TabsTrigger
                 value="video"
-                className="text-xs sm:text-sm data-[state=active]:bg-[#32A88D] data-[state=active]:text-white transition-all duration-200 rounded-lg sm:rounded-xl py-2"
+                className="text-xs sm:text-sm min-h-9 data-[state=active]:bg-[#32A88D] data-[state=active]:text-white transition-all duration-200 rounded-md md:rounded-xl py-2"
               >
                 {t("tabVideo")}
               </TabsTrigger>
               <TabsTrigger
                 value="chat"
-                className="text-xs sm:text-sm data-[state=active]:bg-[#32A88D] data-[state=active]:text-white transition-all duration-200 rounded-lg sm:rounded-xl py-2"
+                className="text-xs sm:text-sm min-h-9 data-[state=active]:bg-[#32A88D] data-[state=active]:text-white transition-all duration-200 rounded-md md:rounded-xl py-2"
               >
                 {t("tabChat")}
               </TabsTrigger>
               <TabsTrigger
                 value="all"
-                className="text-xs sm:text-sm data-[state=active]:bg-[#32A88D] data-[state=active]:text-white transition-all duration-200 rounded-lg sm:rounded-xl py-2"
+                className="text-xs sm:text-sm min-h-9 data-[state=active]:bg-[#32A88D] data-[state=active]:text-white transition-all duration-200 rounded-md md:rounded-xl py-2"
               >
                 {t("tabAll")}
               </TabsTrigger>
             </TabsList>
+          </Tabs>
+        </div>
 
-            <TabsContent value={activeTab} className="m-0">
-              <div className="max-h-[400px] sm:max-h-[500px] lg:max-h-[600px] overflow-y-auto custom-scrollbar">
-                {uniqueRequests.length === 0 ? (
-                  
-                  <div className="text-center py-8 sm:py-12">
-                    <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto mb-3 sm:mb-4" />
-                    <p className="text-gray-500 text-sm sm:text-base">
-                      {searchQuery
-                        ? t("noSearchResults")
-                        : t("noRequests")}
-                    </p>
-                  </div>
-                ) : (
-                  uniqueRequests.map((request) => {
-                    const isPatient = userRole === "patient";
-                    const displayName = isPatient
-                      ? request.data.consultant.full_name
-                      : request.data.patient.full_name;
+        <CardContent className="p-0">
+          <div className="max-h-none overflow-visible md:max-h-[500px] lg:max-h-[600px] md:overflow-y-auto md:custom-scrollbar">
+            {uniqueRequests.length === 0 ? (
+              <div className="text-center py-8 sm:py-12">
+                <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto mb-3 sm:mb-4" />
+                <p className="text-gray-500 text-sm sm:text-base">
+                  {searchQuery ? t("noSearchResults") : t("noRequests")}
+                </p>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-100 md:divide-y-0">
+                {uniqueRequests.map((request) => {
+                  const isPatient = userRole === "patient";
+                  const displayName = isPatient
+                    ? request.data.consultant.full_name
+                    : request.data.patient.full_name;
+                  const hasActiveChat =
+                    request.type === "chat" &&
+                    ["accepted", "active", "completed"].includes(
+                      request.status,
+                    );
 
-                    return (
-                      <div
-                        key={request.id}
-                        className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-all duration-300 hover:bg-white hover:shadow-md group ${
-                          selectedRequest?.id === request.id
-                            ? "bg-gradient-to-r from-[#32A88D]/5 to-white border-s-2 sm:border-s-4 border-s-[#32A88D] shadow-md"
-                            : ""
-                        }`}
-                        onClick={() => onSelectRequest(request)}
-                      >
-                        <div className="flex items-start gap-2 sm:gap-3">
-                          <Avatar className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-gray-200 group-hover:border-[#32A88D]/30 transition-colors duration-300">
-                            <AvatarImage
-                              src={
-                                isPatient
-                                  ? request.data.consultant.image ||
-                                    "/images/placeholder.svg"
-                                  : request.data.patient.image ||
-                                    "/images/placeholder.svg"
-                              }
-                              alt={t("userImageAlt")}
-                            />
-                            <AvatarFallback className="bg-[#32A88D]/10 text-[#32A88D]">
-                              {displayName.charAt(0)}
-                            </AvatarFallback>
-                          </Avatar>
+                  return (
+                    <div
+                      key={request.id}
+                      role="button"
+                      tabIndex={0}
+                      className={`-mx-4 px-4 py-3 md:mx-0 md:px-4 md:py-4 md:border-b md:border-gray-100 cursor-pointer transition-colors active:bg-gray-50 md:hover:bg-white md:hover:shadow-md group ${
+                        selectedRequest?.id === request.id
+                          ? "bg-gradient-to-r from-[#32A88D]/5 to-white border-s-2 md:border-s-4 border-s-[#32A88D] md:shadow-md"
+                          : ""
+                      }`}
+                      onClick={() => onSelectRequest(request)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onSelectRequest(request);
+                        }
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Avatar className="w-11 h-11 sm:w-12 sm:h-12 shrink-0 border-2 border-gray-200 group-hover:border-[#32A88D]/30 transition-colors duration-300">
+                          <AvatarImage
+                            src={
+                              isPatient
+                                ? request.data.consultant.image ||
+                                  "/images/placeholder.svg"
+                                : request.data.patient.image ||
+                                  "/images/placeholder.svg"
+                            }
+                            alt={t("userImageAlt")}
+                          />
+                          <AvatarFallback className="bg-[#32A88D]/10 text-[#32A88D]">
+                            {displayName.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
 
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-1 sm:mb-2">
-                              <h3 className="font-semibold text-gray-800 text-xs sm:text-sm truncate group-hover:text-[#32A88D] transition-colors duration-200 text-start">
-                                {displayName}
-                              </h3>
-                              <div className="flex items-center gap-1">
-                                {getTypeIcon(request.type)}
-                                <div className="scale-75 sm:scale-100">
-                                  {getStatusBadge(request.status, getStatusLabel)}
-                                </div>
-                              </div>
-                            </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-gray-800 text-sm truncate group-hover:text-[#32A88D] transition-colors duration-200 text-start">
+                            {displayName}
+                          </h3>
+                          <span className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
+                            <Clock className="w-3 h-3" />
+                            {formatLocalizedDate(request.created_at, locale)}
+                          </span>
+                        </div>
 
-                            <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-2 sm:gap-4 text-xs text-gray-500">
-                                <span className="flex items-center gap-1 text-xs">
-                                  <Clock className="w-3 h-3" />
-                                  {new Date(request.created_at).toLocaleDateString("en-US")}
-                                </span>
-                              </div>
-
-                              {request.type === "chat" && ["accepted", "active", "completed"].includes(request.status) && (
-                                <Button
-                                  asChild
-                                  variant="outline"
-                                  size="sm"
-                                  className="h-8 border-[#32A88D]/30 text-[#32A88D] hover:bg-[#32A88D]/10"
-                                  onClick={(event) => event.stopPropagation()}
-                                >
-                                  <Link href="/profile/chat">{t("openChat")}</Link>
-                                </Button>
-                              )}
-                            </div>
-
-                            <div className="flex mt-1.5">
-                              <Link
-                                href={`/profile/consultations/${request.type}/${request.id}`}
-                                className="text-xs text-primary hover:underline flex items-center gap-1 rtl:flex-row-reverse"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <ExternalLink className="h-3 w-3" />
-                                {t("viewFinancialDetails")}
-                              </Link>
-                            </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {getTypeIcon(request.type)}
+                          <div className="scale-90 sm:scale-100">
+                            {getStatusBadge(request.status, getStatusLabel)}
                           </div>
                         </div>
                       </div>
-                    );
-                  })
-                )}
+
+                      <div className="flex items-center justify-between mt-1 ps-[56px]">
+                        <Link
+                          href={`/profile/consultations/${request.type}/${request.id}`}
+                          className="min-h-11 inline-flex items-center text-xs text-primary hover:underline gap-1 rtl:flex-row-reverse"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          {t("viewFinancialDetails")}
+                        </Link>
+
+                        {/* {hasActiveChat && (
+                          <Button
+                            asChild
+                            variant="ghost"
+                            size="icon"
+                            className="h-11 w-11 rounded-full border border-[#32A88D]/30 text-[#32A88D] hover:bg-[#32A88D]/10"
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            <Link
+                              href="/profile/chat"
+                              aria-label={t("openChat")}
+                            >
+                              <MessageCircle className="h-5 w-5" />
+                            </Link>
+                          </Button>
+                        )} */}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </TabsContent>
-          </Tabs>
+            )}
+          </div>
         </CardContent>
       </Card>
 

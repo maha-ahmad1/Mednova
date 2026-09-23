@@ -36,7 +36,7 @@
   },
   "sidebar": {
     "home": "الصفحة الرئيسية",
-    "myProfile": "الصفحة الشخصية",
+    "myProfile": "حسابي",
     "consultationRequests": "طلبات الاستشارة",
     "appointments": "المواعيد",
     "patients": "المرضى",
@@ -1258,11 +1258,11 @@
       "otp": {
         "breadcrumb": "المحفظة المالية › التحقق من الحساب",
         "title": "أدخل رمز التحقق",
-        "subtitle": "أرسلنا رمزًا مكونًا من 6 أرقام الى الايميل الخاص بك المسجل لدينا",
+        "subtitle": "أرسلنا رمزًا مكونًا من 6 أرقام إلى بريدك الإلكتروني المسجّل لدينا",
         "confirmButton": "تأكيد",
         "confirmingButton": "جاري التحقق...",
         "resendPrompt": "لم تستلم الرمز؟",
-        "resendButton": "ارجع لإعادة الإرسال",
+        "resendButton": "إعادة الإرسال",
         "resendCooldown": "إعادة الإرسال ({seconds})",
         "otpIncomplete": "يجب إدخال جميع الأرقام الستة"
       },
@@ -1375,6 +1375,7 @@
       "retry": "إعادة المحاولة",
       "header": {
         "breadcrumb": "تفاصيل الاستشارة",
+        "back": "رجوع",
         "idBadge": "#{id}",
         "typeVideo": "فيديو",
         "typeChat": "محادثة"
@@ -1599,6 +1600,8 @@
     "cancelButton": "إلغاء",
     "requestSuccess": "تم إرسال طلب القياس بنجاح",
     "joinButton": "الانضمام للجلسة",
+    "specialistLinkLabel": "رابط المختص (انضمامك أنت)",
+    "patientLinkLabel": "رابط المريض (شاركه مع المريض)",
     "copyLinkAriaLabel": "نسخ رابط المريض",
     "linkCopied": "تم نسخ الرابط",
     "cancelMeasurementButton": "إلغاء القياس",
@@ -1609,6 +1612,20 @@
     "repsLabel": "عدد التكرارات",
     "accuracyLabel": "الدقة",
     "resultDurationLabel": "المدة",
+    "sectionTitle": "قياس الحركة بالقفاز الذكي",
+    "showDetails": "عرض التفاصيل",
+    "hideDetails": "إخفاء التفاصيل",
+    "collapsedSummary": {
+      "success": "اكتملت آخر جلسة — الدقة {accuracy}%",
+      "expired": "انتهت مهلة آخر جلسة دون إكمال القياس",
+      "cancelledByDoctor": "تم إلغاء آخر جلسة من قبل الطبيب",
+      "cancelledByPatient": "ألغى المريض آخر جلسة",
+      "unknown": "انتهت آخر جلسة"
+    },
+    "patientNotice": {
+      "inProgress": "معالجك يجري الآن جلسة قياس للحركة",
+      "shared": "تمت مشاركة نتائج جلسة القياس مع معالجك"
+    },
     "pusher": {
       "completed": "اكتمل قياس {exercise} بنجاح",
       "abandoned": "انتهى قياس {exercise} قبل اكتماله",
@@ -1644,6 +1661,7 @@
     "history": {
       "pageTitle": "سجل قياسات المريض",
       "pageSubtitle": "السجل الكامل لقياسات {name}",
+      "downloadFullReport": "تحميل التقرير الكامل",
       "colDate": "التاريخ",
       "colExercise": "التمرين",
       "colSide": "الجانب",
@@ -2102,6 +2120,10 @@
   },
   "measurementSessionResult": {
     "title": "انتهت جلسة القياس",
+    "titleExpired": "انتهت مهلة الجلسة دون إكمال القياس",
+    "titleCancelledByDoctor": "تم إلغاء الجلسة من قبل الطبيب",
+    "titleCancelledByPatient": "ألغى المريض الجلسة",
+    "titleUnknown": "انتهت الجلسة",
     "reps": "عدد التكرارات",
     "accuracy": "الدقة",
     "affectedSide": "الجانب المصاب",
@@ -2109,6 +2131,7 @@
     "viewFullHistory": "عرض السجل الكامل",
     "downloadReport": "تحميل التقرير",
     "downloadFailed": "تعذّر تحميل التقرير، حاول مرة أخرى",
+    "downloadMissingFilters": "لا يمكن تحميل التقرير بدون تحديد مريض أو استشارة كاملة",
     "waitingForResults": "جاري استلام نتائج الجلسة..."
   }
 }

@@ -81,31 +81,41 @@ export default function MeasurementStatusCard({
           )}
         </div>
 
-        <Button
-          type="button"
-          onClick={() => window.open(measurement.therapist_url, "_blank")}
-          disabled={expired}
-          className="cursor-pointer w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center justify-center gap-2"
-        >
-          {t("measurements.joinButton")}
-        </Button>
-
-        <div className="flex items-center gap-2">
-          <Input
-            readOnly
-            value={measurement.patient_url}
-            className="flex-1 bg-[#32A88D]/10 text-gray-700 border-transparent cursor-text"
-          />
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs sm:text-sm font-medium text-gray-600">
+            {t("measurements.specialistLinkLabel")}
+          </span>
           <Button
             type="button"
-            variant="outline"
-            size="icon"
-            aria-label={t("measurements.copyLinkAriaLabel")}
-            onClick={handleCopyLink}
-            className="cursor-pointer shrink-0"
+            onClick={() => window.open(measurement.therapist_url, "_blank")}
+            disabled={expired}
+            className="cursor-pointer w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center justify-center gap-2"
           >
-            <Copy className="w-4 h-4" />
+            {t("measurements.joinButton")}
           </Button>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs sm:text-sm font-medium text-gray-600">
+            {t("measurements.patientLinkLabel")}
+          </span>
+          <div className="flex items-center gap-2">
+            <Input
+              readOnly
+              value={measurement.patient_url}
+              className="flex-1 bg-[#32A88D]/10 text-gray-700 border-transparent cursor-text"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              aria-label={t("measurements.copyLinkAriaLabel")}
+              onClick={handleCopyLink}
+              className="cursor-pointer shrink-0"
+            >
+              <Copy className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
 
         <Button

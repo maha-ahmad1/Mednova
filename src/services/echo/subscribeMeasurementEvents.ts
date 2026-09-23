@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { bucketEndReason } from "@/features/measurements/utils/mapEndReason";
 import { EXERCISE_TYPES } from "@/features/measurements/utils/exerciseTypes";
 import type { MeasurementCompletedPayload } from "@/features/measurements/types";
+import { useMeasurementLiveStore } from "@/store/measurementLiveStore";
 
 interface Channel {
   listen: (
@@ -44,6 +45,12 @@ export function subscribeMeasurementEvents({
     queryClient.invalidateQueries({
       queryKey: ["measurements", type, payload.consultation_id],
     });
+
+    // Marks this consultation's result as "just arrived live" so a mounted
+    // MeasurementSection auto-expands instead of defaulting to collapsed.
+    useMeasurementLiveStore
+      .getState()
+      .setLastArrival({ type, consultationId: payload.consultation_id });
 
     const bucket = bucketEndReason(payload.end_reason);
     const exerciseLabel = resolveExerciseLabel(payload.exercise_type, t);

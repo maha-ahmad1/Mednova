@@ -1,36 +1,41 @@
-export type SessionOutcome =
-  | "success"
-  | "expired"
-  | "cancelled_by_doctor"
-  | "cancelled_by_patient"
-  | "unknown";
+import type { MeasurementEndReason, MeasurementSessionStatus } from "../types";
 
-// Raw values below reuse the `end_reason` strings already confirmed and shipped
-// elsewhere in this feature (see bucketEndReason.ts and the
-// `measurements.endReasons.*` translations) rather than the "expired" /
-// "cancelled_by_patient" placeholders first guessed for this outcome set —
-// the backend's actual field sends "timeout" and "stopped_by_patient".
-// `stopped_by_therapist`, `pain`, `disconnected`, and `technical_error` are
-// real, known end_reason values too, but this outcome set has no dedicated
-// state for them yet, so they intentionally fall through to "unknown" below.
-// Update this object (only this object) once the backend confirms otherwise.
-const RAW_STATUS_MAP: Record<string, SessionOutcome> = {
-  completed: "success",
-  timeout: "expired",
-  cancelled_by_doctor: "cancelled_by_doctor",
-  stopped_by_patient: "cancelled_by_patient",
-};
+// Real {status, end_reason} model confirmed against live backend payloads for
+// the `.measurement.ended` event — replaces the earlier placeholder mapping,
+// which assumed a `cancelled_by_patient` status that doesn't exist: every
+// patient-initiated ending (stop / pain / connection loss) arrives as
+// status "abandoned", never "cancelled" (that status is doctor-only).
+export type MeasurementOutcomeSeverity = "success" | "info" | "warning" | "neutral";
 
-export function mapSessionOutcome(rawStatus: string | null | undefined): SessionOutcome {
-  if (!rawStatus) return "unknown";
-  const mapped = RAW_STATUS_MAP[rawStatus];
-  if (!mapped) {
-    // An unmapped value showed up — surface it instead of silently falling
-    // back, so new/changed backend end_reason values get noticed.
-    // No shared Sentry capture helper exists in this codebase yet; console.warn
-    // is the agreed stopgap until one is added.
-    console.warn(`Unmapped session end_reason received: ${rawStatus}`);
-    return "unknown";
-  }
-  return mapped;
+export interface MeasurementOutcome {
+  key: string; // stable key for i18n lookups, e.g. "completed", "pain", "unknown"
+  severity: MeasurementOutcomeSeverity;
+  needsElevatedAttention: boolean; // true only for "pain" — surface with warning styling
 }
+
+export const mapMeasurementOutcome = (
+  status: MeasurementSessionStatus,
+  endReason: MeasurementEndReason,
+): MeasurementOutcome => {
+  if (status === "completed" && endReason === "completed") {
+    return { key: "completed", severity: "success", needsElevatedAttention: false };
+  }
+  if (status === "cancelled" && endReason === "cancelled_by_doctor") {
+    return { key: "cancelled_by_doctor", severity: "neutral", needsElevatedAttention: false };
+  }
+  if (status === "abandoned" && endReason === "pain") {
+    // Clinically relevant — patient reported pain during the exercise.
+    return { key: "pain", severity: "warning", needsElevatedAttention: true };
+  }
+  if (status === "abandoned" && endReason === "stopped_by_patient") {
+    return { key: "stopped_by_patient", severity: "info", needsElevatedAttention: false };
+  }
+  if (status === "abandoned" && endReason === "technical_error") {
+    return { key: "technical_error", severity: "neutral", needsElevatedAttention: false };
+  }
+
+  // Defensive fallback for any future/unmapped combination — never throw, never
+  // silently treat an unknown reason as "completed".
+  console.warn("[measurement] Unmapped status/end_reason combination", { status, endReason });
+  return { key: "unknown", severity: "neutral", needsElevatedAttention: false };
+};

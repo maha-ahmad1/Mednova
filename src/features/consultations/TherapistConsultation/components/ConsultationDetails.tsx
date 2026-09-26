@@ -11,6 +11,7 @@ import {
   ExternalLink,
   RefreshCw,
   Calendar,
+  Clock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,6 @@ import { useEffect, useCallback } from "react"; // أضف useEffect
 import { useConsultationStore } from "@/store/consultationStore";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
-import { History } from "lucide-react";
 import { getStatusBadge, getTypeIcon } from "@/features/consultations/utils/consultation-helpers";
 import MeasurementSection from "@/features/measurements/ui/MeasurementSection";
 
@@ -68,7 +68,6 @@ export default function ConsultationDetails({
   const t = useTranslations("consultations.panel");
   const tDays = useTranslations("consultations.panel.days");
   const tStatus = useTranslations("consultations.status");
-  const tMeasurements = useTranslations("measurements");
   const getStatusLabel = (status: string) => tStatus(status as "pending" | "accepted" | "cancelled" | "active" | "completed");
   const getDayLabel = (day: string) => {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -142,10 +141,15 @@ const shouldShowZoomButton = () => {
     });
   }, [displayRequest, storeRequest, isZoomLinkFromPusher, initialRequest.status]);
 
+  // Live-update banner and the Zoom call-out can both be true at once; when
+  // they are, the call-out's own "live" badge already communicates the
+  // real-time state, so the separate green banner would just duplicate it.
+  const showLiveBanner = isZoomLinkFromPusher() && !shouldShowZoomButton();
+
   const renderDetailsContent = () => (
-    <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-200px)]">
+    <div className="p-4 sm:p-6">
       {/* ✅ مؤشر مصدر البيانات */}
-      {isZoomLinkFromPusher() && (
+      {showLiveBanner && (
         <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -264,18 +268,20 @@ const shouldShowZoomButton = () => {
             label={t("fullNameLabel")}
             value={patient.full_name}
           />
-          {!!patient?.id && (
-            <div className="py-2.5 md:py-0 md:mt-3">
-              <Link
-                href={`/profile/consultations/patients/${patient.id}/measurements?patientName=${encodeURIComponent(patient.full_name)}`}
-                className="min-h-11 inline-flex items-center gap-1.5 text-sm font-medium text-[#32A88D] hover:underline"
-              >
-                <History className="w-4 h-4" />
-                {tMeasurements("historyLinkText")}
-              </Link>
-            </div>
-          )}
         </DetailSection>
+      )}
+
+      {/* Pending decisions surface right after the header/identity info instead of
+          waiting at the bottom of the scrollable content, since Accept/Reject is
+          the most time-sensitive action for a pending request. */}
+      {userRole === "consultable" && displayRequest.status === "pending" && (
+        <div className="mb-6 sm:mb-8">
+          <ConsultationActions
+            request={displayRequest}
+            onRequestUpdate={onRequestUpdate}
+            userRole={userRole}
+          />
+        </div>
       )}
 
       <DetailSection title={t("consultationInfoTitle")}>
@@ -288,7 +294,19 @@ const shouldShowZoomButton = () => {
           <FieldRow
             icon={Calendar}
             label={t("bookingDateLabel")}
-            value={appointmentInfo.fullDate}
+            value={
+              <div className="flex flex-wrap items-center gap-2">
+                <span>{appointmentInfo.day}</span>
+                {/* Time shown as a distinct badge, not baked into the day string, to avoid duplicating it */}
+                <Badge
+                  variant="outline"
+                  className="gap-1 border-[#32A88D]/30 bg-[#32A88D]/10 text-[#32A88D] font-normal"
+                >
+                  <Clock className="w-3 h-3" />
+                  {appointmentInfo.time}
+                </Badge>
+              </div>
+            }
           />
         )}
 
@@ -316,11 +334,13 @@ const shouldShowZoomButton = () => {
           session. */}
       <MeasurementSection request={displayRequest} userRole={userRole} />
 
-      <ConsultationActions
-        request={displayRequest} // ✅ استخدم displayRequest
-        onRequestUpdate={onRequestUpdate}
-        userRole={userRole}
-      />
+      {!(userRole === "consultable" && displayRequest.status === "pending") && (
+        <ConsultationActions
+          request={displayRequest} // ✅ استخدم displayRequest
+          onRequestUpdate={onRequestUpdate}
+          userRole={userRole}
+        />
+      )}
     </div>
   );
 
@@ -348,6 +368,11 @@ const shouldShowZoomButton = () => {
               {getTypeIcon(displayRequest.type)}
               {displayRequest.type === "chat" ? t("typeChat") : t("typeVideo")}
             </span>
+            {appointmentInfo && (
+              <span className="text-xs text-gray-500 truncate">
+                {appointmentInfo.day} • {appointmentInfo.time}
+              </span>
+            )}
           </div>
 
           {/* Header row — md and up (unchanged design) */}
@@ -370,6 +395,11 @@ const shouldShowZoomButton = () => {
               </CardTitle>
             </div>
             <div className="flex items-center gap-1 sm:gap-2">
+              {appointmentInfo && (
+                <span className="text-xs sm:text-sm text-gray-500 me-1">
+                  {appointmentInfo.day} • {appointmentInfo.time}
+                </span>
+              )}
               {getTypeIcon(displayRequest.type)}
               <div className="scale-75 sm:scale-100 origin-right">
                 {getStatusBadge(displayRequest.status, getStatusLabel)}
@@ -378,8 +408,8 @@ const shouldShowZoomButton = () => {
           </div>
         </CardHeader>
 
-        <CardContent className="flex-1 p-0 overflow-hidden">
-          <div className="h-full">{renderDetailsContent()}</div>
+        <CardContent className="flex-1 p-0">
+          {renderDetailsContent()}
         </CardContent>
       </Card>
     </div>
@@ -399,7 +429,7 @@ function DetailSection({
         <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
         {title}
       </h3>
-      <div className="divide-y divide-gray-100 md:divide-y-0 md:space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {children}
       </div>
     </div>
@@ -416,14 +446,14 @@ function FieldRow({
   value: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-3 py-2.5 md:p-4 md:bg-white md:rounded-xl md:border md:border-gray-100 md:shadow-sm">
+    <div className="flex items-center gap-3 py-2.5 sm:p-4 sm:bg-white sm:rounded-xl sm:border sm:border-gray-100 sm:shadow-sm">
       {Icon && (
-        <div className="hidden md:block p-1 sm:p-2 bg-[#32A88D]/10 rounded-lg">
+        <div className="hidden sm:block p-1 sm:p-2 bg-[#32A88D]/10 rounded-lg">
           <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#32A88D]" />
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <p className="text-xs text-gray-500 mb-0.5 md:text-sm md:text-gray-600 md:mb-1">
+        <p className="text-xs text-gray-500 mb-0.5 sm:text-sm sm:text-gray-600 sm:mb-1">
           {label}
         </p>
         <div className="font-semibold text-gray-800 text-sm sm:text-base break-words">

@@ -420,7 +420,12 @@
     "smartDevicesCatalog": "Smart Devices Catalog",
     "language": "Language",
     "en": "🇺🇸 English",
-    "ar": "🇸🇦 Arabic"
+    "ar": "🇸🇦 Arabic",
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "patients": "Patients",
+    "searchButtonLabel": "Search",
+    "chat": "Chat"
   },
   "specialists": {
     "title": "Specialists & Centers",
@@ -1612,24 +1617,46 @@
     "repsLabel": "Repetitions",
     "accuracyLabel": "Accuracy",
     "resultDurationLabel": "Duration",
-    "sectionTitle": "Smart Glove Motion Measurement",
+    "sectionTitle": " Motion Measurement",
     "showDetails": "Show details",
     "hideDetails": "Hide details",
     "collapsedSummary": {
-      "success": "Last session completed — accuracy {accuracy}%",
-      "expired": "The last session timed out before completing the measurement",
+      "completed": "Last session completed — accuracy {accuracy}%",
       "cancelledByDoctor": "The last session was cancelled by the doctor",
-      "cancelledByPatient": "The patient cancelled the last session",
+      "stoppedByPatient": "The patient ended the last session early",
+      "pain": "The patient stopped the last session due to reported pain",
+      "technicalError": "The last session stopped due to a connection issue",
       "unknown": "The last session has ended"
     },
     "patientNotice": {
       "inProgress": "Your therapist is currently running a motion measurement session",
       "shared": "Your measurement session results were shared with your therapist"
     },
-    "pusher": {
-      "completed": "Measurement for {exercise} completed successfully",
-      "abandoned": "Measurement for {exercise} ended early",
-      "cancelled": "Measurement for {exercise} was cancelled"
+    "notifications": {
+      "completed": {
+        "patient": "Your measurement session has been completed.",
+        "consultant": "The measurement session has been completed and the results are now available."
+      },
+      "cancelled_by_doctor": {
+        "patient": "Your measurement session was cancelled by your therapist.",
+        "consultant": "You cancelled the measurement session."
+      },
+      "stopped_by_patient": {
+        "patient": "You ended the measurement session early.",
+        "consultant": "The patient ended the measurement session before it was complete."
+      },
+      "pain": {
+        "patient": "Your measurement session was stopped because you reported pain.",
+        "consultant": "⚠️ The patient reported pain during the exercise and the session was stopped."
+      },
+      "technical_error": {
+        "patient": "Your measurement session stopped due to a connection issue.",
+        "consultant": "The measurement session stopped due to a connection issue."
+      },
+      "unknown": {
+        "patient": "There's an update on your measurement session.",
+        "consultant": "There's an update on a measurement session with an unrecognized status."
+      }
     },
     "endReasons": {
       "completed": "Session completed normally",
@@ -2003,6 +2030,12 @@
       "consultation_reminder_for_all": "Upcoming Session Reminder",
       "account_approved": "Account Approved",
       "account_rejected": "Account Rejected",
+      "measurement_completed": "Measurement Session Completed",
+      "measurement_cancelled_by_doctor": "Measurement Session Cancelled",
+      "measurement_stopped_by_patient": "Patient Ended Session Early",
+      "measurement_pain": "Patient Reported Pain",
+      "measurement_technical_error": "Measurement Session Interrupted",
+      "measurement_unknown": "Measurement Session Update",
       "message": "New Message",
       "comment": "New Comment",
       "like": "New Like",
@@ -2120,9 +2153,10 @@
   },
   "measurementSessionResult": {
     "title": "Measurement session completed",
-    "titleExpired": "The session timed out before the measurement was completed",
     "titleCancelledByDoctor": "The session was cancelled by the doctor",
-    "titleCancelledByPatient": "The patient cancelled the session",
+    "titleStoppedByPatient": "The patient ended the session early",
+    "titlePain": "The patient stopped the session due to reported pain",
+    "titleTechnicalError": "The session stopped due to a connection issue",
     "titleUnknown": "The session has ended",
     "reps": "Repetitions",
     "accuracy": "Accuracy",

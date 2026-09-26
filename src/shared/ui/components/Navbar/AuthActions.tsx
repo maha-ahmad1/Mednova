@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { MessageCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
@@ -8,7 +8,11 @@ import { Button } from "@/components/ui/button";
 import { NotificationDropdown } from "@/features/notifications/components/NotificationDropdown";
 import { UserMenu } from "./UserMenu";
 
-export function AuthActions() {
+interface AuthActionsProps {
+  variant?: "landing" | "dashboard";
+}
+
+export function AuthActions({ variant = "landing" }: AuthActionsProps) {
   const { data: session } = useSession();
   const t = useTranslations("navbar");
 
@@ -25,9 +29,15 @@ export function AuthActions() {
   }
 
   return (
-    <div className="flex items-center gap-4">
-      <Button variant="ghost" size="icon" asChild>
-        <Link href="/profile/chat" aria-label="المحادثات">
+    <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
+      {/* On landing, chat is reachable from UserMenu on mobile instead — there's no bottom nav to fall back on there. */}
+      <Button
+        variant="ghost"
+        size="icon"
+        asChild
+        className={variant === "landing" ? "hidden lg:inline-flex" : undefined}
+      >
+        <Link href="/profile/chat" aria-label={t("chat")}>
           <MessageCircle className="h-5 w-5" />
         </Link>
       </Button>

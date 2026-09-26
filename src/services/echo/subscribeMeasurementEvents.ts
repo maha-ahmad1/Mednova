@@ -1,66 +1,73 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { bucketEndReason } from "@/features/measurements/utils/mapEndReason";
-import { EXERCISE_TYPES } from "@/features/measurements/utils/exerciseTypes";
-import type { MeasurementCompletedPayload } from "@/features/measurements/types";
+import { mapMeasurementOutcome } from "@/features/measurements/utils/mapSessionOutcome";
+import { createMeasurementNotification } from "@/utils/notificationFactory";
+import type {
+  MeasurementEndedEventConsultant,
+  MeasurementEndedEventPatient,
+} from "@/features/measurements/types";
+import type { Notification } from "@/store/notificationStore";
 import { useMeasurementLiveStore } from "@/store/measurementLiveStore";
 
 interface Channel {
-  listen: (
-    event: string,
-    callback: (payload: MeasurementCompletedPayload) => void,
-  ) => void;
+  listen: (event: string, callback: (payload: unknown) => void) => void;
 }
 
 interface SubscribeMeasurementEventsParams {
   channel: Channel;
+  role: "patient" | "therapist" | "rehabilitation_center";
   queryClient: QueryClient;
+  addNotification: (notification: Notification) => void;
   /** Translator scoped to the full message tree (called with "measurements.*" keys). */
   t: (key: string, values?: Record<string, string | number | Date>) => string;
 }
 
-// exercise_type on the wire is the canonical UPPER_SNAKE_CASE machine code
-// (e.g. "SHOULDER_FLEXION"), but the i18n keys under measurements.exerciseTypes.*
-// are camelCase (see exerciseTypes.ts) — go through that mapping rather than
-// assuming the raw value doubles as a translation key. Falls back to the raw
-// value for exercise types outside the known list.
-const resolveExerciseLabel = (
-  exerciseType: string,
-  t: (key: string, values?: Record<string, string | number | Date>) => string,
-): string => {
-  const known = EXERCISE_TYPES.find((entry) => entry.value === exerciseType);
-  return known
-    ? t(`measurements.exerciseTypes.${known.labelKey}`)
-    : exerciseType;
-};
-
 export function subscribeMeasurementEvents({
   channel,
+  role,
   queryClient,
+  addNotification,
   t,
 }: SubscribeMeasurementEventsParams): void {
-  channel.listen(".measurement.completed", (payload: MeasurementCompletedPayload) => {
-    const type = payload.consultation_type.includes("Video") ? "video" : "chat";
+  // Registered with a leading dot, same as subscribeAccountEvents.ts's
+  // ".account.status.updated" — Laravel broadcasts this as a plain event name
+  // (not a namespaced class), so the dot must be included or the listener
+  // silently never fires.
+  channel.listen(".measurement.ended", (payload: unknown) => {
+    const event = payload as MeasurementEndedEventPatient | MeasurementEndedEventConsultant;
 
-    queryClient.invalidateQueries({
-      queryKey: ["measurements", type, payload.consultation_id],
+    console.debug("[EchoDebug][Measurement] measurement.ended received", {
+      timestamp: new Date().toISOString(),
+      role,
+      measurementId: event.measurement_id,
+      consultationId: event.consultation_id,
+      status: event.status,
+      endReason: event.end_reason,
     });
 
-    // Marks this consultation's result as "just arrived live" so a mounted
-    // MeasurementSection auto-expands instead of defaulting to collapsed.
-    useMeasurementLiveStore
-      .getState()
-      .setLastArrival({ type, consultationId: payload.consultation_id });
+    queryClient.invalidateQueries({
+      queryKey: ["measurements", event.consultation_type, event.consultation_id],
+    });
 
-    const bucket = bucketEndReason(payload.end_reason);
-    const exerciseLabel = resolveExerciseLabel(payload.exercise_type, t);
+    // Lets a mounted MeasurementSection tell this live arrival apart from a
+    // result that was already there on load, and ignore it if it belongs to
+    // a different consultation than the one currently open.
+    useMeasurementLiveStore.getState().setLastArrival({
+      type: event.consultation_type,
+      consultationId: event.consultation_id,
+    });
 
-    if (bucket === "completed") {
-      toast.success(t("measurements.pusher.completed", { exercise: exerciseLabel }));
-    } else if (bucket === "cancelled") {
-      toast.info(t("measurements.pusher.cancelled", { exercise: exerciseLabel }));
+    const outcome = mapMeasurementOutcome(event.status, event.end_reason);
+    const isPatient = role === "patient";
+    const body = t(`measurements.notifications.${outcome.key}.${isPatient ? "patient" : "consultant"}`);
+
+    const notification = createMeasurementNotification(event, outcome, body);
+    addNotification(notification);
+
+    if (outcome.needsElevatedAttention) {
+      toast.warning(body, { duration: 6000, position: "top-center" });
     } else {
-      toast.warning(t("measurements.pusher.abandoned", { exercise: exerciseLabel }));
+      toast.info(body, { duration: 5000, position: "top-center" });
     }
   });
 }

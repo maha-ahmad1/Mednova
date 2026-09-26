@@ -85,7 +85,7 @@ export function FloatingContactWidget() {
 
   // All hooks done — now safe to do conditional rendering
 
-  if (pathname.includes("control-panel")) return null;
+  if (pathname.includes("control-panel") || pathname.includes("/profile/consultations")) return null;
 
   function handleToggle() {
     setOpen((prev) => !prev);

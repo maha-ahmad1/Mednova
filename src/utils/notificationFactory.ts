@@ -1,5 +1,10 @@
 import type { Notification } from "@/store/notificationStore";
 import type { ConsultationEvent } from "@/services/consultations/consultationFactory";
+import type { MeasurementOutcome } from "@/features/measurements/utils/mapSessionOutcome";
+import type {
+  MeasurementEndedEventConsultant,
+  MeasurementEndedEventPatient,
+} from "@/features/measurements/types";
 
 export type ConsultationMessageEvent = {
   consultation_id: number;
@@ -93,6 +98,39 @@ export const createSystemNotification = (
     data: event as Notification["data"],
   };
   console.log("🧪 [TRACE][Notifications][Pusher Factory][createSystemNotification]", {
+    timestamp: new Date().toISOString(),
+    rawEvent: event,
+    mappedNotification: mapped,
+  });
+  return mapped;
+};
+
+// `body` is our own translated copy for {outcome, role} — never the backend's
+// raw `event.message`, which is hardcoded English and not fit for a bilingual app.
+export const createMeasurementNotification = (
+  event: MeasurementEndedEventPatient | MeasurementEndedEventConsultant,
+  outcome: MeasurementOutcome,
+  body: string,
+): Notification => {
+  const mapped: Notification = {
+    id: `measurement_${event.measurement_id}_${outcome.key}`,
+    type: `measurement_${outcome.key}` as Notification["type"],
+    title: body,
+    message: body,
+    read: false,
+    createdAt: event.completed_at,
+    source: "pusher",
+    data: {
+      consultation_id: event.consultation_id,
+      consultation_type: event.consultation_type,
+      measurement_id: event.measurement_id,
+      exercise_type: event.exercise_type,
+      status: event.status,
+      end_reason: event.end_reason,
+      needs_elevated_attention: outcome.needsElevatedAttention,
+    },
+  };
+  console.log("🧪 [TRACE][Notifications][Pusher Factory][createMeasurementNotification]", {
     timestamp: new Date().toISOString(),
     rawEvent: event,
     mappedNotification: mapped,

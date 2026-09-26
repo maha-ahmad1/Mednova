@@ -129,7 +129,9 @@ export const useEchoNotifications = (): void => {
 
     subscribeMeasurementEvents({
       channel,
+      role: role as "patient" | "therapist" | "rehabilitation_center",
       queryClient,
+      addNotification,
       t: tRoot,
     });
 

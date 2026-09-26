@@ -10,7 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { User, Wallet, HelpCircle, LogOut, Calendar } from "lucide-react";
+import { User, Wallet, HelpCircle, LogOut, Calendar, MessageCircle } from "lucide-react";
 import { useProfileImageStore } from "@/store/useProfileImageStore";
 
 export function UserMenu() {
@@ -73,6 +73,14 @@ export function UserMenu() {
               className="flex-1 text-sm text-start"
             >
               {t("consultationRequests")}
+            </Link>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem className="flex gap-2">
+            <MessageCircle className="w-4 h-4" />
+
+            <Link href="/profile/chat" className="flex-1 text-sm text-start">
+              {tNav("chat")}
             </Link>
           </DropdownMenuItem>
 

@@ -10,19 +10,22 @@ import { useMeasurementLiveStore } from "@/store/measurementLiveStore";
 import MeasurementRequestDialog from "./MeasurementRequestDialog";
 import MeasurementStatusCard from "./MeasurementStatusCard";
 import SessionResultPanel, { SessionResultPanelSkeleton } from "./SessionResultPanel";
-import { mapSessionOutcome, type SessionOutcome } from "../utils/mapSessionOutcome";
-import type { Measurement } from "../types";
+import { mapMeasurementOutcome } from "../utils/mapSessionOutcome";
+import type { Measurement, MeasurementSessionStatus } from "../types";
 
 interface MeasurementSectionProps {
   request: ConsultationRequest;
   userRole: "consultable" | "patient" | undefined;
 }
 
-const COLLAPSED_SUMMARY_KEY: Record<SessionOutcome, string> = {
-  success: "measurements.collapsedSummary.success",
-  expired: "measurements.collapsedSummary.expired",
+// Outcome keys as produced by mapMeasurementOutcome; "unknown" also covers
+// any future/unmapped {status, end_reason} combination.
+const COLLAPSED_SUMMARY_KEY: Record<string, string> = {
+  completed: "measurements.collapsedSummary.completed",
   cancelled_by_doctor: "measurements.collapsedSummary.cancelledByDoctor",
-  cancelled_by_patient: "measurements.collapsedSummary.cancelledByPatient",
+  stopped_by_patient: "measurements.collapsedSummary.stoppedByPatient",
+  pain: "measurements.collapsedSummary.pain",
+  technical_error: "measurements.collapsedSummary.technicalError",
   unknown: "measurements.collapsedSummary.unknown",
 };
 
@@ -85,8 +88,11 @@ function MeasurementResultToggle({
   onToggle: () => void;
 }) {
   const t = useTranslations();
-  const outcome = mapSessionOutcome(measurement.end_reason);
-  const summaryText = t(COLLAPSED_SUMMARY_KEY[outcome], {
+  const outcome = mapMeasurementOutcome(
+    measurement.status as MeasurementSessionStatus,
+    measurement.end_reason ?? "unknown",
+  );
+  const summaryText = t(COLLAPSED_SUMMARY_KEY[outcome.key] ?? COLLAPSED_SUMMARY_KEY.unknown, {
     accuracy: measurement.accuracy_percentage ?? 0,
   });
 

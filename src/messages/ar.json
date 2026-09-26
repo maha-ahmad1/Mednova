@@ -420,7 +420,12 @@
     "smartDevicesCatalog": "كتالوج الأجهزة الذكية",
     "language": "اللغة",
     "en": "🇺🇸 الإنجليزية",
-    "ar": "🇸🇆 العربية"
+    "ar": "🇸🇆 العربية",
+    "dashboard": "لوحة التحكم",
+    "appointments": "المواعيد",
+    "patients": "المرضى",
+    "searchButtonLabel": "بحث",
+    "chat": "المحادثات"
   },
   "specialists": {
     "title": "الإستشارات و المراكز",
@@ -1612,24 +1617,46 @@
     "repsLabel": "عدد التكرارات",
     "accuracyLabel": "الدقة",
     "resultDurationLabel": "المدة",
-    "sectionTitle": "قياس الحركة بالقفاز الذكي",
+    "sectionTitle": "قياس الحركة",
     "showDetails": "عرض التفاصيل",
     "hideDetails": "إخفاء التفاصيل",
     "collapsedSummary": {
-      "success": "اكتملت آخر جلسة — الدقة {accuracy}%",
-      "expired": "انتهت مهلة آخر جلسة دون إكمال القياس",
+      "completed": "اكتملت آخر جلسة — الدقة {accuracy}%",
       "cancelledByDoctor": "تم إلغاء آخر جلسة من قبل الطبيب",
-      "cancelledByPatient": "ألغى المريض آخر جلسة",
+      "stoppedByPatient": "أنهى المريض آخر جلسة قبل اكتمالها",
+      "pain": "أوقف المريض آخر جلسة بسبب الشعور بألم",
+      "technicalError": "توقفت آخر جلسة بسبب مشكلة في الاتصال",
       "unknown": "انتهت آخر جلسة"
     },
     "patientNotice": {
       "inProgress": "معالجك يجري الآن جلسة قياس للحركة",
       "shared": "تمت مشاركة نتائج جلسة القياس مع معالجك"
     },
-    "pusher": {
-      "completed": "اكتمل قياس {exercise} بنجاح",
-      "abandoned": "انتهى قياس {exercise} قبل اكتماله",
-      "cancelled": "تم إلغاء قياس {exercise}"
+    "notifications": {
+      "completed": {
+        "patient": "اكتملت جلسة القياس الخاصة بك.",
+        "consultant": "اكتملت جلسة القياس وأصبحت النتائج متاحة الآن."
+      },
+      "cancelled_by_doctor": {
+        "patient": "تم إلغاء جلسة القياس الخاصة بك من قبل معالجك.",
+        "consultant": "قمت بإلغاء جلسة القياس."
+      },
+      "stopped_by_patient": {
+        "patient": "لقد أنهيت جلسة القياس مبكراً.",
+        "consultant": "أنهى المريض جلسة القياس قبل اكتمالها."
+      },
+      "pain": {
+        "patient": "تم إيقاف جلسة القياس بسبب إبلاغك عن ألم.",
+        "consultant": "⚠️ أبلغ المريض عن ألم أثناء التمرين وتم إيقاف الجلسة."
+      },
+      "technical_error": {
+        "patient": "توقفت جلسة القياس الخاصة بك بسبب مشكلة في الاتصال.",
+        "consultant": "توقفت جلسة القياس بسبب مشكلة في الاتصال."
+      },
+      "unknown": {
+        "patient": "هناك تحديث على جلسة القياس الخاصة بك.",
+        "consultant": "هناك تحديث بحالة غير معروفة لإحدى جلسات القياس."
+      }
     },
     "endReasons": {
       "completed": "اكتملت الجلسة بشكل طبيعي",
@@ -2003,6 +2030,12 @@
       "consultation_reminder_for_all": "تذكير بموعد الجلسة القادمة",
       "account_approved": "تم قبول حسابك",
       "account_rejected": "تم رفض حسابك",
+      "measurement_completed": "اكتملت جلسة القياس",
+      "measurement_cancelled_by_doctor": "تم إلغاء جلسة القياس",
+      "measurement_stopped_by_patient": "أنهى المريض الجلسة مبكراً",
+      "measurement_pain": "المريض أبلغ عن ألم",
+      "measurement_technical_error": "انقطعت جلسة القياس",
+      "measurement_unknown": "تحديث على جلسة القياس",
       "message": "رسالة جديدة",
       "comment": "تعليق جديد",
       "like": "إعجاب جديد",
@@ -2120,9 +2153,10 @@
   },
   "measurementSessionResult": {
     "title": "انتهت جلسة القياس",
-    "titleExpired": "انتهت مهلة الجلسة دون إكمال القياس",
     "titleCancelledByDoctor": "تم إلغاء الجلسة من قبل الطبيب",
-    "titleCancelledByPatient": "ألغى المريض الجلسة",
+    "titleStoppedByPatient": "أنهى المريض الجلسة مبكراً",
+    "titlePain": "أوقف المريض الجلسة بسبب الشعور بألم",
+    "titleTechnicalError": "توقفت الجلسة بسبب مشكلة في الاتصال",
     "titleUnknown": "انتهت الجلسة",
     "reps": "عدد التكرارات",
     "accuracy": "الدقة",

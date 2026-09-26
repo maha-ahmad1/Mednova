@@ -245,7 +245,7 @@ export default function ConsultationList({
                       <div className="flex items-center justify-between mt-1 ps-[56px]">
                         <Link
                           href={`/profile/consultations/${request.type}/${request.id}`}
-                          className="min-h-11 inline-flex items-center text-xs text-primary hover:underline gap-1 rtl:flex-row-reverse"
+                          className="min-h-11 inline-flex items-center gap-1 rounded-md border border-[#32A88D]/30 px-2 py-1 text-xs font-medium text-[#32A88D] hover:bg-[#32A88D]/10 rtl:flex-row-reverse"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <ExternalLink className="h-3 w-3" />

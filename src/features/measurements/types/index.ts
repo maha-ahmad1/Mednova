@@ -70,22 +70,49 @@ export interface PaginatedMeasurementEnvelope<T> {
   status: string;
 }
 
-// Pusher payload for the `.measurement.completed` event on the consultant's
-// private channel. Deliberately NOT the same shape as `Measurement` — this
-// push carries no `status_label`, `therapist_url`, or `patient_url`; those
-// only come back from the REST refetch triggered on receipt.
-export interface MeasurementCompletedPayload {
-  consultation_id: number;
-  consultation_type: string; // raw PHP FQCN, e.g. "App\\Models\\ConsultationVideoRequest"
+// Pusher payload for the `.measurement.ended` event, fired on both
+// `private-patient.{id}` and `private-consultant.{id}` — confirmed against
+// real backend payloads. Supersedes the earlier `.measurement.completed` /
+// `MeasurementCompletedPayload` guess: that event name never actually fires,
+// `consultation_type` here is already the resolved "chat" | "video" (not a
+// raw PHP FQCN), and the two channels carry different shapes.
+export type MeasurementSessionStatus = "completed" | "cancelled" | "abandoned";
+
+// Known values as of this writing — more may be added by the backend later
+// (see mapMeasurementOutcome's fallback), so this is deliberately widened
+// rather than narrowed to a closed union.
+export type MeasurementEndReason =
+  | "completed"
+  | "cancelled_by_doctor"
+  | "stopped_by_patient"
+  | "pain"
+  | "technical_error"
+  | (string & {});
+
+interface MeasurementEndedEventBase {
   measurement_id: string;
-  status: "completed" | "abandoned" | "cancelled";
+  consultation_id: number;
+  consultation_type: "chat" | "video";
+  status: MeasurementSessionStatus;
+  end_reason: MeasurementEndReason;
+  message: string; // raw backend copy — do not render directly, build our own per outcome
   exercise_type: string;
-  affected_side: AffectedSide;
-  measured_rom: number | null;
-  target_rom: number;
-  reps_completed: number | null;
-  target_reps: number;
-  accuracy_percentage: number | null;
-  end_reason: string;
+  affected_side: "left" | "right";
   completed_at: string;
+  reps_completed: number | null; // confirmed null on cancelled_by_doctor
+  target_reps: number;
 }
+
+// private-consultant.{id} only — adds clinical metrics not sent to the patient.
+export interface MeasurementEndedEventConsultant extends MeasurementEndedEventBase {
+  measured_rom: number;
+  target_rom: number;
+  accuracy_percentage: number;
+  incorrect_movements: number;
+  movement_smoothness: number;
+  fatigue_estimation: number;
+  recovery_score: number;
+}
+
+// private-patient.{id} only — lean, patient-safe, no clinical metrics.
+export type MeasurementEndedEventPatient = MeasurementEndedEventBase;

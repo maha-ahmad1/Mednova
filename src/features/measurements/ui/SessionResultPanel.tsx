@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { CheckCircle2, Clock, Download, HelpCircle, Loader2, XCircle } from "lucide-react";
-import { toast } from "sonner";
+import { AlertTriangle, CheckCircle2, Download, HelpCircle, Info, Loader2, XCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,9 +11,9 @@ import { formatDate } from "@/utils/dateUtils";
 import type { ConsultationType } from "@/types/consultation";
 import { EXERCISE_TYPES } from "../utils/exerciseTypes";
 import { getMeasurementStatusBadgeClass } from "../utils/mapMeasurementStatus";
-import { mapSessionOutcome, type SessionOutcome } from "../utils/mapSessionOutcome";
+import { mapMeasurementOutcome } from "../utils/mapSessionOutcome";
 import { useDownloadMeasurementReport } from "../hooks/useDownloadMeasurementReport";
-import type { AffectedSide, Measurement } from "../types";
+import type { AffectedSide, Measurement, MeasurementSessionStatus } from "../types";
 
 interface SessionResultPanelProps {
   measurement: Measurement;
@@ -24,30 +22,36 @@ interface SessionResultPanelProps {
   consultationType: ConsultationType;
 }
 
-const OUTCOME_HEADER_KEY: Record<SessionOutcome, string> = {
-  success: "measurementSessionResult.title",
-  expired: "measurementSessionResult.titleExpired",
+// Outcome keys as produced by mapMeasurementOutcome; "unknown" also covers
+// any future/unmapped {status, end_reason} combination.
+const OUTCOME_HEADER_KEY: Record<string, string> = {
+  completed: "measurementSessionResult.title",
   cancelled_by_doctor: "measurementSessionResult.titleCancelledByDoctor",
-  cancelled_by_patient: "measurementSessionResult.titleCancelledByPatient",
+  stopped_by_patient: "measurementSessionResult.titleStoppedByPatient",
+  pain: "measurementSessionResult.titlePain",
+  technical_error: "measurementSessionResult.titleTechnicalError",
   unknown: "measurementSessionResult.titleUnknown",
 };
 
-const OUTCOME_ICON: Record<SessionOutcome, typeof CheckCircle2> = {
-  success: CheckCircle2,
-  expired: Clock,
+const OUTCOME_ICON: Record<string, typeof CheckCircle2> = {
+  completed: CheckCircle2,
   cancelled_by_doctor: XCircle,
-  cancelled_by_patient: XCircle,
+  stopped_by_patient: Info,
+  pain: AlertTriangle,
+  technical_error: XCircle,
   unknown: HelpCircle,
 };
 
-const OUTCOME_ICON_CLASS: Record<SessionOutcome, string> = {
-  success: "text-[#32A88D]",
-  expired: "text-amber-600",
+const OUTCOME_ICON_CLASS: Record<string, string> = {
+  completed: "text-[#32A88D]",
   // Doctor-initiated cancellation is an expected, intentional action, not a
-  // problem state — kept neutral/gray so it doesn't read as alarming next to
-  // patient-initiated cancellation (kept red: unexpected, may need follow-up).
+  // problem state — kept neutral/gray so it doesn't read as alarming.
   cancelled_by_doctor: "text-gray-500",
-  cancelled_by_patient: "text-red-600",
+  stopped_by_patient: "text-blue-600",
+  // Clinically relevant — visibly distinct (safety signal), not just another
+  // neutral/info outcome.
+  pain: "text-red-600",
+  technical_error: "text-gray-500",
   unknown: "text-gray-400",
 };
 
@@ -55,11 +59,12 @@ const OUTCOME_ICON_CLASS: Record<SessionOutcome, string> = {
 // accent on the outer card so outcomes are distinguishable beyond icon/text
 // color alone (audit P0-2). Reuses the exact border-s-* accent pattern
 // already used for the selected-item state in ConsultationList.tsx.
-const OUTCOME_ACCENT_CLASS: Record<SessionOutcome, string> = {
-  success: "border-s-4 border-s-[#32A88D]",
-  expired: "border-s-4 border-s-amber-400",
+const OUTCOME_ACCENT_CLASS: Record<string, string> = {
+  completed: "border-s-4 border-s-[#32A88D]",
   cancelled_by_doctor: "border-s-4 border-s-gray-400",
-  cancelled_by_patient: "border-s-4 border-s-red-400",
+  stopped_by_patient: "border-s-4 border-s-blue-400",
+  pain: "border-s-4 border-s-red-400",
+  technical_error: "border-s-4 border-s-gray-400",
   unknown: "border-s-4 border-s-gray-300",
 };
 
@@ -125,27 +130,21 @@ export default function SessionResultPanel({
     `measurements.affectedSideOptions.${measurement.affected_side as AffectedSide}`,
   );
 
-  const outcome = mapSessionOutcome(measurement.end_reason);
+  // measurement.status only reaches this panel as completed/abandoned/cancelled
+  // (pending/in_progress are routed to MeasurementStatusCard by MeasurementSection).
+  const outcome = mapMeasurementOutcome(
+    measurement.status as MeasurementSessionStatus,
+    measurement.end_reason ?? "unknown",
+  );
   const hasPartialData = (measurement.reps_completed ?? 0) > 0;
 
-  // success shows the full metrics/ROM/download set; expired and both
-  // cancellation outcomes show them only when reps were actually recorded;
-  // unknown never shows result data, per the outcome table this panel implements.
-  const showResultsData = outcome === "success" || hasPartialData;
-  const showRomBar = outcome === "success";
+  // completed shows the full metrics/ROM/download set; the other outcomes show
+  // them only when reps were actually recorded; unknown never shows result
+  // data, per the outcome table this panel implements.
+  const showResultsData = outcome.key === "completed" || hasPartialData;
+  const showRomBar = outcome.key === "completed";
 
-  const OutcomeIcon = OUTCOME_ICON[outcome];
-
-  // Stopgap toast only — the persistent notification-bell entry for
-  // patient-initiated cancellation is a follow-up pending a backend-created
-  // notification type for this event; it cannot be built from the frontend alone.
-  const patientCancelToastFiredFor = useRef<string | null>(null);
-  useEffect(() => {
-    if (outcome !== "cancelled_by_patient") return;
-    if (patientCancelToastFiredFor.current === measurement.measurement_id) return;
-    patientCancelToastFiredFor.current = measurement.measurement_id;
-    toast.info(t("measurementSessionResult.titleCancelledByPatient"));
-  }, [outcome, measurement.measurement_id, t]);
+  const OutcomeIcon = OUTCOME_ICON[outcome.key] ?? HelpCircle;
 
   const handleDownloadReport = () => {
     // A consultation-scoped report returns every measurement for this
@@ -156,14 +155,14 @@ export default function SessionResultPanel({
 
   return (
     <Card
-      className={`bg-gradient-to-b from-white to-gray-50/50 border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg mt-4 sm:mt-6 ${OUTCOME_ACCENT_CLASS[outcome]}`}
+      className={`bg-gradient-to-b from-white to-gray-50/50 border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg mt-4 sm:mt-6 ${OUTCOME_ACCENT_CLASS[outcome.key] ?? OUTCOME_ACCENT_CLASS.unknown}`}
     >
       <CardContent className="p-4 sm:p-6 flex flex-col gap-4">
         <div className="flex items-center gap-2">
-          <OutcomeIcon className={`w-5 h-5 shrink-0 ${OUTCOME_ICON_CLASS[outcome]}`} />
+          <OutcomeIcon className={`w-5 h-5 shrink-0 ${OUTCOME_ICON_CLASS[outcome.key] ?? OUTCOME_ICON_CLASS.unknown}`} />
           <div>
             <p className="font-semibold text-gray-800 text-sm sm:text-base">
-              {t(OUTCOME_HEADER_KEY[outcome])}
+              {t(OUTCOME_HEADER_KEY[outcome.key] ?? OUTCOME_HEADER_KEY.unknown)}
             </p>
             {measurement.completed_at && (
               <p className="text-xs text-gray-500">
@@ -198,7 +197,7 @@ export default function SessionResultPanel({
           <div className="flex gap-3">
             <MetricTile
               label={t("measurementSessionResult.reps")}
-              value={String(measurement.reps_completed ?? 0)}
+              value={measurement.reps_completed !== null ? String(measurement.reps_completed) : "—"}
             />
             <MetricTile
               label={t("measurementSessionResult.accuracy")}

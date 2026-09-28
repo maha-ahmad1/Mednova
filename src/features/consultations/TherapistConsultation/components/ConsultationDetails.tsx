@@ -11,6 +11,7 @@ import {
   ExternalLink,
   RefreshCw,
   Calendar,
+  Clock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,9 +21,8 @@ import { useEffect, useCallback } from "react"; // أضف useEffect
 import { useConsultationStore } from "@/store/consultationStore";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
-import { History } from "lucide-react";
 import { getStatusBadge, getTypeIcon } from "@/features/consultations/utils/consultation-helpers";
-import MeasurementPanel from "@/features/measurements/ui/MeasurementPanel";
+import MeasurementSection from "@/features/measurements/ui/MeasurementSection";
 
 // Formats the appointment day/time using the caller's translated day names
 const formatAppointmentDateTime = (
@@ -68,7 +68,6 @@ export default function ConsultationDetails({
   const t = useTranslations("consultations.panel");
   const tDays = useTranslations("consultations.panel.days");
   const tStatus = useTranslations("consultations.status");
-  const tMeasurements = useTranslations("measurements");
   const getStatusLabel = (status: string) => tStatus(status as "pending" | "accepted" | "cancelled" | "active" | "completed");
   const getDayLabel = (day: string) => {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -142,10 +141,15 @@ const shouldShowZoomButton = () => {
     });
   }, [displayRequest, storeRequest, isZoomLinkFromPusher, initialRequest.status]);
 
+  // Live-update banner and the Zoom call-out can both be true at once; when
+  // they are, the call-out's own "live" badge already communicates the
+  // real-time state, so the separate green banner would just duplicate it.
+  const showLiveBanner = isZoomLinkFromPusher() && !shouldShowZoomButton();
+
   const renderDetailsContent = () => (
-    <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-200px)]">
+    <div className="p-4 sm:p-6">
       {/* ✅ مؤشر مصدر البيانات */}
-      {isZoomLinkFromPusher() && (
+      {showLiveBanner && (
         <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -242,112 +246,75 @@ const shouldShowZoomButton = () => {
       )} */}
 
       {userRole === "patient" && (
-        <>
-          <div className="mb-6 sm:mb-8" >
-            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
-              <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-              {displayRequest.data.consultant_type === "therapist"
-                ? t("therapistDataTitle")
-                : t("centerDataTitle")}
-            </h3>
-            <div className="grid grid-cols-1 gap-3 sm:gap-4">
-              <InfoCard
-                icon={User}
-                label={t("fullNameLabel")}
-                value={consultant.full_name}
-              />
-              {/* <InfoCard
-                icon={Mail}
-                label="البريد الإلكتروني"
-                value={consultant.email}
-              />
-              <InfoCard
-                icon={Phone}
-                label="رقم الهاتف"
-                value={consultant.phone}
-              /> */}
-            </div>
-          </div>
-        </>
+        <DetailSection
+          title={
+            displayRequest.data.consultant_type === "therapist"
+              ? t("therapistDataTitle")
+              : t("centerDataTitle")
+          }
+        >
+          <FieldRow
+            icon={User}
+            label={t("fullNameLabel")}
+            value={consultant.full_name}
+          />
+        </DetailSection>
       )}
 
       {userRole === "consultable" && (
-        <>
-          <div className="mb-6 sm:mb-8">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
-              <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-              {t("patientDataTitle")}
-            </h3>
-            <div className="grid grid-cols-1 gap-3 sm:gap-4">
-              <InfoCard
-                icon={User}
-                label={t("fullNameLabel")}
-                value={patient.full_name}
-              />
-              {/* <InfoCard
-                icon={Mail}
-                label="البريد الإلكتروني"
-                value={patient.email}
-              />
-              <InfoCard icon={Phone} label="رقم الهاتف" value={patient.phone} /> */}
-            </div>
-            {!!patient?.id && (
-              <Link
-                href={`/profile/consultations/patients/${patient.id}/measurements?patientName=${encodeURIComponent(patient.full_name)}`}
-                className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[#32A88D] hover:underline"
-              >
-                <History className="w-4 h-4" />
-                {tMeasurements("historyLinkText")}
-              </Link>
-            )}
-          </div>
-        </>
+        <DetailSection title={t("patientDataTitle")}>
+          <FieldRow
+            icon={User}
+            label={t("fullNameLabel")}
+            value={patient.full_name}
+          />
+        </DetailSection>
       )}
 
-      <div className="mb-6 sm:mb-8">
-        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
-          <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
-          {t("consultationInfoTitle")}
-        </h3>
-        <div className="space-y-3 sm:space-y-4">
-          <div className="p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm">
-            <p className="text-xs sm:text-sm text-gray-600 mb-2">
-              {t("consultationTypeLabel")}
-            </p>
-            <p className="font-semibold text-gray-800 text-sm sm:text-base">
-              {displayRequest.type === "chat" ? t("typeChat") : t("typeVideo")}
-            </p>
-          </div>
-
-          {/* ✅ عرض تاريخ الحجز - يظهر للمختص والمركز */}
-          {appointmentInfo && (
-            <div className="p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm">
-              <p className="text-xs sm:text-sm text-gray-600 mb-2 flex items-center gap-1">
-                <Calendar className="w-4 h-4 text-[#32A88D]" />
-                {t("bookingDateLabel")}
-              </p>
-              <div className="font-semibold text-gray-800 text-sm sm:text-base">
-                <div className="flex items-center gap-2">
-                  <span>{appointmentInfo.fullDate}</span>
-                  {/* <Badge variant="outline" className="text-xs bg-[#32A88D]/5 text-[#32A88D] border-[#32A88D]/20">
-                    <Clock className="w-3 h-3 ml-1" />
-                    {appointmentInfo.time}
-                  </Badge> */}
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm">
-            <p className="text-xs sm:text-sm text-gray-600 mb-2">
-              {t("statusLabel")}
-            </p>
-            <div className="font-semibold text-gray-800 text-sm sm:text-base">
-              {getStatusBadge(displayRequest.status, getStatusLabel)}
-            </div>
-          </div>
+      {/* Pending decisions surface right after the header/identity info instead of
+          waiting at the bottom of the scrollable content, since Accept/Reject is
+          the most time-sensitive action for a pending request. */}
+      {userRole === "consultable" && displayRequest.status === "pending" && (
+        <div className="mb-6 sm:mb-8">
+          <ConsultationActions
+            request={displayRequest}
+            onRequestUpdate={onRequestUpdate}
+            userRole={userRole}
+          />
         </div>
-      </div>
+      )}
+
+      <DetailSection title={t("consultationInfoTitle")}>
+        <FieldRow
+          label={t("consultationTypeLabel")}
+          value={displayRequest.type === "chat" ? t("typeChat") : t("typeVideo")}
+        />
+
+        {appointmentInfo && (
+          <FieldRow
+            icon={Calendar}
+            label={t("bookingDateLabel")}
+            value={
+              <div className="flex flex-wrap items-center gap-2">
+                <span>{appointmentInfo.day}</span>
+                {/* Time shown as a distinct badge, not baked into the day string, to avoid duplicating it */}
+                <Badge
+                  variant="outline"
+                  className="gap-1 border-[#32A88D]/30 bg-[#32A88D]/10 text-[#32A88D] font-normal"
+                >
+                  <Clock className="w-3 h-3" />
+                  {appointmentInfo.time}
+                </Badge>
+              </div>
+            }
+          />
+        )}
+
+        <FieldRow
+          label={t("statusLabel")}
+          value={getStatusBadge(displayRequest.status, getStatusLabel)}
+        />
+      </DetailSection>
 
       {displayRequest.type === "chat" &&
         ["accepted", "active", "completed"].includes(displayRequest.status) && (
@@ -361,20 +328,55 @@ const shouldShowZoomButton = () => {
           </div>
         )}
 
-      <ConsultationActions
-        request={displayRequest} // ✅ استخدم displayRequest
-        onRequestUpdate={onRequestUpdate}
-        userRole={userRole}
-      />
-      <MeasurementPanel request={displayRequest} userRole={userRole} />
+      {/* Same workspace card/scroll region as the session controls below —
+          not a separate trailing module. Placed above the action buttons
+          since it's the most time-critical, actionable data during a live
+          session. */}
+      <MeasurementSection request={displayRequest} userRole={userRole} />
+
+      {!(userRole === "consultable" && displayRequest.status === "pending") && (
+        <ConsultationActions
+          request={displayRequest} // ✅ استخدم displayRequest
+          onRequestUpdate={onRequestUpdate}
+          userRole={userRole}
+        />
+      )}
     </div>
   );
 
   return (
     <div className={`lg:col-span-2 ${isMobile ? "block" : "block"}`}>
-      <Card className="bg-gradient-to-b from-white to-gray-50/50 border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg h-full flex flex-col">
-        <CardHeader className="pb-3 sm:pb-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white rounded-t-xl sm:rounded-t-2xl">
-          <div className="flex items-center justify-between">
+      <Card className="rounded-none border-0 bg-white shadow-none h-full flex flex-col md:bg-gradient-to-b md:from-white md:to-gray-50/50 md:border md:border-gray-200 md:rounded-2xl md:shadow-lg">
+        <CardHeader className="pb-3 border-b border-gray-100 md:border-gray-200 md:bg-gradient-to-r md:from-gray-50 md:to-white md:rounded-t-2xl">
+          {/* App bar — mobile only */}
+          <div className="flex items-center gap-1 md:hidden">
+            <button
+              type="button"
+              aria-label={t("back")}
+              onClick={onBackToList}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-gray-600 active:bg-gray-100"
+            >
+              <ChevronLeft className="w-5 h-5 rtl:rotate-180" />
+            </button>
+            <h1 className="min-w-0 flex-1 truncate text-base font-semibold text-gray-800">
+              {t("title")}
+            </h1>
+          </div>
+          <div className="flex items-center gap-2 ps-1 md:hidden">
+            {getStatusBadge(displayRequest.status, getStatusLabel)}
+            <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+              {getTypeIcon(displayRequest.type)}
+              {displayRequest.type === "chat" ? t("typeChat") : t("typeVideo")}
+            </span>
+            {appointmentInfo && (
+              <span className="text-xs text-gray-500 truncate">
+                {appointmentInfo.day} • {appointmentInfo.time}
+              </span>
+            )}
+          </div>
+
+          {/* Header row — md and up (unchanged design) */}
+          <div className="hidden items-center justify-between md:flex">
             <div className="flex items-center gap-2">
               {isMobile && (
                 <Button
@@ -393,42 +395,70 @@ const shouldShowZoomButton = () => {
               </CardTitle>
             </div>
             <div className="flex items-center gap-1 sm:gap-2">
+              {appointmentInfo && (
+                <span className="text-xs sm:text-sm text-gray-500 me-1">
+                  {appointmentInfo.day} • {appointmentInfo.time}
+                </span>
+              )}
               {getTypeIcon(displayRequest.type)}
               <div className="scale-75 sm:scale-100 origin-right">
                 {getStatusBadge(displayRequest.status, getStatusLabel)}
               </div>
-           
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="flex-1 p-0 overflow-hidden">
-          <div className="h-full">{renderDetailsContent()}</div>
+        <CardContent className="flex-1 p-0">
+          {renderDetailsContent()}
         </CardContent>
       </Card>
     </div>
   );
 }
 
-function InfoCard({
+function DetailSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mb-6 sm:mb-8">
+      <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-1 md:mb-4 flex items-center gap-2">
+        <div className="w-2 h-2 bg-[#32A88D] rounded-full"></div>
+        {title}
+      </h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function FieldRow({
   icon: Icon,
   label,
   value,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<{ className?: string }>;
   label: string;
-  value: string;
+  value: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-gray-100 shadow-sm">
-      <div className="p-1 sm:p-2 bg-[#32A88D]/10 rounded-lg">
-        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#32A88D]" />
-      </div>
-      <div className="flex-1">
-        <p className="text-xs sm:text-sm text-gray-600 mb-1">{label}</p>
-        <p className="font-semibold text-gray-800 text-sm sm:text-base break-all">
-          {value}
+    <div className="flex items-center gap-3 py-2.5 sm:p-4 sm:bg-white sm:rounded-xl sm:border sm:border-gray-100 sm:shadow-sm">
+      {Icon && (
+        <div className="hidden sm:block p-1 sm:p-2 bg-[#32A88D]/10 rounded-lg">
+          <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-[#32A88D]" />
+        </div>
+      )}
+      <div className="flex-1 min-w-0">
+        <p className="text-xs text-gray-500 mb-0.5 sm:text-sm sm:text-gray-600 sm:mb-1">
+          {label}
         </p>
+        <div className="font-semibold text-gray-800 text-sm sm:text-base break-words">
+          {value}
+        </div>
       </div>
     </div>
   );

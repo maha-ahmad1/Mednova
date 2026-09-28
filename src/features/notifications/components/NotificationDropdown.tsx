@@ -47,13 +47,17 @@ export function NotificationDropdown() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-96 me-6" align="end" forceMount>
+      <DropdownMenuContent
+        className="w-[calc(100vw-2rem)] sm:w-96 me-6"
+        align="end"
+        forceMount
+      >
         <NotificationHeader
           unreadCount={unreadCount}
           onMarkAllAsRead={handleMarkAllAsRead}
         />
 
-        <ScrollArea className="h-[400px]">
+        <ScrollArea className="max-h-[60vh] sm:h-[400px]">
           <DropdownMenuGroup>
             {!hasNotifications ? (
               <NotificationEmptyState isLoading={isLoading} />

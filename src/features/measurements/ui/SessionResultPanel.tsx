@@ -1,35 +1,78 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { CheckCircle2, Download } from "lucide-react";
-import { toast } from "sonner";
+import { AlertTriangle, CheckCircle2, Download, HelpCircle, Info, Loader2, StopCircle, XCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/utils/dateUtils";
-import { useAxiosInstance } from "@/lib/axios/axiosInstance";
+import type { ConsultationType } from "@/types/consultation";
 import { EXERCISE_TYPES } from "../utils/exerciseTypes";
 import { getMeasurementStatusBadgeClass } from "../utils/mapMeasurementStatus";
-import { downloadMeasurementReport } from "../api/measurementApi";
-import type { AffectedSide, Measurement } from "../types";
+import { mapMeasurementOutcome } from "../utils/mapSessionOutcome";
+import { useDownloadMeasurementReport } from "../hooks/useDownloadMeasurementReport";
+import type { AffectedSide, Measurement, MeasurementSessionStatus } from "../types";
 
 interface SessionResultPanelProps {
   measurement: Measurement;
   patientId: number;
+  consultationId: number;
+  consultationType: ConsultationType;
 }
 
-const KNOWN_END_REASONS = new Set([
-  "completed",
-  "stopped_by_therapist",
-  "stopped_by_patient",
-  "pain",
-  "disconnected",
-  "timeout",
-  "technical_error",
-  "cancelled_by_doctor",
-]);
+// Outcome keys as produced by mapMeasurementOutcome; "unknown" also covers
+// any future/unmapped {status, end_reason} combination.
+const OUTCOME_HEADER_KEY: Record<string, string> = {
+  completed: "measurementSessionResult.title",
+  cancelled_by_doctor: "measurementSessionResult.titleCancelledByDoctor",
+  stopped_by_patient: "measurementSessionResult.titleStoppedByPatient",
+  stopped_by_therapist: "measurementSessionResult.titleStoppedByTherapist",
+  pain: "measurementSessionResult.titlePain",
+  technical_error: "measurementSessionResult.titleTechnicalError",
+  unknown: "measurementSessionResult.titleUnknown",
+};
+
+const OUTCOME_ICON: Record<string, typeof CheckCircle2> = {
+  completed: CheckCircle2,
+  cancelled_by_doctor: XCircle,
+  stopped_by_patient: Info,
+  // Stop icon — deliberately distinct from the success checkmark and from
+  // the expired clock, since status "completed" here isn't a real finish.
+  stopped_by_therapist: StopCircle,
+  pain: AlertTriangle,
+  technical_error: XCircle,
+  unknown: HelpCircle,
+};
+
+const OUTCOME_ICON_CLASS: Record<string, string> = {
+  completed: "text-[#32A88D]",
+  // Doctor-initiated cancellation is an expected, intentional action, not a
+  // problem state — kept neutral/gray so it doesn't read as alarming.
+  cancelled_by_doctor: "text-gray-500",
+  stopped_by_patient: "text-blue-600",
+  stopped_by_therapist: "text-gray-500",
+  // Clinically relevant — visibly distinct (safety signal), not just another
+  // neutral/info outcome.
+  pain: "text-red-600",
+  technical_error: "text-gray-500",
+  unknown: "text-gray-400",
+};
+
+// Same distinction as OUTCOME_ICON_CLASS, applied as a border-inline-start
+// accent on the outer card so outcomes are distinguishable beyond icon/text
+// color alone (audit P0-2). Reuses the exact border-s-* accent pattern
+// already used for the selected-item state in ConsultationList.tsx.
+const OUTCOME_ACCENT_CLASS: Record<string, string> = {
+  completed: "border-s-4 border-s-[#32A88D]",
+  cancelled_by_doctor: "border-s-4 border-s-gray-400",
+  stopped_by_patient: "border-s-4 border-s-blue-400",
+  stopped_by_therapist: "border-s-4 border-s-gray-400",
+  pain: "border-s-4 border-s-red-400",
+  technical_error: "border-s-4 border-s-gray-400",
+  unknown: "border-s-4 border-s-gray-300",
+};
 
 function ProgressMetric({
   label,
@@ -74,11 +117,13 @@ function MetricTile({ label, value }: { label: string; value: string }) {
 export default function SessionResultPanel({
   measurement,
   patientId,
+  consultationId,
+  consultationType,
 }: SessionResultPanelProps) {
   const t = useTranslations();
   const locale = useLocale();
-  const axios = useAxiosInstance();
   const dateLocale = locale === "ar" ? "ar-OM" : "en-US";
+  const { download, isDownloading } = useDownloadMeasurementReport();
 
   const exerciseTypeConfig = EXERCISE_TYPES.find(
     (entry) => entry.value === measurement.exercise_type,
@@ -91,60 +136,51 @@ export default function SessionResultPanel({
     `measurements.affectedSideOptions.${measurement.affected_side as AffectedSide}`,
   );
 
-  const hasResultData =
-    measurement.measured_rom !== null && measurement.reps_completed !== null;
-  const showMetrics =
-    measurement.status === "completed" ||
-    (measurement.status === "abandoned" && hasResultData);
-  const showExplanation =
-    measurement.status === "cancelled" ||
-    (measurement.status === "abandoned" && !hasResultData);
+  // measurement.status only reaches this panel as completed/abandoned/cancelled
+  // (pending/in_progress are routed to MeasurementStatusCard by MeasurementSection).
+  const outcome = mapMeasurementOutcome(
+    measurement.status as MeasurementSessionStatus,
+    measurement.end_reason ?? "unknown",
+  );
+  const hasPartialData = (measurement.reps_completed ?? 0) > 0;
 
-  const endReasonLabel =
-    measurement.end_reason && KNOWN_END_REASONS.has(measurement.end_reason)
-      ? t(`measurements.endReasons.${measurement.end_reason}`)
-      : t("measurements.endReasons.unknown");
+  // completed shows the full metrics/ROM/download set; the other outcomes show
+  // them only when reps were actually recorded; unknown never shows result
+  // data, per the outcome table this panel implements.
+  const showResultsData = outcome.key === "completed" || hasPartialData;
+  const showRomBar = outcome.key === "completed";
 
-  const handleDownloadReport = async () => {
-    try {
-      const blob = await downloadMeasurementReport(axios, measurement.measurement_id);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `measurement-report-${measurement.measurement_id}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    } catch {
-      // TODO: depends on the backend endpoint GET /api/measurements/{id}/report, which
-      // does not exist yet — this will 404 until the backend team ships it.
-      toast.error(t("measurementSessionResult.downloadFailed"));
-    }
+  const OutcomeIcon = OUTCOME_ICON[outcome.key] ?? HelpCircle;
+
+  const handleDownloadReport = () => {
+    // A consultation-scoped report returns every measurement for this
+    // consultation, not just the one shown here — expected if a single
+    // bridge session covers more than one exercise, not a bug.
+    download({ consultation_id: consultationId, consultation_type: consultationType });
   };
 
   return (
-    <Card className="bg-gradient-to-b from-white to-gray-50/50 border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg mt-4 sm:mt-6">
+    <Card
+      className={`bg-gradient-to-b from-white to-gray-50/50 border border-gray-200 rounded-xl sm:rounded-2xl shadow-lg mt-4 sm:mt-6 ${OUTCOME_ACCENT_CLASS[outcome.key] ?? OUTCOME_ACCENT_CLASS.unknown}`}
+    >
       <CardContent className="p-4 sm:p-6 flex flex-col gap-4">
-        {measurement.status === "completed" && (
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-[#32A88D] shrink-0" />
-            <div>
-              <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                {t("measurementSessionResult.title")}
+        <div className="flex items-center gap-2">
+          <OutcomeIcon className={`w-5 h-5 shrink-0 ${OUTCOME_ICON_CLASS[outcome.key] ?? OUTCOME_ICON_CLASS.unknown}`} />
+          <div>
+            <p className="font-semibold text-gray-800 text-sm sm:text-base">
+              {t(OUTCOME_HEADER_KEY[outcome.key] ?? OUTCOME_HEADER_KEY.unknown)}
+            </p>
+            {measurement.completed_at && (
+              <p className="text-xs text-gray-500">
+                {formatDate(
+                  measurement.completed_at,
+                  { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" },
+                  dateLocale,
+                )}
               </p>
-              {measurement.completed_at && (
-                <p className="text-xs text-gray-500">
-                  {formatDate(
-                    measurement.completed_at,
-                    { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" },
-                    dateLocale,
-                  )}
-                </p>
-              )}
-            </div>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="flex items-center justify-between gap-2">
           <div>
@@ -163,34 +199,30 @@ export default function SessionResultPanel({
           </Badge>
         </div>
 
-        {showMetrics && (
-          <>
-            <div className="flex gap-3">
-              <MetricTile
-                label={t("measurementSessionResult.reps")}
-                value={String(measurement.reps_completed ?? 0)}
-              />
-              <MetricTile
-                label={t("measurementSessionResult.accuracy")}
-                value={
-                  measurement.accuracy_percentage !== null
-                    ? `${measurement.accuracy_percentage}%`
-                    : "-"
-                }
-              />
-            </div>
-
-            <ProgressMetric
-              label={t("measurementSessionResult.romAchieved")}
-              value={measurement.measured_rom ?? 0}
-              target={measurement.target_rom}
-              unit="°"
+        {showResultsData && (
+          <div className="flex gap-3">
+            <MetricTile
+              label={t("measurementSessionResult.reps")}
+              value={measurement.reps_completed !== null ? String(measurement.reps_completed) : "—"}
             />
-          </>
+            <MetricTile
+              label={t("measurementSessionResult.accuracy")}
+              value={
+                measurement.accuracy_percentage !== null
+                  ? `${measurement.accuracy_percentage}%`
+                  : "-"
+              }
+            />
+          </div>
         )}
 
-        {showExplanation && (
-          <p className="text-xs sm:text-sm text-muted-foreground">{endReasonLabel}</p>
+        {showRomBar && (
+          <ProgressMetric
+            label={t("measurementSessionResult.romAchieved")}
+            value={measurement.measured_rom ?? 0}
+            target={measurement.target_rom}
+            unit="°"
+          />
         )}
 
         <div className="flex flex-col sm:flex-row gap-2 pt-1">
@@ -205,14 +237,21 @@ export default function SessionResultPanel({
               {t("measurementSessionResult.viewFullHistory")}
             </Link>
           </Button>
-          <Button
-            type="button"
-            onClick={handleDownloadReport}
-            className="cursor-pointer flex-1 bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white flex items-center justify-center gap-2"
-          >
-            <Download className="w-4 h-4" />
-            {t("measurementSessionResult.downloadReport")}
-          </Button>
+          {showResultsData && (
+            <Button
+              type="button"
+              onClick={handleDownloadReport}
+              disabled={isDownloading}
+              className="cursor-pointer flex-1 bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white flex items-center justify-center gap-2"
+            >
+              {isDownloading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              {t("measurementSessionResult.downloadReport")}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

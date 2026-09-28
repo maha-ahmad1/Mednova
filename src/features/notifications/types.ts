@@ -49,6 +49,15 @@ export type NotificationType =
   // Account status
   | 'account_approved'
   | 'account_rejected'
+  // Measurement session outcomes
+  | 'measurement_completed'
+  | 'measurement_cancelled_by_doctor'
+  | 'measurement_stopped_by_patient'
+  | 'measurement_stopped_by_therapist'
+  | 'measurement_pain'
+  | 'measurement_technical_error'
+  | 'measurement_expired'
+  | 'measurement_unknown'
   // Messaging / Social
   | 'message'
   | 'comment'

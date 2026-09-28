@@ -13,6 +13,8 @@ import { CenterRegistrationCard } from "./CenterRegistrationCard";
 import { CenterScheduleCard } from "./CenterScheduleCard";
 import { CenterLocationCard } from "./CenterLocationCard";
 import { CenterPricingCard } from "./CenterPricingCard";
+import { SidebarImageEditor } from "@/features/profile/_create/ui/sidebar/SidebarImageEditor";
+import { type UserType } from "@/features/profile/_views/hooks/useUpdateProfileImage";
 
 export default function CenterInfo() {
   const { data: session } = useSession();
@@ -45,6 +47,15 @@ export default function CenterInfo() {
   return (
     <div className="container max-w-5xl mx-auto">
       <div dir={dir} className="space-y-6">
+        <div className="lg:hidden">
+          <SidebarImageEditor
+            currentImage={profile.image || session?.user?.image || "/images/placeholder.svg"}
+            userType={(session?.user?.role as UserType) || "center"}
+            userId={userId!}
+            refetch={refetch}
+          />
+        </div>
+
         <CenterPersonalCard
           profile={profile}
           userId={userId!}

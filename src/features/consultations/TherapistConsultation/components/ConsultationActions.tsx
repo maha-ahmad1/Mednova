@@ -9,7 +9,6 @@ import type { ConsultationRequest } from "@/types/consultation";
 import RejectDialog from "./RejectDialog";
 import { useConsultationRequestActions } from "../../hooks/useConsultationRequestActions";
 import { useConsultationStore } from "@/store/consultationStore";
-import MeasurementRequestDialog from "@/features/measurements/ui/MeasurementRequestDialog";
 
 // Zoom becomes joinable this many minutes before the scheduled appointment time.
 const ZOOM_JOINABLE_LEAD_MS = 5 * 60 * 1000;
@@ -304,10 +303,6 @@ export default function ConsultationActions({
               </p>
             )}
           </div>
-        )}
-
-        {request.status === "active" && (
-          <MeasurementRequestDialog request={request} />
         )}
 
         {request.status === "completed" && (

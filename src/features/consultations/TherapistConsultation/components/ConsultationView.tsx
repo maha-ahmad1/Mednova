@@ -135,9 +135,9 @@ export default function ConsultationView({}: ConsultationViewProps) {
   }
 
   return (
-   <div className="w-full bg-gray-50 py-6 px-4 lg:pb-6 lg:pt-8">
+   <div className="w-full bg-white md:bg-gray-50 md:py-6 md:px-4 lg:pb-6 lg:pt-8">
   <div className="max-w-7xl mx-auto">
-    <div className="grid grid-cols-1 mx-auto max-w-5xl w-full gap-4 lg:grid-cols-3 sm:gap-6 lg:gap-8">
+    <div className="grid grid-cols-1 mx-auto max-w-5xl w-full gap-0 md:gap-4 lg:grid-cols-3 sm:gap-6 lg:gap-8">
       {isMobile ? (
         selectedRequest ? (
           <ConsultationDetails

@@ -27,8 +27,9 @@ export default function DashboardLayout({
       <div className="flex">
         {!hideChrome && (
           <div
-            className="   fixed bottom-0 start-0 end-0 h-16
-    lg:top-36 lg:bottom-auto lg:start-10 lg:end-auto lg:h-auto lg:w-70
+            className="   fixed bottom-0 start-0 end-0
+    pb-[env(safe-area-inset-bottom)]
+    lg:top-36 lg:bottom-auto lg:start-10 lg:end-auto lg:pb-0 lg:h-auto lg:w-70
     z-40 lg:z-30
     bg-white border-t lg:border lg:border-gray-100
     lg:rounded-2xl shadow-lg lg:shadow-xl
@@ -42,10 +43,13 @@ export default function DashboardLayout({
         <div
           className={cn(
             "flex-1 min-h-screen transition-all duration-300 w-full",
-            !hideChrome && "pb-20 lg:pb-0 lg:ms-80"
+            !hideChrome &&
+              "pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0 lg:ms-80"
           )}
         >
-          <main className="container mx-auto px-6 py-8">{children}</main>
+          <main className="container mx-auto px-4 py-4 md:px-6 md:py-8">
+            {children}
+          </main>
         </div>
       </div>
     </div>

@@ -7,12 +7,14 @@ import {
   Video,
   MessageSquare,
   AlertCircle,
+  AlertTriangle,
   XCircle,
   Heart,
   UserPlus,
   Info,
   Wallet,
   AlarmClock,
+  StopCircle,
 } from 'lucide-react';
 
 export interface NotificationTypeConfigEntry {
@@ -102,6 +104,50 @@ const CONFIG_MAP: Record<string, NotificationTypeConfigEntry> = {
     icon: XCircle,
     colorClass: 'bg-red-500',
     titleKey: 'types.account_rejected',
+  },
+  measurement_completed: {
+    icon: CheckCircle2,
+    colorClass: 'bg-green-500',
+    titleKey: 'types.measurement_completed',
+  },
+  measurement_cancelled_by_doctor: {
+    icon: XCircle,
+    colorClass: 'bg-gray-500',
+    titleKey: 'types.measurement_cancelled_by_doctor',
+  },
+  measurement_stopped_by_patient: {
+    icon: Info,
+    colorClass: 'bg-blue-500',
+    titleKey: 'types.measurement_stopped_by_patient',
+  },
+  // Neutral/gray — status "completed" here does not mean a successful
+  // finish, so this must stay visually distinct from measurement_completed
+  // and from measurement_expired (different icon: stop vs. clock).
+  measurement_stopped_by_therapist: {
+    icon: StopCircle,
+    colorClass: 'bg-gray-500',
+    titleKey: 'types.measurement_stopped_by_therapist',
+  },
+  // Safety-relevant — visibly distinct from the other measurement outcomes.
+  measurement_pain: {
+    icon: AlertTriangle,
+    colorClass: 'bg-red-600',
+    titleKey: 'types.measurement_pain',
+  },
+  measurement_technical_error: {
+    icon: AlertCircle,
+    colorClass: 'bg-gray-500',
+    titleKey: 'types.measurement_technical_error',
+  },
+  measurement_expired: {
+    icon: Clock,
+    colorClass: 'bg-gray-500',
+    titleKey: 'types.measurement_expired',
+  },
+  measurement_unknown: {
+    icon: Bell,
+    colorClass: 'bg-gray-400',
+    titleKey: 'types.measurement_unknown',
   },
   message: {
     icon: MessageSquare,

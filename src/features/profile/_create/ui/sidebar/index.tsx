@@ -128,20 +128,22 @@ return (
             key={`${item.href}-${item.labelKey}`}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 rounded-xl px-3 lg:px-4 py-3 lg:py-3 text-sm font-medium transition-all duration-200 justify-center lg:justify-start flex-1 lg:flex-none",
+              "flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-2 text-[10px] font-medium transition-all duration-200 lg:flex-none lg:flex-row lg:justify-start lg:gap-3 lg:px-4 lg:py-3 lg:text-sm",
               isActive
-                ? "bg-[#32A88D] text-white shadow-md"
-                : "text-gray-600 hover:bg-[#32A88D]/10 hover:text-[#32A88D]"
+                ? "text-[#32A88D] lg:bg-[#32A88D] lg:text-white lg:shadow-md"
+                : "text-gray-500 lg:text-gray-600 lg:hover:bg-[#32A88D]/10 lg:hover:text-[#32A88D]"
             )}
             title={label}
           >
             <item.icon
               className={cn(
                 "h-5 w-5 flex-shrink-0",
-                isActive ? "text-white" : "text-[#32A88D]"
+                isActive ? "text-[#32A88D] lg:text-white" : "text-gray-400 lg:text-[#32A88D]"
               )}
             />
-            <span className="hidden lg:block">{label}</span>
+            <span className="leading-none whitespace-nowrap lg:leading-normal">
+              {label}
+            </span>
           </Link>
         );
       })}

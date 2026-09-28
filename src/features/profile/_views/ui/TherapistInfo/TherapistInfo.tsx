@@ -15,6 +15,8 @@ import { TherapistBioCard } from "./TherapistBioCard";
 import { TherapistscheduleCard } from "./TherapistscheduleCard";
 import { TherapistLicensesCard } from "./TherpistLicensesCard";
 import { TherapistPricingCard } from "./TherapistPricingCard";
+import { SidebarImageEditor } from "@/features/profile/_create/ui/sidebar/SidebarImageEditor";
+import { type UserType } from "@/features/profile/_views/hooks/useUpdateProfileImage";
 
 export default function TherapistInfo() {
   const { data: session } = useSession();
@@ -44,6 +46,15 @@ export default function TherapistInfo() {
   return (
     <div className="container max-w-6xl mx-auto px-4 py-8">
       <div dir={dir} className="space-y-6">
+        <div className="lg:hidden">
+          <SidebarImageEditor
+            currentImage={(typeof profile.image === "string" ? profile.image : undefined) || session?.user?.image || "/images/placeholder.svg"}
+            userType={(session?.user?.role as UserType) || "therapist"}
+            userId={userId!}
+            refetch={refetch}
+          />
+        </div>
+
         <TherapistPersonalCard profile={profile} userId={userId!} refetch={refetch} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

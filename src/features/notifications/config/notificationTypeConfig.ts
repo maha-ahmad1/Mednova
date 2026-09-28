@@ -14,6 +14,7 @@ import {
   Info,
   Wallet,
   AlarmClock,
+  StopCircle,
 } from 'lucide-react';
 
 export interface NotificationTypeConfigEntry {
@@ -119,6 +120,14 @@ const CONFIG_MAP: Record<string, NotificationTypeConfigEntry> = {
     colorClass: 'bg-blue-500',
     titleKey: 'types.measurement_stopped_by_patient',
   },
+  // Neutral/gray — status "completed" here does not mean a successful
+  // finish, so this must stay visually distinct from measurement_completed
+  // and from measurement_expired (different icon: stop vs. clock).
+  measurement_stopped_by_therapist: {
+    icon: StopCircle,
+    colorClass: 'bg-gray-500',
+    titleKey: 'types.measurement_stopped_by_therapist',
+  },
   // Safety-relevant — visibly distinct from the other measurement outcomes.
   measurement_pain: {
     icon: AlertTriangle,
@@ -129,6 +138,11 @@ const CONFIG_MAP: Record<string, NotificationTypeConfigEntry> = {
     icon: AlertCircle,
     colorClass: 'bg-gray-500',
     titleKey: 'types.measurement_technical_error',
+  },
+  measurement_expired: {
+    icon: Clock,
+    colorClass: 'bg-gray-500',
+    titleKey: 'types.measurement_expired',
   },
   measurement_unknown: {
     icon: Bell,

@@ -24,6 +24,7 @@ const COLLAPSED_SUMMARY_KEY: Record<string, string> = {
   completed: "measurements.collapsedSummary.completed",
   cancelled_by_doctor: "measurements.collapsedSummary.cancelledByDoctor",
   stopped_by_patient: "measurements.collapsedSummary.stoppedByPatient",
+  stopped_by_therapist: "measurements.collapsedSummary.stoppedByTherapist",
   pain: "measurements.collapsedSummary.pain",
   technical_error: "measurements.collapsedSummary.technicalError",
   unknown: "measurements.collapsedSummary.unknown",

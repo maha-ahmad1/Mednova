@@ -1612,6 +1612,7 @@
     "cancelMeasurementButton": "إلغاء القياس",
     "cancelling": "جاري الإلغاء...",
     "cancelSuccess": "تم إلغاء القياس بنجاح",
+    "cancelUnavailableAfterStart": "لا يمكن إلغاء القياس بعد بدء الجلسة",
     "expiredLabel": "انتهت مهلة الانضمام",
     "romLabel": "المدى الحركي",
     "repsLabel": "عدد التكرارات",
@@ -1624,6 +1625,7 @@
       "completed": "اكتملت آخر جلسة — الدقة {accuracy}%",
       "cancelledByDoctor": "تم إلغاء آخر جلسة من قبل الطبيب",
       "stoppedByPatient": "أنهى المريض آخر جلسة قبل اكتمالها",
+      "stoppedByTherapist": "أنهى المعالج آخر جلسة قبل اكتمالها",
       "pain": "أوقف المريض آخر جلسة بسبب الشعور بألم",
       "technicalError": "توقفت آخر جلسة بسبب مشكلة في الاتصال",
       "unknown": "انتهت آخر جلسة"
@@ -1645,6 +1647,10 @@
         "patient": "لقد أنهيت جلسة القياس مبكراً.",
         "consultant": "أنهى المريض جلسة القياس قبل اكتمالها."
       },
+      "stopped_by_therapist": {
+        "patient": "أنهى المختص جلسة القياس.",
+        "consultant": "قمت بإنهاء جلسة القياس يدوياً قبل اكتمالها."
+      },
       "pain": {
         "patient": "تم إيقاف جلسة القياس بسبب إبلاغك عن ألم.",
         "consultant": "⚠️ أبلغ المريض عن ألم أثناء التمرين وتم إيقاف الجلسة."
@@ -1652,6 +1658,10 @@
       "technical_error": {
         "patient": "توقفت جلسة القياس الخاصة بك بسبب مشكلة في الاتصال.",
         "consultant": "توقفت جلسة القياس بسبب مشكلة في الاتصال."
+      },
+      "expired": {
+        "patient": "انتهت مهلة جلسة القياس الخاصة بك دون اكتمالها.",
+        "consultant": "انتهت الجلسة تلقائياً دون اكتمالها بسبب انتهاء الوقت المخصص."
       },
       "unknown": {
         "patient": "هناك تحديث على جلسة القياس الخاصة بك.",
@@ -2033,8 +2043,10 @@
       "measurement_completed": "اكتملت جلسة القياس",
       "measurement_cancelled_by_doctor": "تم إلغاء جلسة القياس",
       "measurement_stopped_by_patient": "أنهى المريض الجلسة مبكراً",
+      "measurement_stopped_by_therapist": "أنهى المختص الجلسة",
       "measurement_pain": "المريض أبلغ عن ألم",
       "measurement_technical_error": "انقطعت جلسة القياس",
+      "measurement_expired": "انتهت مهلة جلسة القياس",
       "measurement_unknown": "تحديث على جلسة القياس",
       "message": "رسالة جديدة",
       "comment": "تعليق جديد",
@@ -2155,6 +2167,7 @@
     "title": "انتهت جلسة القياس",
     "titleCancelledByDoctor": "تم إلغاء الجلسة من قبل الطبيب",
     "titleStoppedByPatient": "أنهى المريض الجلسة مبكراً",
+    "titleStoppedByTherapist": "أنهى المعالج الجلسة قبل اكتمالها",
     "titlePain": "أوقف المريض الجلسة بسبب الشعور بألم",
     "titleTechnicalError": "توقفت الجلسة بسبب مشكلة في الاتصال",
     "titleUnknown": "انتهت الجلسة",

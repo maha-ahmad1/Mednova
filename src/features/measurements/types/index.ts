@@ -85,8 +85,10 @@ export type MeasurementEndReason =
   | "completed"
   | "cancelled_by_doctor"
   | "stopped_by_patient"
+  | "stopped_by_therapist"
   | "pain"
   | "technical_error"
+  | "expired"
   | (string & {});
 
 interface MeasurementEndedEventBase {

@@ -20,6 +20,12 @@ export const mapMeasurementOutcome = (
   if (status === "completed" && endReason === "completed") {
     return { key: "completed", severity: "success", needsElevatedAttention: false };
   }
+  if (status === "completed" && endReason === "stopped_by_therapist") {
+    // Therapist manually cut a still-running session directly from Thera —
+    // status "completed" here does NOT mean a successful/natural finish, so
+    // this must render distinctly from the "completed" outcome above.
+    return { key: "stopped_by_therapist", severity: "neutral", needsElevatedAttention: false };
+  }
   if (status === "cancelled" && endReason === "cancelled_by_doctor") {
     return { key: "cancelled_by_doctor", severity: "neutral", needsElevatedAttention: false };
   }
@@ -32,6 +38,9 @@ export const mapMeasurementOutcome = (
   }
   if (status === "abandoned" && endReason === "technical_error") {
     return { key: "technical_error", severity: "neutral", needsElevatedAttention: false };
+  }
+  if (status === "abandoned" && endReason === "expired") {
+    return { key: "expired", severity: "neutral", needsElevatedAttention: false };
   }
 
   // Defensive fallback for any future/unmapped combination — never throw, never

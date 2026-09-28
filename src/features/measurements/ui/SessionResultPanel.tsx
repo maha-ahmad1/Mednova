@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { AlertTriangle, CheckCircle2, Download, HelpCircle, Info, Loader2, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Download, HelpCircle, Info, Loader2, StopCircle, XCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ const OUTCOME_HEADER_KEY: Record<string, string> = {
   completed: "measurementSessionResult.title",
   cancelled_by_doctor: "measurementSessionResult.titleCancelledByDoctor",
   stopped_by_patient: "measurementSessionResult.titleStoppedByPatient",
+  stopped_by_therapist: "measurementSessionResult.titleStoppedByTherapist",
   pain: "measurementSessionResult.titlePain",
   technical_error: "measurementSessionResult.titleTechnicalError",
   unknown: "measurementSessionResult.titleUnknown",
@@ -37,6 +38,9 @@ const OUTCOME_ICON: Record<string, typeof CheckCircle2> = {
   completed: CheckCircle2,
   cancelled_by_doctor: XCircle,
   stopped_by_patient: Info,
+  // Stop icon — deliberately distinct from the success checkmark and from
+  // the expired clock, since status "completed" here isn't a real finish.
+  stopped_by_therapist: StopCircle,
   pain: AlertTriangle,
   technical_error: XCircle,
   unknown: HelpCircle,
@@ -48,6 +52,7 @@ const OUTCOME_ICON_CLASS: Record<string, string> = {
   // problem state — kept neutral/gray so it doesn't read as alarming.
   cancelled_by_doctor: "text-gray-500",
   stopped_by_patient: "text-blue-600",
+  stopped_by_therapist: "text-gray-500",
   // Clinically relevant — visibly distinct (safety signal), not just another
   // neutral/info outcome.
   pain: "text-red-600",
@@ -63,6 +68,7 @@ const OUTCOME_ACCENT_CLASS: Record<string, string> = {
   completed: "border-s-4 border-s-[#32A88D]",
   cancelled_by_doctor: "border-s-4 border-s-gray-400",
   stopped_by_patient: "border-s-4 border-s-blue-400",
+  stopped_by_therapist: "border-s-4 border-s-gray-400",
   pain: "border-s-4 border-s-red-400",
   technical_error: "border-s-4 border-s-gray-400",
   unknown: "border-s-4 border-s-gray-300",

@@ -1612,6 +1612,7 @@
     "cancelMeasurementButton": "Cancel Measurement",
     "cancelling": "Cancelling...",
     "cancelSuccess": "Measurement cancelled successfully",
+    "cancelUnavailableAfterStart": "Measurement can no longer be cancelled once the session has started",
     "expiredLabel": "Join window has expired",
     "romLabel": "Range of Motion",
     "repsLabel": "Repetitions",
@@ -1624,6 +1625,7 @@
       "completed": "Last session completed — accuracy {accuracy}%",
       "cancelledByDoctor": "The last session was cancelled by the doctor",
       "stoppedByPatient": "The patient ended the last session early",
+      "stoppedByTherapist": "The therapist ended the last session before it was complete",
       "pain": "The patient stopped the last session due to reported pain",
       "technicalError": "The last session stopped due to a connection issue",
       "unknown": "The last session has ended"
@@ -1645,6 +1647,10 @@
         "patient": "You ended the measurement session early.",
         "consultant": "The patient ended the measurement session before it was complete."
       },
+      "stopped_by_therapist": {
+        "patient": "Your therapist ended the measurement session.",
+        "consultant": "You manually ended the measurement session before it was complete."
+      },
       "pain": {
         "patient": "Your measurement session was stopped because you reported pain.",
         "consultant": "⚠️ The patient reported pain during the exercise and the session was stopped."
@@ -1652,6 +1658,10 @@
       "technical_error": {
         "patient": "Your measurement session stopped due to a connection issue.",
         "consultant": "The measurement session stopped due to a connection issue."
+      },
+      "expired": {
+        "patient": "Your measurement session timed out before it was completed.",
+        "consultant": "The session ended automatically without completing because its time ran out."
       },
       "unknown": {
         "patient": "There's an update on your measurement session.",
@@ -2033,8 +2043,10 @@
       "measurement_completed": "Measurement Session Completed",
       "measurement_cancelled_by_doctor": "Measurement Session Cancelled",
       "measurement_stopped_by_patient": "Patient Ended Session Early",
+      "measurement_stopped_by_therapist": "Session Ended by Therapist",
       "measurement_pain": "Patient Reported Pain",
       "measurement_technical_error": "Measurement Session Interrupted",
+      "measurement_expired": "Measurement Session Timed Out",
       "measurement_unknown": "Measurement Session Update",
       "message": "New Message",
       "comment": "New Comment",
@@ -2155,6 +2167,7 @@
     "title": "Measurement session completed",
     "titleCancelledByDoctor": "The session was cancelled by the doctor",
     "titleStoppedByPatient": "The patient ended the session early",
+    "titleStoppedByTherapist": "The therapist ended the session before it was complete",
     "titlePain": "The patient stopped the session due to reported pain",
     "titleTechnicalError": "The session stopped due to a connection issue",
     "titleUnknown": "The session has ended",

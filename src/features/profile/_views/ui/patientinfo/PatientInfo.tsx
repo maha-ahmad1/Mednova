@@ -16,6 +16,8 @@ import type { ZodTypeAny } from "zod";
 import { signIn } from "next-auth/react";
 import { buildFullPhoneNumber, parsePhoneNumber } from "@/utils/phone";
 import { isValidPhoneLength, phoneLengthErrorMessage } from "@/utils/phoneValidation";
+import { SidebarImageEditor } from "@/features/profile/_create/ui/sidebar/SidebarImageEditor";
+import { type UserType } from "@/features/profile/_views/hooks/useUpdateProfileImage";
 
 export default function PatientInfo() {
   const { data: session } = useSession();
@@ -265,6 +267,15 @@ export default function PatientInfo() {
   return (
     <div className="container max-w-5xl mx-auto">
       <div className="space-y-6">
+        <div className="lg:hidden">
+          <SidebarImageEditor
+            currentImage={d.image || session?.user?.image || "/images/placeholder.svg"}
+            userType={(session?.user?.role as UserType) || "patient"}
+            userId={userId!}
+            refetch={refetch}
+          />
+        </div>
+
         <PatientPersonal1Card
           patient={d}
           onSave={handleSave}

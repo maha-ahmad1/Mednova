@@ -118,22 +118,29 @@ export default function MeasurementStatusCard({
           </div>
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          disabled={cancelMutation.isPending}
-          onClick={() => cancelMutation.mutate(measurement.measurement_id)}
-          className="cursor-pointer w-full"
-        >
-          {cancelMutation.isPending ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              {t("measurements.cancelling")}
-            </>
-          ) : (
-            t("measurements.cancelMeasurementButton")
-          )}
-        </Button>
+        {measurement.status === "pending" ? (
+          <Button
+            type="button"
+            variant="outline"
+            disabled={cancelMutation.isPending}
+            onClick={() => cancelMutation.mutate(measurement.measurement_id)}
+            className="cursor-pointer w-full"
+          >
+            {cancelMutation.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {t("measurements.cancelling")}
+              </>
+            ) : (
+              t("measurements.cancelMeasurementButton")
+            )}
+          </Button>
+        ) : (
+          // Backend only allows cancel while the measurement is still pending.
+          <p className="text-xs sm:text-sm text-muted-foreground text-center">
+            {t("measurements.cancelUnavailableAfterStart")}
+          </p>
+        )}
       </CardContent>
     </Card>
   );

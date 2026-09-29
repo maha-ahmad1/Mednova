@@ -49,11 +49,11 @@ export function ProgramDetailView({
               rating={program.ratings_avg_rating ?? 0}
               reviewCount={program.ratings_count ?? 0}
               starRatings={{
-                "5_stars": program["5_stars"],
-                "4_stars": program["4_stars"],
-                "3_stars": program["3_stars"],
-                "2_stars": program["2_stars"],
-                "1_stars": program["1_stars"],
+                "5_stars": program["5_stars"] ?? 0,
+                "4_stars": program["4_stars"] ?? 0,
+                "3_stars": program["3_stars"] ?? 0,
+                "2_stars": program["2_stars"] ?? 0,
+                "1_stars": program["1_stars"] ?? 0,
               }}
             />
           </div>

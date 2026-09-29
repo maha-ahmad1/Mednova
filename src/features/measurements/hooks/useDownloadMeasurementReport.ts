@@ -8,8 +8,9 @@ import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import { resolveApiMessage } from "../utils/resolveApiMessage";
 
 type ReportFilters =
-  | { patient_id: number; exercise_type?: string; consultation_id?: never; consultation_type?: never }
-  | { consultation_id: number; consultation_type: string; exercise_type?: string; patient_id?: never };
+  | { patient_id: number; exercise_type?: string; consultation_id?: never; consultation_type?: never; measurement_id?: never }
+  | { consultation_id: number; consultation_type: string; exercise_type?: string; patient_id?: never; measurement_id?: never }
+  | { measurement_id: string; patient_id?: never; consultation_id?: never; consultation_type?: never };
 
 export const useDownloadMeasurementReport = () => {
   const axiosInstance = useAxiosInstance();
@@ -18,7 +19,11 @@ export const useDownloadMeasurementReport = () => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   const download = async (filters: ReportFilters) => {
-    if (!filters.patient_id && !(filters.consultation_id && filters.consultation_type)) {
+    if (
+      !filters.patient_id &&
+      !(filters.consultation_id && filters.consultation_type) &&
+      !filters.measurement_id
+    ) {
       toast.error(t("measurementSessionResult.downloadMissingFilters"));
       return;
     }

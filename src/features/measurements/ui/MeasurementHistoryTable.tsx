@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { Download, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { formatDate } from "@/utils/dateUtils";
 import { usePatientMeasurementHistory } from "../hooks/usePatientMeasurementHistory";
+import { useDownloadMeasurementReport } from "../hooks/useDownloadMeasurementReport";
 import { getMeasurementStatusBadgeClass } from "../utils/mapMeasurementStatus";
 import { EXERCISE_TYPES } from "../utils/exerciseTypes";
 import type { AffectedSide, Measurement } from "../types";
@@ -18,9 +21,30 @@ interface MeasurementHistoryTableProps {
 const SKELETON_ROWS = 6;
 const EM_DASH = "—";
 
-// Per-row report download (entry point C) is not wired here: `Measurement` has
-// no `consultation_id`/`consultation_type` fields, and the report endpoint
-// requires both together — this needs a backend response field addition first.
+// One hook instance per row so each row's `isDownloading` is independent —
+// otherwise clicking one row's download would spin every row's button.
+function MeasurementRowDownloadButton({ measurementId }: { measurementId: string }) {
+  const t = useTranslations();
+  const { download, isDownloading } = useDownloadMeasurementReport();
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      className="h-8 w-8"
+      disabled={isDownloading}
+      onClick={() => download({ measurement_id: measurementId })}
+      aria-label={t("measurements.history.downloadReport")}
+    >
+      {isDownloading ? (
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        <Download className="w-4 h-4" />
+      )}
+    </Button>
+  );
+}
 
 export default function MeasurementHistoryTable({
   patientId,
@@ -71,6 +95,9 @@ export default function MeasurementHistoryTable({
               <th className="px-4 py-3 text-start font-medium">
                 {t("measurements.history.colAccuracy")}
               </th>
+              <th className="px-4 py-3 text-start font-medium">
+                {t("measurements.history.colActions")}
+              </th>
             </tr>
           </thead>
 
@@ -96,12 +123,15 @@ export default function MeasurementHistoryTable({
                   <td className="px-4 py-3">
                     <Skeleton className="h-4 w-14" />
                   </td>
+                  <td className="px-4 py-3">
+                    <Skeleton className="h-8 w-8 rounded-md" />
+                  </td>
                 </tr>
               ))}
 
             {!isLoading && isError && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-destructive">
+                <td colSpan={7} className="px-4 py-10 text-center text-destructive">
                   {t("measurements.history.loadError")}
                 </td>
               </tr>
@@ -109,7 +139,7 @@ export default function MeasurementHistoryTable({
 
             {!isLoading && !isError && measurements.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-12 text-center">
+                <td colSpan={7} className="px-4 py-12 text-center">
                   <p className="text-sm font-medium text-foreground mb-1">
                     {t("measurements.history.emptyTitle")}
                   </p>
@@ -162,6 +192,11 @@ export default function MeasurementHistoryTable({
                     </td>
                     <td className="px-4 py-3">
                       {hasAccuracy ? `${measurement.accuracy_percentage}%` : EM_DASH}
+                    </td>
+                    <td className="px-4 py-3">
+                      <MeasurementRowDownloadButton
+                        measurementId={measurement.measurement_id}
+                      />
                     </td>
                   </tr>
                 );

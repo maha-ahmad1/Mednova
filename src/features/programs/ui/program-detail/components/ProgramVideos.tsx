@@ -21,18 +21,17 @@ export function ProgramVideos({ videos, coverImage }: ProgramVideosProps) {
     [selectedVideoId, videos],
   );
   // Using the shared access helper keeps the locked-state logic consistent across UI elements.
-  // const selectedAccess = getVideoAccessState(selectedVideo?.is_free);
-  const selectedAccess = getVideoAccessState(
-    selectedVideo?.is_free,
-    selectedVideo?.is_program_intro,
-  );
+  const selectedAccess = getVideoAccessState(selectedVideo?.is_locked);
 
   if (!videos || videos.length === 0) {
     return null;
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+    <div
+      id="program-videos"
+      className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8"
+    >
       <h2 className="text-2xl font-bold text-gray-900 mb-6">محتوى البرنامج</h2>
 
       {selectedVideo && (
@@ -82,10 +81,7 @@ export function ProgramVideos({ videos, coverImage }: ProgramVideosProps) {
           قائمة الفيديوهات ({videos.length})
         </h3>
         {videos.map((video, index) => {
-          const { isLocked } = getVideoAccessState(
-            video.is_free,
-            video.is_program_intro,
-          );
+          const { isLocked } = getVideoAccessState(video.is_locked);
           const isSelected = selectedVideo?.id === video.id;
 
           return (
@@ -125,7 +121,7 @@ export function ProgramVideos({ videos, coverImage }: ProgramVideosProps) {
                     <h4 className="font-bold text-gray-900">
                       {index + 1}. {video.title}
                       
-                      {video.is_program_intro === 1 && (
+                      {video.is_program_intro && (
                         <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
                           فيديو تعريفي
                         </span>

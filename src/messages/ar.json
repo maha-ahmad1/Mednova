@@ -41,6 +41,7 @@
     "appointments": "المواعيد",
     "patients": "المرضى",
     "financialWallet": "المحفظة المالية",
+    "myPrograms": "كورساتي",
     "reports": "التقارير",
     "help": "المساعدة",
     "navigating": "جارٍ الانتقال...",
@@ -642,6 +643,8 @@
     "topRequested": "الأكثر طلباً",
     "availableNow": "متاح الآن",
     "registeredUsers": "{count} مسجّل",
+    "hasAccessBadge": "لديك وصول",
+    "accessGrantedCta": "لديك وصول — انتقل للمحتوى",
     "sortOptions": {
       "newest": "الأحدث",
       "mostEnrolled": "الأكثر اشتراكًا",
@@ -1705,6 +1708,8 @@
       "colStatus": "الحالة",
       "colRom": "المدى الحركي",
       "colAccuracy": "الدقة",
+      "colActions": "الإجراءات",
+      "downloadReport": "تحميل التقرير",
       "emptyTitle": "لا توجد قياسات بعد",
       "emptyDescription": "لا يوجد لهذا المريض أي سجل قياسات محفوظ.",
       "loadError": "تعذر تحميل سجل القياسات."

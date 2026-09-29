@@ -84,9 +84,9 @@ export function ProgramsList(): React.ReactNode {
         case "newest":
           return b.id - a.id;
         case "lowestPrice":
-          return a.price - b.price;
+          return Number(a.price) - Number(b.price);
         case "highestPrice":
-          return b.price - a.price;
+          return Number(b.price) - Number(a.price);
         default:
           return 0;
       }

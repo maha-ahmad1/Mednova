@@ -1,9 +1,13 @@
-import axios from "axios"
 import type { ProgramDetailResponse } from "../types/program"
+import { mockPrograms } from "./__mock__/programs.mock"
 
 export const getProgramById = async (id: number, token?: string): Promise<ProgramDetailResponse> => {
-  const response = await axios.get<ProgramDetailResponse>(`https://api.mednovacare.com/api/programs/${id}`, {
-    // headers: token ? { Authorization: `Bearer ${token}` } : {},
-  })
-  return response.data
+  // TODO(programs-api-stage2): swap for a real axios call once the backend endpoint ships.
+  const program = mockPrograms.find((item) => item.id === id) ?? mockPrograms[0]
+  return {
+    success: true,
+    message: "",
+    data: program,
+    status: "success",
+  }
 }

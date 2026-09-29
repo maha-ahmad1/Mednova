@@ -4,11 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Check, Heart, Share2 } from "lucide-react";
 import type { ProgramDetail } from "@/features/programs/types/program";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 interface ProgramEnrollmentProps {
   program: ProgramDetail;
 }
 
 export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
+  const t = useTranslations("programs");
+
+  const scrollToVideos = () => {
+    document
+      .getElementById("program-videos")
+      ?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div id="program-enrollment" className="sticky top-8 space-y-4">
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
@@ -27,8 +36,11 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
           <p className="text-sm text-gray-600">سعر البرنامج الكامل</p>
         </div>
 
-        <Button className="w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl py-6 text-lg font-bold transition-all duration-300 shadow-lg hover:shadow-xl mb-3">
-          اشترك الآن
+        <Button
+          onClick={program.has_access ? scrollToVideos : undefined}
+          className="w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl py-6 text-lg font-bold transition-all duration-300 shadow-lg hover:shadow-xl mb-3"
+        >
+          {program.has_access ? t("accessGrantedCta") : "اشترك الآن"}
         </Button>
 
         <p className="text-xs text-gray-500 text-center mb-4">

@@ -50,7 +50,7 @@ export function ProgramCard({
   const rating = Number(program.ratings_avg_rating) || 0;
   const reviewsCount = program.ratings_count || 0;
   const price = program.price || 0;
-  const { isLocked } = getProgramAccessState(program.price);
+  const { isLocked } = getProgramAccessState(program.has_access);
 
   return (
     <div className="group flex h-full flex-col bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-500">
@@ -111,13 +111,20 @@ export function ProgramCard({
           {program.description}
         </p>
 
+        {/* Access Badge - shown when the current user already has access */}
+        {program.has_access && (
+          <Badge className="mb-3 w-fit bg-[#32A88D]/10 text-[#1F6069] px-3 py-1 rounded-full text-xs font-medium">
+            {t('hasAccessBadge')}
+          </Badge>
+        )}
+
         {/* Creator Info - Optional */}
         {showCreator && program.creator && (
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
             <div className="w-8 h-8 bg-[#32A88D]/10 rounded-full flex items-center justify-center">
               <Users className="w-4 h-4 text-[#32A88D]" />
             </div>
-            <span className="font-medium">{program.creator.full_name}</span>
+            <span className="font-medium">{program.creator.name}</span>
           </div>
         )}
 

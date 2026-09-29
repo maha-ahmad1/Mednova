@@ -1,0 +1,116 @@
+import type { ProgramDetail } from "../../types/program";
+
+// Mock data matching the "Specialist Programs" API contract (Sep 28, 2026, @nada).
+// Field names may still shift slightly per the source doc — keep all mock data
+// confined to this file so a future swap to real endpoints touches nothing else.
+export const mockPrograms: ProgramDetail[] = [
+  {
+    id: 12,
+    title: "تأهيل الكتف بعد الإصابة",
+    description:
+      "برنامج شامل لإعادة تأهيل الكتف بعد الإصابات الرياضية والجراحية، يتضمن تمارين تدريجية وإرشادات للتعافي الآمن.",
+    what_you_will_learn:
+      "أساسيات إعادة تأهيل الكتف\nتمارين تقوية آمنة ومتدرجة\nعلامات التعافي الطبيعي مقابل الإفراط\nكيفية العودة للنشاط اليومي والرياضي بأمان",
+    cover_image: "/images/placeholder-course.jpg",
+    price: "20.000",
+    currency: "OMR",
+    creator: { id: 6, name: "د. أحمد", type: "therapist", image: null },
+    videos_count: 8,
+    total_duration_minutes: 95,
+    has_access: false,
+    status: "published",
+    is_approved: 1,
+    enrollments_count: 124,
+    ratings_avg_rating: 4.6,
+    ratings_count: 38,
+    videos: [
+      {
+        id: 40,
+        title: "مقدمة",
+        description: "نظرة عامة على البرنامج وأهدافه.",
+        duration_minute: 5,
+        order: 1,
+        is_program_intro: true,
+        is_free: false,
+        is_locked: false,
+      },
+      {
+        id: 41,
+        title: "التمارين الأولى",
+        description: "تمارين تقوية أولية لعضلات الكتف.",
+        duration_minute: 12,
+        order: 2,
+        is_program_intro: false,
+        is_free: false,
+        is_locked: true,
+      },
+      {
+        id: 42,
+        title: "تمارين المدى الحركي",
+        description: "تمارين لتحسين مدى حركة المفصل.",
+        duration_minute: 15,
+        order: 3,
+        is_program_intro: false,
+        is_free: false,
+        is_locked: true,
+      },
+    ],
+  },
+  {
+    id: 13,
+    title: "تمارين الركبة للمبتدئين",
+    description:
+      "برنامج تمهيدي لتقوية عضلات الركبة والوقاية من الإصابات، مناسب لكل المستويات.",
+    what_you_will_learn:
+      "تشريح مبسط لمفصل الركبة\nتمارين تقوية آمنة للمبتدئين\nنصائح للوقاية من إصابات الركبة الشائعة",
+    cover_image: "/images/placeholder-course.jpg",
+    price: "15.000",
+    currency: "OMR",
+    creator: {
+      id: 9,
+      name: "د. سارة",
+      type: "rehabilitation_center",
+      image: null,
+    },
+    videos_count: 5,
+    total_duration_minutes: 48,
+    has_access: true,
+    status: "published",
+    is_approved: 1,
+    enrollments_count: 76,
+    ratings_avg_rating: 4.2,
+    ratings_count: 21,
+    videos: [
+      {
+        id: 50,
+        title: "مقدمة",
+        description: "نظرة عامة على البرنامج.",
+        duration_minute: 4,
+        order: 1,
+        is_program_intro: true,
+        is_free: true,
+        is_locked: false,
+      },
+      {
+        id: 51,
+        title: "تمارين التسخين",
+        description: "تمارين تسخين قبل البدء بالتمارين الأساسية.",
+        duration_minute: 10,
+        order: 2,
+        is_program_intro: false,
+        is_free: false,
+        is_locked: false,
+      },
+      {
+        id: 52,
+        title: "تمارين التقوية الأساسية",
+        description: "تمارين تقوية عضلات محيط الركبة.",
+        duration_minute: 14,
+        order: 3,
+        is_program_intro: false,
+        is_free: false,
+        is_locked: false,
+      },
+    ],
+  },
+];

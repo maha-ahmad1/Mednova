@@ -8,6 +8,7 @@ import {
   Activity,
   UserPlus,
   Wallet,
+  BookOpen,
 } from "lucide-react";
 
 export const sidebarMenus = {
@@ -30,6 +31,7 @@ export const sidebarMenus = {
     { icon: Calendar, labelKey: "appointments", href: "/profile/consultations" },
     // { icon: Activity, labelKey: "sessions", href: "/coming-soon" },
     { icon: Wallet, labelKey: "financialWallet", href: "/profile/financial" },
+    { icon: BookOpen, labelKey: "myPrograms", href: "/profile/programs" },
     { icon: FileText, labelKey: "reports", href: "/coming-soon" },
     { icon: HelpCircle, labelKey: "help", href: "/coming-soon" },
   ],

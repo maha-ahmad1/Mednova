@@ -61,7 +61,7 @@ export function ProgramDetailHeader({ program }: ProgramDetailHeaderProps) {
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
               <MetaInfoItem icon={<Users className="h-4 w-4" />}>
-                {program.creator?.full_name || "مدرب البرنامج"}
+                {program.creator?.name || "مدرب البرنامج"}
               </MetaInfoItem>
               <MetaInfoItem icon={<Clock className="h-4 w-4" />}>
                 {enrollments} مسجل

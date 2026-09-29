@@ -149,6 +149,16 @@ export async function middleware(req: NextRequest) {
         url.pathname = `/${locale}/profile`;
         return NextResponse.redirect(url);
       }
+
+      // Consultant-only course management — not for patients.
+      // TODO: extend to rehabilitation_center once its own /profile/... routing is decided.
+      if (
+        cleanPathname.startsWith("/profile/programs") &&
+        (token.role ?? token.user?.type_account) !== "therapist"
+      ) {
+        url.pathname = `/${locale}/profile`;
+        return NextResponse.redirect(url);
+      }
     } else if (approval_status === "rejected") {
       if (
         !cleanPathname.startsWith("/profile/rejected") &&

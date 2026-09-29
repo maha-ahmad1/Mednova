@@ -153,10 +153,7 @@ export default function SessionResultPanel({
   const OutcomeIcon = OUTCOME_ICON[outcome.key] ?? HelpCircle;
 
   const handleDownloadReport = () => {
-    // A consultation-scoped report returns every measurement for this
-    // consultation, not just the one shown here — expected if a single
-    // bridge session covers more than one exercise, not a bug.
-    download({ consultation_id: consultationId, consultation_type: consultationType });
+    download({ measurement_id: measurement.measurement_id });
   };
 
   return (

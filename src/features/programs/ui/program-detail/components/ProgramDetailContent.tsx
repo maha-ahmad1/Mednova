@@ -111,12 +111,12 @@ export function ProgramDetailContent({ program }: ProgramDetailContentProps) {
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-[#32A88D]/10 rounded-full flex items-center justify-center">
             <span className="text-2xl font-bold text-[#32A88D]">
-              {(program.creator?.full_name || program.title).charAt(0)}
+              {(program.creator?.name || program.title).charAt(0)}
             </span>
           </div>
           <div>
             <h4 className="font-bold text-gray-900">
-              {program.creator?.full_name || program.title}
+              {program.creator?.name || program.title}
             </h4>
             <p className="text-sm text-gray-600">مدرب معتمد لدى Mednova</p>
           </div>

@@ -1,15 +1,21 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { getProgramById } from "../api/getProgramById.api"
 import { useSession } from "next-auth/react"
+import { useAxiosInstance } from "@/lib/axios/axiosInstance"
+import { getProgramById } from "../api/getProgramById.api"
 
 export const useProgramDetailQuery = (id: number) => {
-      const { data: session, status } = useSession()
-    
+  const axiosInstance = useAxiosInstance()
+  const { data: session, status } = useSession()
+
   return useQuery({
-    queryKey: ["program", id],
-    queryFn: () => getProgramById(id),
-     enabled: !!id,
+    // The response depends on who is asking (is_locked / is_enrolled), so the user is part of
+    // the key — a guest copy cached before login must never be served to a subscriber.
+    queryKey: ["program", id, session?.user?.id ?? "guest"],
+    queryFn: () => getProgramById(axiosInstance, id),
+    // Wait for the session so the first request doesn't go out without the token.
+    enabled: !!id && status !== "loading",
+    refetchOnMount: "always",
   })
 }

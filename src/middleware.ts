@@ -111,6 +111,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Admins have no profile/approval flow; never apply it to them.
+  if (isAdminToken(token)) {
+    return NextResponse.next();
+  }
+
   if (token) {
     const isCompleted =
       token.is_completed ??
@@ -150,11 +155,22 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
       }
 
-      // Consultant-only course management — not for patients.
-      // TODO: extend to rehabilitation_center once its own /profile/... routing is decided.
+      // Course management — therapists and rehabilitation centers only, not patients.
+      const programsAllowedRoles = ["therapist", "rehabilitation_center"];
       if (
         cleanPathname.startsWith("/profile/programs") &&
-        (token.role ?? token.user?.type_account) !== "therapist"
+        !programsAllowedRoles.includes(
+          (token.role ?? token.user?.type_account) as string,
+        )
+      ) {
+        url.pathname = `/${locale}/profile`;
+        return NextResponse.redirect(url);
+      }
+
+      // "My enrolled courses" — patients only.
+      if (
+        cleanPathname.startsWith("/profile/my-programs") &&
+        (token.role ?? token.user?.type_account) !== "patient"
       ) {
         url.pathname = `/${locale}/profile`;
         return NextResponse.redirect(url);

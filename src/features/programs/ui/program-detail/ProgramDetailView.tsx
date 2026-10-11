@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import type { ProgramDetail } from "@/features/programs/types/program";
 import { useProgramDetailQuery } from "@/features/programs/hooks";
 import { ProgramDetailHeader } from "./components/ProgramDetailHeader";
@@ -8,6 +9,7 @@ import { ProgramVideos } from "./components/ProgramVideos";
 import { ProgramEnrollment } from "./components/ProgramEnrollment";
 import { CourseReviews } from "./components/CourseReviews";
 import { RelatedCourses } from "./components/RelatedCourses";
+import { classifyApiError } from "@/lib/classifyApiError";
 import { ErrorState } from "@/shared/ui/components/states/ErrorState";
 import { ProgramDetailSkeleton } from "./components/ProgramDetailSkeleton";
 
@@ -18,17 +20,40 @@ interface ProgramDetailViewProps {
 export function ProgramDetailView({
   programId,
 }: ProgramDetailViewProps): React.ReactNode {
-  const { data, isLoading, error } = useProgramDetailQuery(programId);
+  const { data, isPending: isLoading, error, refetch } = useProgramDetailQuery(programId);
+  const searchParams = useSearchParams();
+  // "متابعة المشاهدة" from "دوراتي" links here with ?video={last_video_id} — jump straight
+  // to that video instead of always defaulting to the first one.
+  const videoParam = searchParams.get("video");
+  const initialVideoId = videoParam ? Number(videoParam) : undefined;
 
   if (isLoading) {
     return <ProgramDetailSkeleton />;
   }
 
-  if (error || !data?.success || !data?.data) {
-    return <ErrorState />;
+  if (error) {
+    const { title, message } = classifyApiError(error);
+    return (
+      <ErrorState
+        title={title}
+        description={message}
+        onRetry={() => refetch()}
+      />
+    );
+  }
+
+  if (!data?.success || !data?.data) {
+    return <ErrorState onRetry={() => refetch()} />;
   }
 
   const program: ProgramDetail = data.data;
+
+  // Defensive until backend confirms GET /api/programs/{id} already excludes
+  // non-approved videos — if it ever returns everything, this keeps a patient
+  // from seeing content that's still pending review or was rejected.
+  const approvedVideos = program.videos.filter(
+    (video) => video.review_status !== "pending" && video.review_status !== "rejected",
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -39,8 +64,10 @@ export function ProgramDetailView({
           <div className="lg:col-span-2 space-y-8">
             <ProgramDetailContent program={program} />
             <ProgramVideos
+              programId={program.id}
               coverImage={program.cover_image}
-              videos={program.videos}
+              videos={approvedVideos}
+              initialVideoId={initialVideoId}
             />
 
             {/* Reviews Section */}

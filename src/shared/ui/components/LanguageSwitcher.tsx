@@ -1,7 +1,8 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
+import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,13 +19,13 @@ interface LanguageSwitcherProps {
 
 export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
   const locale = useLocale();
-  const router = useRouter();
+  const { replace } = useNavigationLoader();
   const pathname = usePathname();
   const t = useTranslations("navbar");
 
   const switchLocale = (nextLocale: string) => {
     if (nextLocale === locale) return;
-    router.replace(pathname, { locale: nextLocale });
+    replace(pathname, { locale: nextLocale });
   };
 
   return (

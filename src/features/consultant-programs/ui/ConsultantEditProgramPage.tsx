@@ -4,33 +4,38 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { classifyApiError } from "@/lib/classifyApiError";
+import { ErrorState } from "@/shared/ui/components/states/ErrorState";
 import { useConsultantProgramDetail } from "../hooks/useConsultantProgramDetail";
 import { ConsultantProgramForm } from "./ConsultantProgramForm";
+import { ConsultantProgramFormSkeleton } from "./components/ConsultantProgramFormSkeleton";
 
 interface ConsultantEditProgramPageProps {
   programId: number;
 }
 
 export function ConsultantEditProgramPage({ programId }: ConsultantEditProgramPageProps) {
-  const { data, isLoading, isError } = useConsultantProgramDetail(programId);
+  const { data, isLoading, isError, error, refetch } = useConsultantProgramDetail(programId);
   const program = data?.data;
 
   if (isLoading) {
-    return (
-      <div className="mx-auto w-full max-w-5xl space-y-4 p-4 sm:p-6">
-        <Skeleton className="h-10 w-44" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-    );
+    return <ConsultantProgramFormSkeleton />;
   }
 
   if (isError || !program) {
+    const { title, message } = isError
+      ? classifyApiError(error)
+      : { title: "حدث خطأ", message: "تعذر تحميل بيانات الكورس." };
+
     return (
-      <div className="mx-auto w-full max-w-5xl p-4 sm:p-6">
+      <div className="mx-auto w-full max-w-5xl space-y-3 p-4 sm:p-6">
+        <ErrorState
+          title={title}
+          description={message}
+          onRetry={() => refetch()}
+        />
         <Card>
           <CardContent className="space-y-3 pt-6 text-center">
-            <p className="font-medium text-destructive">تعذر تحميل بيانات الكورس.</p>
             <Button asChild variant="outline">
               <Link href="/profile/programs">العودة إلى كورساتي</Link>
             </Button>

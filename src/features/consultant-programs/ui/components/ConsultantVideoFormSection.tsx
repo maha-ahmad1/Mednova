@@ -23,7 +23,7 @@ interface ConsultantVideoFormSectionProps<TValues extends FieldValues> {
 
 // Lightweight sibling of the admin VideoFormSection (control-panel/programs) —
 // same visual card, but only the fields the consultant contract defines
-// (no description_ar / duration_minute, the backend derives duration from the file).
+// (no description_ar; duration_minute is entered manually by the consultant).
 export function ConsultantVideoFormSection<TValues extends FieldValues>({
   index,
   form,
@@ -85,6 +85,28 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
                   min={1}
                   value={field.value as number}
                   onChange={(event) => field.onChange(Number(event.target.value))}
+                  className="no-spinner"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name={path("duration_minute")}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>مدة الفيديو (بالدقائق)</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min={1}
+                  value={field.value ? (field.value as number) : ""}
+                  onChange={(event) =>
+                    field.onChange(event.target.value === "" ? undefined : Number(event.target.value))
+                  }
                   className="no-spinner"
                 />
               </FormControl>

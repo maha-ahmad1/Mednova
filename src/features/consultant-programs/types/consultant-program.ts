@@ -19,6 +19,7 @@ export interface ConsultantProgramVideo {
   title_ar: string;
   title_en: string;
   order: number;
+  duration_minute?: number | null;
   is_program_intro: boolean;
   is_free: boolean;
   review_status: VideoReviewStatus;
@@ -87,6 +88,7 @@ export interface ConsultantProgramVideoPayload {
   title_ar: string;
   title_en: string;
   order: number;
+  duration_minute: number;
   is_program_intro: boolean;
   is_free: boolean;
   video: File;

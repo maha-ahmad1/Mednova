@@ -9,7 +9,11 @@ interface ErrorStateProps {
   onRetry?: () => void
 }
 
-export function ErrorState({ title = "حدث خطأ", description = "تعذر تحميل البيانات", onRetry }: ErrorStateProps) {
+export function ErrorState({
+  title = "حدث خطأ",
+  description = "تعذر تحميل البيانات",
+  onRetry,
+}: ErrorStateProps) {
   return (
     <div className="text-center py-20">
       <div className="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-md mx-auto">

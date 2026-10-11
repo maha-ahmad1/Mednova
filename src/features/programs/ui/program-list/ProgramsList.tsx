@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useProgramsQuery } from "../../hooks";
 import type { Program } from "../../types/program";
-import { ProgramSkeleton } from "./components/ProgramSkeleton";
+import { ProgramsPageSkeleton } from "./components/ProgramsPageSkeleton";
 import { Search, Grid, List, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +37,7 @@ const CATEGORIES = [
 
 export function ProgramsList(): React.ReactNode {
   const t = useTranslations("programs");
-  const { data, isLoading, error } = useProgramsQuery();
+  const { data, isPending: isLoading, error } = useProgramsQuery();
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
@@ -131,13 +131,7 @@ export function ProgramsList(): React.ReactNode {
     filters.rating !== t("all");
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ProgramSkeleton count={6} />
-        </div>
-      </div>
-    );
+    return <ProgramsPageSkeleton />;
   }
 
   if (error) {
@@ -159,24 +153,24 @@ export function ProgramsList(): React.ReactNode {
     <div className="min-h-screen bg-gradient-to-b from-[#1F6069]/5 via-white to-white">
       <section className="pt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center gap-3 text-sm text-[#1F6069]">
+          {/* <div className="flex flex-wrap items-center gap-3 text-sm text-[#1F6069]">
             <Badge className="bg-[#1F6069]/10 text-[#1F6069] rounded-full px-3 py-1 text-xs">
               {t("certifiedPrograms")}
             </Badge>
             <Badge className="bg-[#32A88D]/10 text-[#1F6069] rounded-full px-3 py-1 text-xs">
               {t("availablePrograms", { count: publishedPrograms })}
             </Badge>
-          </div>
+          </div> */}
 
           <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
                 {t("programsTitle")}
               </h1>
               <p className="text-base text-gray-600 leading-relaxed">
                 {t("programsDescription")}
               </p>
-            </div>
+            </div> */}
 
             {/* <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-[#1F6069]/10 bg-white p-5 shadow-sm">
@@ -292,7 +286,7 @@ export function ProgramsList(): React.ReactNode {
                   {t("search")} {searchQuery}
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="mr-2 hover:text-red-500"
+                    className="mr-2 cursor-pointer hover:text-red-500"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -303,7 +297,7 @@ export function ProgramsList(): React.ReactNode {
                   {t("category")} {filters.category}
                   <button
                     onClick={() => handleFilterChange("category", t("all"))}
-                    className="mr-2 hover:text-red-500"
+                    className="mr-2 cursor-pointer hover:text-red-500"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -314,7 +308,7 @@ export function ProgramsList(): React.ReactNode {
                   {t("rating")} {filters.rating === "4+" ? t("ratingOptions.fourAndUp") : t("ratingOptions.threeAndUp")}
                   <button
                     onClick={() => handleFilterChange("rating", t("all"))}
-                    className="mr-2 hover:text-red-500"
+                    className="mr-2 cursor-pointer hover:text-red-500"
                   >
                     <X className="w-3 h-3" />
                   </button>
@@ -344,7 +338,7 @@ export function ProgramsList(): React.ReactNode {
             <div className="flex border border-gray-200 rounded-xl overflow-hidden">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-2 ${
+                className={`p-2 cursor-pointer ${
                   viewMode === "grid"
                     ? "bg-[#32A88D] text-white"
                     : "bg-white text-gray-600 hover:bg-gray-50"
@@ -354,7 +348,7 @@ export function ProgramsList(): React.ReactNode {
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-2 ${
+                className={`p-2 cursor-pointer ${
                   viewMode === "list"
                     ? "bg-[#32A88D] text-white"
                     : "bg-white text-gray-600 hover:bg-gray-50"

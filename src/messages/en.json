@@ -42,6 +42,7 @@
     "patients": "Patients",
     "financialWallet": "Financial Wallet",
     "myPrograms": "My Programs",
+    "myEnrolledPrograms": "My Courses",
     "reports": "Reports",
     "help": "Help",
     "navigating": "Navigating...",
@@ -642,6 +643,8 @@
     "subscribeFullAccess": "Subscribe for full access",
     "topRequested": "Top requested",
     "availableNow": "Available now",
+    "enrolledBadge": "You're enrolled in this course",
+    "continueWatching": "Continue watching",
     "hasAccessBadge": "You have access",
     "accessGrantedCta": "You have access — go to content",
     "registeredUsers": "{count} enrolled",
@@ -665,7 +668,45 @@
     "description": "Discover programs most chosen by patients and start your recovery journey.",
     "noProgramsAvailable": "No programs available yet",
     "comingSoon": "New programs will appear here soon.",
-    "viewAll": "View all programs"
+    "viewAll": "View all programs",
+    "purchase": {
+      "successTitle": "Payment successful 🎉",
+      "successDesc": "You can now watch all lessons of “{title}”.",
+      "startWatching": "Start watching",
+      "later": "Later",
+      "freeEnrolled": "You're enrolled — the course is now open",
+      "checkoutError": "Couldn't open the payment page, please try again later",
+      "linkError": "Couldn't create the payment link, please try again",
+      "failedToast": "Payment wasn't completed",
+      "banner": {
+        "unpaid": {
+          "title": "Verifying payment...",
+          "desc": "This may take a few seconds."
+        },
+        "paid": {
+          "title": "Payment successful",
+          "desc": "You now have full access to the course content."
+        },
+        "payment_suspended": {
+          "title": "Payment wasn't completed",
+          "desc": "You can try again."
+        },
+        "expired": {
+          "title": "Payment link expired",
+          "desc": "Please start the purchase again."
+        },
+        "timeout": {
+          "title": "We couldn't confirm the payment",
+          "desc": "If you were charged, the course will appear in My Courses shortly."
+        }
+      }
+    },
+    "player": {
+      "play": "Play video",
+      "authRequired": "Sign in or subscribe to watch",
+      "failed": "Couldn't play the video, please try again",
+      "retry": "Try again"
+    }
   },
   "homeTherapists": {
     "badge": "Featured professionals",
@@ -1841,6 +1882,8 @@
       "transactions": {
         "title": "Platform Transactions",
         "typeFilter": "Filter by type",
+        "colSource": "Source",
+        "colDetails": "Details",
         "colId": "#",
         "colLabel": "Transaction",
         "colConsultation": "Consultation",
@@ -1851,6 +1894,12 @@
         "emptyTitle": "No Transactions",
         "emptyDescription": "No transactions match the selected filter.",
         "loadError": "Failed to load transactions. Please try again.",
+        "source": {
+          "course": "Course",
+          "consultation": "Consultation",
+          "withdrawal": "Withdrawal",
+          "other": "Other"
+        },
         "type": {
           "all": "All Types",
           "payment_record": "Payment Record",
@@ -2086,23 +2135,65 @@
     "products": {
       "hrc10": {
         "name": "Soft Rehabilitation Glove SY-HRC10",
-        "features": ["Pneumatic powered", "Passive training", "Mirror training"],
+        "features": [
+          "Pneumatic powered",
+          "Passive training",
+          "Mirror training"
+        ],
         "configuration": ["1 pc * Host", "1 pc * Rehab glove", "1 pc * Data glove"]
       },
       "hrc12": {
         "name": "Soft Rehabilitation Glove SY-HRC12",
-        "features": ["Passive training", "Pinch training", "Fine motor training", "Finger mirror training", "Extend training", "Functional training"],
-        "configuration": ["1 pc * Host", "1 pc * Rehab glove", "1 pc * Data glove", "1 pc * Training ball", "1 pc * Adapter"]
+        "features": [
+          "Passive training",
+          "Pinch training",
+          "Fine motor training",
+          "Finger mirror training",
+          "Extend training",
+          "Functional training"
+        ],
+        "configuration": [
+          "1 pc * Host",
+          "1 pc * Rehab glove",
+          "1 pc * Data glove",
+          "1 pc * Training ball",
+          "1 pc * Adapter"
+        ]
       },
       "hre12e": {
         "name": "Soft Rehabilitation Glove SY-HRE12E",
-        "features": ["Passive training", "Pinch training", "Fine motor training", "Finger mirror training", "Extend training", "Functional training"],
-        "configuration": ["1 pc * Host", "1 pc * Rehab glove", "1 pc * Data glove", "1 pc * Training ball", "1 pc * Adapter"]
+        "features": [
+          "Passive training",
+          "Pinch training",
+          "Fine motor training",
+          "Finger mirror training",
+          "Extend training",
+          "Functional training"
+        ],
+        "configuration": [
+          "1 pc * Host",
+          "1 pc * Rehab glove",
+          "1 pc * Data glove",
+          "1 pc * Training ball",
+          "1 pc * Adapter"
+        ]
       },
       "hrc15": {
         "name": "Soft Rehabilitation Robot SY-HRC15",
-        "features": ["Passive training", "Mirror training", "Assistance training", "Resistance training", "Active Game training"],
-        "configuration": ["1 pc * Host", "1 pc * Rehab glove", "1 pc * Data glove", "1 pc * Training ball", "1 pc * Adapter"]
+        "features": [
+          "Passive training",
+          "Mirror training",
+          "Assistance training",
+          "Resistance training",
+          "Active Game training"
+        ],
+        "configuration": [
+          "1 pc * Host",
+          "1 pc * Rehab glove",
+          "1 pc * Data glove",
+          "1 pc * Training ball",
+          "1 pc * Adapter"
+        ]
       },
       "hr06e": {
         "name": "Soft Rehabilitation Robot SY-HR06E",
@@ -2146,13 +2237,29 @@
         "name": "Hand Rehabilitation Robot SY-HR08G (BCI)",
         "description": "Based on principles of motor imagery and neural plasticity, through brain-controlled interface training it stimulates the patient's active movement awareness, achieving a \"perception-control\" bidirectional closed-loop neural stimulation, reshaping the user's neural pathway and significantly improving rehabilitation effectiveness.",
         "features": [],
-        "configuration": ["1 pc * Host", "3 pairs * Power-assisted glove", "1 pc * Grip strength meter", "1 pc * Adapter", "1 pc * User manual"]
+        "configuration": [
+          "1 pc * Host",
+          "3 pairs * Power-assisted glove",
+          "1 pc * Grip strength meter",
+          "1 pc * Adapter",
+          "1 pc * User manual"
+        ]
       },
       "uea2": {
         "name": "Upper Limb Rehabilitation Robot SY-UEA2",
         "description": "Provides users with various effective target-oriented training to enhance upper limb strength, speed and accuracy, and reshape upper limb functionality.",
         "features": [],
-        "configuration": ["1 pc * Host", "1 pc * Height-adjustable desk", "1 pc * Control box", "1 set * Keyboard & mouse", "1 set * Strap", "1 set * Hand module accessories", "1 pc * HDMI cable", "1 pc * Host cable", "1 pc * User manual"]
+        "configuration": [
+          "1 pc * Host",
+          "1 pc * Height-adjustable desk",
+          "1 pc * Control box",
+          "1 set * Keyboard & mouse",
+          "1 set * Strap",
+          "1 set * Hand module accessories",
+          "1 pc * HDMI cable",
+          "1 pc * Host cable",
+          "1 pc * User manual"
+        ]
       },
       "uh01": {
         "name": "Dynamic Arm Support SY-UH01",

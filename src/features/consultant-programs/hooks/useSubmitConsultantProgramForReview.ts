@@ -1,8 +1,10 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { toast } from "sonner";
 import { useAxiosInstance } from "@/lib/axios/axiosInstance";
+import { handleBackendFormError } from "@/lib/backendFormErrors";
 import { submitConsultantProgramForReview } from "../api";
 
 export function useSubmitConsultantProgramForReview(id: number) {
@@ -16,8 +18,8 @@ export function useSubmitConsultantProgramForReview(id: number) {
       queryClient.invalidateQueries({ queryKey: ["consultant-program", id] });
       toast.success(response.message || "تم إرسال الكورس للمراجعة");
     },
-    onError: () => {
-      toast.error("تعذر إرسال الكورس للمراجعة. حاول مرة أخرى.");
+    onError: (error: AxiosError<{ message?: string; data?: Record<string, unknown> }>) => {
+      handleBackendFormError(error);
     },
   });
 

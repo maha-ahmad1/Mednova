@@ -17,7 +17,7 @@ import { CurrencyAmount } from "@/features/financial/ui/shared/CurrencyAmount";
 import { EmptyWalletState } from "@/features/financial/ui/shared/EmptyWalletState";
 import { formatDate } from "@/utils/dateUtils";
 import { cn } from "@/lib/utils";
-import type { AdminTransactionType } from "../../types";
+import type { AdminTransaction, AdminTransactionType, TransactionSource } from "../../types";
 import { useAdminTransactions } from "../../hooks/useAdminTransactions";
 
 const SKELETON_ROWS = 10;
@@ -38,6 +38,53 @@ const entryTypeClass: Record<"credit" | "debit", string> = {
   debit: "bg-rose-100 text-rose-700 border-rose-200",
 };
 
+const sourceClass: Record<TransactionSource, string> = {
+  course: "bg-sky-100 text-sky-700 border-sky-200",
+  consultation: "bg-violet-100 text-violet-700 border-violet-200",
+  withdrawal: "bg-amber-100 text-amber-700 border-amber-200",
+  other: "bg-gray-100 text-gray-700 border-gray-200",
+};
+
+// Unknown future values fall back to "other" instead of breaking the row.
+const resolveSource = (source: string | undefined): TransactionSource =>
+  source === "course" || source === "consultation" || source === "withdrawal"
+    ? source
+    : "other";
+
+function parseAmount(item: AdminTransaction): number {
+  const magnitude = Number(item.amount.replace(/[^d.]/g, ""));
+  if (Number.isNaN(magnitude)) return 0;
+  return item.entry_type === "debit" ? -magnitude : magnitude;
+}
+
+function TransactionDetails({ item }: { item: AdminTransaction }) {
+  const source = resolveSource(item.source);
+
+  if (source === "course" && item.course) {
+    return (
+      <>
+        <div className="text-xs font-medium text-foreground">{item.course.program_title}</div>
+        <div className="text-xs text-muted-foreground">{item.course.patient_name}</div>
+      </>
+    );
+  }
+
+  if (source === "consultation" && item.consultation) {
+    return (
+      <>
+        <div className="text-xs font-medium text-foreground">
+          {item.consultation.patient_name} → {item.consultation.consultant_name}
+        </div>
+        <div className="text-xs text-muted-foreground capitalize">
+          #{item.consultation.id} · {item.consultation.type}
+        </div>
+      </>
+    );
+  }
+
+  return <span className="text-xs text-muted-foreground">—</span>;
+}
+
 export function TransactionsTable() {
   const t = useTranslations("controlPanel.financial");
   const [page, setPage] = useState(1);
@@ -51,7 +98,7 @@ export function TransactionsTable() {
     setPage(1);
   };
 
-  const colCount = 7;
+  const colCount = 8;
 
   return (
     <div className="space-y-4">
@@ -82,8 +129,9 @@ export function TransactionsTable() {
           <thead className="bg-muted/40 text-muted-foreground">
             <tr>
               <th className="px-4 py-3 text-right font-medium">{t("transactions.colId")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("transactions.colSource")}</th>
               <th className="px-4 py-3 text-right font-medium">{t("transactions.colLabel")}</th>
-              <th className="px-4 py-3 text-right font-medium">{t("transactions.colConsultation")}</th>
+              <th className="px-4 py-3 text-right font-medium">{t("transactions.colDetails")}</th>
               <th className="px-4 py-3 text-right font-medium">{t("transactions.colEntry")}</th>
               <th className="px-4 py-3 text-right font-medium">{t("transactions.colAmount")}</th>
               <th className="px-4 py-3 text-right font-medium">{t("transactions.colStatus")}</th>
@@ -97,6 +145,7 @@ export function TransactionsTable() {
               Array.from({ length: SKELETON_ROWS }).map((_, i) => (
                 <tr key={`tx-sk-${i}`} className="border-t align-middle">
                   <td className="px-4 py-3"><Skeleton className="h-4 w-10" /></td>
+                  <td className="px-4 py-3"><Skeleton className="h-5 w-16 rounded-full" /></td>
                   <td className="px-4 py-3"><Skeleton className="h-4 w-32" /></td>
                   <td className="px-4 py-3"><Skeleton className="h-4 w-28" /></td>
                   <td className="px-4 py-3"><Skeleton className="h-5 w-14 rounded-full" /></td>
@@ -138,24 +187,24 @@ export function TransactionsTable() {
                 >
                   <td className="px-4 py-3 text-muted-foreground text-xs">#{item.id}</td>
                   <td className="px-4 py-3">
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "rounded-full text-xs font-medium",
+                        sourceClass[resolveSource(item.source)],
+                      )}
+                    >
+                      {t(`transactions.source.${resolveSource(item.source)}`)}
+                    </Badge>
+                  </td>
+                  <td className="px-4 py-3">
                     <div className="text-xs font-medium text-foreground">{item.label}</div>
                     <div className="text-xs text-muted-foreground capitalize">
                       {item.type.replace(/_/g, " ")}
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    {item.consultation ? (
-                      <>
-                        <div className="text-xs font-medium text-foreground">
-                          {item.consultation.patient_name} → {item.consultation.consultant_name}
-                        </div>
-                        <div className="text-xs text-muted-foreground capitalize">
-                          #{item.consultation.id} · {item.consultation.type}
-                        </div>
-                      </>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">—</span>
-                    )}
+                    <TransactionDetails item={item} />
                   </td>
                   <td className="px-4 py-3">
                     <Badge
@@ -169,9 +218,10 @@ export function TransactionsTable() {
                     </Badge>
                   </td>
                   <td className="px-4 py-3">
-                    {/* amount already has +/- prefix; parseFloat preserves the sign */}
+                    {/* amount string carries a +/- prefix (possibly a unicode minus, which
+                        parseFloat can't read) — take the magnitude and sign from entry_type. */}
                     <CurrencyAmount
-                      amount={parseFloat(item.amount)}
+                      amount={parseAmount(item)}
                       currency={item.currency}
                       size="sm"
                       signed

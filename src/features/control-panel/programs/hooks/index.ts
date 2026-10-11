@@ -8,3 +8,8 @@ export { useAddProgramVideos } from "./useAddProgramVideos";
 export { useUpdateProgramVideo } from "./useUpdateProgramVideo";
 export { useDeleteProgramVideo } from "./useDeleteProgramVideo";
 export { useProgramVideoDetails } from "./useProgramVideoDetails";
+export { useReviewQueue } from "./useReviewQueue";
+export { useReviewProgramDetail } from "./useReviewProgramDetail";
+export { useReviewProgram } from "./useReviewProgram";
+export { useReviewProgramVideo } from "./useReviewProgramVideo";
+export { useProgramPurchases } from "./useProgramPurchases";

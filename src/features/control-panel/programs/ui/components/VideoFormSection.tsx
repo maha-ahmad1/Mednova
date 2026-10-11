@@ -1,3 +1,4 @@
+import { createNumberFieldHandler, numberFieldValue } from "@/lib/number-field";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -73,10 +74,8 @@ export function VideoFormSection<TValues extends FieldValues>({
                 <Input
                   className="no-spinner"
                   type="number"
-                  value={field.value as number}
-                  onChange={(event) =>
-                    field.onChange(Number(event.target.value))
-                  }
+                  value={numberFieldValue(field.value as number)}
+                  onChange={createNumberFieldHandler(field.onChange)}
                 />
               </FormControl>
               <FormMessage />
@@ -94,10 +93,8 @@ export function VideoFormSection<TValues extends FieldValues>({
                 <Input
                   type="number"
                   min={1}
-                  value={field.value as number}
-                  onChange={(event) =>
-                    field.onChange(Number(event.target.value))
-                  }
+                  value={numberFieldValue(field.value as number)}
+                  onChange={createNumberFieldHandler(field.onChange)}
                   className="no-spinner"
                 />
               </FormControl>

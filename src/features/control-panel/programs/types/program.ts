@@ -1,4 +1,6 @@
-export type ProgramStatus = "draft" | "approved" | "rejected" | "published" | "archived";
+export type ProgramStatus = "draft" | "pending" | "approved" | "rejected" | "published" | "archived";
+
+export type VideoReviewStatus = "pending" | "approved" | "rejected";
 
 export type ProgramApprovalFilter = "all" | "approved" | "unapproved";
 export type ProgramSortBy = "id" | "title" | "price";
@@ -50,6 +52,8 @@ export interface ControlPanelProgramVideo {
   isProgramIntro: boolean;
   isFree: boolean;
   videoPath: string | null;
+  reviewStatus: VideoReviewStatus | null;
+  rejectionReason: string | null;
 }
 
 export interface ControlPanelProgramDetails {
@@ -65,6 +69,10 @@ export interface ControlPanelProgramDetails {
   price: number | null;
   currency: string | null;
   coverImage: string | null;
+  rejectionReason: string | null;
+  submissionCount: number;
+  submittedAt: string | null;
+  creatorType: string | null;
   videos: ControlPanelProgramVideo[];
 }
 

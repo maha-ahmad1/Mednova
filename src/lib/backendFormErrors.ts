@@ -1,5 +1,6 @@
 import type { AxiosError } from "axios"
 import { toast } from "sonner"
+import { classifyApiError } from "@/lib/classifyApiError"
 
 interface BackendErrorResponse {
   message?: string
@@ -131,20 +132,5 @@ export const handleBackendFormError = (
     return
   }
 
-  if (status === 401) {
-    toast.error("انتَهَت جلستك. يرجى تسجيل الدخول مرة أخرى.")
-    return
-  }
-
-  if (status && status >= 500) {
-    toast.error("حدث خطأ في الخادم. يرجى المحاولة لاحقًا.")
-    return
-  }
-
-  if (errorData?.message) {
-    toast.error(errorData.message)
-    return
-  }
-
-  toast.error("حدث خطأ غير متوقع. يرجى المحاولة لاحقًا.")
+  toast.error(classifyApiError(error).message)
 }

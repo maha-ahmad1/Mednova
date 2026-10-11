@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,12 @@ import type { ControlPanelProgram, ProgramsFilters } from "../types/program";
 import { filterAndSortPrograms, paginatePrograms } from "../utils/programs";
 import { ProgramRow } from "./components/ProgramRow";
 import { ProgramsTableFilters } from "./components/ProgramsTableFilters";
+import { RejectReasonDialog } from "./components/RejectReasonDialog";
 
-type PendingProgramAction = { type: "delete"; program: ControlPanelProgram } | null;
+type PendingProgramAction =
+  | { type: "delete"; program: ControlPanelProgram }
+  | { type: "reject"; program: ControlPanelProgram }
+  | null;
 
 const initialFilters: ProgramsFilters = {
   search: "",
@@ -72,7 +76,7 @@ export function ProgramsManagementPage() {
   const totalPages = pagination?.last_page ?? Math.max(1, Math.ceil(localTotal / PROGRAMS_PER_PAGE));
 
   const onConfirmAction = async () => {
-    if (!pendingAction) return;
+    if (!pendingAction || pendingAction.type !== "delete") return;
 
     await removeProgram(pendingAction.program.id);
     setDeletedIds((prev) => [...prev, pendingAction.program.id]);
@@ -80,11 +84,11 @@ export function ProgramsManagementPage() {
     setPendingAction(null);
   };
 
-  const handleStatusChange = async (programId: number, nextStatus: "approved" | "rejected") => {
+  const applyStatusChange = async (programId: number, nextStatus: "approved" | "rejected", reason?: string) => {
     setStatusLoadingId(programId);
 
     try {
-      await updateProgramStatus({ programId, nextStatus });
+      await updateProgramStatus({ programId, nextStatus, reason });
       setOverrides((prev) => ({
         ...prev,
         [programId]: {
@@ -96,6 +100,27 @@ export function ProgramsManagementPage() {
     } finally {
       setStatusLoadingId(null);
     }
+  };
+
+  const handleStatusChange = (program: ControlPanelProgram, nextStatus: "approved" | "rejected") => {
+    if (statusLoadingId === program.id) return;
+
+    if (nextStatus === "rejected") {
+      // Rejecting a course always requires a reason, even from this legacy
+      // manual admin flow — matches the same requirement added for the
+      // review-queue (see RejectReasonDialog / ProgramStatusDropdown).
+      setPendingAction({ type: "reject", program });
+      return;
+    }
+
+    void applyStatusChange(program.id, "approved");
+  };
+
+  const handleRejectConfirm = async (reason: string) => {
+    if (!pendingAction || pendingAction.type !== "reject") return;
+
+    await applyStatusChange(pendingAction.program.id, "rejected", reason);
+    setPendingAction(null);
   };
 
   return (
@@ -181,7 +206,7 @@ export function ProgramsManagementPage() {
                 key={program.id}
                 program={program}
                 isUpdatingStatus={statusLoadingId === program.id}
-                onStatusChange={(nextStatus) => handleStatusChange(program.id, nextStatus)}
+                onStatusChange={(nextStatus) => handleStatusChange(program, nextStatus)}
                 onView={() => push(`/control-panel/programs/${program.id}`)}
                 onEdit={() => push(`/control-panel/programs/${program.id}/edit`)}
                 onDelete={() => setPendingAction({ type: "delete", program })}
@@ -206,7 +231,7 @@ export function ProgramsManagementPage() {
       />
 
       <ConfirmationModal
-        open={Boolean(pendingAction)}
+        open={pendingAction?.type === "delete"}
         title="تأكيد الإجراء"
         description="هل أنت متأكد أنك تريد تنفيذ هذا الإجراء على البرنامج؟"
         confirmLabel="تأكيد"
@@ -214,6 +239,14 @@ export function ProgramsManagementPage() {
         onConfirm={onConfirmAction}
         onOpenChange={(open) => !open && setPendingAction(null)}
         isConfirming={isDeletingProgram}
+      />
+
+      <RejectReasonDialog
+        open={pendingAction?.type === "reject"}
+        title="رفض البرنامج"
+        isSubmitting={pendingAction?.type === "reject" && statusLoadingId === pendingAction.program.id}
+        onOpenChange={(open) => !open && setPendingAction(null)}
+        onConfirm={handleRejectConfirm}
       />
     </div>
   );

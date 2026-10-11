@@ -41,10 +41,12 @@ export function Sidebar() {
   const [image, setImage] = useState<string | null>(null);
   // const { setUser } = useUserStore();
 
-  const userType: UserType = (session?.user?.role as UserType) || "patient";
+  const userType: UserType = (session?.user?.type_account as UserType) || "patient";
   const userId = session?.user?.id;
   const menuItems =
     sidebarMenus[userType as keyof typeof sidebarMenus] || sidebarMenus.patient;
+// console.log("session:", session?.user?.full_name);
+// console.log("role:", session?.user?.type_account );
 
   const {
     data: profileData,

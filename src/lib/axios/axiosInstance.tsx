@@ -40,7 +40,12 @@ export const useAxiosInstance = () => {
             return instance(originalRequest);
           }
 
-          signOut({ callbackUrl: "/login" });
+          // A 401 from the video stream endpoint means "this token can't preview/watch this
+          // video" (e.g. the admin token on the patient-guarded route), not an expired session.
+          const isStreamRequest = /\/videos\/\d+\/stream/.test(originalRequest?.url ?? "");
+          if (!isStreamRequest) {
+            signOut({ callbackUrl: "/login" });
+          }
         }
         return Promise.reject(error);
       },

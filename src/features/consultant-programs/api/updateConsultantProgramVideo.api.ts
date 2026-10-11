@@ -3,10 +3,6 @@ import type {
   ConsultantProgramResponse,
   ConsultantProgramVideoPayload,
 } from "../types/consultant-program";
-import {
-  getMockConsultantProgramById,
-  upsertMockConsultantProgram,
-} from "./__mock__/consultant-programs.mock";
 
 interface UpdateConsultantProgramVideoArgs {
   programId: number;
@@ -18,35 +14,26 @@ export const updateConsultantProgramVideo = async (
   axiosInstance: AxiosInstance,
   { programId, videoId, payload }: UpdateConsultantProgramVideoArgs,
 ): Promise<ConsultantProgramResponse> => {
-  // TODO(consultant-programs-api): swap for POST /api/consultant/programs/videos/:id (+ _method=PUT, multipart).
-  const current = getMockConsultantProgramById(programId);
-  if (!current) {
-    throw new Error("Program not found");
+  const formData = new FormData();
+  formData.append("title_ar", payload.title_ar);
+  formData.append("title_en", payload.title_en);
+  formData.append("order", String(payload.order));
+  formData.append("duration_minute", String(payload.duration_minute));
+  formData.append("is_program_intro", payload.is_program_intro ? "1" : "0");
+  formData.append("is_free", payload.is_free ? "1" : "0");
+
+  if (payload.video instanceof File) {
+    formData.append("video", payload.video);
   }
 
-  const program = upsertMockConsultantProgram(programId, {
-    videos: current.videos.map((video) =>
-      video.id === videoId
-        ? {
-            ...video,
-            title_ar: payload.title_ar,
-            title_en: payload.title_en,
-            order: payload.order,
-            is_program_intro: payload.is_program_intro,
-            is_free: payload.is_free,
-          }
-        : video,
-    ),
-  });
+  // Laravel method-spoofing — multipart bodies must be sent as POST.
+  formData.append("_method", "PUT");
 
-  if (!program) {
-    throw new Error("Program not found");
-  }
+  const response = await axiosInstance.post<ConsultantProgramResponse>(
+    `/api/consultant/programs/${programId}/videos/${videoId}`,
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } },
+  );
 
-  return {
-    success: true,
-    message: "تم تحديث الفيديو بنجاح",
-    data: program,
-    status: "success",
-  };
+  return response.data;
 };

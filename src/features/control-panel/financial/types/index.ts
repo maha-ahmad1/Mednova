@@ -118,6 +118,15 @@ export type AdminTransactionType =
 
 export type EntryType = "credit" | "debit";
 
+export type TransactionSource = "course" | "consultation" | "withdrawal" | "other";
+
+export interface TransactionCourse {
+  purchase_id: number;
+  program_id: number;
+  program_title: string;
+  patient_name: string;
+}
+
 export interface TransactionConsultation {
   id: number;
   type: "video" | "chat";
@@ -145,6 +154,8 @@ export interface AdminTransaction {
   amount: string;
   currency: string;
   status: string;
+  source: TransactionSource;
+  course?: TransactionCourse | null;
   consultation: TransactionConsultation | null;
   meta: TransactionMeta;
   created_at: string;

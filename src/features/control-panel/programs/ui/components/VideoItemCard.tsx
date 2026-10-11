@@ -71,6 +71,7 @@ export function VideoItemCard({ video, onUpdate, onDelete, isUpdating, isDeletin
   }, [details, form, initialVideoValues, isEditing]);
 
   const handleUpdate = form.handleSubmit(async (values) => {
+    if (isUpdating) return;
     await onUpdate(video.id, values.videos[0]);
     setIsEditing(false);
   });
@@ -84,7 +85,16 @@ export function VideoItemCard({ video, onUpdate, onDelete, isUpdating, isDeletin
       <div className="flex items-center justify-between border-b pb-2">
         <div className="space-y-1 text-right">
           <p className="font-semibold">{video.title}</p>
-          <p className="text-xs text-muted-foreground">الترتيب: #{video.order ?? "-"}</p>
+          <p className="text-xs text-muted-foreground">
+            الترتيب: #{video.order ?? "-"}
+            {" · "}
+            المدة:{" "}
+            {video.durationMinute ? (
+              `${video.durationMinute} دقيقة`
+            ) : (
+              <span className="font-medium text-destructive">غير محددة</span>
+            )}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <Button type="button" variant="outline" size="sm" onClick={handleToggleEdit}>
@@ -116,7 +126,8 @@ export function VideoItemCard({ video, onUpdate, onDelete, isUpdating, isDeletin
               />
             )}
             <div className="flex justify-end">
-              <Button type="submit" disabled={isUpdating || isFetching}>
+              <Button type="submit" className="min-w-28" disabled={isUpdating || isFetching}>
+                {isUpdating && <Loader2 className="h-4 w-4 animate-spin" />}
                 {isUpdating ? "جارٍ الحفظ..." : "حفظ التعديلات"}
               </Button>
             </div>

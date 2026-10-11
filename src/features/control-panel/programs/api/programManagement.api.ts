@@ -1,5 +1,5 @@
 import type { AxiosInstance } from "axios";
-import type { ControlPanelProgramDetails, ProgramStatus } from "../types/program";
+import type { ControlPanelProgramDetails, ProgramStatus, VideoReviewStatus } from "../types/program";
 
 interface ApiResponse<T = unknown> {
   success: boolean;
@@ -33,7 +33,13 @@ interface ProgramDetailsApiResponse {
     is_program_intro?: boolean | 0 | 1 | null;
     is_free?: boolean | 0 | 1 | null;
     video_path?: string | null;
+    review_status?: VideoReviewStatus | null;
+    rejection_reason?: string | null;
   }>;
+  rejection_reason?: string | null;
+  submission_count?: number | null;
+  submitted_at?: string | null;
+  creator_type?: string | null;
 }
 
 export const approveProgram = async (axiosInstance: AxiosInstance, programId: number) => {
@@ -41,8 +47,15 @@ export const approveProgram = async (axiosInstance: AxiosInstance, programId: nu
   return response.data;
 };
 
-export const rejectProgram = async (axiosInstance: AxiosInstance, programId: number) => {
-  const response = await axiosInstance.patch<ApiResponse>(`/api/control-panel/programs/${programId}/reject`);
+export const rejectProgram = async (
+  axiosInstance: AxiosInstance,
+  programId: number,
+  reason: string,
+) => {
+  const response = await axiosInstance.patch<ApiResponse>(
+    `/api/control-panel/programs/${programId}/reject`,
+    { rejection_reason: reason },
+  );
   return response.data;
 };
 
@@ -74,6 +87,10 @@ export const getProgramDetails = async (
     price: program.price === null ? null : Number(program.price),
     currency: program.currency,
     coverImage: program.cover_image,
+    rejectionReason: program.rejection_reason ?? null,
+    submissionCount: program.submission_count ?? 0,
+    submittedAt: program.submitted_at ?? null,
+    creatorType: program.creator_type ?? null,
     videos:
       program.videos?.map((video) => ({
         id: video.id,
@@ -86,6 +103,32 @@ export const getProgramDetails = async (
         isProgramIntro: Boolean(video.is_program_intro),
         isFree: Boolean(video.is_free),
         videoPath: video.video_path ?? null,
+        reviewStatus: video.review_status ?? null,
+        rejectionReason: video.rejection_reason ?? null,
       })) ?? [],
   };
+};
+
+export const approveProgramVideo = async (
+  axiosInstance: AxiosInstance,
+  programId: number,
+  videoId: number,
+) => {
+  const response = await axiosInstance.patch<ApiResponse>(
+    `/api/control-panel/programs/${programId}/videos/${videoId}/approve`,
+  );
+  return response.data;
+};
+
+export const rejectProgramVideo = async (
+  axiosInstance: AxiosInstance,
+  programId: number,
+  videoId: number,
+  reason: string,
+) => {
+  const response = await axiosInstance.patch<ApiResponse>(
+    `/api/control-panel/programs/${programId}/videos/${videoId}/reject`,
+    { rejection_reason: reason },
+  );
+  return response.data;
 };

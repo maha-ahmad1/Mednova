@@ -35,6 +35,14 @@ export function ConfirmationModal({
   isConfirming = false,
   children,
 }: ConfirmationModalProps) {
+  const handleConfirm = () => {
+    // Guards the handler itself, not just the Button's disabled prop — closes the
+    // render-cycle window where a second click could land before the button
+    // visually disables.
+    if (isConfirming) return;
+    onConfirm();
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -49,7 +57,7 @@ export function ConfirmationModal({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isConfirming}>
             {cancelLabel}
           </Button>
-          <Button onClick={onConfirm} disabled={confirmDisabled || isConfirming}>
+          <Button onClick={handleConfirm} disabled={confirmDisabled || isConfirming} className="min-w-28">
             {isConfirming ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />

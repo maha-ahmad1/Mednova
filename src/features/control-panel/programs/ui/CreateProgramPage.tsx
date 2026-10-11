@@ -1,7 +1,7 @@
 "use client";
 
 import { ProgramForm } from "./components/ProgramForm";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 export function CreateProgramPage() {

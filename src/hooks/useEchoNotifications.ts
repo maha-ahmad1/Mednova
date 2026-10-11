@@ -12,6 +12,7 @@ import { subscribeConsultationEvents } from "@/services/echo/subscribeConsultati
 import { subscribeAccountEvents } from "@/services/echo/subscribeAccountEvents";
 import { subscribeSystemEvents } from "@/services/echo/subscribeSystemEvents";
 import { subscribeMeasurementEvents } from "@/services/echo/subscribeMeasurementEvents";
+import { subscribeProgramReviewEvents } from "@/services/echo/subscribeProgramReviewEvents";
 import { useEventDeduplicator } from "@/hooks/useEventDeduplicator";
 
 export const useEchoNotifications = (): void => {
@@ -134,6 +135,14 @@ export const useEchoNotifications = (): void => {
       addNotification,
       t: tRoot,
     });
+
+    if (role === "therapist" || role === "rehabilitation_center") {
+      subscribeProgramReviewEvents({
+        channel,
+        queryClient,
+        addNotification,
+      });
+    }
 
     return () => {
       if (echoRef.current && channelNameRef.current) {

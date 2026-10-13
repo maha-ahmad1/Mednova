@@ -5,17 +5,24 @@ import { Lock, PlayCircle, Clock } from "lucide-react";
 import type { ProgramVideo } from "@/features/programs/types/program";
 import { LockedContentOverlay } from "@/shared/ui/components/LockedContentOverlay";
 import { getVideoAccessState } from "@/features/programs/utils/access";
+import { SignedVideoPlayer } from "@/features/programs/ui/shared/SignedVideoPlayer";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 interface ProgramVideosProps {
+  programId: number;
   videos: ProgramVideo[];
   coverImage?: string | null;
+  /** Deep-link target from "دوراتي"'s "متابعة المشاهدة" — falls back to the first video. */
+  initialVideoId?: number;
 }
 
-export function ProgramVideos({ videos, coverImage }: ProgramVideosProps) {
-  const [selectedVideoId, setSelectedVideoId] = useState<number | null>(
-    videos[0]?.id ?? null,
-  );
+export function ProgramVideos({ programId, videos, coverImage, initialVideoId }: ProgramVideosProps) {
+  const [selectedVideoId, setSelectedVideoId] = useState<number | null>(() => {
+    if (initialVideoId && videos.some((video) => video.id === initialVideoId)) {
+      return initialVideoId;
+    }
+    return videos[0]?.id ?? null;
+  });
   const selectedVideo = useMemo(
     () => videos.find((video) => video.id === selectedVideoId) ?? null,
     [selectedVideoId, videos],
@@ -56,15 +63,12 @@ export function ProgramVideos({ videos, coverImage }: ProgramVideosProps) {
                 />
               </div>
             ) : (
-              <video
-                key={selectedVideo.id}
-                controls
+              <SignedVideoPlayer
+                programId={programId}
+                videoId={selectedVideo.id}
+                poster={coverImage}
                 className="h-full w-full"
-                poster={selectedVideo.video_path}
-              >
-                <source src={selectedVideo.video_path} type="video/mp4" />
-                متصفحك لا يدعم تشغيل الفيديو
-              </video>
+              />
             )}
           </LockedContentOverlay>
           <h3 className="text-xl font-bold text-gray-900 mb-2">
@@ -89,7 +93,7 @@ export function ProgramVideos({ videos, coverImage }: ProgramVideosProps) {
               key={video.id}
               onClick={() => setSelectedVideoId(video.id)}
               className={cn(
-                "w-full text-right p-4 rounded-xl border transition-all duration-300",
+                "w-full cursor-pointer text-right p-4 rounded-xl border transition-all duration-300",
                 isSelected
                   ? "border-[#32A88D] bg-[#32A88D]/5"
                   : "border-gray-200 hover:border-[#32A88D]/50 hover:bg-gray-50",

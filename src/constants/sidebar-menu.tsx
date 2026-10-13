@@ -9,6 +9,7 @@ import {
   UserPlus,
   Wallet,
   BookOpen,
+  HeartPulse,
 } from "lucide-react";
 
 export const sidebarMenus = {
@@ -16,9 +17,20 @@ export const sidebarMenus = {
     { icon: LayoutDashboard, labelKey: "home", href: "/" },
     { icon: UserPlus, labelKey: "myProfile", href: "/profile" },
     // { icon: Users, labelKey: "users", href: "/coming-soon" },
-    { icon: Calendar, labelKey: "consultationRequests", href: "/profile/consultations" },
+    {
+      icon: Calendar,
+      labelKey: "consultationRequests",
+      href: "/profile/consultations",
+    },
     // { icon: Activity, labelKey: "sessions", href: "/coming-soon" },
     { icon: Wallet, labelKey: "financialWallet", href: "/profile/financial" },
+    {
+      icon: BookOpen,
+      labelKey: "myEnrolledPrograms",
+      href: "/profile/my-programs",
+    },
+    // Home-care (Kawader) requests: patients only, so only this role's menu has it.
+    { icon: HeartPulse, labelKey: "kawader", href: "/profile/kawader" },
 
     // { icon: FileText, labelKey: "reports", href: "/coming-soon" },
     // { icon: Settings, labelKey: "settings", href: "/coming-soon" },
@@ -28,18 +40,32 @@ export const sidebarMenus = {
   therapist: [
     { icon: LayoutDashboard, labelKey: "home", href: "/" },
     { icon: UserPlus, labelKey: "myProfile", href: "/profile" },
-    { icon: Calendar, labelKey: "appointments", href: "/profile/consultations" },
+ {
+      icon: Calendar,
+      labelKey: "consultationRequests",
+      href: "/profile/consultations",
+    },
     // { icon: Activity, labelKey: "sessions", href: "/coming-soon" },
     { icon: Wallet, labelKey: "financialWallet", href: "/profile/financial" },
     { icon: BookOpen, labelKey: "myPrograms", href: "/profile/programs" },
-    { icon: FileText, labelKey: "reports", href: "/coming-soon" },
-    { icon: HelpCircle, labelKey: "help", href: "/coming-soon" },
+    // { icon: FileText, labelKey: "reports", href: "/coming-soon" },
+    // { icon: HelpCircle, labelKey: "help", href: "/coming-soon" },
   ],
 
   rehabilitation_center: [
     { icon: LayoutDashboard, labelKey: "home", href: "/" },
-    { icon: Calendar, labelKey: "appointments", href: "/appointments" },
-    { icon: Users, labelKey: "patients", href: "/patients" },
-    { icon: HelpCircle, labelKey: "help", href: "/coming-soon" },
+    { icon: UserPlus, labelKey: "myProfile", href: "/profile" },
+    {
+      icon: Calendar,
+      labelKey: "consultationRequests",
+      href: "/profile/consultations",
+    },
+    { icon: Wallet, labelKey: "financialWallet", href: "/profile/financial" },
+    { icon: BookOpen, labelKey: "myPrograms", href: "/profile/programs" },
+    // { icon: LayoutDashboard, labelKey: "home", href: "/" },
+    // { icon: Calendar, labelKey: "appointments", href: "/appointments" },
+    // { icon: Users, labelKey: "patients", href: "/patients" },
+    // { icon: BookOpen, labelKey: "myPrograms", href: "/profile/programs" },
+    // { icon: HelpCircle, labelKey: "help", href: "/coming-soon" },
   ],
 };

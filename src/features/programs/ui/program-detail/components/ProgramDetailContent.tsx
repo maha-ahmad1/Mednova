@@ -41,7 +41,7 @@ export function ProgramDetailContent({ program }: ProgramDetailContentProps) {
               <PlayCircle className="h-4 w-4 text-[#32A88D]" />
               <span>عدد الفيديوهات</span>
             </div>
-            <p className="mt-3 text-2xl font-bold text-gray-900">{program.videos.length}</p>
+            <p className="mt-3 text-2xl font-bold text-gray-900">{program.videos_count}</p>
           </div>
           <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
             <div className="flex items-center gap-3 text-sm text-gray-600">

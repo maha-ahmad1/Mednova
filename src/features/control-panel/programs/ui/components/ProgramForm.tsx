@@ -1,8 +1,9 @@
 "use client";
 
+import { createNumberFieldHandler, numberFieldValue } from "@/lib/number-field";
 import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -119,6 +120,8 @@ export function ProgramForm({
   };
 
   const submitProgram = form.handleSubmit(async (values) => {
+    if (isCreateMode ? isCreating : isUpdatingProgram) return;
+
     if (isCreateMode) {
       const createValues = values as CreateProgramFormValues;
       await createProgram({
@@ -149,7 +152,7 @@ export function ProgramForm({
   });
 
   const submitAddVideos = addVideoForm.handleSubmit(async (values) => {
-    if (!programId) return;
+    if (!programId || isAddingVideos) return;
 
     await addVideos({
       program_id: programId,
@@ -169,6 +172,8 @@ export function ProgramForm({
         isProgramIntro: video.is_program_intro,
         isFree: video.is_free,
         videoPath: null,
+        reviewStatus: null,
+        rejectionReason: null,
       })),
     ]);
 
@@ -221,10 +226,8 @@ export function ProgramForm({
                     <FormControl>
                       <Input
                         type="number"
-                        value={field.value}
-                        onChange={(event) =>
-                          field.onChange(Number(event.target.value))
-                        }
+                        value={numberFieldValue(field.value)}
+                        onChange={createNumberFieldHandler(field.onChange)}
                         className="no-spinner"
                       />
                     </FormControl>
@@ -336,7 +339,8 @@ export function ProgramForm({
           )}
 
           <div className="flex justify-end rounded-lg border bg-background/95 p-3 backdrop-blur">
-            <Button type="submit" disabled={isSubmittingProgram}>
+            <Button type="submit" className="min-w-32" disabled={isSubmittingProgram}>
+              {isSubmittingProgram && <Loader2 className="h-4 w-4 animate-spin" />}
               {isSubmittingProgram
                 ? isCreateMode
                   ? "جاري الإنشاء..."
@@ -461,7 +465,8 @@ export function ProgramForm({
                       >
                         إلغاء
                       </Button>
-                      <Button type="submit" disabled={isAddingVideos}>
+                      <Button type="submit" className="min-w-36" disabled={isAddingVideos}>
+                        {isAddingVideos && <Loader2 className="h-4 w-4 animate-spin" />}
                         {isAddingVideos
                           ? "جارٍ الإضافة..."
                           : "حفظ الفيديوهات الجديدة"}

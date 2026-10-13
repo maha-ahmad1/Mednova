@@ -8,7 +8,6 @@ import { Link } from "@/i18n/navigation";
 import { Program } from "@/features/programs/types/program";
 import { RatingBadge } from "@/shared/ui/components/RatingBadge";
 import { LockedContentOverlay } from "@/shared/ui/components/LockedContentOverlay";
-import { getProgramAccessState } from "@/features/programs/utils/access";
 import { useTranslations } from 'next-intl';
 // export interface ProgramCardData {
 //   id: number;
@@ -50,13 +49,14 @@ export function ProgramCard({
   const rating = Number(program.ratings_avg_rating) || 0;
   const reviewsCount = program.ratings_count || 0;
   const price = program.price || 0;
-  const { isLocked } = getProgramAccessState(program.has_access);
+  // is_enrolled from the backend is the only source of truth for access.
+  const isEnrolled = program.is_enrolled === true;
 
   return (
     <div className="group flex h-full flex-col bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-500">
       <div className="relative overflow-hidden">
         <LockedContentOverlay
-          isLocked={isLocked}
+          isLocked={!isEnrolled}
           className="relative"
           description={t('subscribeFullAccess')}
           ctaLabel={t('subscribeFullAccess').split(' ')[0]}
@@ -112,7 +112,7 @@ export function ProgramCard({
         </p>
 
         {/* Access Badge - shown when the current user already has access */}
-        {program.has_access && (
+        {isEnrolled && (
           <Badge className="mb-3 w-fit bg-[#32A88D]/10 text-[#1F6069] px-3 py-1 rounded-full text-xs font-medium">
             {t('hasAccessBadge')}
           </Badge>
@@ -157,7 +157,7 @@ export function ProgramCard({
             <Link href={`/programs/${program.id}`}>
               <Button className="cursor-pointer bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl px-6 py-2 transition-all duration-300 shadow-lg hover:shadow-xl">
                 <Eye className="ml-2 w-4 h-4" />
-                {t('viewDetails')}
+                {isEnrolled ? t('continueWatching') : t('viewDetails')}
               </Button>
             </Link>
           </div>

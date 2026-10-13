@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_design_figma__whoami",
+      "Bash(grep -E \"\\\\.tsx$\")",
+      "Read(//c/Users/MSI GF/AppData/Local/Temp/audit/**)",
+      "Bash(node imports.js)",
+      "Bash(node -e ' *)",
+      "Bash(node jsx.js)"
+    ]
+  }
+}

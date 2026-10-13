@@ -23,12 +23,31 @@ export const consultantVideoSchema = z.object({
   title_ar: z.string().trim().min(1, "عنوان الفيديو (عربي) مطلوب"),
   title_en: z.string().trim().min(1, "عنوان الفيديو (إنجليزي) مطلوب"),
   order: z.number().min(1, "الترتيب يجب أن يبدأ من 1"),
+  duration_minute: z
+    .number({ message: "مدة الفيديو بالدقائق مطلوبة" })
+    .int("مدة الفيديو يجب أن تكون عددًا صحيحًا")
+    .min(1, "مدة الفيديو يجب أن تكون دقيقة واحدة على الأقل"),
   is_program_intro: z.boolean(),
   is_free: z.boolean(),
   video: requiredFileSchema,
 });
 
 export type ConsultantVideoFormValues = z.input<typeof consultantVideoSchema>;
+
+// Editing an existing video never requires re-uploading the file.
+export const consultantVideoEditSchema = z.object({
+  title_ar: z.string().trim().min(1, "عنوان الفيديو (عربي) مطلوب"),
+  title_en: z.string().trim().min(1, "عنوان الفيديو (إنجليزي) مطلوب"),
+  order: z.number().min(1, "الترتيب يجب أن يبدأ من 1"),
+  duration_minute: z
+    .number({ message: "مدة الفيديو بالدقائق مطلوبة" })
+    .int("مدة الفيديو يجب أن تكون عددًا صحيحًا")
+    .min(1, "مدة الفيديو يجب أن تكون دقيقة واحدة على الأقل"),
+  is_program_intro: z.boolean(),
+  is_free: z.boolean(),
+});
+
+export type ConsultantVideoEditFormValues = z.infer<typeof consultantVideoEditSchema>;
 
 export const newConsultantVideosSchema = z.object({
   videos: z.array(consultantVideoSchema).min(1, "يجب إضافة فيديو واحد على الأقل"),
@@ -40,6 +59,7 @@ export const createDefaultConsultantVideo = (order = 1): ConsultantVideoFormValu
   title_ar: "",
   title_en: "",
   order,
+  duration_minute: 0,
   is_program_intro: false,
   is_free: false,
   video: undefined,

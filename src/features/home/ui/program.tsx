@@ -1,7 +1,8 @@
 // app/home/components/ProgramsSection.tsx
 "use client";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import { Award, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,17 +16,18 @@ import { useTranslations } from 'next-intl';
 export default function ProgramsSection() {
   const t = useTranslations('programs');
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["getTopEnrolledProgram"],
+  const axiosInstance = useAxiosInstance();
+  const { data: session, status } = useSession();
+
+  const { data, isPending: isLoading, error } = useQuery({
+    queryKey: ["getTopEnrolledProgram", session?.user?.id ?? "guest"],
+    enabled: status !== "loading",
     queryFn: async () => {
-      const res = await axios.get(
-        "https://api.mednovacare.com/api/programs/show/get-top-enrolled-program",
-        {
-          params: {
-            limit: 3,
-          },
-        }
-      );
+      const res = await axiosInstance.get("/api/programs/show/get-top-enrolled-program", {
+        params: {
+          limit: 3,
+        },
+      });
       return res.data;
     },
   });
@@ -42,6 +44,7 @@ const programs: Program[] = (data?.data || []).map((item: Program) => ({
   ratings_avg_rating: item.ratings_avg_rating ? Number(item.ratings_avg_rating) : 0,
   ratings_count: item.ratings_count || 0,
   enrollments_count: item.enrollments_count || 0,
+  is_enrolled: item.is_enrolled === true,
   status: item.status || "draft",
   is_approved: item.is_approved || 0,
   // creator غير موجود في API، لذلك نضع قيمة افتراضية

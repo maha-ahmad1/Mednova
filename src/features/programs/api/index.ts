@@ -1,2 +1,7 @@
 export * from "./getPrograms.api"
 export * from "./getProgramById.api"
+export * from "./purchaseProgram.api"
+export * from "./createProgramPaymentLink.api"
+export * from "./getProgramPurchaseStatus.api"
+export * from "./getMyCourses.api"
+export * from "./getVideoStreamUrl.api"

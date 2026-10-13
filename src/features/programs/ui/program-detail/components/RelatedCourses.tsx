@@ -42,7 +42,7 @@ export function RelatedCourses({ programId }: RelatedCoursesProps): React.ReactN
             onClick={prevSlide}
             type="button"
             aria-label="الشريحة السابقة"
-            className="p-2 rounded-full border border-gray-300 hover:border-[#32A88D] hover:bg-[#32A88D]/5 transition-colors"
+            className="p-2 rounded-full border border-gray-300 hover:border-[#32A88D] hover:bg-[#32A88D]/5 cursor-pointer transition-colors"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -50,7 +50,7 @@ export function RelatedCourses({ programId }: RelatedCoursesProps): React.ReactN
             onClick={nextSlide}
             type="button"
             aria-label="الشريحة التالية"
-            className="p-2 rounded-full border border-gray-300 hover:border-[#32A88D] hover:bg-[#32A88D]/5 transition-colors"
+            className="p-2 rounded-full border border-gray-300 hover:border-[#32A88D] hover:bg-[#32A88D]/5 cursor-pointer transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { AlertTriangle, Archive, Pencil, Plus, Send, Trash2 } from "lucide-react";
+import { AlertTriangle, Archive, Loader2, Pencil, Plus, Send, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { ConsultantProgram } from "../../types/consultant-program";
@@ -47,6 +47,9 @@ export function ConsultantProgramCard({
               <p className="text-sm text-muted-foreground">
                 {program.price} ريال عماني · {program.videos.length} فيديو · {program.sales_count} عملية بيع
               </p>
+              <p className="text-xs text-muted-foreground">
+                عمولة المنصة {program.platform_commission_rate}% · صافي ربحك {program.your_earning_per_sale} ريال لكل عملية بيع
+              </p>
             </div>
             <ConsultantProgramStatusBadge status={program.status} label={program.status_label} />
           </div>
@@ -81,14 +84,22 @@ export function ConsultantProgramCard({
               </Button>
             )}
             {program.can.submit && (
-              <Button size="sm" onClick={onSubmitForReview} disabled={isSubmitting}>
-                <Send className="ms-1 h-4 w-4" />
+              <Button size="sm" className="min-w-36" onClick={onSubmitForReview} disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <Loader2 className="ms-1 h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="ms-1 h-4 w-4" />
+                )}
                 {isSubmitting ? "جارٍ الإرسال..." : "إرسال للمراجعة"}
               </Button>
             )}
             {program.can.archive && (
-              <Button variant="outline" size="sm" onClick={onArchive} disabled={isArchiving}>
-                <Archive className="ms-1 h-4 w-4" />
+              <Button variant="outline" size="sm" className="min-w-28" onClick={onArchive} disabled={isArchiving}>
+                {isArchiving ? (
+                  <Loader2 className="ms-1 h-4 w-4 animate-spin" />
+                ) : (
+                  <Archive className="ms-1 h-4 w-4" />
+                )}
                 {isArchiving ? "جارٍ الأرشفة..." : "أرشفة"}
               </Button>
             )}

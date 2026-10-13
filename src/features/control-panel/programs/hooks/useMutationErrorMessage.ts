@@ -26,7 +26,12 @@ export const getMutationErrorMessage = (error: AxiosError<unknown>, fallback: st
   }
 
   const validationErrors = responseData.data;
-  const firstError = validationErrors ? Object.values(validationErrors)[0]?.[0] : undefined;
+  const firstValue: unknown = validationErrors ? Object.values(validationErrors)[0] : undefined;
+  const firstError = Array.isArray(firstValue)
+    ? firstValue[0]
+    : typeof firstValue === "string"
+      ? firstValue
+      : undefined;
 
   return firstError || responseData.message || fallback;
 };

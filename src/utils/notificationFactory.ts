@@ -21,6 +21,17 @@ export type SystemNotificationEvent = {
   [key: string]: unknown;
 };
 
+// ASSUMPTION pending backend confirmation (see subscribeProgramReviewEvents.ts) — based on
+// the review-queue REST contract's naming (program_id, rejection_reason). Adjust to match
+// the real `program.review` broadcast payload once confirmed.
+export type ProgramReviewEvent = {
+  program_id: number;
+  title: string;
+  status: "approved" | "rejected";
+  rejection_reason?: string | null;
+  [key: string]: unknown;
+};
+
 export const createConsultationNotification = (
   event: ConsultationEvent,
   notificationType: Notification["type"],
@@ -131,6 +142,35 @@ export const createMeasurementNotification = (
     },
   };
   console.log("🧪 [TRACE][Notifications][Pusher Factory][createMeasurementNotification]", {
+    timestamp: new Date().toISOString(),
+    rawEvent: event,
+    mappedNotification: mapped,
+  });
+  return mapped;
+};
+
+export const createProgramReviewNotification = (
+  event: ProgramReviewEvent,
+): Notification => {
+  const title =
+    event.status === "approved"
+      ? `تمت الموافقة على كورسك "${event.title}"`
+      : `تم رفض كورسك "${event.title}"`;
+  const mapped: Notification = {
+    id: `program_review_${event.program_id}_${event.status}`,
+    type: event.status === "approved" ? "program_review_approved" : "program_review_rejected",
+    title,
+    message: event.status === "rejected" && event.rejection_reason ? event.rejection_reason : title,
+    read: false,
+    createdAt: new Date().toISOString(),
+    source: "pusher",
+    data: {
+      program_id: event.program_id,
+      status: event.status,
+      rejection_reason: event.rejection_reason ?? null,
+    },
+  };
+  console.log("🧪 [TRACE][Notifications][Pusher Factory][createProgramReviewNotification]", {
     timestamp: new Date().toISOString(),
     rawEvent: event,
     mappedNotification: mapped,

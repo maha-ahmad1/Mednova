@@ -10,7 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { User, Wallet, HelpCircle, LogOut, Calendar, MessageCircle } from "lucide-react";
+import { User, Wallet, HelpCircle, LogOut, Calendar, MessageCircle, BookOpen } from "lucide-react";
 import { useProfileImageStore } from "@/store/useProfileImageStore";
 
 export function UserMenu() {
@@ -22,6 +22,10 @@ export function UserMenu() {
   const storeImage = useProfileImageStore((state) => state.image);
 
   if (!session?.user) return null;
+
+  const canManagePrograms =
+    session.user.role === "therapist" || session.user.role === "rehabilitation_center";
+  const isPatient = session.user.role === "patient";
 
   // Use Zustand store image (source of truth for UI), fallback to session image
   const displayImage = storeImage || session.user.image;
@@ -94,6 +98,32 @@ export function UserMenu() {
               {t("financialWallet")}
             </Link>
           </DropdownMenuItem>
+
+          {canManagePrograms && (
+            <DropdownMenuItem className="flex gap-2">
+              <BookOpen className="w-4 h-4" />
+
+              <Link
+                href="/profile/programs"
+                className="flex-1 text-sm text-start"
+              >
+                {t("myPrograms")}
+              </Link>
+            </DropdownMenuItem>
+          )}
+
+          {isPatient && (
+            <DropdownMenuItem className="flex gap-2">
+              <BookOpen className="w-4 h-4" />
+
+              <Link
+                href="/profile/my-programs"
+                className="flex-1 text-sm text-start"
+              >
+                {t("myEnrolledPrograms")}
+              </Link>
+            </DropdownMenuItem>
+          )}
 
           <div className="h-px bg-gray-200 my-1" />
 

@@ -10,13 +10,14 @@ import { cn } from "@/lib/utils";
 import type { ProgramStatus } from "../../types/program";
 
 interface ProgramStatusDropdownProps {
-  status: Extract<ProgramStatus, "draft" | "approved" | "rejected">;
+  status: Extract<ProgramStatus, "draft" | "pending" | "approved" | "rejected">;
   isLoading?: boolean;
   onSelectStatus: (status: Extract<ProgramStatus, "approved" | "rejected">) => void;
 }
 
 const statusClasses: Record<ProgramStatus, string> = {
   draft: "bg-amber-100 text-amber-700 border-amber-200",
+  pending: "bg-violet-100 text-violet-700 border-violet-200",
   approved: "bg-emerald-100 text-emerald-700 border-emerald-200",
   rejected: "bg-rose-100 text-rose-700 border-rose-200",
   published: "bg-sky-100 text-sky-700 border-sky-200",
@@ -25,6 +26,7 @@ const statusClasses: Record<ProgramStatus, string> = {
 
 const statusLabels: Record<ProgramStatus, string> = {
   draft: "مسودة",
+  pending: "قيد المراجعة",
   approved: "موافق عليه",
   rejected: "مرفوض",
   published: "منشور",
@@ -50,14 +52,14 @@ export function ProgramStatusDropdown({ status, isLoading = false, onSelectStatu
         <DropdownMenuItem
           disabled={status === "approved"}
           onClick={() => onSelectStatus("approved")}
-          className="justify-end"
+          className="cursor-pointer justify-end"
         >
           {statusLabels.approved}
         </DropdownMenuItem>
         <DropdownMenuItem
           disabled={status === "rejected"}
           onClick={() => onSelectStatus("rejected")}
-          className="justify-end"
+          className="cursor-pointer justify-end"
         >
           {statusLabels.rejected}
         </DropdownMenuItem>

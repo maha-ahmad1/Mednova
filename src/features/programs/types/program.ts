@@ -20,7 +20,7 @@ export interface Program {
   currency: string; // "OMR"
   videos_count: number;
   total_duration_minutes: number;
-  has_access: boolean;
+  is_enrolled: boolean;
   // Legacy fields still consumed by some UI (listing/filtering) — optional since the
   // new API contract does not guarantee them.
   status?: string;
@@ -57,10 +57,15 @@ export interface ProgramVideo {
   is_program_intro: boolean;
   is_free: boolean;
   is_locked: boolean;
-  // No video URL is ever sent at this level — it comes later from a short-lived,
-  // separate endpoint. Kept optional so existing playback UI keeps compiling.
-  video_path?: string;
+  // Confirmed: no video URL field exists on this resource at all, ever — not just
+  // "sent later." The only way to get a playable URL is GET
+  // /api/programs/{id}/videos/{videoId}/stream, requested fresh each time a video
+  // is selected (see useVideoStream / SignedVideoPlayer).
   status?: string | null;
+  // Not confirmed whether GET /api/programs/{id} already filters these server-side
+  // or returns everything including pending/rejected — kept optional and filtered
+  // defensively in ProgramDetailView until backend confirms.
+  review_status?: "pending" | "approved" | "rejected";
 }
 
 export interface ProgramDetail extends Program {

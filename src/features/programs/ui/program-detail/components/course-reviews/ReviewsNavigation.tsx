@@ -36,7 +36,7 @@ export function ReviewsNavigation({
               className={`p-2 rounded-full ${
                 currentPage === 1
                   ? "text-gray-300 cursor-not-allowed"
-                  : "text-gray-700 hover:bg-gray-100"
+                  : "text-gray-700 hover:bg-gray-100 cursor-pointer"
               }`}
               aria-label="التقييمات السابقة"
             >
@@ -53,7 +53,7 @@ export function ReviewsNavigation({
               className={`p-2 rounded-full ${
                 currentPage === totalPages
                   ? "text-gray-300 cursor-not-allowed"
-                  : "text-gray-700 hover:bg-gray-100"
+                  : "text-gray-700 hover:bg-gray-100 cursor-pointer"
               }`}
               aria-label="التقييمات التالية"
             >
@@ -70,7 +70,7 @@ export function ReviewsNavigation({
               <button
                 key={index}
                 onClick={() => onPageChange(index + 1)}
-                className={`w-2 h-2 rounded-full transition-all ${
+                className={`w-2 h-2 rounded-full cursor-pointer transition-all ${
                   currentPage === index + 1
                     ? "bg-blue-600 w-4"
                     : "bg-gray-300 hover:bg-gray-400"

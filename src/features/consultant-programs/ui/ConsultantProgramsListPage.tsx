@@ -3,29 +3,22 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/navigation";
 import { ConfirmationModal } from "@/features/control-panel/users/ui/components/ConfirmationModal";
+import { classifyApiError } from "@/lib/classifyApiError";
+import { ErrorState } from "@/shared/ui/components/states/ErrorState";
 import { useConsultantPrograms } from "../hooks/useConsultantPrograms";
 import { useDeleteConsultantProgram } from "../hooks/useDeleteConsultantProgram";
 import { useArchiveConsultantProgram } from "../hooks/useArchiveConsultantProgram";
 import { useSubmitConsultantProgramForReview } from "../hooks/useSubmitConsultantProgramForReview";
 import { ConsultantProgramCard } from "./components/ConsultantProgramCard";
+import { ConsultantProgramsSkeleton } from "./components/ConsultantProgramsSkeleton";
 
 type PendingAction = { type: "delete" | "archive"; programId: number } | null;
 
-function ConsultantProgramsSkeleton() {
-  return (
-    <div className="space-y-4">
-      {Array.from({ length: 3 }).map((_, index) => (
-        <Skeleton key={`consultant-program-skeleton-${index}`} className="h-40 w-full rounded-xl" />
-      ))}
-    </div>
-  );
-}
-
 export function ConsultantProgramsListPage() {
-  const { data, isLoading, isError } = useConsultantPrograms();
+  const { data, isLoading, isError, error, refetch } = useConsultantPrograms();
+  const classified = classifyApiError(error);
   const { mutateAsync: deleteProgram, isPending: isDeleting } = useDeleteConsultantProgram();
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
 
@@ -51,9 +44,11 @@ export function ConsultantProgramsListPage() {
       {isLoading && <ConsultantProgramsSkeleton />}
 
       {!isLoading && isError && (
-        <div className="rounded-xl border bg-white p-10 text-center text-destructive">
-          تعذر تحميل كورساتك. حاول مرة أخرى.
-        </div>
+        <ErrorState
+          title={classified.title}
+          description={classified.message}
+          onRetry={() => refetch()}
+        />
       )}
 
       {!isLoading && !isError && programs.length === 0 && (
@@ -115,7 +110,10 @@ function ConsultantProgramCardWithActions({
   return (
     <ConsultantProgramCard
       program={program}
-      onSubmitForReview={() => submitForReview()}
+      onSubmitForReview={() => {
+        if (isSubmitting) return;
+        submitForReview();
+      }}
       onArchive={onRequestArchive}
       onDelete={onRequestDelete}
       isSubmitting={isSubmitting}

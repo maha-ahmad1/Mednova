@@ -7,9 +7,15 @@ interface ErrorStateProps {
   title?: string
   description?: string
   onRetry?: () => void
+  retryLabel?: string
 }
 
-export function ErrorState({ title = "حدث خطأ", description = "تعذر تحميل البيانات", onRetry }: ErrorStateProps) {
+export function ErrorState({
+  title = "حدث خطأ",
+  description = "تعذر تحميل البيانات",
+  onRetry,
+  retryLabel = "إعادة المحاولة",
+}: ErrorStateProps) {
   return (
     <div className="text-center py-20">
       <div className="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-md mx-auto">
@@ -24,7 +30,7 @@ export function ErrorState({ title = "حدث خطأ", description = "تعذر ت
             className="mt-4 border-red-300 text-red-700 hover:bg-red-50 bg-transparent"
             onClick={onRetry}
           >
-            إعادة المحاولة
+            {retryLabel}
           </Button>
         )}
       </div>

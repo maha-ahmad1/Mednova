@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Send } from "lucide-react";
+import { Loader2, Plus, Save, Send } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +23,7 @@ import { useCreateConsultantProgram } from "../hooks/useCreateConsultantProgram"
 import { useDeleteConsultantProgramVideo } from "../hooks/useDeleteConsultantProgramVideo";
 import { useSubmitConsultantProgramForReview } from "../hooks/useSubmitConsultantProgramForReview";
 import { useUpdateConsultantProgram } from "../hooks/useUpdateConsultantProgram";
+import { useUpdateConsultantProgramVideo } from "../hooks/useUpdateConsultantProgramVideo";
 import {
   consultantProgramSchema,
   createDefaultConsultantVideo,
@@ -54,6 +55,9 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
     program?.id ?? 0,
   );
   const { deleteVideo, isLoading: isDeletingVideo } = useDeleteConsultantProgramVideo(
+    program?.id ?? 0,
+  );
+  const { updateVideo, isLoading: isUpdatingVideo } = useUpdateConsultantProgramVideo(
     program?.id ?? 0,
   );
   const { addVideo, progressByTempId, isUploading } = useAddConsultantProgramVideo(
@@ -90,6 +94,10 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
   );
 
   const submitProgram = form.handleSubmit(async (values) => {
+    // Guards the handler itself — disabled alone leaves a render-cycle window open
+    // to a second submit (Enter key or a fast double-click) before it takes effect.
+    if (isCreateMode ? isCreating : isUpdating) return;
+
     if (isCreateMode) {
       await createProgram({
         title_ar: values.title_ar,
@@ -117,12 +125,15 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
   });
 
   const submitAddVideos = addVideoForm.handleSubmit(async (values) => {
+    if (isUploading) return;
+
     for (const video of values.videos) {
       const tempId = `${Date.now()}-${Math.random()}`;
       await addVideo(tempId, {
         title_ar: video.title_ar,
         title_en: video.title_en,
         order: video.order,
+        duration_minute: video.duration_minute,
         is_program_intro: video.is_program_intro,
         is_free: video.is_free,
         video: video.video as File,
@@ -153,11 +164,19 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
           {program.can.submit && (
             <Button
               type="button"
-              onClick={() => submitForReview()}
+              className="min-w-36"
+              onClick={() => {
+                if (isSubmitting || isUploading) return;
+                submitForReview();
+              }}
               disabled={isSubmitting || isUploading}
               title={isUploading ? "لا يمكن الإرسال أثناء رفع فيديو" : undefined}
             >
-              <Send className="ms-1 h-4 w-4" />
+              {isSubmitting ? (
+                <Loader2 className="ms-1 h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="ms-1 h-4 w-4" />
+              )}
               {isSubmitting ? "جارٍ الإرسال..." : "إرسال للمراجعة"}
             </Button>
           )}
@@ -293,7 +312,12 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
 
             {!isReadOnly && (
               <div className="flex justify-end rounded-lg border bg-background/95 p-3 backdrop-blur">
-                <Button type="submit" disabled={isSubmittingProgram}>
+                <Button type="submit" className="min-w-32" disabled={isSubmittingProgram}>
+                  {isSubmittingProgram ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
                   {isSubmittingProgram
                     ? isCreateMode
                       ? "جاري الإنشاء..."
@@ -330,8 +354,12 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   video={video}
                   programStatus={program.status}
                   isDeleting={isDeletingVideo}
+                  isUpdating={isUpdatingVideo}
                   onDelete={async (videoId) => {
                     await deleteVideo(videoId);
+                  }}
+                  onUpdate={async (videoId, values) => {
+                    await updateVideo({ videoId, payload: values });
                   }}
                 />
               ))
@@ -382,7 +410,8 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                         >
                           إلغاء
                         </Button>
-                        <Button type="submit" disabled={isUploading}>
+                        <Button type="submit" className="min-w-28" disabled={isUploading}>
+                          {isUploading && <Loader2 className="h-4 w-4 animate-spin" />}
                           {isUploading ? "جارٍ الرفع..." : "حفظ الفيديو"}
                         </Button>
                       </div>

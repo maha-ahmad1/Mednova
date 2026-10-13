@@ -15,7 +15,9 @@ interface ProgramRowProps {
 
 function ProgramRowComponent({ program, isUpdatingStatus = false, onStatusChange, onView, onEdit, onDelete }: ProgramRowProps) {
   const normalizedStatus =
-    program.status === "approved" || program.status === "rejected" ? program.status : "draft";
+    program.status === "approved" || program.status === "rejected" || program.status === "pending"
+      ? program.status
+      : "draft";
 
   return (
     <tr className="border-t align-middle">

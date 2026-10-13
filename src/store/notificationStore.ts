@@ -27,6 +27,8 @@ export interface Notification {
     | 'measurement_technical_error'
     | 'measurement_expired'
     | 'measurement_unknown'
+    | 'program_review_approved'
+    | 'program_review_rejected'
     | 'message'
     | 'comment'
     | 'like'

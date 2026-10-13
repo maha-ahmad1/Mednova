@@ -175,6 +175,15 @@ export async function middleware(req: NextRequest) {
         url.pathname = `/${locale}/profile`;
         return NextResponse.redirect(url);
       }
+
+      // Kawader home-care requests — patients only.
+      if (
+        cleanPathname.startsWith("/profile/kawader") &&
+        (token.role ?? token.user?.type_account) !== "patient"
+      ) {
+        url.pathname = `/${locale}/profile`;
+        return NextResponse.redirect(url);
+      }
     } else if (approval_status === "rejected") {
       if (
         !cleanPathname.startsWith("/profile/rejected") &&

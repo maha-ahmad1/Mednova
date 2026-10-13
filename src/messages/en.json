@@ -43,6 +43,7 @@
     "financialWallet": "Financial Wallet",
     "myPrograms": "My Programs",
     "myEnrolledPrograms": "My Courses",
+    "kawader": "Home Care",
     "reports": "Reports",
     "help": "Help",
     "navigating": "Navigating...",
@@ -2292,5 +2293,336 @@
     "downloadFailed": "Failed to download the report, please try again",
     "downloadMissingFilters": "Cannot download the report without a patient or a complete consultation",
     "waitingForResults": "Receiving session results..."
+  },
+  "kawader": {
+    "errors": {
+      "tooManyRequests": "Too many requests. Please try again later."
+    },
+    "form": {
+      "title": "Request a home care service",
+      "subtitle": "Fill in the details below and we will arrange your request."
+    },
+    "emergency": {
+      "title": "Is this an emergency?",
+      "body": "Emergency ambulance is not one of these services.",
+      "callPrefix": "In an emergency, call"
+    },
+    "pricing": {
+      "note": "The price is agreed and paid directly to the service provider, in cash or by card."
+    },
+    "service": {
+      "label": "Service",
+      "placeholder": "Choose a service"
+    },
+    "area": {
+      "label": "Area",
+      "placeholder": "Choose your area"
+    },
+    "patientName": {
+      "label": "Patient name",
+      "placeholder": "Full name"
+    },
+    "patientAge": {
+      "label": "Age"
+    },
+    "phone": {
+      "label": "Phone number",
+      "placeholder": "Phone number"
+    },
+    "location": {
+      "label": "Address",
+      "placeholder": "Area, street, building, flat",
+      "useCurrent": "Use my current location",
+      "locating": "Getting your location...",
+      "captured": "Your current location was added.",
+      "clear": "Remove",
+      "denied": "Location permission was denied. You can still type your address.",
+      "unavailable": "Could not determine your location. Please type your address.",
+      "timeout": "Getting your location took too long. Please try again.",
+      "unsupported": "Your browser does not support location."
+    },
+    "destination": {
+      "label": "Destination",
+      "placeholder": "Where should the patient be taken?"
+    },
+    "preferredAt": {
+      "date": "Preferred date",
+      "time": "Preferred time",
+      "hint": "Choose a time at least {hours} hours from now and within {days} days.",
+      "timezone": "Times use your local time zone ({timezone})."
+    },
+    "notes": {
+      "label": "Notes",
+      "labelOptional": "Notes (optional)",
+      "placeholder": "Anything the provider should know"
+    },
+    "insurance": {
+      "hasInsurance": "I have health insurance",
+      "company": "Insurance company",
+      "cardNumber": "Insurance card number",
+      "notAccepted": "Insurance is not accepted for home care services."
+    },
+    "consent": {
+      "text": "I agree to share my name, phone number, address and notes with the service provider so they can carry out my request."
+    },
+    "submit": {
+      "label": "Send request",
+      "loading": "Sending..."
+    },
+    "success": {
+      "title": "Your request was sent",
+      "body": "We received your request and will update you on its status.",
+      "reference": "Reference number",
+      "viewRequest": "View request",
+      "myRequests": "My requests"
+    },
+    "states": {
+      "errorTitle": "Could not load the form",
+      "errorDescription": "Something went wrong while loading the services. Please try again."
+    },
+    "validation": {
+      "required": "This field is required.",
+      "lengthRange": "Must be between {min} and {max} characters.",
+      "ageRange": "Enter an age between {min} and {max}.",
+      "phoneInvalid": "Enter a valid phone number ({min} to {max} digits including the country code).",
+      "phoneNoCode": "Do not type the country code here. Choose it from the list.",
+      "locationIncomplete": "The location is incomplete. Remove it and try again.",
+      "serviceRequired": "Please choose a service.",
+      "areaRequired": "Please choose your area.",
+      "dateInvalid": "Enter a valid date and time.",
+      "tooSoon": "The time must be at least {hours} hours from now.",
+      "tooFar": "The time must be within {days} days from now.",
+      "notesMin": "Please write at least {min} characters.",
+      "notesMax": "Notes can be at most {max} characters.",
+      "consentRequired": "You must agree to share your data to continue."
+    },
+    "status": {
+      "pending": "New",
+      "sent_to_hospital": "Sent to hospital",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "rejected": "Declined",
+      "cancelled": "Cancelled",
+      "expired": "Expired"
+    },
+    "list": {
+      "title": "My requests",
+      "subtitle": "Follow the status of your home care requests.",
+      "newRequest": "New request",
+      "filterLabel": "Filter by status",
+      "filterAll": "All",
+      "preferredAt": "Preferred time",
+      "emptyTitle": "No requests yet",
+      "emptyDescription": "When you request a home care service, it will show up here.",
+      "emptyFilteredTitle": "No requests with this status",
+      "emptyFilteredDescription": "Choose another status above, or send a new request.",
+      "emptyCta": "Request a service",
+      "errorTitle": "Could not load your requests",
+      "errorDescription": "Something went wrong while loading your requests. Please try again.",
+      "retry": "Try again"
+    },
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next",
+      "summary": "Page {current} of {last} • Total {total}"
+    },
+    "details": {
+      "back": "Back to my requests",
+      "reference": "Reference number",
+      "createdAt": "Sent on",
+      "reasonRejected": "Reason for declining",
+      "reasonCancelled": "Reason for cancellation",
+      "reasonDefault": "Note about your request",
+      "sectionService": "Service",
+      "service": "Service",
+      "area": "Area",
+      "preferredAt": "Preferred time",
+      "sectionPatient": "Patient",
+      "patientName": "Name",
+      "patientAge": "Age",
+      "patientPhone": "Phone number",
+      "sectionLocation": "Location",
+      "address": "Address",
+      "map": "Map",
+      "openMap": "Open in Google Maps",
+      "destination": "Destination",
+      "sectionNotes": "Notes",
+      "notes": "Notes",
+      "sectionInsurance": "Insurance",
+      "insuranceCompany": "Insurance company",
+      "insuranceCard": "Card number",
+      "notFoundTitle": "Request not found",
+      "notFoundDescription": "This request does not exist or is not yours.",
+      "notFoundCta": "Back to my requests",
+      "errorTitle": "Could not load the request",
+      "errorDescription": "Something went wrong while loading this request. Please try again."
+    },
+    "cancel": {
+      "button": "Cancel request",
+      "title": "Cancel this request?",
+      "description": "The request will be cancelled. This cannot be undone.",
+      "reasonLabel": "Reason (optional)",
+      "reasonPlaceholder": "Tell us why you are cancelling",
+      "counter": "{count} / {max}",
+      "confirm": "Cancel request",
+      "confirming": "Cancelling...",
+      "keep": "Keep request",
+      "success": "Your request was cancelled."
+    },
+    "admin": {
+      "title": "Kawader requests",
+      "subtitle": "Review home care requests and follow them until they are completed.",
+      "tabsLabel": "Request scope",
+      "tabs": {
+        "open": "Open",
+        "closed": "Closed",
+        "all": "All"
+      },
+      "errorTitle": "Could not load the requests",
+      "errorDescription": "Something went wrong while loading the requests. Please try again.",
+      "retry": "Try again",
+      "emptyTitle": "No requests here",
+      "emptyDescription": "There are no requests in this tab yet.",
+      "emptyFilteredTitle": "No requests match your filters",
+      "emptyFilteredDescription": "Try changing or clearing the filters.",
+      "filters": {
+        "searchPlaceholder": "Search by reference, phone or name",
+        "status": "Status",
+        "anyStatus": "Any status",
+        "priority": "Priority",
+        "anyPriority": "Any priority",
+        "priorities": {
+          "urgent": "Urgent",
+          "soon": "Soon",
+          "normal": "Normal"
+        },
+        "service": "Service",
+        "anyService": "Any service",
+        "services": {
+          "gp_visit": "General practitioner visit",
+          "dietitian": "Dietitian",
+          "home_nursing": "Home nursing",
+          "physiotherapy": "Physiotherapy",
+          "home_diagnostics": "Home diagnostics",
+          "patient_transfer": "Patient transfer (non-emergency)",
+          "medical_supplies_delivery": "Medical supplies delivery",
+          "pharmacy_delivery": "Pharmacy delivery"
+        },
+        "area": "Area",
+        "anyArea": "Any area",
+        "insurance": "Insurance",
+        "anyInsurance": "Any",
+        "insuranceYes": "With insurance",
+        "insuranceNo": "Without insurance",
+        "dateFrom": "From date",
+        "dateTo": "To date",
+        "clear": "Clear filters"
+      },
+      "table": {
+        "reference": "Reference",
+        "patient": "Patient",
+        "phone": "Phone",
+        "service": "Service",
+        "area": "Area",
+        "preferredAt": "Preferred time",
+        "priority": "Priority",
+        "status": "Status",
+        "createdAt": "Created",
+        "ageYears": "{age} years"
+      },
+      "details": {
+        "back": "Back to requests",
+        "createdAt": "Created",
+        "sectionRequest": "Request",
+        "destination": "Destination",
+        "notes": "Patient notes",
+        "sectionPatient": "Patient",
+        "name": "Name",
+        "age": "Age",
+        "email": "Email",
+        "sectionAccount": "Account owner",
+        "accountHint": "The account that sent the request. It can be a different person from the patient.",
+        "sectionLocation": "Location",
+        "address": "Address",
+        "map": "Map",
+        "openMap": "Open in Google Maps",
+        "sectionInsurance": "Insurance",
+        "insuranceCompany": "Insurance company",
+        "insuranceCard": "Card number",
+        "reasonRejected": "Reason for declining (shown to the patient)",
+        "reasonCancelled": "Reason for cancellation (shown to the patient)",
+        "reasonDefault": "Reason (shown to the patient)",
+        "cancelledBy": "Cancelled by: {actor}",
+        "internalNoteTitle": "Internal note",
+        "internalNoteHint": "Only admins can see this. The patient never does.",
+        "notFoundTitle": "Request not found",
+        "notFoundDescription": "This request does not exist.",
+        "errorTitle": "Could not load the request",
+        "errorDescription": "Something went wrong while loading this request. Please try again."
+      },
+      "timeline": {
+        "title": "Status history",
+        "empty": "No history yet."
+      },
+      "actors": {
+        "patient": "patient",
+        "admin": "admin",
+        "system": "system"
+      },
+      "hospitalMessage": {
+        "title": "Message for the hospital",
+        "copy": "Copy message",
+        "copied": "Message copied.",
+        "copyFailed": "Could not copy the message. Select the text and copy it manually.",
+        "whatsapp": "Open WhatsApp"
+      },
+      "actions": {
+        "title": "Actions",
+        "none": "No actions are available for this status.",
+        "sent_to_hospital": "Mark as sent to hospital",
+        "confirmed": "Confirm",
+        "completed": "Mark as completed",
+        "rejected": "Hospital declined",
+        "cancelled": "Cancel request"
+      },
+      "statusDialog": {
+        "title": {
+          "sent_to_hospital": "Mark as sent to hospital?",
+          "confirmed": "Confirm this request?",
+          "completed": "Mark as completed?",
+          "rejected": "Record that the hospital declined?",
+          "cancelled": "Cancel this request?"
+        },
+        "description": {
+          "sent_to_hospital": "The request will be marked as sent to the hospital.",
+          "confirmed": "The request will be marked as confirmed. The patient is notified.",
+          "completed": "The request will be marked as completed.",
+          "rejected": "The request will be closed as declined. The patient will see the reason.",
+          "cancelled": "The request will be cancelled. The patient will see the reason."
+        },
+        "confirm": {
+          "sent_to_hospital": "Mark as sent",
+          "confirmed": "Confirm",
+          "completed": "Mark as completed",
+          "rejected": "Hospital declined",
+          "cancelled": "Cancel request"
+        },
+        "dismiss": "Back",
+        "confirming": "Saving...",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "Explain why",
+        "reasonHelp": "The patient will see this reason.",
+        "noteLabel": "Internal note (optional)",
+        "notePlaceholder": "A note for other admins",
+        "noteHelp": "Internal only. The patient will not see it.",
+        "counter": "{count} / {max}"
+      }
+    },
+    "home": {
+      "badge": "Home care",
+      "title": "Healthcare at your door",
+      "description": "Request a doctor visit, nursing, physiotherapy, diagnostics, patient transfer and more at home. Send a request and follow its status.",
+      "cta": "Request a home care service"
+    }
   }
 }

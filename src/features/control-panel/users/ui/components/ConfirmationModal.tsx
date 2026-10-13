@@ -20,6 +20,9 @@ interface ConfirmationModalProps {
   onOpenChange: (open: boolean) => void;
   confirmDisabled?: boolean;
   isConfirming?: boolean;
+  /** Shown next to the spinner while `isConfirming`. */
+  confirmingLabel?: string;
+  confirmVariant?: "default" | "destructive";
   children?: ReactNode;
 }
 
@@ -33,6 +36,8 @@ export function ConfirmationModal({
   onOpenChange,
   confirmDisabled = false,
   isConfirming = false,
+  confirmingLabel = "جاري التنفيذ...",
+  confirmVariant = "default",
   children,
 }: ConfirmationModalProps) {
   const handleConfirm = () => {
@@ -57,11 +62,16 @@ export function ConfirmationModal({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isConfirming}>
             {cancelLabel}
           </Button>
-          <Button onClick={handleConfirm} disabled={confirmDisabled || isConfirming} className="min-w-28">
+          <Button
+            variant={confirmVariant}
+            onClick={handleConfirm}
+            disabled={confirmDisabled || isConfirming}
+            className="min-w-28"
+          >
             {isConfirming ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                جاري التنفيذ...
+                {confirmingLabel}
               </>
             ) : (
               confirmLabel

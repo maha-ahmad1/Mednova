@@ -3,6 +3,7 @@ import {
   BarChart3,
   ChartNoAxesCombined,
   Cpu,
+  HeartPulse,
   Landmark,
   LogOut,
   Settings,
@@ -62,6 +63,12 @@ export const adminSidebarGroups: AdminSidebarGroup[] = [
       // { label: "البرامج المنشورة", href: "/control-panel/programs?status=published" },
       // { label: "البرامج غير الموافق عليها", href: "/control-panel/programs?is_approved=0" },
     ],
+  },
+  {
+    id: "kawader",
+    label: "كوادر",
+    icon: HeartPulse,
+    items: [{ label: "طلبات كوادر", href: "/control-panel/kawader" }],
   },
   {
     id: "finance",

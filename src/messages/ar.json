@@ -43,6 +43,7 @@
     "financialWallet": "المحفظة المالية",
     "myPrograms": "كورساتي",
     "myEnrolledPrograms": "دوراتي",
+    "kawader": "الرعاية المنزلية",
     "reports": "التقارير",
     "help": "المساعدة",
     "navigating": "جارٍ الانتقال...",
@@ -2233,5 +2234,336 @@
     "downloadFailed": "تعذّر تحميل التقرير، حاول مرة أخرى",
     "downloadMissingFilters": "لا يمكن تحميل التقرير بدون تحديد مريض أو استشارة كاملة",
     "waitingForResults": "جاري استلام نتائج الجلسة..."
+  },
+  "kawader": {
+    "errors": {
+      "tooManyRequests": "محاولات كثيرة. يرجى المحاولة لاحقاً."
+    },
+    "form": {
+      "title": "طلب خدمة رعاية منزلية",
+      "subtitle": "أدخل البيانات التالية وسنقوم بترتيب طلبك."
+    },
+    "emergency": {
+      "title": "هل هي حالة طارئة؟",
+      "body": "الإسعاف الطارئ ليس من ضمن هذه الخدمات.",
+      "callPrefix": "في الحالات الطارئة اتصل على"
+    },
+    "pricing": {
+      "note": "يُحدَّد السعر ويُدفع مباشرة لمقدم الخدمة، نقداً أو بالبطاقة."
+    },
+    "service": {
+      "label": "الخدمة",
+      "placeholder": "اختر الخدمة"
+    },
+    "area": {
+      "label": "المنطقة",
+      "placeholder": "اختر منطقتك"
+    },
+    "patientName": {
+      "label": "اسم المريض",
+      "placeholder": "الاسم الكامل"
+    },
+    "patientAge": {
+      "label": "العمر"
+    },
+    "phone": {
+      "label": "رقم الهاتف",
+      "placeholder": "رقم الهاتف"
+    },
+    "location": {
+      "label": "العنوان",
+      "placeholder": "المنطقة، الشارع، المبنى، الشقة",
+      "useCurrent": "استخدم موقعي الحالي",
+      "locating": "جاري تحديد موقعك...",
+      "captured": "تمت إضافة موقعك الحالي.",
+      "clear": "إزالة",
+      "denied": "تم رفض إذن الموقع. يمكنك كتابة عنوانك يدوياً.",
+      "unavailable": "تعذر تحديد موقعك. يرجى كتابة العنوان.",
+      "timeout": "استغرق تحديد الموقع وقتاً طويلاً. حاول مرة أخرى.",
+      "unsupported": "متصفحك لا يدعم تحديد الموقع."
+    },
+    "destination": {
+      "label": "الوجهة",
+      "placeholder": "إلى أين سيُنقل المريض؟"
+    },
+    "preferredAt": {
+      "date": "التاريخ المفضل",
+      "time": "الوقت المفضل",
+      "hint": "اختر موعداً بعد {hours} ساعات على الأقل من الآن وخلال {days} يوماً.",
+      "timezone": "الأوقات بتوقيتك المحلي ({timezone})."
+    },
+    "notes": {
+      "label": "ملاحظات",
+      "labelOptional": "ملاحظات (اختياري)",
+      "placeholder": "أي معلومات يجب أن يعرفها مقدم الخدمة"
+    },
+    "insurance": {
+      "hasInsurance": "لدي تأمين صحي",
+      "company": "شركة التأمين",
+      "cardNumber": "رقم بطاقة التأمين",
+      "notAccepted": "التأمين غير مقبول لخدمات الرعاية المنزلية."
+    },
+    "consent": {
+      "text": "أوافق على مشاركة اسمي ورقم هاتفي وعنواني وملاحظاتي مع مقدم الخدمة لتنفيذ طلبي."
+    },
+    "submit": {
+      "label": "إرسال الطلب",
+      "loading": "جاري الإرسال..."
+    },
+    "success": {
+      "title": "تم إرسال طلبك",
+      "body": "استلمنا طلبك وسنوافيك بتحديثات حالته.",
+      "reference": "الرقم المرجعي",
+      "viewRequest": "عرض الطلب",
+      "myRequests": "طلباتي"
+    },
+    "states": {
+      "errorTitle": "تعذر تحميل النموذج",
+      "errorDescription": "حدث خطأ أثناء تحميل الخدمات. يرجى المحاولة مرة أخرى."
+    },
+    "validation": {
+      "required": "هذا الحقل مطلوب.",
+      "lengthRange": "يجب أن يكون بين {min} و{max} حرفاً.",
+      "ageRange": "أدخل عمراً بين {min} و{max}.",
+      "phoneInvalid": "أدخل رقم هاتف صحيحاً ({min} إلى {max} رقماً شاملاً رمز الدولة).",
+      "phoneNoCode": "لا تكتب رمز الدولة هنا. اخترْه من القائمة.",
+      "locationIncomplete": "الموقع غير مكتمل. أزله وحاول مرة أخرى.",
+      "serviceRequired": "يرجى اختيار الخدمة.",
+      "areaRequired": "يرجى اختيار منطقتك.",
+      "dateInvalid": "أدخل تاريخاً ووقتاً صحيحين.",
+      "tooSoon": "يجب أن يكون الموعد بعد {hours} ساعات على الأقل من الآن.",
+      "tooFar": "يجب أن يكون الموعد خلال {days} يوماً من الآن.",
+      "notesMin": "يرجى كتابة {min} أحرف على الأقل.",
+      "notesMax": "الحد الأقصى للملاحظات {max} حرف.",
+      "consentRequired": "يجب الموافقة على مشاركة بياناتك للمتابعة."
+    },
+    "status": {
+      "pending": "جديد",
+      "sent_to_hospital": "أُرسل للمستشفى",
+      "confirmed": "مؤكد",
+      "completed": "مكتمل",
+      "rejected": "اعتذر المستشفى",
+      "cancelled": "ملغي",
+      "expired": "منتهي"
+    },
+    "list": {
+      "title": "طلباتي",
+      "subtitle": "تابع حالة طلبات الرعاية المنزلية الخاصة بك.",
+      "newRequest": "طلب جديد",
+      "filterLabel": "تصفية حسب الحالة",
+      "filterAll": "الكل",
+      "preferredAt": "الموعد المفضل",
+      "emptyTitle": "لا توجد طلبات بعد",
+      "emptyDescription": "عند طلب خدمة رعاية منزلية ستظهر هنا.",
+      "emptyFilteredTitle": "لا توجد طلبات بهذه الحالة",
+      "emptyFilteredDescription": "اختر حالة أخرى من الأعلى، أو أرسل طلباً جديداً.",
+      "emptyCta": "اطلب خدمة",
+      "errorTitle": "تعذر تحميل طلباتك",
+      "errorDescription": "حدث خطأ أثناء تحميل طلباتك. يرجى المحاولة مرة أخرى.",
+      "retry": "إعادة المحاولة"
+    },
+    "pagination": {
+      "prev": "السابق",
+      "next": "التالي",
+      "summary": "الصفحة {current} من {last} • الإجمالي {total}"
+    },
+    "details": {
+      "back": "العودة إلى طلباتي",
+      "reference": "الرقم المرجعي",
+      "createdAt": "تاريخ الإرسال",
+      "reasonRejected": "سبب الاعتذار",
+      "reasonCancelled": "سبب الإلغاء",
+      "reasonDefault": "ملاحظة على طلبك",
+      "sectionService": "الخدمة",
+      "service": "الخدمة",
+      "area": "المنطقة",
+      "preferredAt": "الموعد المفضل",
+      "sectionPatient": "المريض",
+      "patientName": "الاسم",
+      "patientAge": "العمر",
+      "patientPhone": "رقم الهاتف",
+      "sectionLocation": "الموقع",
+      "address": "العنوان",
+      "map": "الخريطة",
+      "openMap": "فتح في خرائط جوجل",
+      "destination": "الوجهة",
+      "sectionNotes": "الملاحظات",
+      "notes": "الملاحظات",
+      "sectionInsurance": "التأمين",
+      "insuranceCompany": "شركة التأمين",
+      "insuranceCard": "رقم البطاقة",
+      "notFoundTitle": "الطلب غير موجود",
+      "notFoundDescription": "هذا الطلب غير موجود أو ليس لك.",
+      "notFoundCta": "العودة إلى طلباتي",
+      "errorTitle": "تعذر تحميل الطلب",
+      "errorDescription": "حدث خطأ أثناء تحميل هذا الطلب. يرجى المحاولة مرة أخرى."
+    },
+    "cancel": {
+      "button": "إلغاء الطلب",
+      "title": "إلغاء هذا الطلب؟",
+      "description": "سيتم إلغاء الطلب ولا يمكن التراجع عن ذلك.",
+      "reasonLabel": "السبب (اختياري)",
+      "reasonPlaceholder": "أخبرنا لماذا تريد الإلغاء",
+      "counter": "{count} / {max}",
+      "confirm": "إلغاء الطلب",
+      "confirming": "جاري الإلغاء...",
+      "keep": "إبقاء الطلب",
+      "success": "تم إلغاء طلبك."
+    },
+    "admin": {
+      "title": "طلبات كوادر",
+      "subtitle": "راجع طلبات الرعاية المنزلية وتابعها حتى اكتمالها.",
+      "tabsLabel": "نطاق الطلبات",
+      "tabs": {
+        "open": "المفتوحة",
+        "closed": "المغلقة",
+        "all": "الكل"
+      },
+      "errorTitle": "تعذر تحميل الطلبات",
+      "errorDescription": "حدث خطأ أثناء تحميل الطلبات. يرجى المحاولة مرة أخرى.",
+      "retry": "إعادة المحاولة",
+      "emptyTitle": "لا توجد طلبات هنا",
+      "emptyDescription": "لا توجد طلبات في هذا التبويب حتى الآن.",
+      "emptyFilteredTitle": "لا توجد طلبات تطابق الفلاتر",
+      "emptyFilteredDescription": "جرّب تغيير الفلاتر أو مسحها.",
+      "filters": {
+        "searchPlaceholder": "بحث بالرقم المرجعي أو الهاتف أو الاسم",
+        "status": "الحالة",
+        "anyStatus": "كل الحالات",
+        "priority": "الأولوية",
+        "anyPriority": "كل الأولويات",
+        "priorities": {
+          "urgent": "عاجل",
+          "soon": "قريب",
+          "normal": "عادي"
+        },
+        "service": "الخدمة",
+        "anyService": "كل الخدمات",
+        "services": {
+          "gp_visit": "زيارة طبيب عام",
+          "dietitian": "أخصائي تغذية",
+          "home_nursing": "تمريض منزلي",
+          "physiotherapy": "علاج طبيعي",
+          "home_diagnostics": "فحوصات منزلية",
+          "patient_transfer": "نقل مرضى (غير طارئ)",
+          "medical_supplies_delivery": "توصيل مستلزمات طبية",
+          "pharmacy_delivery": "توصيل أدوية"
+        },
+        "area": "المنطقة",
+        "anyArea": "كل المناطق",
+        "insurance": "التأمين",
+        "anyInsurance": "الكل",
+        "insuranceYes": "مع تأمين",
+        "insuranceNo": "بدون تأمين",
+        "dateFrom": "من تاريخ",
+        "dateTo": "إلى تاريخ",
+        "clear": "مسح الفلاتر"
+      },
+      "table": {
+        "reference": "الرقم المرجعي",
+        "patient": "المريض",
+        "phone": "الهاتف",
+        "service": "الخدمة",
+        "area": "المنطقة",
+        "preferredAt": "الموعد المفضل",
+        "priority": "الأولوية",
+        "status": "الحالة",
+        "createdAt": "تاريخ الإنشاء",
+        "ageYears": "{age} سنة"
+      },
+      "details": {
+        "back": "العودة إلى الطلبات",
+        "createdAt": "تاريخ الإنشاء",
+        "sectionRequest": "الطلب",
+        "destination": "الوجهة",
+        "notes": "ملاحظات المريض",
+        "sectionPatient": "المريض",
+        "name": "الاسم",
+        "age": "العمر",
+        "email": "البريد الإلكتروني",
+        "sectionAccount": "صاحب الحساب",
+        "accountHint": "الحساب الذي أرسل الطلب. قد يختلف عن المريض.",
+        "sectionLocation": "الموقع",
+        "address": "العنوان",
+        "map": "الخريطة",
+        "openMap": "فتح في خرائط جوجل",
+        "sectionInsurance": "التأمين",
+        "insuranceCompany": "شركة التأمين",
+        "insuranceCard": "رقم البطاقة",
+        "reasonRejected": "سبب الاعتذار (يراه المريض)",
+        "reasonCancelled": "سبب الإلغاء (يراه المريض)",
+        "reasonDefault": "السبب (يراه المريض)",
+        "cancelledBy": "ألغاه: {actor}",
+        "internalNoteTitle": "ملاحظة داخلية",
+        "internalNoteHint": "يراها المشرفون فقط، ولا يراها المريض.",
+        "notFoundTitle": "الطلب غير موجود",
+        "notFoundDescription": "هذا الطلب غير موجود.",
+        "errorTitle": "تعذر تحميل الطلب",
+        "errorDescription": "حدث خطأ أثناء تحميل هذا الطلب. يرجى المحاولة مرة أخرى."
+      },
+      "timeline": {
+        "title": "سجل الحالات",
+        "empty": "لا يوجد سجل بعد."
+      },
+      "actors": {
+        "patient": "المريض",
+        "admin": "مشرف",
+        "system": "النظام"
+      },
+      "hospitalMessage": {
+        "title": "رسالة المستشفى",
+        "copy": "نسخ الرسالة",
+        "copied": "تم نسخ الرسالة.",
+        "copyFailed": "تعذر نسخ الرسالة. حدد النص وانسخه يدوياً.",
+        "whatsapp": "فتح واتساب"
+      },
+      "actions": {
+        "title": "الإجراءات",
+        "none": "لا توجد إجراءات متاحة لهذه الحالة.",
+        "sent_to_hospital": "تحديد كمُرسل للمستشفى",
+        "confirmed": "تأكيد",
+        "completed": "تحديد كمكتمل",
+        "rejected": "اعتذر المستشفى",
+        "cancelled": "إلغاء الطلب"
+      },
+      "statusDialog": {
+        "title": {
+          "sent_to_hospital": "تحديد الطلب كمُرسل للمستشفى؟",
+          "confirmed": "تأكيد هذا الطلب؟",
+          "completed": "تحديد الطلب كمكتمل؟",
+          "rejected": "تسجيل اعتذار المستشفى؟",
+          "cancelled": "إلغاء هذا الطلب؟"
+        },
+        "description": {
+          "sent_to_hospital": "سيتم تحديد الطلب كمُرسل للمستشفى.",
+          "confirmed": "سيتم تأكيد الطلب ويُشعَر المريض.",
+          "completed": "سيتم تحديد الطلب كمكتمل.",
+          "rejected": "سيُغلق الطلب باعتذار المستشفى، وسيرى المريض السبب.",
+          "cancelled": "سيتم إلغاء الطلب، وسيرى المريض السبب."
+        },
+        "confirm": {
+          "sent_to_hospital": "تحديد كمُرسل",
+          "confirmed": "تأكيد",
+          "completed": "تحديد كمكتمل",
+          "rejected": "اعتذر المستشفى",
+          "cancelled": "إلغاء الطلب"
+        },
+        "dismiss": "رجوع",
+        "confirming": "جاري الحفظ...",
+        "reasonLabel": "السبب",
+        "reasonPlaceholder": "اشرح السبب",
+        "reasonHelp": "سيرى المريض هذا السبب.",
+        "noteLabel": "ملاحظة داخلية (اختياري)",
+        "notePlaceholder": "ملاحظة للمشرفين الآخرين",
+        "noteHelp": "داخلية فقط، ولا يراها المريض.",
+        "counter": "{count} / {max}"
+      }
+    },
+    "home": {
+      "badge": "الرعاية المنزلية",
+      "title": "الرعاية الصحية حتى باب بيتك",
+      "description": "اطلب زيارة طبيب أو تمريضاً أو علاجاً طبيعياً أو فحوصات أو نقل مرضى وغيرها في منزلك. أرسل طلبك وتابع حالته.",
+      "cta": "اطلب خدمة رعاية منزلية"
+    }
   }
 }

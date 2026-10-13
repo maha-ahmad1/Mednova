@@ -7,6 +7,7 @@ import MostRatedProfessionals from "./mostRatedProfessionals";
 import Services from "./Services";
 import TrustStrip from "./trustStrip";
 import ClosingCta from "./closingCta";
+import HomeCare from "./homeCare";
 
 
 export default function HomeSections() {
@@ -19,6 +20,7 @@ export default function HomeSections() {
       <Program />
       <SmartGlove />
       <Services />
+      <HomeCare />
       <ClosingCta />
       <Footer />
     </>

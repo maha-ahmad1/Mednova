@@ -9,6 +9,7 @@ import {
   UserPlus,
   Wallet,
   BookOpen,
+  HeartPulse,
 } from "lucide-react";
 
 export const sidebarMenus = {
@@ -28,6 +29,8 @@ export const sidebarMenus = {
       labelKey: "myEnrolledPrograms",
       href: "/profile/my-programs",
     },
+    // Home-care (Kawader) requests: patients only, so only this role's menu has it.
+    { icon: HeartPulse, labelKey: "kawader", href: "/profile/kawader" },
 
     // { icon: FileText, labelKey: "reports", href: "/coming-soon" },
     // { icon: Settings, labelKey: "settings", href: "/coming-soon" },

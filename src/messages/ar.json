@@ -2091,6 +2091,7 @@
       "follow": "متابعة جديدة",
       "system": "إشعار نظام",
       "alert": "تنبيه",
+      "kawader": "طلب رعاية منزلية",
       "unknown": "إشعار"
     }
   },
@@ -2336,6 +2337,26 @@
       "notesMin": "يرجى كتابة {min} أحرف على الأقل.",
       "notesMax": "الحد الأقصى للملاحظات {max} حرف.",
       "consentRequired": "يجب الموافقة على مشاركة بياناتك للمتابعة."
+    },
+    "realtime": {
+      "view": "عرض",
+      "updated": "تم تحديث الطلب {code}",
+      "events": {
+        "kawader_request_created_admin": "طلب كوادر جديد {code}"
+      },
+      "patient": {
+        "sent_to_hospital": "تم إرسال طلبك {code} إلى المستشفى",
+        "confirmed": "تم تأكيد طلبك {code}",
+        "rejected": "اعتذر المستشفى عن طلبك {code}",
+        "cancelled": "تم إلغاء طلبك {code}",
+        "completed": "اكتمل طلبك {code}",
+        "expired": "انتهت صلاحية طلبك {code}"
+      },
+      "admin": {
+        "pending": "طلب كوادر جديد {code}",
+        "cancelled": "ألغى المريض الطلب {code}",
+        "expired": "انتهت صلاحية الطلب {code}"
+      }
     },
     "status": {
       "pending": "جديد",

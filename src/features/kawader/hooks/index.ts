@@ -6,3 +6,4 @@ export * from "./useCancelKawaderRequest";
 export * from "./useAdminKawaderRequests";
 export * from "./useAdminKawaderRequestDetail";
 export * from "./useChangeKawaderRequestStatus";
+export * from "./useKawaderAdminRealtime";

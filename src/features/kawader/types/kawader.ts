@@ -36,6 +36,19 @@ export type KawaderStatus =
 
 export type KawaderPriority = "urgent" | "soon" | "normal";
 
+/**
+ * Body of the `kawader.request.status.changed` broadcast. `event_type` and `message`
+ * are not in the API doc, so both are optional; `message` is a fixed-language string
+ * and is never shown to the user.
+ */
+export interface KawaderRealtimePayload {
+  kawader_request_id: number;
+  reference_code: string;
+  status: KawaderStatus;
+  event_type?: string;
+  message?: string;
+}
+
 export type KawaderServiceKey =
   | "gp_visit"
   | "dietitian"

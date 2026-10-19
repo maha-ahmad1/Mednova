@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import {
+  buildKawaderText,
+  getKawaderRequestId,
+  isKawaderNotificationType,
+  type KawaderTranslator,
+} from "@/features/kawader/utils/kawader-notification";
 import { Video, ExternalLink, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -25,6 +31,8 @@ export function NotificationItemBase({
   trailingSlot,
 }: NotificationItemBaseProps) {
   const t = useTranslations("notifications");
+  const tKawader = useTranslations("kawader");
+  const locale = useLocale();
   const { id, type, message, read, data } = notification;
   const config = getTypeConfig(type);
   const Icon = config.icon;
@@ -33,6 +41,20 @@ export function NotificationItemBase({
     typeof (data as Record<string, unknown>).patient_name === "string"
       ? (data as Record<string, unknown>).patient_name as string
       : undefined;
+
+  // Stored message is always Arabic: show it in the Arabic UI, build localized text otherwise.
+  const body = (() => {
+    if (!isKawaderNotificationType(type)) return message;
+    const payload = data as Record<string, unknown>;
+    if (locale === "ar" && typeof payload.message === "string" && payload.message) return message;
+    return buildKawaderText(tKawader as unknown as KawaderTranslator, {
+      role: "patient",
+      referenceCode: typeof payload.reference_code === "string" ? payload.reference_code : undefined,
+      requestId: getKawaderRequestId(payload),
+      status: typeof payload.status === "string" ? payload.status : undefined,
+      eventType: type,
+    });
+  })();
 
   const handleContainerClick = () => {
     if (!read) onMarkAsRead(id);
@@ -75,7 +97,7 @@ export function NotificationItemBase({
           )}
         </div>
 
-        <p className="text-sm text-muted-foreground line-clamp-2">{message}</p>
+        <p className="text-sm text-muted-foreground line-clamp-2">{body}</p>
 
         {patientName && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground">

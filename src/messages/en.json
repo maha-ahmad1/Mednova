@@ -2109,6 +2109,7 @@
       "follow": "New Follower",
       "system": "System Notification",
       "alert": "Alert",
+      "kawader": "Home care request",
       "unknown": "Notification"
     }
   },
@@ -2395,6 +2396,26 @@
       "notesMin": "Please write at least {min} characters.",
       "notesMax": "Notes can be at most {max} characters.",
       "consentRequired": "You must agree to share your data to continue."
+    },
+    "realtime": {
+      "view": "View",
+      "updated": "Request {code} was updated",
+      "events": {
+        "kawader_request_created_admin": "New Kawader request {code}"
+      },
+      "patient": {
+        "sent_to_hospital": "Your request {code} was sent to the hospital",
+        "confirmed": "Your request {code} was confirmed",
+        "rejected": "The hospital declined your request {code}",
+        "cancelled": "Your request {code} was cancelled",
+        "completed": "Your request {code} is complete",
+        "expired": "Your request {code} has expired"
+      },
+      "admin": {
+        "pending": "New Kawader request {code}",
+        "cancelled": "Request {code} was cancelled by the patient",
+        "expired": "Request {code} has expired"
+      }
     },
     "status": {
       "pending": "New",

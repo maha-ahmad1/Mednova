@@ -1,5 +1,9 @@
 import { Notification, NotificationType, ApiNotification, ApiResponse, NotificationsPageResult } from '../types';
 import { getNotificationTitleByType } from "../utils/notificationTitles";
+import {
+  isKawaderAdminNotificationType,
+  isKawaderNotificationType,
+} from "@/features/kawader/utils/kawader-notification";
 
 
 const KNOWN_NOTIFICATION_TYPES = new Set<string>([
@@ -26,8 +30,16 @@ const KNOWN_NOTIFICATION_TYPES = new Set<string>([
   'alert',
 ]);
 
+// TODO(backend): GET /api/notification filters by notifiable_id only, so a patient can
+// receive `kawader_*_admin` rows meant for admins. Drop them here until the backend
+// filters them server-side; remove this once that fix ships.
+export const isHiddenFromCustomerBell = (type: string): boolean =>
+  isKawaderAdminNotificationType(type);
+
 export const mapApiTypeToNotificationType = (type: string): NotificationType => {
   const normalized = type.trim().toLowerCase();
+  // Every kawader_* type (stored = event_type) keeps its own type instead of becoming "system".
+  if (isKawaderNotificationType(normalized)) return normalized;
   return KNOWN_NOTIFICATION_TYPES.has(normalized)
     ? (normalized as NotificationType)
     : 'system';
@@ -68,7 +80,9 @@ export const mapApiNotificationToNotification = (
 export const mapApiResponseToNotifications = (
   apiResponse: ApiNotification[]
 ): Notification[] => {
-  return apiResponse.map(mapApiNotificationToNotification);
+  return apiResponse
+    .filter((notif) => !isHiddenFromCustomerBell(notif.type))
+    .map(mapApiNotificationToNotification);
 };
 
 export const mapApiResponseToNotificationsPage = (

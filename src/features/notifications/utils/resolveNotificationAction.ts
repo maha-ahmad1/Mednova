@@ -1,4 +1,8 @@
 import type { Notification } from '../types';
+import {
+  getKawaderRequestId,
+  isKawaderNotificationType,
+} from '@/features/kawader/utils/kawader-notification';
 
 export type NotificationAction =
   | { kind: 'external'; href: string }
@@ -11,6 +15,11 @@ export const resolveNotificationAction = (notification: Notification): Notificat
   if (notification.type === 'consultation_active') {
     const videoRoomLink = typeof data.video_room_link === 'string' ? data.video_room_link : undefined;
     if (videoRoomLink) return { kind: 'external', href: videoRoomLink };
+  }
+
+  if (isKawaderNotificationType(notification.type)) {
+    const kawaderId = getKawaderRequestId(data);
+    if (kawaderId !== undefined) return { kind: 'internal', href: `/profile/kawader/${kawaderId}` };
   }
 
   const consultationId = typeof data.consultation_id === 'number' ? data.consultation_id : undefined;

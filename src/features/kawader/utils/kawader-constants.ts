@@ -31,5 +31,17 @@ export const KAWADER_SERVICE_KEYS: readonly KawaderServiceKey[] = [
   "pharmacy_delivery",
 ];
 
+/** Event name as set by the backend's `broadcastAs` (no PHP class namespace). */
+export const KAWADER_REALTIME_EVENT = "kawader.request.status.changed";
+
+/** Echo needs the leading dot for `broadcastAs` names, otherwise it prefixes the app namespace. */
+export const KAWADER_ECHO_EVENT = `.${KAWADER_REALTIME_EVENT}`;
+
+/** Private channel the admins listen on (Pusher name: `private-admin.notifications`). */
+export const KAWADER_ADMIN_CHANNEL = "admin.notifications";
+
+/** Every Kawader notification `type` (stored = broadcast `event_type`) starts with this. */
+export const KAWADER_NOTIFICATION_PREFIX = "kawader_";
+
 /** Statuses that still count towards the patient's open-request limit. */
 export const OPEN_STATUSES: readonly KawaderStatus[] = ["pending", "sent_to_hospital", "confirmed"];

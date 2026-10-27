@@ -1,13 +1,15 @@
 import { z } from "zod";
 import type { KawaderService } from "./kawader";
 import { MAX_DAYS_AHEAD, MIN_HOURS_BEFORE } from "../utils/kawader-constants";
+import { PHONE_MAX_DIGITS, PHONE_MIN_DIGITS } from "../utils/kawader-phone";
 import {
-  PHONE_MAX_DIGITS,
-  PHONE_MIN_DIGITS,
-  buildKawaderPhone,
+  buildInternationalPhone,
+  checkLocalPhone,
+  formatDisjunction,
+  getPhoneCountryName,
   hasEmbeddedCountryCode,
   normalizeDigits,
-} from "../utils/kawader-phone";
+} from "@/utils/phoneRules";
 
 // Everything is a string (inputs are text) except the two checkboxes. Conversion to the
 // API payload types happens in `buildCreatePayload`.
@@ -41,6 +43,8 @@ interface KawaderSchemaContext {
   /** True only when the API returned a non-empty `areas` list. */
   areasEnabled: boolean;
   insuranceEnabled: boolean;
+  /** UI language: country names and "7 or 9" lists in the phone errors follow it. */
+  locale: string;
 }
 
 const baseSchema = z.object({
@@ -74,7 +78,7 @@ const NOTES_MAX = 1000;
 
 // Rebuild with `useMemo` when the selected service changes: its flags change the rules.
 export function createKawaderRequestSchema(t: KawaderT, context: KawaderSchemaContext) {
-  const { service, areasEnabled, insuranceEnabled } = context;
+  const { service, areasEnabled, insuranceEnabled, locale } = context;
 
   return baseSchema.superRefine((values, ctx) => {
     const fail = (path: keyof KawaderRequestFormValues, message: string) =>
@@ -109,10 +113,27 @@ export function createKawaderRequestSchema(t: KawaderT, context: KawaderSchemaCo
     } else if (hasEmbeddedCountryCode(values.phone_number)) {
       fail("phone_number", t("validation.phoneNoCode"));
     } else {
-      const combined = buildKawaderPhone(values.phone_country_code, values.phone_number);
-      const digits = combined.length - 1; // minus the leading "+"
-      if (digits < PHONE_MIN_DIGITS || digits > PHONE_MAX_DIGITS) {
-        fail("phone_number", t("validation.phoneInvalid", { min: PHONE_MIN_DIGITS, max: PHONE_MAX_DIGITS }));
+      const check = checkLocalPhone(values.phone_country_code, values.phone_number);
+      if (!check.ok) {
+        const country = getPhoneCountryName(values.phone_country_code, locale) ?? values.phone_country_code;
+        if (check.reason === "length") {
+          fail(
+            "phone_number",
+            t("validation.phoneLength", { country, count: formatDisjunction(check.rule.lengths, locale) }),
+          );
+        } else {
+          fail(
+            "phone_number",
+            t("validation.phonePrefix", { country, digits: formatDisjunction(check.rule.starts ?? [], locale) }),
+          );
+        }
+      } else {
+        // Countries without a rule fall back to the backend's rule for the combined number.
+        const combined = buildInternationalPhone(values.phone_country_code, values.phone_number);
+        const digits = combined.length - 1; // minus the leading "+"
+        if (digits < PHONE_MIN_DIGITS || digits > PHONE_MAX_DIGITS) {
+          fail("phone_number", t("validation.phoneInvalid", { min: PHONE_MIN_DIGITS, max: PHONE_MAX_DIGITS }));
+        }
       }
     }
 

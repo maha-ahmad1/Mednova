@@ -19,7 +19,12 @@ export function useMyKawaderRequests(filters: MyKawaderRequestsFilters = {}) {
   const query = useQuery({
     queryKey: kawaderKeys.myRequestsList(locale, filters),
     queryFn: () => getMyKawaderRequests(axiosInstance, filters),
-    placeholderData: (previous) => previous,
+    // Keep the old page while paging/filtering, but not across tabs: showing "Current"
+    // requests under the "Previous" tab while it loads would be misleading.
+    placeholderData: (previous, previousQuery) => {
+      const previousFilters = previousQuery?.queryKey.at(-1) as MyKawaderRequestsFilters | undefined;
+      return previousFilters?.scope === filters.scope ? previous : undefined;
+    },
   });
 
   const items: KawaderRequest[] = useMemo(() => query.data?.data ?? [], [query.data]);

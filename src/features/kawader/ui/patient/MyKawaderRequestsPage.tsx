@@ -5,21 +5,33 @@ import { useSearchParams } from "next/navigation";
 import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { EmptyState } from "@/shared/ui/components/states/EmptyState";
 import { ErrorState } from "@/shared/ui/components/states/ErrorState";
 import { useMyKawaderRequests } from "../../hooks/useMyKawaderRequests";
-import type { KawaderStatus } from "../../types/kawader";
-import { KAWADER_STATUSES } from "../../utils/kawader-constants";
+import type { KawaderStatus, MyKawaderScope } from "../../types/kawader";
+import { CLOSED_STATUSES, OPEN_STATUSES } from "../../utils/kawader-constants";
 import { KawaderRequestCard } from "./components/KawaderRequestCard";
 import { KawaderRequestsListSkeleton } from "./components/KawaderRequestsSkeleton";
 
 const PER_PAGE = 10;
+const SCOPES: readonly MyKawaderScope[] = ["open", "closed"];
+const DEFAULT_SCOPE: MyKawaderScope = "open";
+const STATUSES_BY_SCOPE: Record<MyKawaderScope, readonly KawaderStatus[]> = {
+  open: OPEN_STATUSES,
+  closed: CLOSED_STATUSES,
+};
 
-const parseStatus = (value: string | null): KawaderStatus | undefined =>
-  KAWADER_STATUSES.find((status) => status === value);
+// An invalid scope falls back to the default tab.
+const parseScope = (value: string | null): MyKawaderScope =>
+  SCOPES.find((scope) => scope === value) ?? DEFAULT_SCOPE;
+
+// A status that does not belong to the active tab is ignored.
+const parseStatus = (value: string | null, scope: MyKawaderScope): KawaderStatus | undefined =>
+  STATUSES_BY_SCOPE[scope].find((status) => status === value);
 
 const parsePage = (value: string | null): number => {
   const page = Number.parseInt(value ?? "", 10);
@@ -32,20 +44,29 @@ export function MyKawaderRequestsPage() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Status and page live in the URL so a refresh or a shared link keeps the same view.
-  const status = parseStatus(searchParams.get("status"));
+  // Scope, status and page live in the URL so a refresh or a shared link keeps the same view.
+  const scope = parseScope(searchParams.get("scope"));
+  const status = parseStatus(searchParams.get("status"), scope);
   const page = parsePage(searchParams.get("page"));
 
   const { items, pagination, isPending, isError, isFetching, refetch } = useMyKawaderRequests({
+    scope,
     status,
     page,
     per_page: PER_PAGE,
   });
 
   const updateParams = useCallback(
-    (next: { status?: KawaderStatus | null; page?: number }) => {
+    (next: { scope?: MyKawaderScope; status?: KawaderStatus | null; page?: number }) => {
       const params = new URLSearchParams(searchParams.toString());
 
+      if (next.scope !== undefined) {
+        if (next.scope !== DEFAULT_SCOPE) params.set("scope", next.scope);
+        else params.delete("scope");
+        // Switching tabs resets the status and the page.
+        params.delete("status");
+        params.delete("page");
+      }
       if (next.status !== undefined) {
         if (next.status) params.set("status", next.status);
         else params.delete("status");
@@ -64,7 +85,7 @@ export function MyKawaderRequestsPage() {
 
   const filters: { value: KawaderStatus | null; label: string }[] = [
     { value: null, label: t("list.filterAll") },
-    ...KAWADER_STATUSES.map((value) => ({ value, label: t(`status.${value}`) })),
+    ...STATUSES_BY_SCOPE[scope].map((value) => ({ value, label: t(`status.${value}`) })),
   ];
 
   const renderContent = () => {
@@ -85,8 +106,8 @@ export function MyKawaderRequestsPage() {
     if (items.length === 0) {
       return (
         <EmptyState
-          title={status ? t("list.emptyFilteredTitle") : t("list.emptyTitle")}
-          description={status ? t("list.emptyFilteredDescription") : t("list.emptyDescription")}
+          title={status ? t("list.emptyFilteredTitle") : t(`list.empty.${scope}Title`)}
+          description={status ? t("list.emptyFilteredDescription") : t(`list.empty.${scope}Description`)}
           actionLabel={t("list.emptyCta")}
           onAction={() => router.push("/profile/kawader/new")}
         />
@@ -131,6 +152,16 @@ export function MyKawaderRequestsPage() {
           </Link>
         </Button>
       </div>
+
+      <Tabs value={scope} onValueChange={(next) => updateParams({ scope: parseScope(next) })}>
+        <TabsList aria-label={t("list.tabsLabel")}>
+          {SCOPES.map((value) => (
+            <TabsTrigger key={value} value={value} className="px-4">
+              {t(`list.tabs.${value}`)}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       <div role="group" aria-label={t("list.filterLabel")} className="flex flex-wrap gap-2">
         {filters.map((filter) => {

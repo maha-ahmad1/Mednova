@@ -2142,7 +2142,11 @@
           "Passive training",
           "Mirror training"
         ],
-        "configuration": ["1 pc * Host", "1 pc * Rehab glove", "1 pc * Data glove"]
+        "configuration": [
+          "1 pc * Host",
+          "1 pc * Rehab glove",
+          "1 pc * Data glove"
+        ]
       },
       "hrc12": {
         "name": "Soft Rehabilitation Glove SY-HRC12",
@@ -2328,7 +2332,8 @@
     },
     "phone": {
       "label": "Phone number",
-      "placeholder": "Phone number"
+      "placeholder": "Phone number",
+      "hint": "{count} digits, without the country code"
     },
     "location": {
       "label": "Address",
@@ -2387,6 +2392,8 @@
       "ageRange": "Enter an age between {min} and {max}.",
       "phoneInvalid": "Enter a valid phone number ({min} to {max} digits including the country code).",
       "phoneNoCode": "Do not type the country code here. Choose it from the list.",
+      "phoneLength": "{country} numbers are {count} digits.",
+      "phonePrefix": "{country} mobile numbers start with {digits}.",
       "locationIncomplete": "The location is incomplete. Remove it and try again.",
       "serviceRequired": "Please choose a service.",
       "areaRequired": "Please choose your area.",
@@ -2399,22 +2406,17 @@
     },
     "realtime": {
       "view": "View",
-      "updated": "Request {code} was updated",
+      "updated": "Request was updated {reference_code}",
       "events": {
-        "kawader_request_created_admin": "New Kawader request {code}"
-      },
-      "patient": {
-        "sent_to_hospital": "Your request {code} was sent to the hospital",
-        "confirmed": "Your request {code} was confirmed",
-        "rejected": "The hospital declined your request {code}",
-        "cancelled": "Your request {code} was cancelled",
-        "completed": "Your request {code} is complete",
-        "expired": "Your request {code} has expired"
-      },
-      "admin": {
-        "pending": "New Kawader request {code}",
-        "cancelled": "Request {code} was cancelled by the patient",
-        "expired": "Request {code} has expired"
+        "kawader_request_sent_patient": "Your request was sent to the hospital {reference_code}",
+        "kawader_request_confirmed_patient": "Your request was confirmed {reference_code}",
+        "kawader_request_completed_patient": "Your request is complete {reference_code}",
+        "kawader_request_rejected_patient": "The hospital declined your request {reference_code}",
+        "kawader_request_cancelled_patient": "Your request was cancelled {reference_code}",
+        "kawader_request_expired_patient": "Your request has expired {reference_code}",
+        "kawader_request_created_admin": "New Kawader request {reference_code}",
+        "kawader_request_cancelled_admin": "Request was cancelled by the patient {reference_code}",
+        "kawader_request_expired_admin": "Request has expired {reference_code}"
       }
     },
     "status": {
@@ -2433,8 +2435,17 @@
       "filterLabel": "Filter by status",
       "filterAll": "All",
       "preferredAt": "Preferred time",
-      "emptyTitle": "No requests yet",
-      "emptyDescription": "When you request a home care service, it will show up here.",
+      "tabsLabel": "Request scope",
+      "tabs": {
+        "open": "Current",
+        "closed": "Previous"
+      },
+      "empty": {
+        "openTitle": "No current requests",
+        "openDescription": "When you request a home care service, it will show up here while it is in progress.",
+        "closedTitle": "No previous requests",
+        "closedDescription": "Completed, declined, cancelled and expired requests will show up here."
+      },
       "emptyFilteredTitle": "No requests with this status",
       "emptyFilteredDescription": "Choose another status above, or send a new request.",
       "emptyCta": "Request a service",
@@ -2512,25 +2523,11 @@
         "anyStatus": "Any status",
         "priority": "Priority",
         "anyPriority": "Any priority",
-        "priorities": {
-          "urgent": "Urgent",
-          "soon": "Soon",
-          "normal": "Normal"
-        },
         "service": "Service",
         "anyService": "Any service",
-        "services": {
-          "gp_visit": "General practitioner visit",
-          "dietitian": "Dietitian",
-          "home_nursing": "Home nursing",
-          "physiotherapy": "Physiotherapy",
-          "home_diagnostics": "Home diagnostics",
-          "patient_transfer": "Patient transfer (non-emergency)",
-          "medical_supplies_delivery": "Medical supplies delivery",
-          "pharmacy_delivery": "Pharmacy delivery"
-        },
         "area": "Area",
         "anyArea": "Any area",
+        "legacy": "Old",
         "insurance": "Insurance",
         "anyInsurance": "Any",
         "insuranceYes": "With insurance",
@@ -2640,10 +2637,37 @@
       }
     },
     "home": {
-      "badge": "Home care",
-      "title": "Healthcare at your door",
-      "description": "Request a doctor visit, nursing, physiotherapy, diagnostics, patient transfer and more at home. Send a request and follow its status.",
-      "cta": "Request a home care service"
+      "badge": "New service",
+      "title": "Medical care that comes to your home",
+      "description": "Request a doctor, nurse, physiotherapist and more at home. We coordinate with the hospital and follow up with you.",
+      "ctaPrimary": "Request home care",
+      "ctaSecondary": "How it works",
+      "stepsTitle": "How it works",
+      "steps": {
+        "request": {
+          "title": "Request the service",
+          "description": "Pick the service, time and address."
+        },
+        "coordinate": {
+          "title": "We coordinate with the hospital",
+          "description": "We confirm the details with you."
+        },
+        "arrive": {
+          "title": "The care team comes to you",
+          "description": "At the time you chose."
+        }
+      },
+      "servicesLabel": "Available services",
+      "services": {
+        "gp_visit": "GP visit",
+        "dietitian": "Dietitian",
+        "home_nursing": "Home nursing",
+        "physiotherapy": "Physiotherapy",
+        "home_diagnostics": "Home diagnostics",
+        "patient_transfer": "Patient transfer",
+        "medical_supplies_delivery": "Medical supplies delivery"
+      },
+      "footer": "Price is set and paid directly to the provider · For emergencies call 9999"
     }
   }
 }

@@ -9,21 +9,17 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import type {
-  KawaderArea,
+  AdminKawaderMeta,
   KawaderPriority,
-  KawaderServiceKey,
   KawaderStatus,
 } from "../../../types/kawader";
-import {
-  KAWADER_PRIORITIES,
-  KAWADER_SERVICE_KEYS,
-  KAWADER_STATUSES,
-} from "../../../utils/kawader-constants";
 import type {
   AdminKawaderViewPatch,
   AdminKawaderViewState,
@@ -38,33 +34,73 @@ interface AdminKawaderFiltersProps {
   onChange: (patch: AdminKawaderViewPatch) => void;
   onClear: () => void;
   hasActiveFilters: boolean;
-  /** The area filter is rendered only when this list is non-empty. */
-  areas?: KawaderArea[];
+  /** Options and labels for the selects. While it is missing (loading / failed) they are disabled. */
+  meta?: AdminKawaderMeta;
+}
+
+interface FilterOption {
+  value: string;
+  label: string;
+  /** Small marker next to the label (e.g. legacy areas). */
+  badge?: string;
 }
 
 interface FilterSelectProps {
   label: string;
   value: string;
   anyLabel: string;
-  options: { value: string; label: string }[];
+  options?: FilterOption[];
+  /** Used instead of `options` to render grouped items. */
+  groups?: { label: string; options: FilterOption[] }[];
+  disabled?: boolean;
   onChange: (value: string | null) => void;
 }
 
-function FilterSelect({ label, value, anyLabel, options, onChange }: FilterSelectProps) {
+function FilterItem({ option }: { option: FilterOption }) {
+  return (
+    <SelectItem value={option.value}>
+      <span>{option.label}</span>
+      {option.badge ? (
+        <span className="ms-2 rounded-full border px-1.5 py-0.5 text-[10px] font-normal text-muted-foreground">
+          {option.badge}
+        </span>
+      ) : null}
+    </SelectItem>
+  );
+}
+
+function FilterSelect({
+  label,
+  value,
+  anyLabel,
+  options = [],
+  groups,
+  disabled,
+  onChange,
+}: FilterSelectProps) {
   return (
     <div className="space-y-1.5">
       <Label className="text-xs text-muted-foreground">{label}</Label>
-      <Select value={value} onValueChange={(next) => onChange(next === ANY ? null : next)}>
+      <Select
+        value={value}
+        disabled={disabled}
+        onValueChange={(next) => onChange(next === ANY ? null : next)}
+      >
         <SelectTrigger className="w-full" aria-label={label}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ANY}>{anyLabel}</SelectItem>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
+          {groups
+            ? groups.map((group) => (
+                <SelectGroup key={group.label}>
+                  <SelectLabel>{group.label}</SelectLabel>
+                  {group.options.map((option) => (
+                    <FilterItem key={option.value} option={option} />
+                  ))}
+                </SelectGroup>
+              ))
+            : options.map((option) => <FilterItem key={option.value} option={option} />)}
         </SelectContent>
       </Select>
     </div>
@@ -76,10 +112,30 @@ export function AdminKawaderFilters({
   onChange,
   onClear,
   hasActiveFilters,
-  areas = [],
+  meta,
 }: AdminKawaderFiltersProps) {
-  const t = useTranslations("kawader");
+  const ta = useTranslations("kawader.admin");
   const tf = useTranslations("kawader.admin.filters");
+  const metaMissing = !meta;
+
+  // Labels come from the API. Open statuses first, then closed (from `group`).
+  const statusGroups = (["open", "closed"] as const)
+    .map((group) => ({
+      label: ta(`tabs.${group}`),
+      options: (meta?.statuses ?? [])
+        .filter((status) => status.group === group)
+        .map((status) => ({ value: status.key, label: status.label })),
+    }))
+    .filter((group) => group.options.length > 0);
+
+  // Legacy areas stay selectable (old requests) but go last, with a marker.
+  const areaOptions = [...(meta?.areas ?? [])]
+    .sort((a, b) => Number(a.legacy) - Number(b.legacy))
+    .map((area) => ({
+      value: area.key,
+      label: area.name,
+      badge: area.legacy ? tf("legacy") : undefined,
+    }));
 
   // The input keeps its own text and writes to the URL after a pause.
   const [searchText, setSearchText] = useState(view.search);
@@ -133,45 +189,54 @@ export function AdminKawaderFilters({
           label={tf("status")}
           anyLabel={tf("anyStatus")}
           value={view.status ?? ANY}
-          options={KAWADER_STATUSES.map((status) => ({ value: status, label: t(`status.${status}`) }))}
+          groups={statusGroups}
+          disabled={metaMissing}
           onChange={(value) => onChange({ status: value as KawaderStatus | null })}
         />
         <FilterSelect
           label={tf("priority")}
           anyLabel={tf("anyPriority")}
           value={view.priority ?? ANY}
-          options={KAWADER_PRIORITIES.map((priority) => ({
-            value: priority,
-            label: tf(`priorities.${priority}`),
+          options={(meta?.priorities ?? []).map((priority) => ({
+            value: priority.key,
+            label: priority.label,
           }))}
+          disabled={metaMissing}
           onChange={(value) => onChange({ priority: value as KawaderPriority | null })}
         />
         <FilterSelect
           label={tf("service")}
           anyLabel={tf("anyService")}
           value={view.service_key ?? ANY}
-          options={KAWADER_SERVICE_KEYS.map((key) => ({ value: key, label: tf(`services.${key}`) }))}
-          onChange={(value) => onChange({ service_key: value as KawaderServiceKey | null })}
+          options={(meta?.services ?? []).map((service) => ({
+            value: service.key,
+            label: service.name,
+          }))}
+          disabled={metaMissing}
+          onChange={(value) => onChange({ service_key: value })}
         />
-        {areas.length > 0 ? (
-          <FilterSelect
-            label={tf("area")}
-            anyLabel={tf("anyArea")}
-            value={view.service_area ?? ANY}
-            options={areas.map((area) => ({ value: area.key, label: area.name }))}
-            onChange={(value) => onChange({ service_area: value })}
-          />
-        ) : null}
         <FilterSelect
-          label={tf("insurance")}
-          anyLabel={tf("anyInsurance")}
-          value={insuranceValue}
-          options={[
-            { value: "1", label: tf("insuranceYes") },
-            { value: "0", label: tf("insuranceNo") },
-          ]}
-          onChange={(value) => onChange({ has_insurance: value === null ? null : value === "1" })}
+          label={tf("area")}
+          anyLabel={tf("anyArea")}
+          value={view.service_area ?? ANY}
+          options={areaOptions}
+          disabled={metaMissing}
+          onChange={(value) => onChange({ service_area: value })}
         />
+        {/* Hidden once the backend turns insurance off; old requests keep showing it in details. */}
+        {meta?.insurance_enabled === false ? null : (
+          <FilterSelect
+            label={tf("insurance")}
+            anyLabel={tf("anyInsurance")}
+            value={insuranceValue}
+            options={[
+              { value: "1", label: tf("insuranceYes") },
+              { value: "0", label: tf("insuranceNo") },
+            ]}
+            disabled={metaMissing}
+            onChange={(value) => onChange({ has_insurance: value === null ? null : value === "1" })}
+          />
+        )}
         <div className="space-y-1.5">
           <Label htmlFor="kawader-admin-date-from" className="text-xs text-muted-foreground">
             {tf("dateFrom")}

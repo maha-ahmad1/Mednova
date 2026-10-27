@@ -8,6 +8,8 @@ export const kawaderKeys = {
 
   services: (locale: string) => [...kawaderKeys.all(locale), "services"] as const,
 
+  adminMeta: (locale: string) => [...kawaderKeys.all(locale), "admin-meta"] as const,
+
   myRequests: (locale: string) => [...kawaderKeys.all(locale), "my-requests"] as const,
   myRequestsList: (locale: string, filters: MyKawaderRequestsFilters) =>
     [...kawaderKeys.myRequests(locale), "list", filters] as const,

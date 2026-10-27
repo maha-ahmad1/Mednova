@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
 import { EmptyState } from "@/shared/ui/components/states/EmptyState";
 import { ErrorState } from "@/shared/ui/components/states/ErrorState";
+import { useAdminKawaderMeta } from "../../hooks/useAdminKawaderMeta";
 import { useAdminKawaderRequests } from "../../hooks/useAdminKawaderRequests";
 import type { AdminKawaderScope } from "../../types/kawader";
 import {
@@ -35,6 +36,9 @@ export function AdminKawaderRequestsPage() {
 
   const { items, pagination, isPending, isError, isFetching, isPlaceholderData, refetch } =
     useAdminKawaderRequests(toAdminKawaderApiFilters(view));
+
+  // Only feeds the filters: if it is loading or fails, the list itself keeps working.
+  const { meta } = useAdminKawaderMeta();
 
   const updateView = useCallback(
     (patch: AdminKawaderViewPatch) => {
@@ -131,6 +135,7 @@ export function AdminKawaderRequestsPage() {
         onChange={updateView}
         onClear={clearFilters}
         hasActiveFilters={hasActiveFilters}
+        meta={meta}
       />
 
       {renderContent()}

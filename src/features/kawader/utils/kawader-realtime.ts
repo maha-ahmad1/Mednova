@@ -1,9 +1,9 @@
 import type { QueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import type { KawaderRealtimePayload } from "../types/kawader";
 import { KAWADER_ECHO_EVENT } from "./kawader-constants";
 import { buildKawaderText, type KawaderTranslator } from "./kawader-notification";
 import { kawaderKeys } from "./kawader-query-keys";
+import { showKawaderToast } from "./kawader-toast";
 
 export interface KawaderRealtimeContext {
   role: "patient" | "admin";
@@ -57,18 +57,19 @@ export function handleKawaderRealtimeEvent(raw: unknown, ctx: KawaderRealtimeCon
 
   const href = role === "patient" ? `/profile/kawader/${id}` : `/control-panel/kawader/${id}`;
   const text = buildKawaderText(t, {
-    role,
     referenceCode: payload.reference_code,
     requestId: id,
-    status: payload.status,
     eventType: payload.event_type,
+    message: payload.message,
   });
 
   // Fixed id: if the same event were ever delivered twice, sonner updates the toast
   // instead of stacking a second one.
-  toast.info(text, {
+  showKawaderToast(text, {
     id: `kawader-${id}-${payload.status}-${payload.event_type ?? ""}`,
     duration: 6000,
+    referenceCode: payload.reference_code,
+    locale,
     action: { label: t("realtime.view"), onClick: () => navigate(href) },
   });
 }

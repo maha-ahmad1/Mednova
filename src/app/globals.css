@@ -253,3 +253,86 @@
     transform: none;
   }
 }
+
+/* Kawader home section — "the pulse reaches home".
+   Draw/fade/float are CSS-only and start when KawaderPulseHouse sets data-seen. */
+.kawader-pulse-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.kawader-pulse[data-seen="true"] .kawader-pulse-line {
+  animation: kawader-pulse-draw 1.6s ease-out forwards;
+}
+
+.kawader-pulse-fill {
+  opacity: 0;
+}
+
+.kawader-pulse[data-seen="true"] .kawader-pulse-fill {
+  animation: kawader-pulse-fade 0.8s ease-out 1.5s forwards;
+}
+
+.kawader-pulse-heart {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.kawader-pulse[data-seen="true"] .kawader-pulse-heart {
+  animation: kawader-pulse-beat 0.9s ease-out 1.9s forwards;
+}
+
+.kawader-pulse-float {
+  opacity: 0;
+  animation: kawader-pulse-float 5s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+.kawader-pulse[data-seen="true"] .kawader-pulse-float {
+  opacity: 1;
+  transition: opacity 0.6s ease-out 1.2s;
+}
+
+.kawader-pulse[data-visible="true"] .kawader-pulse-float {
+  animation-play-state: running;
+}
+
+@keyframes kawader-pulse-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes kawader-pulse-fade {
+  to { opacity: 1; }
+}
+
+@keyframes kawader-pulse-beat {
+  0%   { opacity: 0; transform: scale(0.6); }
+  40%  { opacity: 1; transform: scale(1.25); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes kawader-pulse-float {
+  0%, 100% { transform: translateY(-6px); }
+  50%      { transform: translateY(6px); }
+}
+
+/* Service chips: icon does one gentle pulse on hover / keyboard focus */
+@keyframes kawader-chip-icon-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.18); }
+}
+
+.kawader-chip:hover .kawader-chip-icon,
+.kawader-chip:focus-visible .kawader-chip-icon {
+  animation: kawader-chip-icon-pulse 0.5s ease-in-out 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kawader-pulse-line { stroke-dashoffset: 0; animation: none !important; }
+  .kawader-pulse-fill,
+  .kawader-pulse-heart { opacity: 1; animation: none !important; transform: none; }
+  .kawader-pulse-float { opacity: 1; animation: none !important; transition: none !important; }
+  .kawader-chip:hover .kawader-chip-icon,
+  .kawader-chip:focus-visible .kawader-chip-icon { animation: none; }
+}

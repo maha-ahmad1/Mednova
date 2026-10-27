@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Info } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
@@ -44,6 +44,7 @@ const SERVER_FIELD_ALIASES: Record<string, keyof KawaderRequestFormValues> = {
 
 export function KawaderRequestForm({ servicesData, onCreated }: KawaderRequestFormProps) {
   const t = useTranslations("kawader");
+  const locale = useLocale();
   const { data: session } = useSession();
   const sessionName = session?.user?.full_name;
 
@@ -59,8 +60,8 @@ export function KawaderRequestForm({ servicesData, onCreated }: KawaderRequestFo
 
   // Rebuilt when the service changes: needs_details / needs_destination change the rules.
   const schema = useMemo(
-    () => createKawaderRequestSchema(t, { service, areasEnabled, insuranceEnabled }),
-    [t, service, areasEnabled, insuranceEnabled],
+    () => createKawaderRequestSchema(t, { service, areasEnabled, insuranceEnabled, locale }),
+    [t, service, areasEnabled, insuranceEnabled, locale],
   );
 
   const form = useForm<KawaderRequestFormValues>({

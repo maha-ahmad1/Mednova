@@ -30,9 +30,8 @@ const KNOWN_NOTIFICATION_TYPES = new Set<string>([
   'alert',
 ]);
 
-// TODO(backend): GET /api/notification filters by notifiable_id only, so a patient can
-// receive `kawader_*_admin` rows meant for admins. Drop them here until the backend
-// filters them server-side; remove this once that fix ships.
+// Defensive only: the backend now scopes `kawader_*_admin` rows to admins (the old
+// notifiable_type bug is fixed). This just guarantees a patient never renders one.
 export const isHiddenFromCustomerBell = (type: string): boolean =>
   isKawaderAdminNotificationType(type);
 

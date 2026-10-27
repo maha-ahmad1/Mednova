@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   buildKawaderText,
   getKawaderRequestId,
@@ -32,7 +32,6 @@ export function NotificationItemBase({
 }: NotificationItemBaseProps) {
   const t = useTranslations("notifications");
   const tKawader = useTranslations("kawader");
-  const locale = useLocale();
   const { id, type, message, read, data } = notification;
   const config = getTypeConfig(type);
   const Icon = config.icon;
@@ -42,17 +41,16 @@ export function NotificationItemBase({
       ? (data as Record<string, unknown>).patient_name as string
       : undefined;
 
-  // Stored message is always Arabic: show it in the Arabic UI, build localized text otherwise.
+  // The stored message follows the account locale at send time, not the current UI language,
+  // so Kawader text is built from the type; `data.message` is only the unknown-type fallback.
   const body = (() => {
     if (!isKawaderNotificationType(type)) return message;
     const payload = data as Record<string, unknown>;
-    if (locale === "ar" && typeof payload.message === "string" && payload.message) return message;
     return buildKawaderText(tKawader as unknown as KawaderTranslator, {
-      role: "patient",
       referenceCode: typeof payload.reference_code === "string" ? payload.reference_code : undefined,
       requestId: getKawaderRequestId(payload),
-      status: typeof payload.status === "string" ? payload.status : undefined,
       eventType: type,
+      message: payload.message,
     });
   })();
 

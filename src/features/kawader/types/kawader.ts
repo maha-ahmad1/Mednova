@@ -36,16 +36,21 @@ export type KawaderStatus =
 
 export type KawaderPriority = "urgent" | "soon" | "normal";
 
-export type KawaderServiceKey =
-  | "gp_visit"
-  | "dietitian"
-  | "home_nursing"
-  | "physiotherapy"
-  | "home_diagnostics"
-  | "patient_transfer"
-  | "medical_supplies_delivery"
-  // Old key of the seventh service; accepted until the backend rename ships.
-  | "pharmacy_delivery";
+/**
+ * Body of the `kawader.request.status.changed` broadcast. `event_type` equals the stored
+ * notification `type` and drives the toast text. `message` is in the recipient's locale at send
+ * time (Arabic for admins), so it is only a fallback for an unknown `kawader_*` type.
+ */
+export interface KawaderRealtimePayload {
+  kawader_request_id: number;
+  reference_code: string;
+  status: KawaderStatus;
+  event_type?: string;
+  message?: string;
+}
+
+/** Services come from the API (P1 / admin meta); always match by key, never by name. */
+export type KawaderServiceKey = string;
 
 /** Statuses the admin can move a request to (A3). */
 export type KawaderTargetStatus = Exclude<KawaderStatus, "pending" | "expired">;
@@ -69,9 +74,9 @@ export interface KawaderArea {
 
 export interface KawaderServicesResponse {
   services: KawaderService[];
-  /** Not shipped yet — render the area field only when present. */
+  /** The area field is rendered (and required) only when this list is non-empty. */
   areas?: KawaderArea[];
-  /** Not shipped yet — treat a missing value as `false`. */
+  /** Treat a missing value as `false`. */
   insurance_enabled?: boolean;
   emergency_phone: string | null;
 }
@@ -96,7 +101,7 @@ export interface KawaderRequest {
   status: KawaderStatus;
   status_label: string;
   service: KawaderServiceRef;
-  /** Not shipped yet. */
+  /** Always display `name`; old requests can carry areas patients can no longer pick (e.g. "muscat"). */
   service_area?: KawaderAreaRef | null;
   patient_name: string;
   patient_age: number;
@@ -211,7 +216,7 @@ export interface AdminKawaderDetails {
 
 export interface CreateKawaderRequestPayload {
   service_key: KawaderServiceKey;
-  /** Required once the backend ships areas. */
+  /** Required whenever P1 returns areas. */
   service_area?: string;
   patient_name: string;
   patient_age: number;
@@ -256,7 +261,11 @@ export type ChangeKawaderStatusPayload =
 // Filters
 // ---------------------------------------------------------------------------
 
+/** P3 `scope`: "Current" (open) and "Previous" (closed) tabs. */
+export type MyKawaderScope = "open" | "closed";
+
 export interface MyKawaderRequestsFilters {
+  scope?: MyKawaderScope;
   status?: KawaderStatus;
   page?: number;
   per_page?: number;
@@ -279,4 +288,42 @@ export interface AdminKawaderFilters {
   search?: string;
   page?: number;
   per_page?: number;
+}
+
+// ---------------------------------------------------------------------------
+// Admin meta (GET /api/control-panel/kawader/services)
+// ---------------------------------------------------------------------------
+
+export interface AdminKawaderMetaService {
+  key: KawaderServiceKey;
+  name: string;
+  needs_details: boolean;
+  needs_destination: boolean;
+}
+
+export interface AdminKawaderMetaArea {
+  key: string;
+  name: string;
+  /** Shown in the admin filter and on old requests, never offered to patients. */
+  legacy: boolean;
+}
+
+export interface AdminKawaderMetaStatus {
+  /** Kept a plain string: an unknown key must still be renderable. */
+  key: string;
+  label: string;
+  group: "open" | "closed";
+}
+
+export interface AdminKawaderMetaPriority {
+  key: string;
+  label: string;
+}
+
+export interface AdminKawaderMeta {
+  services: AdminKawaderMetaService[];
+  areas: AdminKawaderMetaArea[];
+  statuses: AdminKawaderMetaStatus[];
+  priorities: AdminKawaderMetaPriority[];
+  insurance_enabled: boolean;
 }

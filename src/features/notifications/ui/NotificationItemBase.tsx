@@ -2,6 +2,12 @@
 
 import React from "react";
 import { useTranslations } from "next-intl";
+import {
+  buildKawaderText,
+  getKawaderRequestId,
+  isKawaderNotificationType,
+  type KawaderTranslator,
+} from "@/features/kawader/utils/kawader-notification";
 import { Video, ExternalLink, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -25,6 +31,7 @@ export function NotificationItemBase({
   trailingSlot,
 }: NotificationItemBaseProps) {
   const t = useTranslations("notifications");
+  const tKawader = useTranslations("kawader");
   const { id, type, message, read, data } = notification;
   const config = getTypeConfig(type);
   const Icon = config.icon;
@@ -33,6 +40,19 @@ export function NotificationItemBase({
     typeof (data as Record<string, unknown>).patient_name === "string"
       ? (data as Record<string, unknown>).patient_name as string
       : undefined;
+
+  // The stored message follows the account locale at send time, not the current UI language,
+  // so Kawader text is built from the type; `data.message` is only the unknown-type fallback.
+  const body = (() => {
+    if (!isKawaderNotificationType(type)) return message;
+    const payload = data as Record<string, unknown>;
+    return buildKawaderText(tKawader as unknown as KawaderTranslator, {
+      referenceCode: typeof payload.reference_code === "string" ? payload.reference_code : undefined,
+      requestId: getKawaderRequestId(payload),
+      eventType: type,
+      message: payload.message,
+    });
+  })();
 
   const handleContainerClick = () => {
     if (!read) onMarkAsRead(id);
@@ -75,7 +95,7 @@ export function NotificationItemBase({
           )}
         </div>
 
-        <p className="text-sm text-muted-foreground line-clamp-2">{message}</p>
+        <p className="text-sm text-muted-foreground line-clamp-2">{body}</p>
 
         {patientName && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground">

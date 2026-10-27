@@ -1,7 +1,7 @@
 import type { CreateKawaderRequestPayload, KawaderService, KawaderServiceKey } from "../types/kawader";
 import type { KawaderRequestFormValues } from "../types/kawader-form";
 import { getUserTimezone, toApiLocalDateTime } from "./kawader-datetime";
-import { buildKawaderPhone, normalizeDigits } from "./kawader-phone";
+import { buildInternationalPhone, normalizeDigits } from "@/utils/phoneRules";
 
 interface PayloadContext {
   service?: KawaderService | null;
@@ -18,7 +18,7 @@ export function buildCreatePayload(
     service_key: values.service_key as KawaderServiceKey,
     patient_name: values.patient_name.trim(),
     patient_age: Number(normalizeDigits(values.patient_age).trim()),
-    patient_phone: buildKawaderPhone(values.phone_country_code, values.phone_number),
+    patient_phone: buildInternationalPhone(values.phone_country_code, values.phone_number),
     location_address: values.location_address.trim(),
     preferred_at: toApiLocalDateTime(new Date(`${values.preferred_date}T${values.preferred_time}`)),
     timezone: getUserTimezone(),

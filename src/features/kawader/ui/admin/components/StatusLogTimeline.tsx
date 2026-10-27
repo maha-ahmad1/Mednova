@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useAdminKawaderMeta } from "../../../hooks/useAdminKawaderMeta";
 import type { KawaderStatusLog } from "../../../types/kawader";
 import { formatKawaderDate, getUserTimezone } from "../../../utils/kawader-datetime";
 
@@ -9,21 +10,12 @@ interface StatusLogTimelineProps {
   logs: KawaderStatusLog[];
 }
 
-const KNOWN_STATUSES = new Set([
-  "pending",
-  "sent_to_hospital",
-  "confirmed",
-  "completed",
-  "rejected",
-  "cancelled",
-  "expired",
-]);
 const KNOWN_ACTORS = new Set(["patient", "admin", "system"]);
 
 export function StatusLogTimeline({ logs }: StatusLogTimelineProps) {
-  const t = useTranslations("kawader");
   const ta = useTranslations("kawader.admin");
   const locale = useLocale();
+  const { getStatusLabel } = useAdminKawaderMeta();
   const timeZone = getUserTimezone();
 
   // Oldest first.
@@ -32,9 +24,8 @@ export function StatusLogTimeline({ logs }: StatusLogTimelineProps) {
     [logs],
   );
 
-  // The logs carry no labels, so statuses and actors are translated here; an unknown value
-  // (the backend added one) is shown as it is.
-  const statusLabel = (status: string) => (KNOWN_STATUSES.has(status) ? t(`status.${status}`) : status);
+  // The logs carry no labels: status labels come from the admin meta (by key; an unknown key,
+  // or meta not loaded yet, shows the raw key). Actors are translated here.
   const actorLabel = (actor: string) => (KNOWN_ACTORS.has(actor) ? ta(`actors.${actor}`) : actor);
 
   return (
@@ -51,7 +42,7 @@ export function StatusLogTimeline({ logs }: StatusLogTimelineProps) {
                 className="absolute -start-[1.6rem] top-1.5 h-2.5 w-2.5 rounded-full bg-primary ring-4 ring-white"
                 aria-hidden
               />
-              <p className="text-sm font-semibold text-foreground">{statusLabel(log.to_status)}</p>
+              <p className="text-sm font-semibold text-foreground">{getStatusLabel(log.to_status)}</p>
               <p className="text-xs text-muted-foreground">
                 {[log.actor_name, `(${actorLabel(log.actor_type)})`].filter(Boolean).join(" ")}
                 {" · "}

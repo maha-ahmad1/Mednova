@@ -6,7 +6,20 @@ import Pusher from "pusher-js";
 let echoInstance: any = null;
 let chatEchoInstance: any = null;
 
+// Latest token per connection; read lazily by Pusher on each channel auth request.
+const currentTokens: Record<"notifications" | "chat", string> = {
+  notifications: "",
+  chat: "",
+};
+
+// NEXT_PUBLIC_API_URL has no "/api" suffix (staging locally, production when deployed).
+const getBroadcastingAuthEndpoint = () =>
+  `${(process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/+$/, "")}/api/broadcasting/auth`;
+
+
+
 export function getEcho(token: string) {
+  currentTokens.notifications = token;
   if (echoInstance) {
     console.log("🔁 إعادة استخدام اتصال Echo للإشعارات");
     return echoInstance;
@@ -17,6 +30,7 @@ export function getEcho(token: string) {
 }
 
 export function getChatEcho(token: string) {
+  currentTokens.chat = token;
   if (chatEchoInstance) {
     console.log("🔁 إعادة استخدام اتصال Echo للشات");
     return chatEchoInstance;
@@ -32,18 +46,21 @@ function createEchoInstance(token: string, type: "notifications" | "chat") {
     return null as any;
   }
 
+
+
   (window as any).Pusher = Pusher;
 
   // 🔥 إصدار مبسط بدون أنواع معقدة
   const pusherClient = new Pusher("8e0c74bbc25e86b98813", {
     cluster: "eu",
     forceTLS: true,
-    authEndpoint: "https://api.mednovacare.com/api/broadcasting/auth",
-    auth: {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    channelAuthorization: {
+      endpoint: getBroadcastingAuthEndpoint(),
+      transport: "ajax",
+      headersProvider: () => ({
+        Authorization: `Bearer ${currentTokens[type]}`,
         Accept: "application/json",
-      },
+      }),
     },
   });
 
@@ -67,6 +84,7 @@ export function cleanupChatEcho() {
     try {
       chatEchoInstance.disconnect();
       chatEchoInstance = null;
+      currentTokens.chat = "";
       console.log("🧹 تم تنظيف اتصال الشات");
     } catch (error) {
       console.error("❌ خطأ في تنظيف اتصال الشات:", error);
@@ -81,6 +99,7 @@ export function cleanupAllEcho() {
     try {
       echoInstance.disconnect();
       echoInstance = null;
+      currentTokens.notifications = "";
       console.log("🧹 تم تنظيف جميع اتصالات Echo");
     } catch (error) {
       console.error("❌ خطأ في تنظيف اتصالات Echo:", error);

@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanupAllEcho } from "@/lib/echo";
 import { signOut } from "next-auth/react";
 import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 
@@ -12,6 +13,7 @@ export function useAdminLogout() {
     } catch {
       // Always clear local session even if remote logout fails.
     } finally {
+      cleanupAllEcho();
       await signOut({ callbackUrl: "/control-panel/login" });
     }
   };

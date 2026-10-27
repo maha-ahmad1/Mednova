@@ -11,7 +11,11 @@ import {
   NOTIFICATION_LIMITS,
   STALE_TIMES,
 } from '../constants';
-import { mapApiResponseToNotificationsPage, mapApiTypeToNotificationType } from './mapper';
+import {
+  isHiddenFromCustomerBell,
+  mapApiResponseToNotificationsPage,
+  mapApiTypeToNotificationType,
+} from './mapper';
 import { useFetcher } from '@/hooks/useFetcher';
 import { getNotificationTitleByType } from "../utils/notificationTitles";
 
@@ -25,7 +29,9 @@ export const fetchNotifications = async (
     notification: ApiNotification[];
   }>>(NOTIFICATION_ENDPOINTS.LIST, { params });
 
-  return response.data.data.notification.map((notif) => {
+  return response.data.data.notification
+    .filter((notif) => !isHiddenFromCustomerBell(notif.type))
+    .map((notif) => {
     const mapped = {
       id: `api_${notif.id}`,
       type: mapApiTypeToNotificationType(notif.type),

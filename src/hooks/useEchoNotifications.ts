@@ -3,8 +3,14 @@
 import { useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter as useLocaleRouter } from "@/i18n/navigation";
+import {
+  listenToKawaderEvents,
+  type KawaderRealtimeContext,
+} from "@/features/kawader/utils/kawader-realtime";
+import type { KawaderTranslator } from "@/features/kawader/utils/kawader-notification";
 import { getEcho } from "@/lib/echo";
 import { useConsultationStore } from "@/store/consultationStore";
 import { useNotificationStore } from "@/store/notificationStore";
@@ -23,6 +29,23 @@ export const useEchoNotifications = (): void => {
   const t = useTranslations("accountStatus");
   const tRoot = useTranslations();
   const queryClient = useQueryClient();
+  const locale = useLocale();
+  const tKawader = useTranslations("kawader");
+  const localeRouter = useLocaleRouter();
+
+  // Read by the Kawader listener on every event, so the main effect below does not
+  // need locale/translator/router as dependencies (it would re-subscribe on each change).
+  const kawaderContextRef = useRef<KawaderRealtimeContext | null>(null);
+  useEffect(() => {
+    kawaderContextRef.current = {
+      role: "patient",
+      queryClient,
+      locale,
+      t: tKawader as unknown as KawaderTranslator,
+      userId: session?.user?.id,
+      navigate: (href) => localeRouter.push(href),
+    };
+  }, [queryClient, locale, tKawader, localeRouter, session?.user?.id]);
 
   const addRequest = useConsultationStore((state) => state.addRequest);
   const updateRequest = useConsultationStore((state) => state.updateRequest);
@@ -144,7 +167,14 @@ export const useEchoNotifications = (): void => {
       });
     }
 
+    // Kawader events arrive on the patient's customer.{id} channel (same object as above).
+    const stopKawaderListener =
+      role === "patient"
+        ? listenToKawaderEvents(accountChannel, () => kawaderContextRef.current)
+        : undefined;
+
     return () => {
+      stopKawaderListener?.();
       if (echoRef.current && channelNameRef.current) {
         echoRef.current.leave(channelNameRef.current);
         echoRef.current.leave("notifications");

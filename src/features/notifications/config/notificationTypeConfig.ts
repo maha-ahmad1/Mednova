@@ -15,7 +15,9 @@ import {
   Wallet,
   AlarmClock,
   StopCircle,
+  HeartPulse,
 } from 'lucide-react';
+import { isKawaderNotificationType } from '@/features/kawader/utils/kawader-notification';
 
 export interface NotificationTypeConfigEntry {
   icon: LucideIcon;
@@ -183,5 +185,12 @@ const CONFIG_MAP: Record<string, NotificationTypeConfigEntry> = {
 
 export const NOTIFICATION_TYPE_CONFIG = CONFIG_MAP;
 
+// One entry for every kawader_* type; icon matches the Kawader sidebar entry.
+const KAWADER_CONFIG: NotificationTypeConfigEntry = {
+  icon: HeartPulse,
+  colorClass: 'bg-primary',
+  titleKey: 'types.kawader',
+};
+
 export const getTypeConfig = (type: string): NotificationTypeConfigEntry =>
-  CONFIG_MAP[type] ?? DEFAULT_CONFIG;
+  CONFIG_MAP[type] ?? (isKawaderNotificationType(type) ? KAWADER_CONFIG : DEFAULT_CONFIG);

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { adminSidebarGroups } from "@/features/control-panel/admin-layout/config/navigation";
 import { AdminSidebar } from "./components/AdminSidebar";
 import { TopNavbar } from "./components/TopNavbar";
+import { useKawaderAdminRealtime } from "@/features/kawader/hooks/useKawaderAdminRealtime";
 
 interface AdminLayoutShellProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ interface AdminLayoutShellProps {
 
 export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
   const pathname = usePathname();
+  useKawaderAdminRealtime();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openGroupId, setOpenGroupId] = useState(adminSidebarGroups[0].id);

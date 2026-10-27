@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanupAllEcho } from "@/lib/echo";
 import axios from "axios";
 import { useMemo } from "react";
 import { getSession, signOut, useSession } from "next-auth/react";
@@ -44,6 +45,7 @@ export const useAxiosInstance = () => {
           // video" (e.g. the admin token on the patient-guarded route), not an expired session.
           const isStreamRequest = /\/videos\/\d+\/stream/.test(originalRequest?.url ?? "");
           if (!isStreamRequest) {
+            cleanupAllEcho();
             signOut({ callbackUrl: "/login" });
           }
         }

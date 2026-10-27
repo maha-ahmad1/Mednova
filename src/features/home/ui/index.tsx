@@ -1,3 +1,4 @@
+import KawaderHomeSection from "@/features/kawader/ui/home/KawaderHomeSection";
 import { Footer } from "@/shared/ui/components/Footer";
 import WhyMednova from "./whyMednova";
 import Hero from "./hero";
@@ -7,7 +8,6 @@ import MostRatedProfessionals from "./mostRatedProfessionals";
 import Services from "./Services";
 import TrustStrip from "./trustStrip";
 import ClosingCta from "./closingCta";
-import HomeCare from "./homeCare";
 
 
 export default function HomeSections() {
@@ -20,7 +20,7 @@ export default function HomeSections() {
       <Program />
       <SmartGlove />
       <Services />
-      <HomeCare />
+      <KawaderHomeSection />
       <ClosingCta />
       <Footer />
     </>

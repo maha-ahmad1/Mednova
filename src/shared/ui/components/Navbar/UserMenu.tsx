@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanupAllEcho } from "@/lib/echo";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { signOut, useSession } from "next-auth/react";
@@ -128,7 +129,10 @@ export function UserMenu() {
           <div className="h-px bg-gray-200 my-1" />
 
           <DropdownMenuItem
-            onClick={() => signOut()}
+            onClick={() => {
+              cleanupAllEcho();
+              signOut();
+            }}
             className="flex gap-2 cursor-pointer"
           >
             <LogOut className="w-4 h-4" />

@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanupAllEcho } from "@/lib/echo";
 import {
   Bell,
   Search,
@@ -110,7 +111,10 @@ export function Navbar({ variant = "default" }: { variant?: "default" | "landing
 
               <DropdownMenuItem
                 className=" pl-5.5 flex items-center gap-2 py-2 rounded-md bg-gray-100/60 text-gray-700 transition"
-                onClick={() => signOut()}
+                onClick={() => {
+                  cleanupAllEcho();
+                  signOut();
+                }}
               >
                 <span className="text-sm text-gray-700">{t("logout")}</span>
                 <LogOut className="w-4 h-4 text-gray-900" />

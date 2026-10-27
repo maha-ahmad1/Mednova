@@ -2,10 +2,9 @@ import type {
   AdminKawaderFilters,
   AdminKawaderScope,
   KawaderPriority,
-  KawaderServiceKey,
   KawaderStatus,
 } from "../types/kawader";
-import { KAWADER_PRIORITIES, KAWADER_SERVICE_KEYS, KAWADER_STATUSES } from "./kawader-constants";
+import { KAWADER_PRIORITIES, KAWADER_STATUSES } from "./kawader-constants";
 
 export const ADMIN_SCOPES: readonly AdminKawaderScope[] = ["open", "closed", "all"];
 const DEFAULT_ADMIN_SCOPE: AdminKawaderScope = "open";
@@ -16,7 +15,8 @@ export interface AdminKawaderViewState {
   scope: AdminKawaderScope;
   status?: KawaderStatus;
   priority?: KawaderPriority;
-  service_key?: KawaderServiceKey;
+  /** Free-form key: the valid keys come from the admin meta response, which loads async. */
+  service_key?: string;
   service_area?: string;
   has_insurance?: boolean;
   date_from?: string;
@@ -51,7 +51,7 @@ export function parseAdminKawaderView(params: ParamReader): AdminKawaderViewStat
     scope: pickFrom(ADMIN_SCOPES, params.get("scope")) ?? DEFAULT_ADMIN_SCOPE,
     status: pickFrom(KAWADER_STATUSES, params.get("status")),
     priority: pickFrom(KAWADER_PRIORITIES, params.get("priority")),
-    service_key: pickFrom(KAWADER_SERVICE_KEYS, params.get("service_key")),
+    service_key: parseKey(params.get("service_key")),
     service_area: parseKey(params.get("service_area")),
     has_insurance: hasInsurance === "1" ? true : hasInsurance === "0" ? false : undefined,
     date_from: parseDate(params.get("date_from")),

@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanupAllEcho } from "@/lib/echo";
 import { useState } from "react";
 import { AlertCircle, Loader2, LogOut, MessageCircle, XCircle } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -46,6 +47,7 @@ export default function RejectedProfilePage() {
   // spinner instead.
   const handleLogout = () => {
     setIsLoggingOut(true);
+    cleanupAllEcho();
     signOut({ callbackUrl: "/login" });
   };
 

@@ -216,6 +216,7 @@ export function ProgramDetailsPage({ programId }: ProgramDetailsPageProps) {
               <SignedVideoPlayer
                 programId={numericProgramId}
                 videoId={activeVideo.id}
+                variant="admin"
                 poster={program.coverImage}
                 className="w-full aspect-video rounded-lg bg-black"
               />

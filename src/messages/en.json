@@ -705,6 +705,8 @@
     "player": {
       "play": "Play video",
       "authRequired": "Sign in or subscribe to watch",
+      "adminAuthFailed": "Your session expired or you don't have permission to preview this video",
+      "notFound": "Video not found",
       "failed": "Couldn't play the video, please try again",
       "retry": "Try again"
     }

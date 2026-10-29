@@ -5,7 +5,10 @@ import axios from "axios";
 import { Loader2, PlayCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { useVideoStream } from "@/features/programs/hooks/useVideoStream";
+import {
+  useVideoStream,
+  type VideoStreamVariant,
+} from "@/features/programs/hooks/useVideoStream";
 
 interface SignedVideoPlayerProps {
   programId: number;
@@ -14,13 +17,15 @@ interface SignedVideoPlayerProps {
   isLocked?: boolean;
   poster?: string | null;
   className?: string;
+  /** "admin" uses the control-panel stream route and admin-specific error messages. */
+  variant?: VideoStreamVariant;
 }
 
 // Max consecutive link refreshes after a <video> error — stops an infinite loop
 // if the error isn't actually an expired link.
 const MAX_REFRESH_ATTEMPTS = 2;
 
-type PlayerError = "auth" | "generic";
+type PlayerError = "auth" | "notFound" | "generic";
 
 // Shared by the patient-facing course page and the admin review page. The signed URL
 // (valid 10 min) is requested only when the user presses play — never on mount — and is
@@ -32,9 +37,10 @@ export function SignedVideoPlayer({
   isLocked = false,
   poster,
   className,
+  variant = "patient",
 }: SignedVideoPlayerProps) {
   const t = useTranslations("programs.player");
-  const { mutateAsync: fetchStream } = useVideoStream();
+  const { mutateAsync: fetchStream } = useVideoStream(variant);
   const [streamUrl, setStreamUrl] = useState<string | null>(null);
   const [error, setError] = useState<PlayerError | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -70,7 +76,9 @@ export function SignedVideoPlayer({
       if (requestId !== requestIdRef.current) return;
       const status = axios.isAxiosError(err) ? err.response?.status : undefined;
       setStreamUrl(null);
-      setError(status === 401 || status === 403 ? "auth" : "generic");
+      if (status === 401 || status === 403) setError("auth");
+      else if (variant === "admin" && status === 404) setError("notFound");
+      else setError("generic");
     } finally {
       if (requestId === requestIdRef.current) setIsLoading(false);
     }
@@ -98,7 +106,15 @@ export function SignedVideoPlayer({
           className,
         )}
       >
-        <p className="text-sm">{error === "auth" ? t("authRequired") : t("failed")}</p>
+        <p className="text-sm">
+          {error === "auth"
+            ? variant === "admin"
+              ? t("adminAuthFailed")
+              : t("authRequired")
+            : error === "notFound"
+              ? t("notFound")
+              : t("failed")}
+        </p>
         {error === "generic" && (
           <button
             type="button"

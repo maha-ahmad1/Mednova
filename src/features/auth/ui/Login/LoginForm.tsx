@@ -6,7 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import * as z from "zod";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter as useI18nRouter } from "@/i18n/navigation";
+import { getSafeRedirect } from "@/lib/safe-redirect";
 import { Mail } from "lucide-react";
 import axios from "axios";
 import { signIn } from "next-auth/react";
@@ -58,7 +59,12 @@ export function LoginForm() {
 function LoginFormInner() {
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
+  const i18nRouter = useI18nRouter();
   const searchParams = useSearchParams();
+  const safeRedirect = getSafeRedirect(searchParams.get("redirect"));
+  const redirectQuery = safeRedirect
+    ? `?redirect=${encodeURIComponent(safeRedirect)}`
+    : "";
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { data: session } = useSession();
   const locale = useLocale();
@@ -125,7 +131,8 @@ function LoginFormInner() {
       if (!user.is_completed) {
         router.push("/profile/create");
       } else {
-        router.push("/profile");
+        // Locale-aware router: the redirect is stored without a locale prefix.
+        i18nRouter.push(safeRedirect ?? "/profile");
       }
     },
     onError: (error) => {
@@ -327,7 +334,7 @@ function LoginFormInner() {
 
         <div dir={isRtl ? "rtl" : "ltr"}>
           <span className="text-[#4B5563] text-md">{t("noAccount")} </span>
-          <Link href="/register" className="text-[#32A88D] hover:underline">
+          <Link href={`/register${redirectQuery}`} className="text-[#32A88D] hover:underline">
             {t("registerNow")}
           </Link>
         </div>

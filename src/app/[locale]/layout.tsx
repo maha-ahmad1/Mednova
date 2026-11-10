@@ -5,6 +5,7 @@ import { routing } from "@/i18n/routing";
 import { IncompleteProfileBanner } from "@/shared/ui/components/IncompleteProfileBanner";
 import { AccountStatusNotificationCard } from "@/shared/ui/components/AccountStatusNotificationCard";
 import { FloatingContactWidget } from "@/shared/ui/components/FloatingContactWidget";
+import { ConnectionStatusToast } from "@/shared/ui/ConnectionStatusToast";
 import EchoProvider from "@/providers/ClientEchoWrapper";
 // import * as Sentry from "@sentry/nextjs";
 export default async function LocaleLayout({
@@ -27,6 +28,7 @@ export default async function LocaleLayout({
     <NextIntlClientProvider locale={locale} messages={messages}>
       <div dir={dir} className="min-h-screen">
         <EchoProvider>
+          <ConnectionStatusToast />
           <IncompleteProfileBanner />
           <AccountStatusNotificationCard />
           {children}

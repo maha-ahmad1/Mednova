@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { DollarSign, ShoppingBag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CurrencyAmount, WalletStatCard } from "@/features/financial/ui/shared";
@@ -10,6 +12,7 @@ interface ConsultantProgramSalesProps {
 }
 
 export function ConsultantProgramSales({ programId }: ConsultantProgramSalesProps) {
+  const t = useTranslations("consultantPrograms.sales");
   const { data, isLoading } = useConsultantProgramSales(programId);
   const sales = data?.data;
 
@@ -18,20 +21,20 @@ export function ConsultantProgramSales({ programId }: ConsultantProgramSalesProp
   return (
     <Card>
       <CardContent className="space-y-4 p-5">
-        <h3 className="text-lg font-bold text-foreground">المبيعات</h3>
+        <h3 className="text-lg font-bold text-foreground">{t("title")}</h3>
 
         <div className="flex flex-wrap gap-3">
           <WalletStatCard
             icon={<ShoppingBag className="h-4 w-4 text-[#32A88D]" />}
             iconBg="bg-[#32A88D]/10"
-            label="عدد المبيعات"
+            label={t("count")}
             value={String(sales?.sales_count ?? 0)}
             isLoading={isLoading}
           />
           <WalletStatCard
             icon={<DollarSign className="h-4 w-4 text-emerald-600" />}
             iconBg="bg-emerald-100"
-            label="إجمالي الأرباح"
+            label={t("totalEarnings")}
             value={sales ? Number(sales.total_earnings).toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 }) : "0.000"}
             unit="OMR"
             isLoading={isLoading}
@@ -40,7 +43,7 @@ export function ConsultantProgramSales({ programId }: ConsultantProgramSalesProp
 
         {!isLoading && !hasSales && (
           <p className="rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
-            لا توجد مبيعات لهذا الكورس بعد.
+            {t("empty")}
           </p>
         )}
 
@@ -49,9 +52,9 @@ export function ConsultantProgramSales({ programId }: ConsultantProgramSalesProp
             <table className="w-full text-sm">
               <thead className="bg-muted/40 text-muted-foreground">
                 <tr>
-                  <th className="px-3 py-2 text-right font-medium">الشهر</th>
-                  <th className="px-3 py-2 text-right font-medium">عدد المبيعات</th>
-                  <th className="px-3 py-2 text-right font-medium">الأرباح</th>
+                  <th className="px-3 py-2 text-start font-medium">{t("month")}</th>
+                  <th className="px-3 py-2 text-start font-medium">{t("count")}</th>
+                  <th className="px-3 py-2 text-start font-medium">{t("earnings")}</th>
                 </tr>
               </thead>
               <tbody>

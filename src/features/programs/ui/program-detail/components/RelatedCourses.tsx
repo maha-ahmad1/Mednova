@@ -5,6 +5,7 @@ import { useProgramsQuery } from "@/features/programs/hooks"
 import { ProgramCard } from "@/shared/ui/components/ProgramCard"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 
 interface RelatedCoursesProps {
   programId: number
@@ -12,6 +13,7 @@ interface RelatedCoursesProps {
 }
 
 export function RelatedCourses({ programId }: RelatedCoursesProps): React.ReactNode {
+  const t = useTranslations("programs.detail")
   const { data } = useProgramsQuery()
   const [currentIndex, setCurrentIndex] = useState<number>(0)
 
@@ -36,23 +38,23 @@ export function RelatedCourses({ programId }: RelatedCoursesProps): React.ReactN
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">دورات ذات صلة</h2>
+        <h2 className="text-2xl font-bold text-gray-900">{t("related")}</h2>
         <div className="flex gap-2">
           <button
             onClick={prevSlide}
             type="button"
-            aria-label="الشريحة السابقة"
+            aria-label={t("prevSlide")}
             className="p-2 rounded-full border border-gray-300 hover:border-[#32A88D] hover:bg-[#32A88D]/5 cursor-pointer transition-colors"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5 rtl:rotate-180" />
           </button>
           <button
             onClick={nextSlide}
             type="button"
-            aria-label="الشريحة التالية"
+            aria-label={t("nextSlide")}
             className="p-2 rounded-full border border-gray-300 hover:border-[#32A88D] hover:bg-[#32A88D]/5 cursor-pointer transition-colors"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5 rtl:rotate-180" />
           </button>
         </div>
       </div>

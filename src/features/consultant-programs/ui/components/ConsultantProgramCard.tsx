@@ -1,5 +1,7 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
+
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { AlertTriangle, Archive, Loader2, Pencil, Plus, Send, Trash2 } from "lucide-react";
@@ -25,6 +27,8 @@ export function ConsultantProgramCard({
   isSubmitting = false,
   isArchiving = false,
 }: ConsultantProgramCardProps) {
+  const t = useTranslations("consultantPrograms.card");
+  const locale = useLocale();
   return (
     <Card className="overflow-hidden">
       <div className="flex flex-col sm:flex-row">
@@ -32,7 +36,7 @@ export function ConsultantProgramCard({
           {program.cover_image ? (
             <Image
               src={program.cover_image}
-              alt={program.title_ar}
+              alt={locale === "en" ? program.title_en : program.title_ar}
               fill
               className="object-cover"
               unoptimized
@@ -43,12 +47,12 @@ export function ConsultantProgramCard({
         <CardContent className="flex flex-1 flex-col gap-3 p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="space-y-1">
-              <h3 className="text-lg font-bold text-foreground">{program.title_ar}</h3>
+              <h3 className="text-lg font-bold text-foreground">{locale === "en" ? program.title_en : program.title_ar}</h3>
               <p className="text-sm text-muted-foreground">
-                {program.price} ريال عماني · {program.videos.length} فيديو · {program.sales_count} عملية بيع
+                {t("summary", { price: program.price, videos: program.videos.length, sales: program.sales_count })}
               </p>
               <p className="text-xs text-muted-foreground">
-                عمولة المنصة {program.platform_commission_rate}% · صافي ربحك {program.your_earning_per_sale} ريال لكل عملية بيع
+                {t("commission", { rate: program.platform_commission_rate, earning: program.your_earning_per_sale })}
               </p>
             </div>
             <ConsultantProgramStatusBadge status={program.status} label={program.status_label} />
@@ -66,20 +70,20 @@ export function ConsultantProgramCard({
               <Button asChild variant="outline" size="sm">
                 <Link href={`/profile/programs/${program.id}/edit`}>
                   <Pencil className="ms-1 h-4 w-4" />
-                  تعديل
+                  {t("edit")}
                 </Link>
               </Button>
             )}
             {!program.can.edit && (
               <Button asChild variant="outline" size="sm">
-                <Link href={`/profile/programs/${program.id}/edit`}>عرض التفاصيل</Link>
+                <Link href={`/profile/programs/${program.id}/edit`}>{t("viewDetails")}</Link>
               </Button>
             )}
             {program.can.add_video && (
               <Button asChild variant="outline" size="sm">
                 <Link href={`/profile/programs/${program.id}/edit`}>
                   <Plus className="ms-1 h-4 w-4" />
-                  إضافة فيديو
+                  {t("addVideo")}
                 </Link>
               </Button>
             )}
@@ -90,7 +94,7 @@ export function ConsultantProgramCard({
                 ) : (
                   <Send className="ms-1 h-4 w-4" />
                 )}
-                {isSubmitting ? "جارٍ الإرسال..." : "إرسال للمراجعة"}
+                {isSubmitting ? t("submitting") : t("submitForReview")}
               </Button>
             )}
             {program.can.archive && (
@@ -100,13 +104,13 @@ export function ConsultantProgramCard({
                 ) : (
                   <Archive className="ms-1 h-4 w-4" />
                 )}
-                {isArchiving ? "جارٍ الأرشفة..." : "أرشفة"}
+                {isArchiving ? t("archiving") : t("archive")}
               </Button>
             )}
             {program.can.delete && (
               <Button variant="destructive" size="sm" onClick={onDelete}>
                 <Trash2 className="ms-1 h-4 w-4" />
-                حذف
+                {t("delete")}
               </Button>
             )}
           </div>

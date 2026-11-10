@@ -1,19 +1,20 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { Review } from "@/features/programs/types/reviews";
-import { ReviewCard } from "./ReviewCard";
+import { ReviewCard, type ReviewItem } from "./ReviewCard";
 
 interface ReviewsListProps {
-  reviews: Review[];
+  reviews: ReviewItem[];
   isLoading: boolean;
-  reviewsPerPage?: number;
+  emptyTitle: string;
+  emptyHint?: string;
 }
 
-export function ReviewsList({ 
-  reviews, 
-  isLoading, 
-  reviewsPerPage = 2 
+export function ReviewsList({
+  reviews,
+  isLoading,
+  emptyTitle,
+  emptyHint,
 }: ReviewsListProps) {
   if (isLoading) {
     return (
@@ -41,10 +42,8 @@ export function ReviewsList({
         <div className="text-gray-400 mb-2">
           <Star className="w-12 h-12 mx-auto" />
         </div>
-        <p className="text-gray-500">لا توجد تقييمات بعد</p>
-        <p className="text-sm text-gray-400 mt-1">
-          كن أول من يقيم هذا البرنامج
-        </p>
+        <p className="text-gray-500">{emptyTitle}</p>
+        {emptyHint && <p className="text-sm text-gray-400 mt-1">{emptyHint}</p>}
       </div>
     );
   }

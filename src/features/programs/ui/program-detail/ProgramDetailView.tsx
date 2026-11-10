@@ -22,7 +22,7 @@ export function ProgramDetailView({
 }: ProgramDetailViewProps): React.ReactNode {
   const { data, isPending: isLoading, error, refetch } = useProgramDetailQuery(programId);
   const searchParams = useSearchParams();
-  // "متابعة المشاهدة" from "دوراتي" links here with ?video={last_video_id} — jump straight
+  // "Continue watching" from My Courses links here with ?video={last_video_id} — jump straight
   // to that video instead of always defaulting to the first one.
   const videoParam = searchParams.get("video");
   const initialVideoId = videoParam ? Number(videoParam) : undefined;
@@ -75,6 +75,7 @@ export function ProgramDetailView({
               programId={program.id}
               rating={program.ratings_avg_rating ?? 0}
               reviewCount={program.ratings_count ?? 0}
+              isEnrolled={program.is_enrolled === true}
               starRatings={{
                 "5_stars": program["5_stars"] ?? 0,
                 "4_stars": program["4_stars"] ?? 0,

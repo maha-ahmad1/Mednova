@@ -21,6 +21,8 @@ export interface Program {
   videos_count: number;
   total_duration_minutes: number;
   is_enrolled: boolean;
+  // Not guaranteed by the backend yet; the card only shows "Free" when it is explicitly true.
+  is_free?: boolean;
   // Legacy fields still consumed by some UI (listing/filtering) — optional since the
   // new API contract does not guarantee them.
   status?: string;

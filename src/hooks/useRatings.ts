@@ -1,7 +1,7 @@
 // hooks/useRatings.ts
 import { useFetcher } from './useFetcher';
 
-export type ReviewableType = 'program' | 'specialist' | 'center';
+export type ReviewableType = 'program' | 'customer';
 
 export interface RatingUser {
   id: number;

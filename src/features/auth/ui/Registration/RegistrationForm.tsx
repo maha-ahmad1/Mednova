@@ -5,7 +5,8 @@ import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getSafeRedirect } from "@/lib/safe-redirect";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
@@ -82,6 +83,10 @@ function RegistrationFormInner() {
   const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_CODES[0]);
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
+  const safeRedirect = getSafeRedirect(useSearchParams().get("redirect"));
+  const loginHref = safeRedirect
+    ? `/login?redirect=${encodeURIComponent(safeRedirect)}`
+    : "/login";
   const locale = useLocale();
   const t = useTranslations("Auth");
   const isRtl = locale === "ar";
@@ -127,7 +132,7 @@ function RegistrationFormInner() {
   const mutation = useMutation({
     mutationFn: (data: RegistrationData) => registerUser(data),
     onSuccess: (data) => {
-      if (data.success) router.push("/login");
+      if (data.success) router.push(loginHref);
       else setServerError(data.message || t("register.errors.unexpected"));
     },
     onError: (
@@ -282,7 +287,7 @@ function RegistrationFormInner() {
           <span className="text-[#4B5563] text-md">
             {t("register.hasAccount")}{" "}
           </span>
-          <Link href="/login" className="text-[#32A88D] hover:underline">
+          <Link href={loginHref} className="text-[#32A88D] hover:underline">
             {t("register.login")}
           </Link>
         </div>

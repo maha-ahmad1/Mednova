@@ -1,6 +1,7 @@
 "use client";
 
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface OverallRatingProps {
   rating: number;
@@ -8,6 +9,7 @@ interface OverallRatingProps {
 }
 
 export function OverallRating({ rating, reviewCount }: OverallRatingProps) {
+  const t = useTranslations("programs.detail");
   return (
     <div className="text-center">
       <div className="text-5xl font-bold text-gray-900 mb-2">
@@ -27,7 +29,7 @@ export function OverallRating({ rating, reviewCount }: OverallRatingProps) {
           />
         ))}
       </div>
-      <div className="text-gray-600">متوسط التقييم</div>
+      <div className="text-gray-600">{t("averageRating")}</div>
     </div>
   );
 }

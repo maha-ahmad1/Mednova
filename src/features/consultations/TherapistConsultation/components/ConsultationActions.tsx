@@ -148,6 +148,7 @@ export default function ConsultationActions({
         )}
 
         <RejectDialog
+          mode="cancel"
           open={rejectDialogOpen}
           onOpenChange={setRejectDialogOpen}
           onConfirm={handleRejectConfirm}
@@ -260,7 +261,7 @@ export default function ConsultationActions({
               variant="outline"
               className="cursor-pointer border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-lg sm:rounded-xl px-4 sm:px-8 py-2 sm:py-3 flex items-center gap-1 sm:gap-2 text-sm sm:text-base flex-1 sm:flex-initial"
             >
-              {t("cancelConsultation")}
+              {t("rejectRequest")}
             </Button>
           </>
         )}
@@ -331,6 +332,7 @@ export default function ConsultationActions({
       </div>
 
       <RejectDialog
+        mode="reject"
         open={rejectDialogOpen}
         onOpenChange={setRejectDialogOpen}
         onConfirm={handleRejectConfirm}

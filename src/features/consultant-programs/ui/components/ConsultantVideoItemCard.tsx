@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { AlertTriangle, Loader2, Pencil, Trash2 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -17,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ConfirmationModal } from "@/features/control-panel/users/ui/components/ConfirmationModal";
 import {
-  consultantVideoEditSchema,
+  createConsultantVideoEditSchema,
   type ConsultantVideoEditFormValues,
 } from "../../types/consultant-program-form";
 import type { ConsultantProgramVideo, ProgramStatus } from "../../types/consultant-program";
@@ -28,10 +29,10 @@ const reviewStatusClasses: Record<ConsultantProgramVideo["review_status"], strin
   rejected: "bg-rose-100 text-rose-700 border-rose-200",
 };
 
-const reviewStatusLabels: Record<ConsultantProgramVideo["review_status"], string> = {
-  pending: "قيد المراجعة",
-  approved: "معتمد",
-  rejected: "مرفوض",
+const reviewStatusKeys: Record<ConsultantProgramVideo["review_status"], string> = {
+  pending: "statusPending",
+  approved: "statusApproved",
+  rejected: "statusRejected",
 };
 
 interface ConsultantVideoItemCardProps {
@@ -51,6 +52,10 @@ export function ConsultantVideoItemCard({
   isDeleting = false,
   isUpdating = false,
 }: ConsultantVideoItemCardProps) {
+  const t = useTranslations("consultantPrograms.video");
+  const locale = useLocale();
+  const tv = useTranslations("consultantPrograms.validation");
+  const schema = useMemo(() => createConsultantVideoEditSchema(tv), [tv]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -71,7 +76,7 @@ export function ConsultantVideoItemCard({
     !isArchived && (video.review_status === "rejected" || programStatus === "draft");
 
   const form = useForm<ConsultantVideoEditFormValues>({
-    resolver: zodResolver(consultantVideoEditSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       title_ar: video.title_ar,
       title_en: video.title_en,
@@ -103,16 +108,16 @@ export function ConsultantVideoItemCard({
   return (
     <div className="space-y-2 rounded-lg border bg-muted/20 p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="space-y-1 text-right">
-          <p className="font-semibold">{video.title_ar}</p>
+        <div className="space-y-1 text-start">
+          <p className="font-semibold">{locale === "en" ? video.title_en : video.title_ar}</p>
           <p className="text-xs text-muted-foreground">
-            الترتيب: #{video.order}
+            {t("orderLabel", { order: video.order })}
             {" · "}
-            المدة:{" "}
+            {t("durationLabel")}{" "}
             {video.duration_minute ? (
-              `${video.duration_minute} دقيقة`
+              t("minutes", { count: video.duration_minute })
             ) : (
-              <span className="font-medium text-destructive">غير محددة</span>
+              <span className="font-medium text-destructive">{t("unspecified")}</span>
             )}
           </p>
         </div>
@@ -121,18 +126,18 @@ export function ConsultantVideoItemCard({
           <span
             className={`rounded-full border px-2.5 py-1 text-xs font-medium ${reviewStatusClasses[video.review_status]}`}
           >
-            {reviewStatusLabels[video.review_status]}
+            {t(reviewStatusKeys[video.review_status])}
           </span>
           <Button
             type="button"
             variant="outline"
             size="sm"
             disabled={!canEditVideo}
-            title={!canEditVideo ? "لا يمكن تعديل الفيديو أثناء انتظار المراجعة أو بعد اعتماده" : undefined}
+            title={!canEditVideo ? t("cannotEdit") : undefined}
             onClick={() => (isEditing ? setIsEditing(false) : openEditForm())}
           >
             <Pencil className="ms-1 h-4 w-4" />
-            {isEditing ? "إلغاء التعديل" : "تعديل"}
+            {isEditing ? t("cancelEdit") : t("edit")}
           </Button>
           <Button
             type="button"
@@ -142,7 +147,7 @@ export function ConsultantVideoItemCard({
             onClick={() => setShowDeleteModal(true)}
           >
             <Trash2 className="ms-1 h-4 w-4" />
-            حذف
+            {t("delete")}
           </Button>
         </div>
       </div>
@@ -162,7 +167,7 @@ export function ConsultantVideoItemCard({
               name="title_ar"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>عنوان الفيديو (عربي)</FormLabel>
+                  <FormLabel>{t("titleAr")}</FormLabel>
                   <FormControl>
                     <Input {...field} dir="rtl" />
                   </FormControl>
@@ -176,7 +181,7 @@ export function ConsultantVideoItemCard({
               name="title_en"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>عنوان الفيديو (إنجليزي)</FormLabel>
+                  <FormLabel>{t("titleEn")}</FormLabel>
                   <FormControl>
                     <Input {...field} dir="ltr" />
                   </FormControl>
@@ -190,7 +195,7 @@ export function ConsultantVideoItemCard({
               name="order"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ترتيب الفيديو</FormLabel>
+                  <FormLabel>{t("order")}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -210,7 +215,7 @@ export function ConsultantVideoItemCard({
               name="duration_minute"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>مدة الفيديو (بالدقائق)</FormLabel>
+                  <FormLabel>{t("duration")}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -240,7 +245,7 @@ export function ConsultantVideoItemCard({
                       onCheckedChange={(checked) => field.onChange(Boolean(checked))}
                     />
                   </FormControl>
-                  <FormLabel className="mb-0 cursor-pointer">فيديو مقدمة البرنامج</FormLabel>
+                  <FormLabel className="mb-0 cursor-pointer">{t("introShort")}</FormLabel>
                 </FormItem>
               )}
             />
@@ -256,18 +261,18 @@ export function ConsultantVideoItemCard({
                       onCheckedChange={(checked) => field.onChange(Boolean(checked))}
                     />
                   </FormControl>
-                  <FormLabel className="mb-0 cursor-pointer">فيديو مجاني</FormLabel>
+                  <FormLabel className="mb-0 cursor-pointer">{t("isFree")}</FormLabel>
                 </FormItem>
               )}
             />
 
             <div className="flex justify-end gap-2 md:col-span-2">
               <Button type="button" variant="outline" onClick={() => setIsEditing(false)} disabled={isUpdating}>
-                إلغاء
+                {t("cancel")}
               </Button>
               <Button type="submit" className="min-w-28" disabled={isUpdating}>
                 {isUpdating && <Loader2 className="h-4 w-4 animate-spin" />}
-                {isUpdating ? "جارٍ الحفظ..." : "حفظ التعديل"}
+                {isUpdating ? t("saving") : t("saveEdit")}
               </Button>
             </div>
           </form>
@@ -276,10 +281,10 @@ export function ConsultantVideoItemCard({
 
       <ConfirmationModal
         open={showDeleteModal}
-        title="حذف الفيديو"
-        description="هل أنت متأكد أنك تريد حذف هذا الفيديو؟ لا يمكن التراجع عن هذا الإجراء."
-        confirmLabel="حذف"
-        cancelLabel="إلغاء"
+        title={t("deleteTitle")}
+        description={t("deleteDesc")}
+        confirmLabel={t("delete")}
+        cancelLabel={t("cancel")}
         isConfirming={isDeleting}
         onConfirm={async () => {
           await onDelete(video.id);

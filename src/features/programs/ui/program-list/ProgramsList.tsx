@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useProgramsQuery } from "../../hooks";
 import type { Program } from "../../types/program";
@@ -28,15 +28,9 @@ interface ProgramFilters {
 
 type ViewMode = "grid" | "list";
 
-const CATEGORIES = [
-  "الكل",
-  "إعادة التأهيل",
-  "اللياقة البدنية",
-  "الصحة العامة",
-];
-
 export function ProgramsList(): React.ReactNode {
   const t = useTranslations("programs");
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const { data, isPending: isLoading, error } = useProgramsQuery();
 
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -99,16 +93,9 @@ export function ProgramsList(): React.ReactNode {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const clearFilters = (): void => {
+  const clearSearch = (): void => {
     setSearchQuery("");
-    setViewMode("grid");
-    setFilters({
-      category: t("all"),
-      difficulty: t("all"),
-      sortBy: "newest",
-      priceRange: t("all"),
-      rating: t("all"),
-    });
+    searchInputRef.current?.focus();
   };
 
   const sortOptions = [
@@ -124,11 +111,6 @@ export function ProgramsList(): React.ReactNode {
     { value: "4+", label: t("ratingOptions.fourAndUp") },
     { value: "3+", label: t("ratingOptions.threeAndUp") },
   ];
-
-  const hasActiveFilters = 
-    searchQuery || 
-    filters.category !== t("all") || 
-    filters.rating !== t("all");
 
   if (isLoading) {
     return <ProgramsPageSkeleton />;
@@ -200,13 +182,32 @@ export function ProgramsList(): React.ReactNode {
                 {t("searchLabel")}
               </label>
               <div className="relative">
-                <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute start-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
+                  ref={searchInputRef}
                   placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pr-12 rounded-xl border-gray-200 focus:border-[#32A88D] focus:ring-[#32A88D] h-12"
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape" && searchQuery) {
+                      e.preventDefault();
+                      clearSearch();
+                    }
+                  }}
+                  type="search"
+                  enterKeyHint="search"
+                  className="w-full ps-12 pe-12 rounded-xl border-gray-200 focus:border-[#32A88D] focus:ring-[#32A88D] h-12 [&::-webkit-search-cancel-button]:hidden"
                 />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    aria-label={t("clearSearch")}
+                    onClick={clearSearch}
+                    className="absolute end-1.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#32A88D]"
+                  >
+                    <X className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                )}
               </div>
             </div>
 
@@ -264,7 +265,7 @@ export function ProgramsList(): React.ReactNode {
                 onValueChange={(value) => handleFilterChange("sortBy", value)}
               >
                 <SelectTrigger className="rounded-xl border-gray-200 h-12">
-                  <SelectValue placeholder="ترتيب حسب" />
+                  <SelectValue placeholder={t("sort")} />
                 </SelectTrigger>
                 <SelectContent>
                   {sortOptions.map((option) => (
@@ -276,54 +277,6 @@ export function ProgramsList(): React.ReactNode {
               </Select>
             </div>
           </div>
-
-          {/* Active Filters */}
-          {hasActiveFilters && (
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              <div className="text-sm text-gray-600">{t("activeFilters")}:</div>
-              {searchQuery && (
-                <Badge variant="secondary" className="rounded-lg px-3 py-1.5">
-                  {t("search")} {searchQuery}
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="mr-2 cursor-pointer hover:text-red-500"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              )}
-              {filters.category !== t("all") && (
-                <Badge variant="secondary" className="rounded-lg px-3 py-1.5">
-                  {t("category")} {filters.category}
-                  <button
-                    onClick={() => handleFilterChange("category", t("all"))}
-                    className="mr-2 cursor-pointer hover:text-red-500"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              )}
-              {filters.rating !== t("all") && (
-                <Badge variant="secondary" className="rounded-lg px-3 py-1.5">
-                  {t("rating")} {filters.rating === "4+" ? t("ratingOptions.fourAndUp") : t("ratingOptions.threeAndUp")}
-                  <button
-                    onClick={() => handleFilterChange("rating", t("all"))}
-                    className="mr-2 cursor-pointer hover:text-red-500"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              )}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearFilters}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                {t("clearAllFilters")}
-              </Button>
-            </div>
-          )}
         </div>
 
         {/* Results Header */}
@@ -393,11 +346,13 @@ export function ProgramsList(): React.ReactNode {
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               {t("noResultsTitle")}
             </h3>
-            <p className="text-gray-600 max-w-md mx-auto mb-6">
-              {t("noResultsDesc")}
+            <p className="text-gray-600 max-w-md mx-auto mb-6 px-4 break-words [overflow-wrap:anywhere] line-clamp-3">
+              {searchQuery.trim() ? t("noResultsQuery", { query: searchQuery.trim() }) : t("noResultsDesc")}
             </p>
             <Button
-              onClick={clearFilters}
+              onClick={() => {
+                clearSearch();
+              }}
               className="bg-[#32A88D] hover:bg-[#2a8a7a]"
             >
               {t("showAllPrograms")}

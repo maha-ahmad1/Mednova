@@ -2,11 +2,13 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import { updateConsultantProgramVideo } from "../api";
 import type { ConsultantProgramVideoPayload } from "../types/consultant-program";
 
 export function useUpdateConsultantProgramVideo(programId: number) {
+  const t = useTranslations("consultantPrograms.toast");
   const axiosInstance = useAxiosInstance();
   const queryClient = useQueryClient();
 
@@ -20,10 +22,10 @@ export function useUpdateConsultantProgramVideo(programId: number) {
     }) => updateConsultantProgramVideo(axiosInstance, { programId, videoId, payload }),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["consultant-program", programId] });
-      toast.success(response.message || "تم تحديث الفيديو بنجاح");
+      toast.success(response.message || t("updateVideoSuccess"));
     },
     onError: () => {
-      toast.error("تعذر تحديث الفيديو. حاول مرة أخرى.");
+      toast.error(t("updateVideoError"));
     },
   });
 

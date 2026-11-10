@@ -1,59 +1,60 @@
 import { z } from "zod";
 
-const requiredFileSchema = z
-  .custom<File | undefined>()
-  .refine((file): file is File => file instanceof File, "الملف مطلوب");
+/** Translator scoped to `consultantPrograms.validation` (`useTranslations("consultantPrograms.validation")`). */
+export type ValidationTranslator = (key: string) => string;
 
-const optionalFileSchema = z.custom<File | undefined>();
+export const createConsultantProgramSchema = (t: ValidationTranslator) =>
+  z.object({
+    title_ar: z.string().trim().min(1, t("programTitleAr")),
+    title_en: z.string().trim().min(1, t("programTitleEn")),
+    description_ar: z.string().trim().min(1, t("programDescAr")),
+    description_en: z.string().trim().min(1, t("programDescEn")),
+    what_you_will_learn_ar: z.string().trim().min(1, t("learnAr")),
+    what_you_will_learn_en: z.string().trim().min(1, t("learnEn")),
+    price: z.number().min(0, t("price")),
+    cover_image: z.custom<File | undefined>(),
+  });
 
-export const consultantProgramSchema = z.object({
-  title_ar: z.string().trim().min(1, "عنوان البرنامج (عربي) مطلوب"),
-  title_en: z.string().trim().min(1, "عنوان البرنامج (إنجليزي) مطلوب"),
-  description_ar: z.string().trim().min(1, "وصف البرنامج (عربي) مطلوب"),
-  description_en: z.string().trim().min(1, "وصف البرنامج (إنجليزي) مطلوب"),
-  what_you_will_learn_ar: z.string().trim().min(1, "حقل ماذا ستتعلم (عربي) مطلوب"),
-  what_you_will_learn_en: z.string().trim().min(1, "حقل ماذا ستتعلم (إنجليزي) مطلوب"),
-  price: z.number().min(0, "السعر يجب أن يكون 0 أو أكثر"),
-  cover_image: optionalFileSchema,
-});
+export type ConsultantProgramFormValues = z.input<ReturnType<typeof createConsultantProgramSchema>>;
 
-export type ConsultantProgramFormValues = z.input<typeof consultantProgramSchema>;
-
-export const consultantVideoSchema = z.object({
-  title_ar: z.string().trim().min(1, "عنوان الفيديو (عربي) مطلوب"),
-  title_en: z.string().trim().min(1, "عنوان الفيديو (إنجليزي) مطلوب"),
-  order: z.number().min(1, "الترتيب يجب أن يبدأ من 1"),
+const videoFields = (t: ValidationTranslator) => ({
+  title_ar: z.string().trim().min(1, t("videoTitleAr")),
+  title_en: z.string().trim().min(1, t("videoTitleEn")),
+  order: z.number().min(1, t("order")),
   duration_minute: z
-    .number({ message: "مدة الفيديو بالدقائق مطلوبة" })
-    .int("مدة الفيديو يجب أن تكون عددًا صحيحًا")
-    .min(1, "مدة الفيديو يجب أن تكون دقيقة واحدة على الأقل"),
+    .number({ message: t("durationRequired") })
+    .int(t("durationInt"))
+    .min(1, t("durationMin")),
   is_program_intro: z.boolean(),
   is_free: z.boolean(),
-  video: requiredFileSchema,
 });
 
-export type ConsultantVideoFormValues = z.input<typeof consultantVideoSchema>;
+export const createConsultantVideoSchema = (t: ValidationTranslator) =>
+  z.object({
+    ...videoFields(t),
+    video: z
+      .custom<File | undefined>()
+      .refine((file): file is File => file instanceof File, t("file")),
+  });
+
+export type ConsultantVideoFormValues = z.input<ReturnType<typeof createConsultantVideoSchema>>;
 
 // Editing an existing video never requires re-uploading the file.
-export const consultantVideoEditSchema = z.object({
-  title_ar: z.string().trim().min(1, "عنوان الفيديو (عربي) مطلوب"),
-  title_en: z.string().trim().min(1, "عنوان الفيديو (إنجليزي) مطلوب"),
-  order: z.number().min(1, "الترتيب يجب أن يبدأ من 1"),
-  duration_minute: z
-    .number({ message: "مدة الفيديو بالدقائق مطلوبة" })
-    .int("مدة الفيديو يجب أن تكون عددًا صحيحًا")
-    .min(1, "مدة الفيديو يجب أن تكون دقيقة واحدة على الأقل"),
-  is_program_intro: z.boolean(),
-  is_free: z.boolean(),
-});
+export const createConsultantVideoEditSchema = (t: ValidationTranslator) =>
+  z.object(videoFields(t));
 
-export type ConsultantVideoEditFormValues = z.infer<typeof consultantVideoEditSchema>;
+export type ConsultantVideoEditFormValues = z.infer<
+  ReturnType<typeof createConsultantVideoEditSchema>
+>;
 
-export const newConsultantVideosSchema = z.object({
-  videos: z.array(consultantVideoSchema).min(1, "يجب إضافة فيديو واحد على الأقل"),
-});
+export const createNewConsultantVideosSchema = (t: ValidationTranslator) =>
+  z.object({
+    videos: z.array(createConsultantVideoSchema(t)).min(1, t("videosMin")),
+  });
 
-export type NewConsultantVideosFormValues = z.input<typeof newConsultantVideosSchema>;
+export type NewConsultantVideosFormValues = z.input<
+  ReturnType<typeof createNewConsultantVideosSchema>
+>;
 
 export const createDefaultConsultantVideo = (order = 1): ConsultantVideoFormValues => ({
   title_ar: "",

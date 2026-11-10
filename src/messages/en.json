@@ -24,14 +24,14 @@
   "accountPending": {
     "title": "Your Account Is Under Review",
     "restrictedAccess": "Your account is currently under review. You will be able to access this feature once your account has been approved.",
-    "description": "We're reviewing your account information to make sure everything is accurate and complete. This usually takes between 24 and 48 hours.",
+    "description": "We're reviewing your account information to make sure everything is accurate and complete. This is usually completed within 1–2 business days.",
     "whyReviewTitle": "Why do we review accounts?",
     "whyReviewDescription": "We review every new account to maintain service quality and protect our users' data.",
     "notification": "We'll send you a notification as soon as the review is complete, so you don't need to keep checking back.",
     "goToSpecialists": "Browse Specialists",
     "backToHome": "Back to Home",
     "thanks": "Thank you for your patience. We're here to help anytime.",
-    "reviewDuration": "Review time: 1-2 days",
+    "reviewDuration": "Review time: usually within 1–2 business days",
     "qualityCheck": "Quality Review"
   },
   "sidebar": {
@@ -42,7 +42,7 @@
     "patients": "Patients",
     "financialWallet": "Financial Wallet",
     "myPrograms": "My Programs",
-    "myEnrolledPrograms": "My Courses",
+    "myEnrolledPrograms": "My Programs",
     "kawader": "Home Care",
     "reports": "Reports",
     "help": "Help",
@@ -225,7 +225,7 @@
         "currencyPlaceholder": "Select currency"
       },
       "bioCard": {
-        "title": "About the Therapist",
+        "title": "About the Specialist",
         "editButton": "Edit Bio",
         "editTitle": "Edit Personal Bio",
         "validationError": "Please correct the errors before saving",
@@ -415,15 +415,15 @@
     "logout": "Logout",
     "login": "Login",
     "home": "Home",
-    "specialists": "Specialists",
+    "specialists": "Consultations",
     "programs": "Rehabilitation Programs",
     "notification": "Notifications",
     "devices": "Devices",
     "smartGlove": "Smart Glove",
     "smartDevicesCatalog": "Smart Devices Catalog",
     "language": "Language",
-    "en": "🇺🇸 English",
-    "ar": "🇸🇦 Arabic",
+    "en": "English",
+    "ar": "العربية",
     "dashboard": "Dashboard",
     "appointments": "Appointments",
     "patients": "Patients",
@@ -431,7 +431,7 @@
     "chat": "Chat"
   },
   "specialists": {
-    "title": "Specialists & Centers",
+    "title": "Consultations",
     "all": "All",
     "searchLabel": "Search specialists",
     "searchPlaceholder": "Type specialist name...",
@@ -441,7 +441,7 @@
     "noResultsTitle": "No results found",
     "filtersTitle": "Filters",
     "type": "Type",
-    "therapists": "Therapists",
+    "therapists": "Specialists",
     "centers": "Rehabilitation Centers",
     "specialties": "Specialties",
     "noResultsDesc": "No specialists match your search",
@@ -484,6 +484,16 @@
       "reviewsCountSuffix": "review(s)",
       "writeYourReview": "Write your review",
       "writeReview": "Write a review",
+      "reviews": {
+        "loginPrompt": "Log in to write a review.",
+        "loginLink": "Log in",
+        "yourReview": "Your review",
+        "noReviews": "No reviews yet",
+        "listTitle": "Reviews ({count})",
+        "prevPage": "Previous reviews",
+        "nextPage": "Next reviews",
+        "pageN": "Page {page}"
+      },
       "chooseSessionTime": "Choose Session Time",
       "specialtiesLabel": "Specialties:",
       "experienceYearsSuffix": "years experience",
@@ -518,7 +528,7 @@
     },
     "reviewDialog": {
       "close": "Close",
-      "thanksTitle": "Thank you!",
+      "thanksTitle": "Thank you",
       "thanksDesc": "Your review has been submitted successfully",
       "title": "Write Your Review",
       "subtitle": "Share your experience with {name}",
@@ -532,7 +542,7 @@
       "submitButton": "Submit Review",
       "closingNote": "The window will close automatically...",
       "thanksNote": "Thank you for sharing your feedback with us. Your review helps us improve our services.",
-      "submitSuccessToast": "Your review has been submitted successfully!",
+      "submitSuccessToast": "Your review has been submitted successfully",
       "submitErrorToast": "An error occurred while submitting the review"
     },
     "reviewStars": {
@@ -583,7 +593,7 @@
     },
     "toasts": {
       "selectDateTime": "Please select a date and time",
-      "noConsultantId": "No consultant ID found",
+      "noConsultantId": "No specialist ID found",
       "bookingError": "An error occurred during booking"
     }
   },
@@ -622,15 +632,25 @@
     "previous": "Previous",
     "pageNotFound": "404 - Page Not Found",
     "pageNotFoundDesc": "The page you're looking for doesn't exist.",
-    "goHome": "Go Home"
+    "goHome": "Go Home",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "summary": "Page {current} of {last}",
+      "summaryTotal": "Page {current} of {last} • Total {total}"
+    }
+  },
+  "connection": {
+    "offline": "You're offline",
+    "offlineHint": "We'll reconnect automatically",
+    "online": "You're back online",
+    "onlineHint": "You can continue what you were doing"
   },
   "programs": {
     "all": "All",
     "sort": "Sort",
     "searchLabel": "Search programs",
     "searchPlaceholder": "Type program name...",
-    "activeFilters": "Active filters",
-    "clearAllFilters": "Clear filters",
     "showingResults": "Showing {count} results",
     "sortedBy": "Sorted by {sort}",
     "noResultsTitle": "No results found",
@@ -644,9 +664,12 @@
     "subscribeFullAccess": "Subscribe for full access",
     "topRequested": "Top requested",
     "availableNow": "Available now",
-    "enrolledBadge": "You're enrolled in this course",
+    "enrolledBadge": "Enrolled",
     "continueWatching": "Continue watching",
     "hasAccessBadge": "You have access",
+    "paidBadge": "Paid",
+    "freeBadge": "Free",
+    "purchased": "Purchased",
     "accessGrantedCta": "You have access — go to content",
     "registeredUsers": "{count} enrolled",
     "sortOptions": {
@@ -675,9 +698,10 @@
       "successDesc": "You can now watch all lessons of “{title}”.",
       "startWatching": "Start watching",
       "later": "Later",
-      "freeEnrolled": "You're enrolled — the course is now open",
+      "freeEnrolled": "You're enrolled — the program is now open",
       "checkoutError": "Couldn't open the payment page, please try again later",
       "linkError": "Couldn't create the payment link, please try again",
+      "patientsOnly": "Program enrollment is available to patients only",
       "failedToast": "Payment wasn't completed",
       "banner": {
         "unpaid": {
@@ -686,7 +710,7 @@
         },
         "paid": {
           "title": "Payment successful",
-          "desc": "You now have full access to the course content."
+          "desc": "You now have full access to the program content."
         },
         "payment_suspended": {
           "title": "Payment wasn't completed",
@@ -697,19 +721,99 @@
           "desc": "Please start the purchase again."
         },
         "timeout": {
-          "title": "We couldn't confirm the payment",
-          "desc": "If you were charged, the course will appear in My Courses shortly."
+          "title": "We couldn't confirm the payment yet",
+          "desc": "If you were charged, the program will appear in My Programs shortly."
         }
       }
     },
     "player": {
       "play": "Play video",
-      "authRequired": "Sign in or subscribe to watch",
+      "authRequired": "Sign in or subscribe to watch this content",
       "adminAuthFailed": "Your session expired or you don't have permission to preview this video",
       "notFound": "Video not found",
       "failed": "Couldn't play the video, please try again",
       "retry": "Try again"
-    }
+    },
+    "breadcrumb": {
+      "list": "Rehabilitation Programs"
+    },
+    "detail": {
+      "certifiedBadge": "Mednova Certified Programs",
+      "creatorFallback": "Program instructor",
+      "enrolledCount": "{count, plural, one {# enrolled} other {# enrolled}}",
+      "videosCount": "{count, plural, one {# video} other {# videos}}",
+      "minutes": "{count, plural, one {# minute} other {# minutes}}",
+      "overview": "Overview",
+      "overviewVideos": "Videos",
+      "overviewEnrolled": "Enrolled",
+      "overviewRating": "Average rating",
+      "whatYouLearn": "What you'll learn",
+      "learn1": "Build a practical training plan you can apply right away.",
+      "learn2": "Learn the core skills step by step with real-world examples.",
+      "learn3": "Develop the ability to perform exercises safely and effectively.",
+      "learn4": "Understand the key tools and models used in the field.",
+      "learn5": "Track your progress through visual content and guided exercises.",
+      "learn6": "Gain greater confidence in handling different cases.",
+      "aboutInstructor": "About the instructor",
+      "instructorBadge": "Mednova certified instructor",
+      "fullPrice": "Full program price",
+      "noRefund": "This program is non-refundable, and I agree to purchase it",
+      "processing": "Processing...",
+      "subscribeNow": "Subscribe now",
+      "whatYouGet": "What you'll get",
+      "fullAccess": "Full access to all program content",
+      "videosIncluded": "{count, plural, one {# instructional video} other {# instructional videos}}",
+      "lifetimeAccess": "Lifetime access",
+      "certificate": "Program completion certificate",
+      "content": "Program content",
+      "lockedVideoTitle": "This video is locked",
+      "lockedVideoDesc": "Subscribe to access all lessons",
+      "lockedVideoCta": "Subscribe to access",
+      "videoList": "Video list ({count})",
+      "introVideo": "Intro video",
+      "freeVideo": "Free",
+      "lockedHint": "Locked content • Subscribe to access",
+      "related": "Related programs",
+      "prevSlide": "Previous slide",
+      "nextSlide": "Next slide",
+      "reviewsTitle": "Participant reviews",
+      "averageRating": "Average rating",
+      "noReviews": "No reviews yet",
+      "beFirst": "Be the first to review this program",
+      "participantsOpinions": "Participant opinions ({count})",
+      "prevReviews": "Previous reviews",
+      "nextReviews": "Next reviews",
+      "pageN": "Page {page}",
+      "reviewForm": {
+        "title": "Add your review",
+        "ratingLabel": "Your rating",
+        "commentLabel": "Comment (optional)",
+        "commentPlaceholder": "Share your experience with this program",
+        "counter": "{count}/{max}",
+        "submit": "Submit review",
+        "submitting": "Submitting...",
+        "submitSuccess": "Your review has been submitted",
+        "submitError": "Couldn't submit your review. Please try again.",
+        "loginPrompt": "Log in to review this program.",
+        "loginLink": "Log in",
+        "enrollPrompt": "Enroll in the program to be able to review it.",
+        "yourReview": "Your review"
+      }
+    },
+    "my": {
+      "title": "My programs",
+      "subtitle": "Programs you currently have active access to",
+      "errorTitle": "Couldn't load your programs",
+      "errorDesc": "Something went wrong while fetching the data. Please try again.",
+      "retry": "Try again",
+      "emptyTitle": "You haven't enrolled in any program yet",
+      "emptyDesc": "Browse the available programs and start your learning journey.",
+      "browse": "Browse programs",
+      "progress": "{done} of {total, plural, one {# video} other {# videos}}",
+      "continue": "Continue watching"
+    },
+    "clearSearch": "Clear search",
+    "noResultsQuery": "No programs match “{query}”"
   },
   "homeTherapists": {
     "badge": "Featured professionals",
@@ -739,11 +843,11 @@
       },
       {
         "title": "Health record",
-        "details": "A smart record of your condition and progress, with ongoing input from specialists to improve outcomes."
+        "details": "A smart record of your condition and progress, with ongoing input from specialists to support your treatment plan."
       },
       {
         "title": "Ongoing follow-up",
-        "details": "Stay connected with your care team with a flexible plan tailored to your needs."
+        "details": "Stay connected with your care team to track your progress, with a flexible plan tailored to your needs."
       },
       {
         "title": "Near you",
@@ -757,7 +861,7 @@
     "location": "Muscat, Oman",
     "quickLinks": "Quick links",
     "linkHome": "Home",
-    "linkSpecialists": "Specialists",
+    "linkSpecialists": "Consultations",
     "linkPrograms": "Rehabilitation programs",
     "linkSmartGlove": "Smart glove",
     "support": "Support",
@@ -904,7 +1008,7 @@
       },
       {
         "title": "Step-by-Step Follow-up",
-        "desc": "We stay with you through full recovery"
+        "desc": "We stay with you throughout your treatment journey"
       }
     ]
   },
@@ -915,8 +1019,8 @@
         "desc": "Certified and qualified professionals"
       },
       {
-        "title": "Secure health records",
-        "desc": "Your data is fully protected and private"
+        "title": "Your health records, protected",
+        "desc": "We protect your data and keep it confidential"
       },
       {
         "title": "Fast consultation booking",
@@ -1022,7 +1126,7 @@
       "titleBefore": "",
       "titleHighlight": "Mednova",
       "titleAfter": " digital platform",
-      "description": "A complete system linking the smart glove, patient, and therapist with smart analytics and detailed reports.",
+      "description": "A complete system linking the smart glove, patient, and specialist with smart analytics and detailed reports.",
       "features": [
         {
           "title": "Therapy program tuning",
@@ -1090,7 +1194,7 @@
         ]
       },
       {
-        "title": "For the therapist",
+        "title": "For the specialist",
         "items": [
           "Remote monitoring and adjustments",
           "Accurate, detailed reports",
@@ -1175,7 +1279,7 @@
       "cancelled": "Cancelled"
     },
     "consultant": {
-      "breadcrumb": "Consultant Dashboard › Financial Wallet",
+      "breadcrumb": "Specialist Dashboard › Financial Wallet",
       "title": "Financial Wallet",
       "exportStatement": "Export Statement",
       "totalWallet": "Total Wallet",
@@ -1244,7 +1348,7 @@
     },
     "patientPayments": {
       "colConsultation": "Consultation",
-      "colConsultant": "Consultant",
+      "colConsultant": "Specialist",
       "colAmountPaid": "Amount Paid",
       "colPaymentFees": "Payment Fees",
       "colPaymentMethod": "Payment Method",
@@ -1320,14 +1424,14 @@
       },
       "request": {
         "title": "Withdrawal Request",
-        "subtitle": "Processing takes 1–3 business days",
+        "subtitle": "Transfers are usually completed within 1–3 business days",
         "availableLabel": "Withdrawable Amount",
         "bankLabel": "Withdrawal Method",
         "bankType": "Bank",
         "summaryAmount": "Amount",
         "summaryFee": "Transfer Fee",
         "summaryEta": "Expected Arrival",
-        "summaryEtaValue": "2 business days",
+        "summaryEtaValue": "Usually within 1–3 business days",
         "summaryRecipient": "Recipient",
         "confirmButton": "Confirm Withdrawal",
         "cancelButton": "Cancel",
@@ -1367,7 +1471,7 @@
     "breadcrumb": "Booking & Payment Summary",
     "typeChat": "Text Consultation",
     "typeVideo": "Video Consultation",
-    "step1Label": "Provider",
+    "step1Label": "Specialist",
     "step2VideoLabel": "Appointment Details",
     "step2ChatLabel": "Consultation Type",
     "step3Label": "Cost Summary",
@@ -1379,12 +1483,12 @@
     "consultationPrice": "Consultation Fee",
     "platformFee": "Platform Fee",
     "totalAmount": "Total Amount",
-    "escrowTitle": "Guaranteed Financial Protection — Escrow System",
+    "escrowTitle": "Your payment is protected until the session is completed",
     "escrowDesc": "At Mednova, we hold the payment until the session is successfully completed. Funds are released to the specialist 48 hours after the session ends, provided there are no disputes.",
     "buttonCreatingLink": "Creating payment link...",
     "buttonPaid": "Payment Successful",
-    "buttonPay": "Pay Securely — {total} {currency}",
-    "sslNote": "Data encrypted with SSL 256-bit — fully secure payment",
+    "buttonPay": "Complete payment — {total} {currency}",
+    "sslNote": "Encrypted connection to protect your data",
     "agreeToTerms": "By paying, you agree to our",
     "termsAnd": "and",
     "terms": "Terms of Service",
@@ -1464,7 +1568,7 @@
           "titlePatient": "Payment confirmed — waiting for specialist to accept",
           "descPatient": "Your payment was received. You'll be able to start the session once the specialist accepts your request.",
           "titleConsultant": "Paid request awaiting your approval",
-          "descConsultant": "The patient has completed payment and funds are held in escrow. You can accept the request from the consultation requests page."
+          "descConsultant": "The patient has completed payment and funds are held by the platform. You can accept the request from the consultation requests page."
         },
         "comingSoon": "Coming soon"
       },
@@ -1472,8 +1576,8 @@
         "held": {
           "titlePatient": "Payment confirmed — your consultation is booked",
           "titleConsultant": "Payment confirmed — request awaiting action",
-          "descPatient": "Your payment was received. We're holding the funds in escrow until the session is complete.",
-          "descConsultant": "The patient has completed payment. Funds are held in escrow until the session is complete."
+          "descPatient": "Your payment is held by the platform until the session is completed.",
+          "descConsultant": "The amount is held by the platform and will be transferred to you after the session is completed, unless a dispute is opened."
         },
         "reviewWindow": {
           "title": "Review period in progress",
@@ -1560,7 +1664,7 @@
       "joinZoom": "Join Zoom Session",
       "linkOpensNewWindow": "The link will open in a new window",
       "liveUpdate": "Live update",
-      "therapistDataTitle": "Therapist Data",
+      "therapistDataTitle": "Specialist Data",
       "centerDataTitle": "Center Data",
       "patientDataTitle": "Patient Data",
       "fullNameLabel": "Full Name",
@@ -1584,33 +1688,42 @@
     "actions": {
       "cancelling": "Cancelling...",
       "cancelConsultation": "Cancel Consultation",
+      "rejectRequest": "Reject request",
       "cancelledTitle": "Consultation request cancelled",
-      "cancelledDesc": "The patient will be notified of the cancellation",
+      "cancelledDesc": "The consultation request was cancelled.",
       "completedTitle": "Consultation completed successfully",
       "thanksNote": "Thank you for providing excellent service to the patient",
       "accepting": "Accepting...",
       "acceptButton": "Accept Request",
       "joinZoomSession": "Join Zoom Session",
-      "rejectedTitle": "Consultation request rejected",
-      "rejectedDesc": "The patient will be notified of the rejection decision",
+      "rejectedTitle": "The consultation request was cancelled",
+      "rejectedDesc": "The consultation request was cancelled.",
       "acceptFailedToast": "Failed to accept the request, please try again",
       "completeFailedToast": "Failed to complete the request, please try again",
       "rejectFailedToast": "Failed to cancel the request, please try again",
       "zoomAvailableSoonNote": "Zoom will be available 5 minutes before the consultation."
     },
-    "rejectDialog": {
-      "title": "Confirm Consultation Cancellation",
-      "reasonLabel": "Cancellation Reason",
+    "cancelDialog": {
+      "title": "Cancel consultation",
+      "reasonLabel": "Cancellation reason",
       "reasonPlaceholder": "Enter the reason for cancelling the consultation...",
-      "reasonNote": "This reason will be sent to the patient",
-      "confirmButton": "Confirm Cancellation",
+      "confirmButton": "Confirm cancellation",
       "confirmingButton": "Cancelling...",
       "reasonRequiredToast": "Please enter a cancellation reason"
+    },
+    "rejectDialog": {
+      "title": "Reject consultation request",
+      "reasonLabel": "Rejection reason",
+      "reasonPlaceholder": "Enter the reason for rejecting the request...",
+      "reasonNote": "This reason will be sent to the patient",
+      "confirmButton": "Confirm rejection",
+      "confirmingButton": "Rejecting...",
+      "reasonRequiredToast": "Please enter a rejection reason"
     },
     "status": {
       "pending": "Awaiting Approval",
       "accepted": "Accepted",
-      "cancelled": "Rejected",
+      "cancelled": "Cancelled",
       "active": "Active",
       "completed": "Completed"
     }
@@ -1670,16 +1783,16 @@
     "hideDetails": "Hide details",
     "collapsedSummary": {
       "completed": "Last session completed — accuracy {accuracy}%",
-      "cancelledByDoctor": "The last session was cancelled by the doctor",
+      "cancelledByDoctor": "The last session was cancelled by the specialist",
       "stoppedByPatient": "The patient ended the last session early",
-      "stoppedByTherapist": "The therapist ended the last session before it was complete",
+      "stoppedByTherapist": "The specialist ended the last session before it was complete",
       "pain": "The patient stopped the last session due to reported pain",
       "technicalError": "The last session stopped due to a connection issue",
       "unknown": "The last session has ended"
     },
     "patientNotice": {
-      "inProgress": "Your therapist is currently running a motion measurement session",
-      "shared": "Your measurement session results were shared with your therapist"
+      "inProgress": "Your specialist is currently running a motion measurement session",
+      "shared": "Your measurement session results were shared with your specialist"
     },
     "notifications": {
       "completed": {
@@ -1687,7 +1800,7 @@
         "consultant": "The measurement session has been completed and the results are now available."
       },
       "cancelled_by_doctor": {
-        "patient": "Your measurement session was cancelled by your therapist.",
+        "patient": "Your measurement session was cancelled by your specialist.",
         "consultant": "You cancelled the measurement session."
       },
       "stopped_by_patient": {
@@ -1695,12 +1808,12 @@
         "consultant": "The patient ended the measurement session before it was complete."
       },
       "stopped_by_therapist": {
-        "patient": "Your therapist ended the measurement session.",
+        "patient": "Your specialist ended the measurement session.",
         "consultant": "You manually ended the measurement session before it was complete."
       },
       "pain": {
         "patient": "Your measurement session was stopped because you reported pain.",
-        "consultant": "⚠️ The patient reported pain during the exercise and the session was stopped."
+        "consultant": "The patient reported pain during the exercise and the session was stopped."
       },
       "technical_error": {
         "patient": "Your measurement session stopped due to a connection issue.",
@@ -1717,13 +1830,13 @@
     },
     "endReasons": {
       "completed": "Session completed normally",
-      "stopped_by_therapist": "Stopped by the therapist",
+      "stopped_by_therapist": "Stopped by the specialist",
       "stopped_by_patient": "Stopped by the patient",
       "pain": "Stopped due to reported pain",
       "disconnected": "Session disconnected",
       "timeout": "Session timed out",
       "technical_error": "A technical error occurred",
-      "cancelled_by_doctor": "Cancelled by the consultant",
+      "cancelled_by_doctor": "Cancelled by the specialist",
       "unknown": "The session did not complete"
     },
     "errors": {
@@ -1761,7 +1874,7 @@
   },
   "chat": {
     "header": {
-      "therapist": "Therapist",
+      "therapist": "Specialist",
       "center": "Rehabilitation Center",
       "patient": "Patient"
     },
@@ -1794,7 +1907,7 @@
       "fetchFailedError": "Failed to fetch messages",
       "markReadFailedError": "Failed to update message status",
       "markReadStatusFailedError": "Failed to update read status",
-      "newMessageToast": "📩 New message"
+      "newMessageToast": "New message"
     },
     "input": {
       "placeholder": "Type a message..."
@@ -1820,7 +1933,7 @@
       "tabs": {
         "overview": "Overview",
         "revenue": "Revenue",
-        "escrow": "Escrow",
+        "escrow": "Held funds",
         "transactions": "Transactions",
         "withdrawals": "Withdrawals"
       },
@@ -1856,31 +1969,31 @@
         "colConsultation": "Consultation",
         "colPrice": "Price",
         "colCommission": "Commission",
-        "colConsultantEarning": "Consultant Earning",
+        "colConsultantEarning": "Specialist Earning",
         "colDate": "Date",
         "emptyTitle": "No Revenue Records",
         "emptyDescription": "No revenue records match the selected filter.",
         "loadError": "Failed to load revenue records. Please try again."
       },
       "escrow": {
-        "title": "Escrow / Held Funds",
+        "title": "Held funds",
         "statusAll": "All",
         "statusHeld": "Held",
         "statusReview": "In Review",
         "summaryHeld": "Total Held",
         "summaryReview": "In Review",
-        "summaryTotal": "Total Escrow",
+        "summaryTotal": "Total held funds",
         "entries": "entries",
         "colId": "Consultation #",
         "colType": "Type",
         "colPatient": "Patient",
-        "colConsultant": "Consultant",
+        "colConsultant": "Specialist",
         "colAmount": "Amount",
         "colStatus": "Status",
         "colDate": "Paid On",
-        "emptyTitle": "No Escrow Records",
+        "emptyTitle": "No held funds",
         "emptyDescription": "No held funds match the selected filter.",
-        "loadError": "Failed to load escrow records. Please try again."
+        "loadError": "Failed to load held funds. Please try again."
       },
       "transactions": {
         "title": "Platform Transactions",
@@ -1898,7 +2011,7 @@
         "emptyDescription": "No transactions match the selected filter.",
         "loadError": "Failed to load transactions. Please try again.",
         "source": {
-          "course": "Course",
+          "course": "Program",
           "consultation": "Consultation",
           "withdrawal": "Withdrawal",
           "other": "Other"
@@ -2012,7 +2125,7 @@
       "table": {
         "colId": "Dispute #",
         "colPatient": "Patient",
-        "colConsultant": "Consultant",
+        "colConsultant": "Specialist",
         "colConsultationType": "Consultation Type",
         "colFinancialStatus": "Financial Status",
         "colStatus": "Status",
@@ -2032,7 +2145,7 @@
         "backButton": "Back",
         "sectionDispute": "Dispute Information",
         "sectionPatient": "Patient Information",
-        "sectionConsultant": "Consultant Information",
+        "sectionConsultant": "Specialist Information",
         "sectionConsultation": "Consultation Information",
         "sectionEvidence": "Service Evidence",
         "labelId": "Dispute #",
@@ -2051,7 +2164,7 @@
         "title": "Resolve Dispute",
         "description": "Select a resolution and add an admin note before confirming.",
         "resolutionLabel": "Resolution",
-        "releaseLabel": "Release funds to consultant",
+        "releaseLabel": "Release funds to specialist",
         "refundLabel": "Refund patient",
         "adminNoteLabel": "Admin Note",
         "adminNotePlaceholder": "Describe the resolution reason...",
@@ -2086,7 +2199,7 @@
       "consultation_accepted": "Consultation Request Accepted",
       "consultation_active": "Consultation Activated",
       "consultation_cancelled": "Consultation Cancelled",
-      "consultation_cancelled_by_consultant": "Consultation Cancelled by Consultant",
+      "consultation_cancelled_by_consultant": "Consultation Cancelled by Specialist",
       "consultation_cancelled_by_patient": "Consultation Cancelled by Patient",
       "consultation_completed": "Consultation Completed",
       "consultation_updated": "Consultation Updated",
@@ -2100,7 +2213,7 @@
       "measurement_completed": "Measurement Session Completed",
       "measurement_cancelled_by_doctor": "Measurement Session Cancelled",
       "measurement_stopped_by_patient": "Patient Ended Session Early",
-      "measurement_stopped_by_therapist": "Session Ended by Therapist",
+      "measurement_stopped_by_therapist": "Session Ended by Specialist",
       "measurement_pain": "Patient Reported Pain",
       "measurement_technical_error": "Measurement Session Interrupted",
       "measurement_expired": "Measurement Session Timed Out",
@@ -2285,9 +2398,9 @@
   },
   "measurementSessionResult": {
     "title": "Measurement session completed",
-    "titleCancelledByDoctor": "The session was cancelled by the doctor",
+    "titleCancelledByDoctor": "The session was cancelled by the specialist",
     "titleStoppedByPatient": "The patient ended the session early",
-    "titleStoppedByTherapist": "The therapist ended the session before it was complete",
+    "titleStoppedByTherapist": "The specialist ended the session before it was complete",
     "titlePain": "The patient stopped the session due to reported pain",
     "titleTechnicalError": "The session stopped due to a connection issue",
     "titleUnknown": "The session has ended",
@@ -2670,6 +2783,153 @@
         "medical_supplies_delivery": "Medical supplies delivery"
       },
       "footer": "Price is set and paid directly to the provider · For emergencies call 9999"
+    }
+  },
+  "apiErrors": {
+    "genericTitle": "Something went wrong",
+    "loadFailed": "Failed to load data",
+    "retry": "Try again"
+  },
+  "consultantPrograms": {
+    "toast": {
+      "addVideoSuccess": "Video added successfully",
+      "addVideoError": "Couldn't upload the video. Please try again.",
+      "archiveSuccess": "Program archived",
+      "archiveError": "Couldn't archive the program. Please try again.",
+      "createSuccess": "Created successfully",
+      "createError": "Couldn't create the program. Please try again.",
+      "deleteSuccess": "Program deleted successfully",
+      "deleteError": "Couldn't delete the program. Please try again.",
+      "deleteVideoSuccess": "Video deleted successfully",
+      "deleteVideoError": "Couldn't delete the video. Please try again.",
+      "submitSuccess": "Program submitted for review",
+      "updateSuccess": "Updated successfully",
+      "updateError": "Couldn't update the program. Please try again.",
+      "updateVideoSuccess": "Video updated successfully",
+      "updateVideoError": "Couldn't update the video. Please try again."
+    },
+    "validation": {
+      "file": "File is required",
+      "programTitleAr": "Program title (Arabic) is required",
+      "programTitleEn": "Program title (English) is required",
+      "programDescAr": "Program description (Arabic) is required",
+      "programDescEn": "Program description (English) is required",
+      "learnAr": "\"What you will learn\" (Arabic) is required",
+      "learnEn": "\"What you will learn\" (English) is required",
+      "price": "Price must be 0 or more",
+      "videoTitleAr": "Video title (Arabic) is required",
+      "videoTitleEn": "Video title (English) is required",
+      "order": "Order must start from 1",
+      "durationRequired": "Video duration in minutes is required",
+      "durationInt": "Video duration must be a whole number",
+      "durationMin": "Video duration must be at least one minute",
+      "videosMin": "At least one video is required"
+    },
+    "card": {
+      "summary": "{price} OMR · {videos, plural, one {# video} other {# videos}} · {sales, plural, one {# sale} other {# sales}}",
+      "commission": "Platform commission {rate}% · Your net earning {earning} OMR per sale",
+      "edit": "Edit",
+      "viewDetails": "View details",
+      "addVideo": "Add video",
+      "submitting": "Submitting...",
+      "submitForReview": "Submit for review",
+      "archiving": "Archiving...",
+      "archive": "Archive",
+      "delete": "Delete"
+    },
+    "sales": {
+      "title": "Sales",
+      "count": "Sales count",
+      "totalEarnings": "Total earnings",
+      "empty": "No sales for this program yet.",
+      "month": "Month",
+      "earnings": "Earnings"
+    },
+    "video": {
+      "defaultTitle": "Video #{n}",
+      "titleAr": "Video title (Arabic)",
+      "titleEn": "Video title (English)",
+      "titlePlaceholder": "Enter the video title",
+      "order": "Video order",
+      "duration": "Video duration (minutes)",
+      "upload": "Upload video",
+      "isIntro": "This video is the program intro",
+      "introShort": "Program intro video",
+      "isFree": "Free video",
+      "orderLabel": "Order: #{order}",
+      "durationLabel": "Duration:",
+      "minutes": "{count, plural, one {# minute} other {# minutes}}",
+      "unspecified": "Not specified",
+      "statusPending": "Under review",
+      "statusApproved": "Approved",
+      "statusRejected": "Rejected",
+      "cannotEdit": "The video can't be edited while awaiting review or after approval",
+      "cancelEdit": "Cancel editing",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "saveEdit": "Save changes",
+      "deleteTitle": "Delete video",
+      "deleteDesc": "Are you sure you want to delete this video? This action cannot be undone."
+    },
+    "create": {
+      "title": "Create a new program",
+      "subtitle": "Add the basic program details, then add its videos after creation.",
+      "back": "Back"
+    },
+    "edit": {
+      "title": "Update program",
+      "subtitle": "Update the program details, manage its videos, and track its sales.",
+      "back": "Back",
+      "backToList": "Back to my programs",
+      "loadError": "Couldn't load the program data."
+    },
+    "form": {
+      "readOnly": "This program can't be edited in its current status — shown read-only.",
+      "cannotSubmitWhileUploading": "Can't submit while a video is uploading",
+      "submitting": "Submitting...",
+      "submitForReview": "Submit for review",
+      "info": "Program information",
+      "titleAr": "Program title (Arabic)",
+      "titleArPlaceholder": "Enter the program title",
+      "titleEn": "Program title (English)",
+      "price": "Price (OMR)",
+      "descAr": "Program description (Arabic)",
+      "descArPlaceholder": "Write the program description",
+      "descEn": "Program description (English)",
+      "learnAr": "What learners will learn (Arabic)",
+      "learnArPlaceholder": "Write the learning outcomes",
+      "learnEn": "What learners will learn (English)",
+      "cover": "Cover image",
+      "creating": "Creating...",
+      "updating": "Updating...",
+      "create": "Create program",
+      "update": "Update program",
+      "manageVideos": "Manage program videos",
+      "videosAdded": "{count, plural, one {# video added so far.} other {# videos added so far.}}",
+      "noVideos": "This program has no videos yet.",
+      "addNew": "Add a new video",
+      "addNewHint": "Click to open the form for adding a new video.",
+      "closeForm": "Close form",
+      "addVideo": "Add video",
+      "uploading": "Uploading video... {percent}%",
+      "cancel": "Cancel",
+      "uploadingShort": "Uploading...",
+      "saveVideo": "Save video"
+    },
+    "list": {
+      "title": "My programs",
+      "subtitle": "Manage your training programs: creation, videos, submission for review, and sales.",
+      "newCourse": "New program",
+      "empty": "No programs yet. Start by creating your first program.",
+      "deleteTitle": "Delete program",
+      "deleteDesc": "Are you sure you want to delete this program? This action cannot be undone.",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "archiveTitle": "Archive program",
+      "archiveDesc": "After archiving, the program will stop being sold to new customers, but existing buyers will keep full access to its content.",
+      "archive": "Archive"
     }
   }
 }

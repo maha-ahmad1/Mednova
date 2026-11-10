@@ -7,16 +7,20 @@ import {
   OctagonXIcon,
   TriangleAlertIcon,
 } from "lucide-react"
+import { useParams } from "next/navigation"
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
+  // The Toaster sits outside the [locale] layout (which owns `dir`), so derive it from the route.
+  const { locale } = useParams<{ locale?: string }>()
 
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
+      dir={locale === "en" ? "ltr" : "rtl"}
       icons={{
         success: <CircleCheckIcon className="size-4" />,
         info: <InfoIcon className="size-4" />,

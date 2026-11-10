@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import axios from "axios";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 import * as Sentry from "@sentry/nextjs";
 import { Loader2, Check, Heart, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,10 +29,17 @@ const CHECKOUT_ERROR = "checkout_url_not_allowed";
 
 export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
   const t = useTranslations("programs");
+  const td = useTranslations("programs.detail");
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 
   const [agreedNoRefund, setAgreedNoRefund] = useState(false);
+  const {
+    session,
+    isLoading: isAuthLoading,
+    isAuthenticated,
+    redirectToLogin,
+  } = useRequireAuth();
 
   const { mutateAsync: purchaseProgram, isPending: isPurchasing } = useProgramPurchase();
   const { mutateAsync: createPaymentLink, isPending: isCreatingLink } = useProgramPaymentLink();
@@ -113,6 +122,16 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
     // second click landing before the button visually disables.
     if (isProcessing || !agreedNoRefund) return;
 
+    if (isAuthLoading) return;
+    if (!isAuthenticated) {
+      redirectToLogin();
+      return;
+    }
+    if ((session?.role ?? session?.user?.type_account) !== "patient") {
+      toast.error(tp("patientsOnly"));
+      return;
+    }
+
     try {
       const purchase = await purchaseProgram(program.id);
 
@@ -137,6 +156,10 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
 
       window.location.href = link.checkout_url;
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        redirectToLogin();
+        return;
+      }
       Sentry.captureException(error);
       const isCheckoutError =
         error instanceof Error && error.message === CHECKOUT_ERROR;
@@ -182,7 +205,7 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
             />
           </div>
 
-          <p className="text-sm text-gray-600">سعر البرنامج الكامل</p>
+          <p className="text-sm text-gray-600">{td("fullPrice")}</p>
         </div>
         )}
 
@@ -193,7 +216,7 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
               onCheckedChange={(checked) => setAgreedNoRefund(Boolean(checked))}
               className="mt-0.5 cursor-pointer"
             />
-            <span>الكورس غير قابل للاسترداد، وأوافق على الشراء</span>
+            <span>{td("noRefund")}</span>
           </label>
         )}
 
@@ -205,16 +228,16 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
           {isProcessing ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              جاري التنفيذ...
+              {td("processing")}
             </>
           ) : isEnrolled ? (
             t("continueWatching")
           ) : (
-            "اشترك الآن"
+            td("subscribeNow")
           )}
         </Button>
 
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <Button
             variant="outline"
             className="flex-1 rounded-xl bg-transparent"
@@ -227,18 +250,18 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
           >
             <Share2 className="w-5 h-5" />
           </Button>
-        </div>
+        </div> */}
       </div>
 
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">ما ستحصل عليه</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-4">{td("whatYouGet")}</h3>
         <ul className="space-y-3">
           <li className="flex items-start gap-3">
             <div className="w-5 h-5 rounded-full bg-[#32A88D]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
               <Check className="w-3 h-3 text-[#32A88D]" />
             </div>
             <span className="text-gray-700">
-              الوصول الكامل لجميع محتويات البرنامج
+              {td("fullAccess")}
             </span>
           </li>
           <li className="flex items-start gap-3">
@@ -246,20 +269,20 @@ export function ProgramEnrollment({ program }: ProgramEnrollmentProps) {
               <Check className="w-3 h-3 text-[#32A88D]" />
             </div>
             <span className="text-gray-700">
-              {program.videos_count} فيديو تعليمي
+              {td("videosIncluded", { count: program.videos_count })}
             </span>
           </li>
           <li className="flex items-start gap-3">
             <div className="w-5 h-5 rounded-full bg-[#32A88D]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
               <Check className="w-3 h-3 text-[#32A88D]" />
             </div>
-            <span className="text-gray-700">وصول مدى الحياة</span>
+            <span className="text-gray-700">{td("lifetimeAccess")}</span>
           </li>
           <li className="flex items-start gap-3">
             <div className="w-5 h-5 rounded-full bg-[#32A88D]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
               <Check className="w-3 h-3 text-[#32A88D]" />
             </div>
-            <span className="text-gray-700">شهادة إتمام البرنامج</span>
+            <span className="text-gray-700">{td("certificate")}</span>
           </li>
         </ul>
       </div>

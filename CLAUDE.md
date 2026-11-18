@@ -32,7 +32,7 @@ Mednova: bilingual (Arabic default/RTL, English/LTR) healthcare platform. Patien
 
 - New API files: `src/features/<feature>/api/<name>.api.ts`. Files without JSX use `.ts`, not `.tsx`.
 - Pass the `AxiosInstance` from `useAxiosInstance()` into API functions. The only exception is `src/features/auth/api/authApi.tsx`, which has its own instance.
-- Envelope: `{ success: boolean, message?: string, data: T }`.
+- Envelope: `{ success, status, message?, data, pagination? }`. `pagination` is outside `data`, on list endpoints only. `status` is a text field: never branch on it, rely on the HTTP status code.
 - Query params go in `{ params }`. `FormData` bodies need `{ headers: { "Content-Type": "multipart/form-data" } }`.
 - Mutations handle errors with `axios.isAxiosError()` and `handleBackendFormError` (`src/lib/backendFormErrors.ts`) for 422 field errors. General errors go to a Sonner toast.
 - Real-time: Echo client in `src/lib/echo.ts`, event subscribers in `src/services/echo/`, hook `src/hooks/useEchoNotifications.ts`.
@@ -41,6 +41,8 @@ Mednova: bilingual (Arabic default/RTL, English/LTR) healthcare platform. Patien
 
 - **Base URL has no `/api`.** `axiosInstance` uses `NEXT_PUBLIC_API_URL` as-is, so every feature path starts with `/api/...`. `authApi.tsx` appends `/api` itself, so do not prefix its paths.
 - **`useFetcher` vs raw axios.** `useFetcher` returns the inner `response.data.data` (as `T | null`). Calling an API function directly returns the full envelope. Never mix the two.
+- **Pagination.** `pagination` sits next to `data` in the envelope, so `useFetcher` drops it. For paginated lists do not use `useFetcher`: the API function returns the full envelope (`res.data`) and a `useQuery` hook reads `query.data.data` and `query.data.pagination` (see `useAdminTransactions`, `usePatientMeasurementHistory`). Known mismatch: `useControlPanelPrograms` and the programs review queue read pagination from inside `data`. Confirm with backend which is right.
+- **Two 422 shapes.** Normal: `data` is `{ field: message }`, handled by `handleBackendFormError`. Course submit-for-review: `data.readiness_errors` is a list of `{ code, section, field, message, video_id }`. `handleBackendFormError` does not handle it: it flattens every value into one summary toast, and `useSubmitConsultantProgramForReview` passes the error straight to it. Known gap: nothing in `src` references `readiness_errors` yet, so it needs dedicated handling.
 - **`useFetcher` options.** `staleTime` is in minutes (default 5). It waits for an authenticated session unless `requiresAuth: false`. A `null` endpoint disables the query.
 - **`useAxiosInstance()` is a client-only hook.** The instance is memoized on `[token, locale]` and sends `Accept-Language`. On a 401 it retries once with the refreshed session, then signs out. Video-stream 401s are exempt.
 - **Navigation.** `Link`, `useRouter`, `usePathname` and `redirect` come from `@/i18n/navigation` (`localePrefix: "always"` drops the locale prefix otherwise). `useSearchParams`, `useParams` and `notFound` stay on `next/navigation`. When editing a file, switch only the first group. Never blind-replace the whole import.
@@ -49,16 +51,17 @@ Mednova: bilingual (Arabic default/RTL, English/LTR) healthcare platform. Patien
 - **RTL.** New code uses logical utilities only: `ms-`/`me-`/`ps-`/`pe-`/`start-`/`end-`/`text-start`/`text-end`. Use `rtl:` variants only when no logical equivalent exists (e.g. flipping directional icons). Do not refactor existing physical classes (`ml-`, `mr-`, `left-`, `right-`) unless you are already editing that line.
 - **Translations.** Every new UI string goes in both `src/messages/en.json` and `src/messages/ar.json`. No hardcoded text.
 - **Checkout redirects.** Every external checkout redirect must go through `isAllowedCheckoutUrl` (`src/features/programs/utils/checkoutUrl.ts`). Known gap: `src/features/payment/pages/PaymentPageView.tsx` redirects without it.
-- **`reviewee_type`.** The API currently returns a class name (e.g. `App\Models\Customer`). The backend is changing it to `customer` | `program`. Do not branch on the raw current value. Target `customer` | `program`. `platform` is NOT a valid `reviewee_type`; the backend rejects it. (`platform` is valid only for `creator.type` on courses.)
+- **`reviewee_type`.** Values are `customer` | `program` only. `platform` is NOT a valid `reviewee_type`; the backend rejects it. (`platform` is valid only for `creator.type` on courses.)
 - **`consultant` and `specialist` are not roles.** "consultant" only appears in field and route names (`consultant_type`, `consultant/programs`). Never use either as a role value.
 - **Images.** Remote image hosts are allowlisted in `next.config.ts`. A new host needs a config change (ask first, see Workflow).
 
 ## Glossary
 
-- **Account types** (`type_account`): `patient`, `therapist`, `rehabilitation_center`. The API always returns `rehabilitation_center`. `center` appears only in the search filter `?type=center`, and the backend also accepts `rehabilitation_center` there.
+- **Account types** (`type_account`): `patient`, `therapist`, `rehabilitation_center`. The API always returns `rehabilitation_center`. `center` appears only in the search filter `?type=center`. The backend currently accepts only `center` there; `rehabilitation_center` will be added later.
 - **Service provider**: `therapist` + `rehabilitation_center`.
 - **Admin**: not a backend `type_account` value. `src/middleware.ts` treats a token as admin when `token.role`, `token.user.type_account` or `token.user.role` is `"admin"`. Control-panel login sets `type_account: "admin"` in `src/lib/auth.ts`. Admins skip the profile and approval flow and use `/control-panel/*`.
 - **`approval_status`**: `pending` | `approved` | `rejected`. Incomplete profiles go to `/profile/create`, pending to `/profile/pending`, rejected to `/profile/rejected`. Routes that need an approved account are in `src/lib/routeConfig.ts`.
+- **`account_status`**: separate from `approval_status`. Backend values: `active` | `suspended`. The code disagrees: the control-panel users filter sends `active` / `inactive` (`src/features/control-panel/users/utils/users.ts`), the type is `"active" | "inactive" | string`, and `suspended` appears nowhere. To confirm with backend before relying on either.
 - **Programs** (courses): service providers manage them under `/profile/programs`. Patients enrol under `/profile/my-programs`. `creator.type` can be `platform`, meaning the admin/platform created it.
 - **Kawader**: home-care requests. Patients submit them (P1–P5), admins handle them (A1–A3), with realtime notifications. `/profile/kawader` is patients only.
 

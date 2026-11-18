@@ -68,11 +68,15 @@ export function ProgramDetailView({
               coverImage={program.cover_image}
               videos={approvedVideos}
               initialVideoId={initialVideoId}
+              isEnrolled={program.is_enrolled === true}
+              progressPercent={program.progress_percent}
+              lastVideoId={program.last_video_id}
             />
 
             {/* Reviews Section */}
             <CourseReviews
               programId={program.id}
+              programTitle={program.title}
               rating={program.ratings_avg_rating ?? 0}
               reviewCount={program.ratings_count ?? 0}
               isEnrolled={program.is_enrolled === true}

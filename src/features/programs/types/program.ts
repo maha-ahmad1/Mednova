@@ -50,11 +50,23 @@ export interface ProgramFilters {
   sortBy: string;
 }
 
+// Per-user watch progress returned with GET /api/programs/{id} (enrolled users only).
+// The backend marks a video completed once 90% of it has been watched.
+export interface ProgramVideoProgress {
+  position_seconds: number;
+  is_completed?: boolean;
+  /** Alternate spelling — kept until the field name is confirmed on staging. */
+  completed?: boolean;
+}
+
 export interface ProgramVideo {
   id: number;
   title: string;
   description?: string;
+  /** Computed by the backend from the uploaded file. */
+  duration_seconds?: number | null;
   duration_minute: number | null;
+  progress?: ProgramVideoProgress | null;
   order: number;
   is_program_intro: boolean;
   is_free: boolean;
@@ -72,6 +84,10 @@ export interface ProgramVideo {
 
 export interface ProgramDetail extends Program {
   videos: ProgramVideo[];
+  /** Overall watch progress for the current user (0–100). */
+  progress_percent?: number | null;
+  /** The video the user watched last — target of "continue where you left off". */
+  last_video_id?: number | null;
 }
 
 export interface ProgramDetailResponse {

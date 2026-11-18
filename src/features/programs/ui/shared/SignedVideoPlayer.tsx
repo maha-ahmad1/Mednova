@@ -9,6 +9,7 @@ import {
   useVideoStream,
   type VideoStreamVariant,
 } from "@/features/programs/hooks/useVideoStream";
+import type { VideoProgressHandlers } from "@/features/programs/hooks/useVideoProgressTracker";
 
 interface SignedVideoPlayerProps {
   programId: number;
@@ -19,6 +20,15 @@ interface SignedVideoPlayerProps {
   className?: string;
   /** "admin" uses the control-panel stream route and admin-specific error messages. */
   variant?: VideoStreamVariant;
+  /** Second to start from (saved watch position). Defaults to the beginning. */
+  startAtSeconds?: number;
+  /**
+   * Bump to start playback from outside (e.g. "continue where you left off").
+   * Starts from `startAtSeconds`; seeks in place if this video is already loaded.
+   */
+  playRequest?: number;
+  /** Watch-progress callbacks (patient side only). */
+  progress?: VideoProgressHandlers;
 }
 
 // Max consecutive link refreshes after a <video> error — stops an infinite loop
@@ -38,6 +48,9 @@ export function SignedVideoPlayer({
   poster,
   className,
   variant = "patient",
+  startAtSeconds = 0,
+  playRequest = 0,
+  progress,
 }: SignedVideoPlayerProps) {
   const t = useTranslations("programs.player");
   const { mutateAsync: fetchStream } = useVideoStream(variant);
@@ -48,6 +61,7 @@ export function SignedVideoPlayer({
   const refreshAttemptsRef = useRef(0);
   // Incremented on video change/unmount so a late response for an old video is ignored.
   const requestIdRef = useRef(0);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     requestIdRef.current += 1;
@@ -83,6 +97,22 @@ export function SignedVideoPlayer({
       if (requestId === requestIdRef.current) setIsLoading(false);
     }
   };
+
+  // External "play from the saved position" request. Declared after the reset effect above,
+  // so when the video and the request change together the reset runs first.
+  useEffect(() => {
+    if (!playRequest || isLocked) return;
+    const element = videoRef.current;
+    if (element && streamUrl) {
+      element.currentTime = startAtSeconds;
+      element.play().catch(() => {});
+      return;
+    }
+    refreshAttemptsRef.current = 0;
+    loadStream(startAtSeconds);
+    // Only a new request should trigger this; startAt/streamUrl are read at that moment.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playRequest]);
 
   if (isLocked) {
     return null;
@@ -150,7 +180,7 @@ export function SignedVideoPlayer({
             className="cursor-pointer rounded-full bg-black/50 p-2 text-white transition hover:bg-black/70"
             onClick={() => {
               refreshAttemptsRef.current = 0;
-              loadStream(0);
+              loadStream(startAtSeconds);
             }}
           >
             <PlayCircle className="h-14 w-14" />
@@ -162,6 +192,7 @@ export function SignedVideoPlayer({
 
   return (
     <video
+      ref={videoRef}
       key={streamUrl}
       src={streamUrl}
       controls
@@ -170,7 +201,11 @@ export function SignedVideoPlayer({
       className={className}
       onTimeUpdate={(event) => {
         savedTimeRef.current = event.currentTarget.currentTime;
+        progress?.onTimeUpdate(event.currentTarget.currentTime, event.currentTarget.duration);
       }}
+      onPlay={() => progress?.onPlay()}
+      onPause={(event) => progress?.onPause(event.currentTarget.currentTime)}
+      onEnded={(event) => progress?.onEnded(event.currentTarget.currentTime)}
       onLoadedMetadata={(event) => {
         if (savedTimeRef.current > 0) {
           event.currentTarget.currentTime = savedTimeRef.current;

@@ -1,5 +1,6 @@
 import type { AxiosError } from "axios"
 import { toast } from "sonner"
+import { apiErrorMessage } from "@/lib/apiErrorMessages"
 import { classifyApiError } from "@/lib/classifyApiError"
 
 interface BackendErrorResponse {
@@ -103,7 +104,7 @@ export const extractValidationErrors = (
   if (!errorData?.data) {
     return {
       fieldErrors,
-      summary: errorData?.message || "يرجى مراجعة الحقول المدخلة.",
+      summary: errorData?.message || apiErrorMessage("reviewFields"),
     }
   }
 
@@ -112,8 +113,8 @@ export const extractValidationErrors = (
   })
 
   const summary = summaryParts.length
-    ? `تحقق من البيانات التالية: ${summaryParts.join(" — ")}`
-    : errorData.message || "يرجى مراجعة الحقول المدخلة."
+    ? `${apiErrorMessage("validationPrefix")} ${summaryParts.join(" — ")}`
+    : errorData.message || apiErrorMessage("reviewFields")
 
   return { fieldErrors, summary }
 }
@@ -129,6 +130,13 @@ export const handleBackendFormError = (
     const { fieldErrors, summary } = extractValidationErrors(errorData)
     toast.error(summary)
     onValidationError?.(fieldErrors)
+    return
+  }
+
+  // The persistent offline toast already covers this; don't stack another one.
+  const isNetworkError =
+    error.code === "ERR_NETWORK" || error.message === "Network Error"
+  if (isNetworkError && typeof navigator !== "undefined" && !navigator.onLine) {
     return
   }
 

@@ -15,7 +15,7 @@
   },
   "accountStatus": {
     "approvedTitle": "تمت الموافقة على حسابك",
-    "approvedDescription": "تمت الموافقة على حسابك. أصبح لديك الآن إمكانية الوصول الكامل لجميع ميزات مدنوفا.",
+    "approvedDescription": "تمت الموافقة على حسابك. أصبح لديك الآن إمكانية الوصول الكامل لجميع ميزات مدنوڤا.",
     "approvedAction": "الانتقال إلى الملف الشخصي",
     "rejectedTitle": "لم تتم الموافقة على مراجعة الحساب",
     "rejectedDescription": "نأسف، لم تتم الموافقة على حسابك. يرجى مراجعة التفاصيل أو التواصل مع الدعم.",
@@ -24,14 +24,14 @@
   "accountPending": {
     "title": "حسابك قيد المراجعة",
     "restrictedAccess": "حسابك قيد المراجعة حاليًا. ستتمكن من الوصول إلى هذه الميزة بعد اعتماد حسابك.",
-    "description": "نعمل حاليًا على مراجعة معلومات حسابك للتأكد من دقتها واكتمالها. تستغرق هذه العملية عادةً من 24 إلى 48 ساعة.",
+    "description": "نعمل حاليًا على مراجعة معلومات حسابك للتأكد من دقتها واكتمالها. تتم هذه العملية عادةً خلال 1 إلى 2 يوم عمل.",
     "whyReviewTitle": "لماذا نراجع الحسابات؟",
-    "whyReviewDescription": "نراجع جميع الحسابات الجديدة لضمان جودة الخدمة وحماية بيانات المستخدمين.",
+    "whyReviewDescription": "نراجع جميع الحسابات الجديدة للحفاظ على جودة الخدمة وحماية بيانات المستخدمين.",
     "notification": "سنرسل لك إشعارًا فور اكتمال المراجعة، حتى لا تحتاج لمتابعة الحالة بنفسك.",
     "goToSpecialists": "تصفح المتخصصين",
     "backToHome": "العودة للرئيسية",
     "thanks": "شكرًا لصبرك، نحن هنا لمساعدتك في أي وقت.",
-    "reviewDuration": "مدة المراجعة: 1-2 يوم",
+    "reviewDuration": "مدة المراجعة: عادةً خلال 1 إلى 2 يوم عمل",
     "qualityCheck": "مراجعة الجودة"
   },
   "sidebar": {
@@ -41,12 +41,12 @@
     "appointments": "المواعيد",
     "patients": "المرضى",
     "financialWallet": "المحفظة المالية",
-    "myPrograms": "كورساتي",
-    "myEnrolledPrograms": "دوراتي",
+    "myPrograms": "برامجي",
+    "myEnrolledPrograms": "برامجي",
     "kawader": "الرعاية المنزلية",
     "reports": "التقارير",
     "help": "المساعدة",
-    "navigating": "جارٍ الانتقال...",
+    "navigating": "جاري الانتقال...",
     "userNamePlaceholder": "اسم المستخدم"
   },
   "medicalSpecialties": {
@@ -61,7 +61,7 @@
   },
   "profile": {
     "patientInfo": {
-      "loading": "جارٍ تحميل بيانات المريض...",
+      "loading": "جاري تحميل بيانات المريض...",
       "loadError": "حدث خطأ أثناء جلب البيانات: {error}",
       "validationError": "يرجى تصحيح الأخطاء قبل الحفظ",
       "saveSuccess": "تم حفظ التعديلات بنجاح",
@@ -114,7 +114,7 @@
       }
     },
     "therapistInfo": {
-      "loading": "جارٍ التحميل...",
+      "loading": "جاري التحميل...",
       "loadError": "حدث خطأ أثناء جلب البيانات: {error}",
       "saveButton": "حفظ التغييرات",
       "cancelButton": "إلغاء",
@@ -225,7 +225,7 @@
         "currencyPlaceholder": "اختر العملة"
       },
       "bioCard": {
-        "title": "نبذة عن المعالج",
+        "title": "نبذة عن الأخصائي",
         "editButton": "تعديل النبذة",
         "editTitle": "تعديل النبذة الشخصية",
         "validationError": "يرجى تصحيح الأخطاء قبل الحفظ",
@@ -248,7 +248,7 @@
       }
     },
     "centerInfo": {
-      "loading": "جارٍ التحميل...",
+      "loading": "جاري التحميل...",
       "loadError": "حدث خطأ أثناء جلب البيانات: {error}",
       "saveButton": "حفظ التغييرات",
       "cancelButton": "إلغاء",
@@ -415,15 +415,15 @@
     "logout": "تسجيل الخروج",
     "login": "تسجيل الدخول",
     "home": "الرئيسية",
-    "specialists": "الإستشارات",
+    "specialists": "الاستشارات",
     "programs": "برامج التأهيل",
     "notification": "الإشعارات",
     "devices": "الأجهزة",
     "smartGlove": "القفاز الذكي",
     "smartDevicesCatalog": "كتالوج الأجهزة الذكية",
     "language": "اللغة",
-    "en": "🇺🇸 الإنجليزية",
-    "ar": "🇸🇆 العربية",
+    "en": "English",
+    "ar": "العربية",
     "dashboard": "لوحة التحكم",
     "appointments": "المواعيد",
     "patients": "المرضى",
@@ -431,11 +431,11 @@
     "chat": "المحادثات"
   },
   "specialists": {
-    "title": "الإستشارات و المراكز",
+    "title": "الاستشارات",
     "filtersTitle": "الفلاتر",
     "type": "النوع",
     "all": "الكل",
-    "therapists": "المختصون",
+    "therapists": "الأخصائيون",
     "centers": "المراكز التأهيلية",
     "specialties": "التخصصات",
     "searchLabel": "البحث عن أخصائيين",
@@ -460,7 +460,7 @@
     },
     "consultationDialog": {
       "requestConsultation": "طلب استشارة",
-      "navigating": "جارٍ الانتقال...",
+      "navigating": "جاري الانتقال...",
       "chooseTypeTitle": "اختر نوع الاستشارة",
       "withProvider": "مع {name}",
       "chatTitle": "استشارة نصية",
@@ -472,11 +472,11 @@
     },
     "publicProfile": {
       "errorTitle": "حدث خطأ",
-      "notFoundDesc": "لم يتم العثور على المختص",
+      "notFoundDesc": "لم يتم العثور على الأخصائي",
       "breadcrumb": "الملف الشخصي",
       "reviewsTab": "التقييمات",
       "bioTab": "السيرة الذاتية",
-      "aboutTitle": "نبذة عن المختص",
+      "aboutTitle": "نبذة عن الأخصائي",
       "noInfoAvailable": "لا توجد معلومات متاحة حالياً.",
       "showLess": "عرض أقل",
       "showMore": "عرض المزيد",
@@ -484,6 +484,16 @@
       "reviewsCountSuffix": "تقييم",
       "writeYourReview": "اكتب تقييمك",
       "writeReview": "اكتب تقييم",
+      "reviews": {
+        "loginPrompt": "سجّل دخولك لكتابة تقييم.",
+        "loginLink": "تسجيل الدخول",
+        "yourReview": "تقييمك",
+        "noReviews": "لا توجد تقييمات بعد",
+        "listTitle": "التقييمات ({count})",
+        "prevPage": "التقييمات السابقة",
+        "nextPage": "التقييمات التالية",
+        "pageN": "الصفحة {page}"
+      },
       "chooseSessionTime": "اختر موعد الجلسة",
       "specialtiesLabel": "التخصصات:",
       "experienceYearsSuffix": "سنوات خبرة",
@@ -518,7 +528,7 @@
     },
     "reviewDialog": {
       "close": "إغلاق",
-      "thanksTitle": "شكراً لك!",
+      "thanksTitle": "شكراً لك",
       "thanksDesc": "تم إرسال تقييمك بنجاح",
       "title": "اكتب تقييمك",
       "subtitle": "شاركنا تجربتك مع {name}",
@@ -532,7 +542,7 @@
       "submitButton": "إرسال التقييم",
       "closingNote": "سيتم إغلاق النافذة تلقائياً...",
       "thanksNote": "شكراً لمشاركتك رأيك معنا. تقييمك يساعدنا في تحسين خدماتنا.",
-      "submitSuccessToast": "تم إرسال تقييمك بنجاح!",
+      "submitSuccessToast": "تم إرسال تقييمك بنجاح",
       "submitErrorToast": "حدث خطأ أثناء إرسال التقييم"
     },
     "reviewStars": {
@@ -543,7 +553,7 @@
     "headerBadge": "حجز المواعيد",
     "headerTitle": "حجز موعد استشارة بالفيديو",
     "headerSubtitle": "اختر التاريخ والوقت المناسبين لحجز موعد استشارتك مع {type}",
-    "specialistWord": "المختص",
+    "specialistWord": "الأخصائي",
     "centerWord": "المركز",
     "confirmBooking": "تأكيد الحجز",
     "bookingInProgress": "جاري الحجز...",
@@ -557,9 +567,9 @@
       "appointmentTypeLabel": "نوع الموعد",
       "videoConsultation": "استشارة فيديو",
       "backButton": "الرجوع",
-      "specialistAlt": "المختص",
+      "specialistAlt": "الأخصائي",
       "centerAlt": "المركز",
-      "specialtyFallback": "تخصص المختص",
+      "specialtyFallback": "تخصص الأخصائي",
       "addressFallback": "عنوان غير محدد"
     },
     "dateTime": {
@@ -583,7 +593,7 @@
     },
     "toasts": {
       "selectDateTime": "الرجاء اختيار التاريخ والوقت",
-      "noConsultantId": "لا يوجد معرف للمستشار",
+      "noConsultantId": "لا يوجد معرف للأخصائي",
       "bookingError": "حدث خطأ أثناء الحجز"
     }
   },
@@ -598,9 +608,9 @@
     "patients": "مرضى تعافوا",
     "satisfaction": "نسبة الرضا",
     "statSpecialistsValue": "500+",
-    "statPatientsValue": "10 ألف+",
+    "statPatientsValue": "+10 آلاف",
     "statSatisfactionValue": "98٪",
-    "imageAlt": "طبيب مختص",
+    "imageAlt": "أخصائي",
     "chat": "استشارة محادثة",
     "instant": "رد فوري",
     "video": "استشارة فيديو",
@@ -622,15 +632,25 @@
     "previous": "السابق",
     "pageNotFound": "404 - الصفحة غير موجودة",
     "pageNotFoundDesc": "الصفحة التي تبحث عنها غير موجودة.",
-    "goHome": "اذهب إلى الرئيسية"
+    "goHome": "اذهب إلى الرئيسية",
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "summary": "الصفحة {current} من {last}",
+      "summaryTotal": "الصفحة {current} من {last} • إجمالي {total}"
+    }
+  },
+  "connection": {
+    "offline": "لا يوجد اتصال بالإنترنت",
+    "offlineHint": "سنحاول إعادة الاتصال تلقائيًا",
+    "online": "تمت استعادة الاتصال",
+    "onlineHint": "يمكنك متابعة ما كنت تفعله"
   },
   "programs": {
     "all": "الكل",
     "sort": "ترتيب",
     "searchLabel": "البحث عن برامج",
     "searchPlaceholder": "اكتب اسم البرنامج...",
-    "activeFilters": "الفلاتر النشطة",
-    "clearAllFilters": "مسح الكل",
     "showingResults": "عرض {count} نتيجة",
     "sortedBy": "مرتب حسب {sort}",
     "noResultsTitle": "لا توجد نتائج",
@@ -645,9 +665,12 @@
     "topRequested": "الأكثر طلباً",
     "availableNow": "متاح الآن",
     "registeredUsers": "{count} مسجّل",
-    "enrolledBadge": "أنت مشترك بهذا الكورس",
+    "enrolledBadge": "مشترك",
     "continueWatching": "تابع المشاهدة",
     "hasAccessBadge": "لديك وصول",
+    "paidBadge": "مدفوع",
+    "freeBadge": "مجاني",
+    "purchased": "تم الشراء",
     "accessGrantedCta": "لديك وصول — انتقل للمحتوى",
     "sortOptions": {
       "newest": "الأحدث",
@@ -675,9 +698,10 @@
       "successDesc": "يمكنك الآن مشاهدة جميع دروس «{title}».",
       "startWatching": "ابدأ المشاهدة",
       "later": "لاحقًا",
-      "freeEnrolled": "تم تفعيل وصولك للكورس",
+      "freeEnrolled": "تم تفعيل وصولك للبرنامج",
       "checkoutError": "تعذر فتح صفحة الدفع، يرجى المحاولة لاحقًا",
       "linkError": "تعذر إنشاء رابط الدفع، حاول مرة أخرى",
+      "patientsOnly": "الاشتراك في البرامج متاح للمرضى فقط",
       "failedToast": "لم تكتمل عملية الدفع",
       "banner": {
         "unpaid": {
@@ -686,7 +710,7 @@
         },
         "paid": {
           "title": "تم الدفع بنجاح",
-          "desc": "لديك الآن وصول كامل لمحتوى الكورس."
+          "desc": "لديك الآن وصول كامل لمحتوى البرنامج."
         },
         "payment_suspended": {
           "title": "لم تكتمل عملية الدفع",
@@ -697,41 +721,121 @@
           "desc": "يرجى بدء عملية الشراء من جديد."
         },
         "timeout": {
-          "title": "ما قدرنا نتأكد من الدفع",
-          "desc": "إذا تم الخصم رح يظهر الكورس بدوراتي خلال لحظات."
+          "title": "لم يتم تأكيد الدفع بعد",
+          "desc": "إذا تم خصم المبلغ، فسيظهر البرنامج في «برامجي» خلال لحظات."
         }
       }
     },
     "player": {
       "play": "تشغيل الفيديو",
-      "authRequired": "سجّلي دخولك أو اشتركي للمشاهدة",
+      "authRequired": "يرجى تسجيل الدخول أو الاشتراك لمشاهدة المحتوى",
       "adminAuthFailed": "انتهت الجلسة أو لا تملك صلاحية معاينة هذا الفيديو",
       "notFound": "الفيديو غير موجود",
       "failed": "تعذّر تشغيل الفيديو، حاول مرة أخرى",
       "retry": "إعادة المحاولة"
-    }
+    },
+    "breadcrumb": {
+      "list": "البرامج التأهيلية"
+    },
+    "detail": {
+      "certifiedBadge": "برامج Mednova المعتمدة",
+      "creatorFallback": "مدرب البرنامج",
+      "enrolledCount": "{count, plural, one {# مسجّل} two {مسجّلان} few {# مسجّلين} many {# مسجّل} other {# مسجّل}}",
+      "videosCount": "{count, plural, one {فيديو #} two {فيديوهان} few {# فيديوهات} many {# فيديو} other {# فيديو}}",
+      "minutes": "{count, plural, one {دقيقة} two {دقيقتان} few {# دقائق} many {# دقيقة} other {# دقيقة}}",
+      "overview": "نظرة عامة",
+      "overviewVideos": "عدد الفيديوهات",
+      "overviewEnrolled": "المسجلون",
+      "overviewRating": "متوسط التقييم",
+      "whatYouLearn": "ما ستتعلمه",
+      "learn1": "بناء خطة تدريبية عملية قابلة للتطبيق مباشرة.",
+      "learn2": "تعلم المهارات الأساسية خطوة بخطوة مع أمثلة واقعية.",
+      "learn3": "تطوير القدرة على تنفيذ التمارين بأمان وفعالية.",
+      "learn4": "فهم أهم الأدوات والنماذج المستخدمة في المجال.",
+      "learn5": "متابعة التقدم من خلال محتوى مرئي وتمارين موجهة.",
+      "learn6": "اكتساب ثقة أعلى في التعامل مع الحالات المختلفة.",
+      "aboutInstructor": "عن المدرب",
+      "instructorBadge": "مدرب معتمد لدى Mednova",
+      "fullPrice": "سعر البرنامج الكامل",
+      "noRefund": "البرنامج غير قابل للاسترداد، وأوافق على الشراء",
+      "processing": "جاري التنفيذ...",
+      "subscribeNow": "اشترك الآن",
+      "whatYouGet": "ما ستحصل عليه",
+      "fullAccess": "الوصول الكامل لجميع محتويات البرنامج",
+      "videosIncluded": "{count} فيديو تعليمي",
+      "lifetimeAccess": "وصول مدى الحياة",
+      "certificate": "شهادة إتمام البرنامج",
+      "content": "محتوى البرنامج",
+      "lockedVideoTitle": "هذا الفيديو مقفل",
+      "lockedVideoDesc": "اشترك للوصول إلى جميع الدروس",
+      "lockedVideoCta": "اشترك للوصول",
+      "videoList": "قائمة الفيديوهات ({count})",
+      "introVideo": "فيديو تعريفي",
+      "freeVideo": "مجاني",
+      "lockedHint": "المحتوى مقفل • اشترك للوصول",
+      "related": "برامج ذات صلة",
+      "prevSlide": "الشريحة السابقة",
+      "nextSlide": "الشريحة التالية",
+      "reviewsTitle": "تقييمات المشاركين",
+      "averageRating": "متوسط التقييم",
+      "noReviews": "لا توجد تقييمات بعد",
+      "beFirst": "كن أول من يقيم هذا البرنامج",
+      "participantsOpinions": "آراء المشاركين ({count})",
+      "prevReviews": "التقييمات السابقة",
+      "nextReviews": "التقييمات التالية",
+      "pageN": "الصفحة {page}",
+      "reviewForm": {
+        "title": "أضف تقييمك",
+        "ratingLabel": "تقييمك",
+        "commentLabel": "تعليق (اختياري)",
+        "commentPlaceholder": "شاركنا تجربتك مع هذا البرنامج",
+        "counter": "{count}/{max}",
+        "submit": "إرسال التقييم",
+        "submitting": "جارٍ الإرسال...",
+        "submitSuccess": "تم إرسال تقييمك",
+        "submitError": "تعذر إرسال التقييم. حاول مرة أخرى.",
+        "loginPrompt": "سجّل دخولك لتقييم البرنامج.",
+        "loginLink": "تسجيل الدخول",
+        "enrollPrompt": "اشترك في البرنامج لتتمكن من تقييمه.",
+        "yourReview": "تقييمك"
+      }
+    },
+    "my": {
+      "title": "برامجي",
+      "subtitle": "البرامج التي لديك وصول فعّال إليها",
+      "errorTitle": "تعذر تحميل برامجك",
+      "errorDesc": "حدث خطأ أثناء جلب البيانات. حاول مرة أخرى.",
+      "retry": "إعادة المحاولة",
+      "emptyTitle": "لم تشترك في أي برنامج بعد",
+      "emptyDesc": "يمكنك تصفّح البرامج المتاحة والبدء برحلتك التعليمية.",
+      "browse": "تصفح البرامج",
+      "progress": "{done} من {total, plural, one {فيديو #} two {فيديوهان} few {# فيديوهات} many {# فيديو} other {# فيديو}}",
+      "continue": "متابعة المشاهدة"
+    },
+    "clearSearch": "مسح البحث",
+    "noResultsQuery": "لا توجد برامج تطابق «{query}»"
   },
   "homeTherapists": {
-    "badge": "المختصون المميزون",
-    "title": "المختصون الأكثر تقييماً",
-    "subtitle": "اختر من بين أفضل المختصين المعتمدين ذوي الخبرة الواسعة والتقييمات المرتفعة",
+    "badge": "الأخصائيون المميزون",
+    "title": "الأخصائيون الأكثر تقييماً",
+    "subtitle": "اختر من بين أفضل الأخصائيين المعتمدين ذوي الخبرة الواسعة والتقييمات المرتفعة",
     "errorTitle": "حدث خطأ",
-    "errorDesc": "تعذر تحميل بيانات المختصين"
+    "errorDesc": "تعذر تحميل بيانات الأخصائيين"
   },
   "homeServices": {
     "badge": "خدمات متكاملة",
     "titleBefore": "خدماتنا",
     "titleHighlight": "المميزة",
-    "description": "نوفّر خدمات طبية متكاملة ومبتكرة للعلاج الفيزيائي، مصمّمة لتلبية احتياجاتك الصحية بدقة، باستخدام أحدث التقنيات وأفضل المختصين.",
+    "description": "نوفّر خدمات طبية متكاملة ومبتكرة للعلاج الفيزيائي، مصمّمة لتلبية احتياجاتك الصحية بدقة، باستخدام أحدث التقنيات وأفضل الأخصائيين.",
     "iconAltSuffix": "أيقونة الخدمة",
     "cards": [
       {
         "title": "حجز ذكي",
-        "details": "احجز موعدك بخطوات سهلة وسريعة، مع نظام حجز ذكي يتيح لك اختيار المختص المناسب والوقت الأنسب لك بكل مرونة."
+        "details": "احجز موعدك بخطوات سهلة وسريعة، مع نظام حجز ذكي يتيح لك اختيار الأخصائي المناسب والوقت الأنسب لك بكل مرونة."
       },
       {
         "title": "استشارة فورية",
-        "details": "احصل على استشارة علاج طبيعي مباشرة من مختصين مؤهلين، في أي وقت تحتاج فيه للدعم أو التوجيه السريع."
+        "details": "احصل على استشارة علاج طبيعي مباشرة من أخصائيين مؤهلين، في أي وقت تحتاج فيه للدعم أو التوجيه السريع."
       },
       {
         "title": "فيديوهات تعليمية",
@@ -739,11 +843,11 @@
       },
       {
         "title": "ملف صحي",
-        "details": "ملف صحي ذكي يُسجل حالتك وتطورك أولًا بأول، مع إمكانية المتابعة المستمرة من المختصين لتحسين نتائج العلاج."
+        "details": "ملف صحي ذكي يُسجل حالتك وتطورك أولًا بأول، مع إمكانية المتابعة المستمرة من الأخصائيين لدعم خطتك العلاجية."
       },
       {
         "title": "متابعة مستمرة",
-        "details": "تواصل دائم مع المختصين لمتابعة حالتك، وضمان التقدم في العلاج بخطة مرنة ومناسبة لحاجتك الفردية."
+        "details": "تواصل دائم مع الأخصائيين لمتابعة حالتك والتقدم في العلاج بخطة مرنة ومناسبة لحاجتك الفردية."
       },
       {
         "title": "قريبون منك",
@@ -757,7 +861,7 @@
     "location": "مسقط-عمان",
     "quickLinks": "روابط سريعة",
     "linkHome": "الرئيسية",
-    "linkSpecialists": "المعالجين",
+    "linkSpecialists": "الاستشارات",
     "linkPrograms": "البرامج التأهيلية",
     "linkSmartGlove": "القفاز الذكي",
     "support": "الدعم",
@@ -817,7 +921,7 @@
     "confirmPasswordLabel": "تأكيد كلمة المرور",
     "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
     "submitButton": "إعادة التعيين",
-    "submitting": "جارٍ إعادة التعيين...",
+    "submitting": "جاري إعادة التعيين...",
     "validation": {
       "passwordMin": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
       "passwordPattern": "يجب أن تحتوي على حرف كبير وحرف صغير ورمز",
@@ -859,7 +963,7 @@
       "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
       "accountType": "نوع الحساب",
       "accountTypePatient": "مريض",
-      "accountTypeTherapist": "مختص",
+      "accountTypeTherapist": "أخصائي",
       "accountTypeCenter": "مركز تأهيلي",
       "acceptTerms": "أوافق على <terms>الشروط والأحكام</terms> و<privacy>سياسة الخصوصية</privacy>.",
       "submit": "إنشاء حساب",
@@ -904,23 +1008,23 @@
       },
       {
         "title": "نرافقك خطوة بخطوة",
-        "desc": "متابعة مستمرة حتى تمام التعافي"
+        "desc": "متابعة مستمرة طوال رحلة العلاج"
       }
     ]
   },
   "trustStrip": {
     "items": [
       {
-        "title": "مختصون موثّقون",
+        "title": "أخصائيون موثّقون",
         "desc": "أخصائيون معتمدون ومؤهلون"
       },
       {
-        "title": "سجلات صحية آمنة",
-        "desc": "بياناتك محمية وسرّية بالكامل"
+        "title": "حماية سجلاتك الصحية",
+        "desc": "نحمي بياناتك ونحافظ على سريتها"
       },
       {
         "title": "حجز سريع للاستشارة",
-        "desc": "تواصل مع مختص في دقائق"
+        "desc": "تواصل مع أخصائي في دقائق"
       },
       {
         "title": "دعم متواصل",
@@ -963,7 +1067,7 @@
     "hero": {
       "badge": "تكنولوجيا طبية متطورة",
       "title": "القفاز الطبي الذكي من",
-      "brand": "مدنوفا",
+      "brand": "مدنوڤا",
       "description": "جهاز تأهيلي متقدم مصمم لإعادة تأهيل حركة اليد بطريقة عملية، ذكية، وقابلة للتخصيص. يستهدف مرضى الجلطات الدماغية، الشلل النصفي، ضمور العضلات، كبار السن، والأطفال، سواء داخل المراكز أو من المنزل.",
       "ctaLearn": "تعرف أكثر على خدماتنا",
       "ctaVideo": "مشاهدة الفيديو",
@@ -971,7 +1075,7 @@
       "trust2": "تدريب مجاني",
       "trust3": "دعم فني 24/7"
     },
-    "imageAlt": "القفاز الذكي من مدنوفا",
+    "imageAlt": "القفاز الذكي من مدنوڤا",
     "floatSmart": "ذكي",
     "floatSmartDesc": "تكنولوجيا متطورة",
     "floatHome": "منزلي",
@@ -1020,13 +1124,13 @@
     "platform": {
       "badge": "التقنية الذكية",
       "titleBefore": "منصة ",
-      "titleHighlight": "مدنوفا",
+      "titleHighlight": "مدنوڤا",
       "titleAfter": " الرقمية",
-      "description": "نظام متكامل يربط القفاز الذكي بالمريض والمعالج، يوفر تحليلات ذكية وتقارير مفصلة",
+      "description": "نظام متكامل يربط القفاز الذكي بالمريض والأخصائي، يوفر تحليلات ذكية وتقارير مفصلة",
       "features": [
         {
           "title": "ضبط البرامج العلاجية",
-          "description": "يتم ضبط البرامج من قبل المختص حسب حالة المريض"
+          "description": "يتم ضبط البرامج من قبل الأخصائي حسب حالة المريض"
         },
         {
           "title": "تتبع التقدم الحركي",
@@ -1085,12 +1189,12 @@
           "إعادة تأهيل تدريجي ومبرمج",
           "إمكانية العلاج المنزلي",
           "توفير الوقت والجهد",
-          "متابعة مستمرة مع المختص",
+          "متابعة مستمرة مع الأخصائي",
           "نتائج ملموسة وقابلة للقياس"
         ]
       },
       {
-        "title": "للمعالج",
+        "title": "للأخصائي",
         "items": [
           "مراقبة وتعديل العلاج عن بعد",
           "تقارير دقيقة ومفصلة",
@@ -1117,16 +1221,16 @@
     },
     "faq": [
       {
-        "question": "ما هو القفاز الذكي من مدنوفا؟",
+        "question": "ما هو القفاز الذكي من مدنوڤا؟",
         "answer": "جهاز تأهيلي متطور يعمل على إعادة تأهيل حركة اليد للمرضى الذين يعانون من ضعف أو شلل في اليد بسبب الجلطات الدماغية، الشلل النصفي، ضمور العضلات، أو كبار السن."
       },
       {
         "question": "هل يمكن استخدام القفاز في المنزل؟",
-        "answer": "نعم، تم تصميم القفاز خصيصاً للاستخدام المنزلي مع إمكانية المتابعة عن بعد من خلال منصة مدنوفا الرقمية."
+        "answer": "نعم، تم تصميم القفاز خصيصاً للاستخدام المنزلي مع إمكانية المتابعة عن بعد من خلال منصة مدنوڤا الرقمية."
       },
       {
         "question": "كيف يتم تخصيص برنامج العلاج؟",
-        "answer": "يتم ضبط البرامج التأهيلية من قبل المختص عبر المنصة الرقمية، حيث يمكن تحديد زوايا الحركة، قوة التمرين، ومدة الجلسات حسب حالة كل مريض."
+        "answer": "يتم ضبط البرامج التأهيلية من قبل الأخصائي عبر المنصة الرقمية، حيث يمكن تحديد زوايا الحركة، قوة التمرين، ومدة الجلسات حسب حالة كل مريض."
       },
       {
         "question": "ما مدى فعالية القفاز؟",
@@ -1151,7 +1255,7 @@
       "withdrawalRequest": "طلب سحب",
       "addBankAccount": "إضافة حساب بنكي",
       "viewBankAccount": "الحساب البنكي",
-      "navigating": "جارٍ الانتقال...",
+      "navigating": "جاري الانتقال...",
       "consultationType": {
         "chat": "دردشة",
         "video": "فيديو"
@@ -1175,7 +1279,7 @@
       "cancelled": "ملغي"
     },
     "consultant": {
-      "breadcrumb": "لوحة المستشار › المحفظة المالية",
+      "breadcrumb": "لوحة الأخصائي › المحفظة المالية",
       "title": "المحفظة المالية",
       "exportStatement": "تصدير كشف حساب",
       "totalWallet": "إجمالي المحفظة",
@@ -1244,7 +1348,7 @@
     },
     "patientPayments": {
       "colConsultation": "الاستشارة",
-      "colConsultant": "المستشار",
+      "colConsultant": "الأخصائي",
       "colAmountPaid": "المبلغ المدفوع",
       "colPaymentFees": "رسوم الدفع",
       "colPaymentMethod": "طريقة الدفع",
@@ -1265,7 +1369,7 @@
         "breadcrumb": "المحفظة المالية › الحساب البنكي",
         "title": "إضافة حساب بنكي",
         "subtitle": "سيُستخدم هذا الحساب لتحويل أرباحك عند طلب السحب",
-        "infoBanner": "ستتحقق من ملكية حسابك البنكي عبر رمز OTP يُرسل إلى ايميلك",
+        "infoBanner": "ستتحقق من ملكية حسابك البنكي عبر رمز التحقق يُرسل إلى بريدك الإلكتروني",
         "fieldBank": "البنك",
         "fieldBankPlaceholder": "مثال: بنك مسقط",
         "fieldCountry": "الدولة",
@@ -1285,7 +1389,7 @@
         "displayTitle": "حسابك البنكي",
         "displaySubtitle": "تم التحقق من الحساب — يمكنك الآن سحب أرباحك في أي وقت",
         "displayEdit": "تعديل بيانات الحساب",
-        "displayEditHint": "سيتطلب التعديل تحققاً جديداً عبر OTP",
+        "displayEditHint": "سيتطلب التعديل تحققاً جديداً عبر رمز التحقق",
         "displayDelete": "حذف الحساب البنكي",
         "displayDeleteHint": "لن تستطيع سحب الأرباح حتى تضيف حساباً جديداً",
         "displayWithdraw": "متابعة طلب السحب",
@@ -1320,14 +1424,14 @@
       },
       "request": {
         "title": "طلب سحب مبلغ",
-        "subtitle": "يتم التحويل خلال ١–٣ أيام عمل",
+        "subtitle": "يتم التحويل عادةً خلال 1 إلى 3 أيام عمل",
         "availableLabel": "المبلغ القابل للسحب",
         "bankLabel": "طريقة السحب",
         "bankType": "بنك",
         "summaryAmount": "المبلغ",
         "summaryFee": "رسوم التحويل",
         "summaryEta": "الوصول المتوقع",
-        "summaryEtaValue": "٢ يوم عمل",
+        "summaryEtaValue": "عادةً خلال 1 إلى 3 أيام عمل",
         "summaryRecipient": "المستلم",
         "confirmButton": "تأكيد طلب السحب",
         "cancelButton": "إلغاء",
@@ -1362,29 +1466,29 @@
     }
   },
   "payment": {
-    "navigating": "جارٍ الانتقال...",
+    "navigating": "جاري الانتقال...",
     "pageTitle": "تأكيد الحجز والدفع",
     "breadcrumb": "ملخص الحجز والدفع",
     "typeChat": "استشارة نصية",
     "typeVideo": "استشارة فيديو",
-    "step1Label": "المختص المحجوز",
+    "step1Label": "الأخصائي المحجوز",
     "step2VideoLabel": "تفاصيل الموعد",
     "step2ChatLabel": "نوع الاستشارة",
     "step3Label": "ملخص التكاليف",
     "date": "التاريخ",
     "time": "الوقت",
     "instantChat": "محادثة فورية",
-    "instantChatDesc": "تبدأ بمجرد قبول المختص",
-    "verifiedSpecialist": "اختصاصي معتمد",
+    "instantChatDesc": "تبدأ بمجرد قبول الأخصائي",
+    "verifiedSpecialist": "أخصائي معتمد",
     "consultationPrice": "قيمة الاستشارة",
     "platformFee": "رسوم البوابة",
     "totalAmount": "المبلغ الإجمالي",
-    "escrowTitle": "حماية مالية مضمونة — نظام Escrow",
-    "escrowDesc": "في مدنوڤا، نحتفظ بالمبلغ حتى إتمام الجلسة بنجاح. يُحوَّل للمختص بعد ٤٨ ساعة من انتهاء الجلسة دون نزاعات.",
+    "escrowTitle": "حماية دفعتك حتى اكتمال الجلسة",
+    "escrowDesc": "في مدنوڤا، نحتفظ بالمبلغ حتى إتمام الجلسة بنجاح. يُحوَّل للأخصائي بعد 48 ساعة من انتهاء الجلسة دون نزاعات.",
     "buttonCreatingLink": "جاري إنشاء رابط الدفع...",
     "buttonPaid": "تم الدفع بنجاح",
-    "buttonPay": "الدفع الآمن — {total} {currency}",
-    "sslNote": "بيانات مشفرة بـ SSL 256-bit — دفع آمن تماماً",
+    "buttonPay": "إتمام الدفع — {total} {currency}",
+    "sslNote": "اتصال مشفّر لحماية بياناتك",
     "agreeToTerms": "بالدفع، أنت توافق على",
     "termsAnd": "و",
     "terms": "شروط الخدمة",
@@ -1441,7 +1545,7 @@
         "location": "النوع",
         "locationOnline": "عبر الإنترنت",
         "instantChat": "محادثة فورية",
-        "instantChatDesc": "تبدأ الجلسة بمجرد قبول المختص"
+        "instantChatDesc": "تبدأ الجلسة بمجرد قبول الأخصائي"
       },
       "cost": {
         "title": "ملخص التكلفة",
@@ -1461,10 +1565,10 @@
         "reviewZoom": "مشاهدة الجلسة",
         "reviewChat": "فتح المحادثة لمراجعة الجلسة",
         "waitingForAccept": {
-          "titlePatient": "تم الدفع بنجاح — في انتظار قبول المختص",
-          "descPatient": "تم استلام دفعتك بنجاح. ستتمكن من بدء الجلسة بمجرد قبول المختص لطلبك.",
+          "titlePatient": "تم الدفع بنجاح — في انتظار قبول الأخصائي",
+          "descPatient": "تم استلام دفعتك بنجاح. ستتمكن من بدء الجلسة بمجرد قبول الأخصائي لطلبك.",
           "titleConsultant": "الطلب مدفوع بانتظار موافقتك",
-          "descConsultant": "المريض أكمل الدفع، والدفعة محتجزة في الضمان. يمكنك قبول الطلب من صفحة طلبات الاستشارة."
+          "descConsultant": "المريض أكمل الدفع، والدفعة محتجزة لدى المنصة. يمكنك قبول الطلب من صفحة طلبات الاستشارة."
         },
         "comingSoon": "قريباً"
       },
@@ -1472,8 +1576,8 @@
         "held": {
           "titlePatient": "تم تأكيد الدفع — استشارتك محجوزة",
           "titleConsultant": "تم تأكيد الدفع — الطلب بانتظار الإجراء",
-          "descPatient": "تم استلام دفعتك بنجاح. نحتفظ بالمبلغ في الضمان حتى اكتمال الجلسة.",
-          "descConsultant": "المريض أكمل الدفع. الدفعة محتجزة في الضمان حتى اكتمال الجلسة."
+          "descPatient": "دفعتك محتجزة لدى المنصة حتى اكتمال الجلسة.",
+          "descConsultant": "المبلغ محتجز لدى المنصة وسيُحوَّل إليك بعد اكتمال الجلسة، ما لم يُفتح نزاع."
         },
         "reviewWindow": {
           "title": "فترة المراجعة جارية",
@@ -1560,7 +1664,7 @@
       "joinZoom": "انضم إلى جلسة الزوم",
       "linkOpensNewWindow": "سيتم فتح الرابط في نافذة جديدة",
       "liveUpdate": "تحديث مباشر",
-      "therapistDataTitle": "بيانات المعالج",
+      "therapistDataTitle": "بيانات الأخصائي",
       "centerDataTitle": "بيانات المركز",
       "patientDataTitle": "بيانات المريض",
       "fullNameLabel": "الاسم الكامل",
@@ -1582,27 +1686,36 @@
       }
     },
     "actions": {
-      "cancelling": "جاري الرفض...",
-      "cancelConsultation": "إلغاء الإستشارة",
+      "cancelling": "جاري الإلغاء...",
+      "cancelConsultation": "إلغاء الاستشارة",
+      "rejectRequest": "رفض الطلب",
       "cancelledTitle": "تم إلغاء طلب الاستشارة",
-      "cancelledDesc": "سيتم إعلام المريض بقرار الإلغاء",
+      "cancelledDesc": "تم إلغاء طلب الاستشارة.",
       "completedTitle": "تم إكمال الاستشارة بنجاح",
       "thanksNote": "شكراً لك على تقديم خدمة مميزة للمريض",
       "accepting": "جاري القبول...",
       "acceptButton": "قبول الطلب",
       "joinZoomSession": "انضم إلى جلسة الزوم",
-      "rejectedTitle": "تم رفض طلب الاستشارة",
-      "rejectedDesc": "سيتم إعلام المريض بقرار الرفض",
+      "rejectedTitle": "تم إلغاء طلب الاستشارة",
+      "rejectedDesc": "تم إلغاء طلب الاستشارة.",
       "acceptFailedToast": "فشل قبول الطلب، حاول مرة أخرى",
-      "completeFailedToast": "فشل اكمال الطلب، حاول مرة أخرى",
-      "rejectFailedToast": "فشل الغاء الطلب، حاول مرة أخرى",
+      "completeFailedToast": "فشل إكمال الطلب، حاول مرة أخرى",
+      "rejectFailedToast": "فشل إلغاء الطلب، حاول مرة أخرى",
       "zoomAvailableSoonNote": "سيصبح Zoom متاحًا قبل موعد الاستشارة بـ 5 دقائق"
     },
-    "rejectDialog": {
-      "title": "تأكيد إلغاء الاستشارة",
+    "cancelDialog": {
+      "title": "إلغاء الاستشارة",
       "reasonLabel": "سبب الإلغاء",
       "reasonPlaceholder": "أدخل سبب إلغاء الاستشارة...",
-      "reasonNote": "هذا السبب سيتم إرساله للمريض",
+      "confirmButton": "تأكيد الإلغاء",
+      "confirmingButton": "جاري الإلغاء...",
+      "reasonRequiredToast": "يرجى إدخال سبب الإلغاء"
+    },
+    "rejectDialog": {
+      "title": "رفض طلب الاستشارة",
+      "reasonLabel": "سبب الرفض",
+      "reasonPlaceholder": "أدخل سبب رفض طلب الاستشارة...",
+      "reasonNote": "سيُرسل هذا السبب إلى المريض",
       "confirmButton": "تأكيد الرفض",
       "confirmingButton": "جاري الرفض...",
       "reasonRequiredToast": "يرجى إدخال سبب الرفض"
@@ -1610,7 +1723,7 @@
     "status": {
       "pending": "في انتظار الموافقة",
       "accepted": "مقبول",
-      "cancelled": "مرفوض",
+      "cancelled": "ملغى",
       "active": "نشطة",
       "completed": "مكتمل"
     }
@@ -1652,7 +1765,7 @@
     "cancelButton": "إلغاء",
     "requestSuccess": "تم إرسال طلب القياس بنجاح",
     "joinButton": "الانضمام للجلسة",
-    "specialistLinkLabel": "رابط المختص (انضمامك أنت)",
+    "specialistLinkLabel": "رابط الأخصائي (انضمامك أنت)",
     "patientLinkLabel": "رابط المريض (شاركه مع المريض)",
     "copyLinkAriaLabel": "نسخ رابط المريض",
     "linkCopied": "تم نسخ الرابط",
@@ -1670,16 +1783,16 @@
     "hideDetails": "إخفاء التفاصيل",
     "collapsedSummary": {
       "completed": "اكتملت آخر جلسة — الدقة {accuracy}%",
-      "cancelledByDoctor": "تم إلغاء آخر جلسة من قبل الطبيب",
+      "cancelledByDoctor": "تم إلغاء آخر جلسة من قبل الأخصائي",
       "stoppedByPatient": "أنهى المريض آخر جلسة قبل اكتمالها",
-      "stoppedByTherapist": "أنهى المعالج آخر جلسة قبل اكتمالها",
+      "stoppedByTherapist": "أنهى الأخصائي آخر جلسة قبل اكتمالها",
       "pain": "أوقف المريض آخر جلسة بسبب الشعور بألم",
       "technicalError": "توقفت آخر جلسة بسبب مشكلة في الاتصال",
       "unknown": "انتهت آخر جلسة"
     },
     "patientNotice": {
-      "inProgress": "معالجك يجري الآن جلسة قياس للحركة",
-      "shared": "تمت مشاركة نتائج جلسة القياس مع معالجك"
+      "inProgress": "أخصائيك يجري الآن جلسة قياس للحركة",
+      "shared": "تمت مشاركة نتائج جلسة القياس مع أخصائيك"
     },
     "notifications": {
       "completed": {
@@ -1687,7 +1800,7 @@
         "consultant": "اكتملت جلسة القياس وأصبحت النتائج متاحة الآن."
       },
       "cancelled_by_doctor": {
-        "patient": "تم إلغاء جلسة القياس الخاصة بك من قبل معالجك.",
+        "patient": "تم إلغاء جلسة القياس الخاصة بك من قبل أخصائيك.",
         "consultant": "قمت بإلغاء جلسة القياس."
       },
       "stopped_by_patient": {
@@ -1695,12 +1808,12 @@
         "consultant": "أنهى المريض جلسة القياس قبل اكتمالها."
       },
       "stopped_by_therapist": {
-        "patient": "أنهى المختص جلسة القياس.",
+        "patient": "أنهى الأخصائي جلسة القياس.",
         "consultant": "قمت بإنهاء جلسة القياس يدوياً قبل اكتمالها."
       },
       "pain": {
         "patient": "تم إيقاف جلسة القياس بسبب إبلاغك عن ألم.",
-        "consultant": "⚠️ أبلغ المريض عن ألم أثناء التمرين وتم إيقاف الجلسة."
+        "consultant": "أبلغ المريض عن ألم أثناء التمرين وتم إيقاف الجلسة."
       },
       "technical_error": {
         "patient": "توقفت جلسة القياس الخاصة بك بسبب مشكلة في الاتصال.",
@@ -1717,13 +1830,13 @@
     },
     "endReasons": {
       "completed": "اكتملت الجلسة بشكل طبيعي",
-      "stopped_by_therapist": "أوقفها المعالج",
+      "stopped_by_therapist": "أوقفها الأخصائي",
       "stopped_by_patient": "أوقفها المريض",
       "pain": "تم الإيقاف بسبب الشعور بالألم",
       "disconnected": "انقطع الاتصال أثناء الجلسة",
       "timeout": "انتهت مهلة الجلسة",
       "technical_error": "حدث خطأ تقني",
-      "cancelled_by_doctor": "تم الإلغاء من قبل المختص",
+      "cancelled_by_doctor": "تم الإلغاء من قبل الأخصائي",
       "unknown": "لم تكتمل الجلسة"
     },
     "errors": {
@@ -1761,7 +1874,7 @@
   },
   "chat": {
     "header": {
-      "therapist": "معالج",
+      "therapist": "أخصائي",
       "center": "مركز تأهيل",
       "patient": "مريض"
     },
@@ -1794,7 +1907,7 @@
       "fetchFailedError": "فشل في جلب الرسائل",
       "markReadFailedError": "فشل في تحديث حالة الرسالة",
       "markReadStatusFailedError": "فشل في تحديث حالة القراءة",
-      "newMessageToast": "📩 رسالة جديدة"
+      "newMessageToast": "رسالة جديدة"
     },
     "input": {
       "placeholder": "اكتب رسالة..."
@@ -1856,7 +1969,7 @@
         "colConsultation": "الاستشارة",
         "colPrice": "السعر",
         "colCommission": "العمولة",
-        "colConsultantEarning": "أرباح المستشار",
+        "colConsultantEarning": "أرباح الأخصائي",
         "colDate": "التاريخ",
         "emptyTitle": "لا توجد سجلات إيرادات",
         "emptyDescription": "لا توجد سجلات تطابق الفلتر المحدد.",
@@ -1869,12 +1982,12 @@
         "statusReview": "قيد المراجعة",
         "summaryHeld": "إجمالي المحتجز",
         "summaryReview": "قيد المراجعة",
-        "summaryTotal": "إجمالي الضمان",
+        "summaryTotal": "إجمالي الأموال المحتجزة",
         "entries": "سجل",
         "colId": "رقم الاستشارة",
         "colType": "النوع",
         "colPatient": "المريض",
-        "colConsultant": "المستشار",
+        "colConsultant": "الأخصائي",
         "colAmount": "المبلغ",
         "colStatus": "الحالة",
         "colDate": "تاريخ الدفع",
@@ -1898,7 +2011,7 @@
         "emptyDescription": "لا توجد معاملات تطابق الفلتر المحدد.",
         "loadError": "تعذر تحميل المعاملات. حاول مرة أخرى.",
         "source": {
-          "course": "كورس",
+          "course": "برنامج",
           "consultation": "استشارة",
           "withdrawal": "سحب",
           "other": "أخرى"
@@ -2012,7 +2125,7 @@
       "table": {
         "colId": "رقم النزاع",
         "colPatient": "المريض",
-        "colConsultant": "المستشار",
+        "colConsultant": "الأخصائي",
         "colConsultationType": "نوع الاستشارة",
         "colFinancialStatus": "الحالة المالية",
         "colStatus": "الحالة",
@@ -2032,7 +2145,7 @@
         "backButton": "رجوع",
         "sectionDispute": "معلومات النزاع",
         "sectionPatient": "معلومات المريض",
-        "sectionConsultant": "معلومات المستشار",
+        "sectionConsultant": "معلومات الأخصائي",
         "sectionConsultation": "معلومات الاستشارة",
         "sectionEvidence": "دليل الخدمة",
         "labelId": "رقم النزاع",
@@ -2051,13 +2164,13 @@
         "title": "حل النزاع",
         "description": "اختر القرار وأضف ملاحظة قبل التأكيد.",
         "resolutionLabel": "القرار",
-        "releaseLabel": "الإفراج عن الأموال للمستشار",
+        "releaseLabel": "الإفراج عن الأموال للأخصائي",
         "refundLabel": "استرداد المبلغ للمريض",
         "adminNoteLabel": "ملاحظة المسؤول",
         "adminNotePlaceholder": "صف سبب القرار...",
         "submitButton": "تأكيد القرار",
         "cancelButton": "إلغاء",
-        "submitting": "جارٍ الحل..."
+        "submitting": "جاري الحل..."
       },
       "toast": {
         "resolveSuccess": "تم حل النزاع بنجاح.",
@@ -2086,7 +2199,7 @@
       "consultation_accepted": "تم قبول طلب الاستشارة",
       "consultation_active": "تم تفعيل الاستشارة",
       "consultation_cancelled": "تم إلغاء طلب الاستشارة",
-      "consultation_cancelled_by_consultant": "تم إلغاء الاستشارة من قِبل المستشار",
+      "consultation_cancelled_by_consultant": "تم إلغاء الاستشارة من قِبل الأخصائي",
       "consultation_cancelled_by_patient": "تم إلغاء الاستشارة من قِبل المريض",
       "consultation_completed": "تم إكمال الاستشارة",
       "consultation_updated": "تحديث حالة الاستشارة",
@@ -2100,7 +2213,7 @@
       "measurement_completed": "اكتملت جلسة القياس",
       "measurement_cancelled_by_doctor": "تم إلغاء جلسة القياس",
       "measurement_stopped_by_patient": "أنهى المريض الجلسة مبكراً",
-      "measurement_stopped_by_therapist": "أنهى المختص الجلسة",
+      "measurement_stopped_by_therapist": "أنهى الأخصائي الجلسة",
       "measurement_pain": "المريض أبلغ عن ألم",
       "measurement_technical_error": "انقطعت جلسة القياس",
       "measurement_expired": "انتهت مهلة جلسة القياس",
@@ -2128,7 +2241,7 @@
     "bestSeller": "الأكثر مبيعاً",
     "viewDetails": "عرض التفاصيل",
     "contactWhatsapp": "تواصل معنا عبر واتساب",
-    "whatsappMessageTemplate": "مرحباً، أنا مهتم بجهاز {product} من كتالوج الأجهزة الذكية لدى مدنوفا. هل يمكنكم إرسال السعر ومدى التوفر؟",
+    "whatsappMessageTemplate": "مرحباً، أنا مهتم بجهاز {product} من كتالوج الأجهزة الذكية لدى مدنوڤا. هل يمكنكم إرسال السعر ومدى التوفر؟",
     "featuresLabel": "المزايا",
     "configurationLabel": "محتويات الطقم",
     "hostSizeLabel": "حجم الوحدة الرئيسية",
@@ -2285,9 +2398,9 @@
   },
   "measurementSessionResult": {
     "title": "انتهت جلسة القياس",
-    "titleCancelledByDoctor": "تم إلغاء الجلسة من قبل الطبيب",
+    "titleCancelledByDoctor": "تم إلغاء الجلسة من قبل الأخصائي",
     "titleStoppedByPatient": "أنهى المريض الجلسة مبكراً",
-    "titleStoppedByTherapist": "أنهى المعالج الجلسة قبل اكتمالها",
+    "titleStoppedByTherapist": "أنهى الأخصائي الجلسة قبل اكتمالها",
     "titlePain": "أوقف المريض الجلسة بسبب الشعور بألم",
     "titleTechnicalError": "توقفت الجلسة بسبب مشكلة في الاتصال",
     "titleUnknown": "انتهت الجلسة",
@@ -2670,6 +2783,153 @@
         "medical_supplies_delivery": "توصيل مستلزمات طبية"
       },
       "footer": "يُحدَّد السعر ويُدفع مباشرة لمقدّم الخدمة · للطوارئ اتصل على 9999"
+    }
+  },
+  "apiErrors": {
+    "genericTitle": "حدث خطأ",
+    "loadFailed": "تعذر تحميل البيانات",
+    "retry": "إعادة المحاولة"
+  },
+  "consultantPrograms": {
+    "toast": {
+      "addVideoSuccess": "تمت إضافة الفيديو بنجاح",
+      "addVideoError": "تعذر رفع الفيديو. حاول مرة أخرى.",
+      "archiveSuccess": "تمت أرشفة البرنامج",
+      "archiveError": "تعذر أرشفة البرنامج. حاول مرة أخرى.",
+      "createSuccess": "تم الإنشاء بنجاح",
+      "createError": "تعذر إنشاء البرنامج. حاول مرة أخرى.",
+      "deleteSuccess": "تم حذف البرنامج بنجاح",
+      "deleteError": "تعذر حذف البرنامج. حاول مرة أخرى.",
+      "deleteVideoSuccess": "تم حذف الفيديو بنجاح",
+      "deleteVideoError": "تعذر حذف الفيديو. حاول مرة أخرى.",
+      "submitSuccess": "تم إرسال البرنامج للمراجعة",
+      "updateSuccess": "تم التحديث بنجاح",
+      "updateError": "تعذر تحديث البرنامج. حاول مرة أخرى.",
+      "updateVideoSuccess": "تم تحديث الفيديو بنجاح",
+      "updateVideoError": "تعذر تحديث الفيديو. حاول مرة أخرى."
+    },
+    "validation": {
+      "file": "الملف مطلوب",
+      "programTitleAr": "عنوان البرنامج (عربي) مطلوب",
+      "programTitleEn": "عنوان البرنامج (إنجليزي) مطلوب",
+      "programDescAr": "وصف البرنامج (عربي) مطلوب",
+      "programDescEn": "وصف البرنامج (إنجليزي) مطلوب",
+      "learnAr": "حقل ماذا ستتعلم (عربي) مطلوب",
+      "learnEn": "حقل ماذا ستتعلم (إنجليزي) مطلوب",
+      "price": "السعر يجب أن يكون 0 أو أكثر",
+      "videoTitleAr": "عنوان الفيديو (عربي) مطلوب",
+      "videoTitleEn": "عنوان الفيديو (إنجليزي) مطلوب",
+      "order": "الترتيب يجب أن يبدأ من 1",
+      "durationRequired": "مدة الفيديو بالدقائق مطلوبة",
+      "durationInt": "مدة الفيديو يجب أن تكون عددًا صحيحًا",
+      "durationMin": "مدة الفيديو يجب أن تكون دقيقة واحدة على الأقل",
+      "videosMin": "يجب إضافة فيديو واحد على الأقل"
+    },
+    "card": {
+      "summary": "{price} ريال عماني · {videos, plural, one {فيديو #} two {فيديوهان} few {# فيديوهات} many {# فيديو} other {# فيديو}} · {sales, plural, one {عملية بيع #} two {عمليتا بيع} few {# عمليات بيع} many {# عملية بيع} other {# عملية بيع}}",
+      "commission": "عمولة المنصة {rate}% · صافي ربحك {earning} ريال لكل عملية بيع",
+      "edit": "تعديل",
+      "viewDetails": "عرض التفاصيل",
+      "addVideo": "إضافة فيديو",
+      "submitting": "جاري الإرسال...",
+      "submitForReview": "إرسال للمراجعة",
+      "archiving": "جاري الأرشفة...",
+      "archive": "أرشفة",
+      "delete": "حذف"
+    },
+    "sales": {
+      "title": "المبيعات",
+      "count": "عدد المبيعات",
+      "totalEarnings": "إجمالي الأرباح",
+      "empty": "لا توجد مبيعات لهذا البرنامج بعد.",
+      "month": "الشهر",
+      "earnings": "الأرباح"
+    },
+    "video": {
+      "defaultTitle": "الفيديو #{n}",
+      "titleAr": "عنوان الفيديو (عربي)",
+      "titleEn": "عنوان الفيديو (إنجليزي)",
+      "titlePlaceholder": "أدخل عنوان الفيديو",
+      "order": "ترتيب الفيديو",
+      "duration": "مدة الفيديو (بالدقائق)",
+      "upload": "رفع الفيديو",
+      "isIntro": "هذا الفيديو مقدمة البرنامج",
+      "introShort": "فيديو مقدمة البرنامج",
+      "isFree": "فيديو مجاني",
+      "orderLabel": "الترتيب: #{order}",
+      "durationLabel": "المدة:",
+      "minutes": "{count, plural, one {دقيقة} two {دقيقتان} few {# دقائق} many {# دقيقة} other {# دقيقة}}",
+      "unspecified": "غير محددة",
+      "statusPending": "قيد المراجعة",
+      "statusApproved": "معتمد",
+      "statusRejected": "مرفوض",
+      "cannotEdit": "لا يمكن تعديل الفيديو أثناء انتظار المراجعة أو بعد اعتماده",
+      "cancelEdit": "إلغاء التعديل",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "cancel": "إلغاء",
+      "saving": "جاري الحفظ...",
+      "saveEdit": "حفظ التعديل",
+      "deleteTitle": "حذف الفيديو",
+      "deleteDesc": "هل أنت متأكد أنك تريد حذف هذا الفيديو؟ لا يمكن التراجع عن هذا الإجراء."
+    },
+    "create": {
+      "title": "إنشاء برنامج جديد",
+      "subtitle": "أضف بيانات البرنامج الأساسية، ثم أضف فيديوهاته بعد الإنشاء.",
+      "back": "رجوع"
+    },
+    "edit": {
+      "title": "تحديث البرنامج",
+      "subtitle": "قم بتحديث بيانات البرنامج وإدارة فيديوهاته ومتابعة مبيعاته.",
+      "back": "رجوع",
+      "backToList": "العودة إلى برامجي",
+      "loadError": "تعذر تحميل بيانات البرنامج."
+    },
+    "form": {
+      "readOnly": "لا يمكن تعديل بيانات البرنامج بحالته الحالية — معروضة للقراءة فقط.",
+      "cannotSubmitWhileUploading": "لا يمكن الإرسال أثناء رفع فيديو",
+      "submitting": "جاري الإرسال...",
+      "submitForReview": "إرسال للمراجعة",
+      "info": "معلومات البرنامج",
+      "titleAr": "عنوان البرنامج (عربي)",
+      "titleArPlaceholder": "أدخل عنوان البرنامج",
+      "titleEn": "عنوان البرنامج (إنجليزي)",
+      "price": "السعر (OMR)",
+      "descAr": "وصف البرنامج (عربي)",
+      "descArPlaceholder": "اكتب وصف البرنامج",
+      "descEn": "وصف البرنامج (إنجليزي)",
+      "learnAr": "ماذا سيتعلم المستخدم (عربي)",
+      "learnArPlaceholder": "اكتب مخرجات التعلم",
+      "learnEn": "ماذا سيتعلم المستخدم (إنجليزي)",
+      "cover": "صورة الغلاف",
+      "creating": "جاري الإنشاء...",
+      "updating": "جاري التحديث...",
+      "create": "إنشاء البرنامج",
+      "update": "تحديث البرنامج",
+      "manageVideos": "إدارة فيديوهات البرنامج",
+      "videosAdded": "{count, plural, one {فيديو # مضاف حاليًا.} two {فيديوهان مضافان حاليًا.} few {# فيديوهات مضافة حاليًا.} many {# فيديو مضاف حاليًا.} other {# فيديو مضاف حاليًا.}}",
+      "noVideos": "لا توجد فيديوهات حالية لهذا البرنامج حتى الآن.",
+      "addNew": "إضافة فيديو جديد",
+      "addNewHint": "اضغط لفتح نموذج إضافة فيديو جديد للبرنامج.",
+      "closeForm": "إغلاق النموذج",
+      "addVideo": "إضافة فيديو",
+      "uploading": "جاري رفع الفيديو... {percent}%",
+      "cancel": "إلغاء",
+      "uploadingShort": "جاري الرفع...",
+      "saveVideo": "حفظ الفيديو"
+    },
+    "list": {
+      "title": "برامجي",
+      "subtitle": "أدر برامجك التدريبية: الإنشاء، الفيديوهات، الإرسال للمراجعة، والمبيعات.",
+      "newCourse": "برنامج جديد",
+      "empty": "لا توجد برامج بعد. ابدأ بإنشاء برنامجك الأول.",
+      "deleteTitle": "حذف البرنامج",
+      "deleteDesc": "هل أنت متأكد أنك تريد حذف هذا البرنامج؟ لا يمكن التراجع عن هذا الإجراء.",
+      "delete": "حذف",
+      "cancel": "إلغاء",
+      "archiveTitle": "أرشفة البرنامج",
+      "archiveDesc": "بعد الأرشفة سيتوقف بيع البرنامج لعملاء جدد، لكن المشترين الحاليين سيحتفظون بوصولهم الكامل لمحتوى البرنامج.",
+      "archive": "أرشفة"
     }
   }
 }

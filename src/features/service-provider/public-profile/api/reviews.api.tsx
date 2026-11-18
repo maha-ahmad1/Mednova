@@ -7,14 +7,12 @@ export const reviewsApi = {
     payload: SubmitReviewPayload
   ): Promise<SubmitReviewResponse> => {
     const response = await axios.post<SubmitReviewResponse>(
-      'https://api.mednovacare.com/api/rating/store',
+      '/api/rating/store',
       payload,
       {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          // يمكن إضافة أي هيدرات مطلوبة مثل التوكن
-           //'Authorization': `Bearer ${token}`
         },
       }
     );

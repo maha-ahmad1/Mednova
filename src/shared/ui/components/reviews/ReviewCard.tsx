@@ -1,10 +1,22 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { Review } from "@/features/programs/types/reviews";
+
+// Minimal shape on purpose: only name and image of the reviewer are ever rendered,
+// so email / phone / birth_date from the API never reach the UI.
+export interface ReviewItem {
+  id: number;
+  rating: number;
+  comment?: string | null;
+  reviewer: {
+    id: number;
+    full_name: string;
+    image: string | null;
+  };
+}
 
 interface ReviewCardProps {
-  review: Review;
+  review: ReviewItem;
 }
 
 export function ReviewCard({ review }: ReviewCardProps) {

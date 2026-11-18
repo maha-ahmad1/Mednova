@@ -1,8 +1,7 @@
 import { useState, useMemo } from "react";
-import { Review } from "@/features/programs/types/reviews";
 
-export function useReviewsPagination(
-  reviews: Review[],
+export function useReviewsPagination<T>(
+  reviews: T[],
   reviewsPerPage: number = 2
 ) {
   const [currentPage, setCurrentPage] = useState(1);

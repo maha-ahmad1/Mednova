@@ -46,6 +46,7 @@ export interface CourseReviewsProps {
   rating: number;
   reviewCount: number;
   starRatings?: StarRatings;
+  isEnrolled?: boolean;
 }
 
 export interface ApiRatingsResponse {

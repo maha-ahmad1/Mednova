@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +19,7 @@ import { ConsultantProgramsSkeleton } from "./components/ConsultantProgramsSkele
 type PendingAction = { type: "delete" | "archive"; programId: number } | null;
 
 export function ConsultantProgramsListPage() {
+  const t = useTranslations("consultantPrograms.list");
   const { data, isLoading, isError, error, refetch } = useConsultantPrograms();
   const classified = classifyApiError(error);
   const { mutateAsync: deleteProgram, isPending: isDeleting } = useDeleteConsultantProgram();
@@ -28,15 +31,15 @@ export function ConsultantProgramsListPage() {
     <div className="mx-auto w-full max-w-5xl space-y-5 p-4 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold text-foreground">كورساتي</h1>
+          <h1 className="text-2xl font-semibold text-foreground">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            أدر كورساتك التدريبية: الإنشاء، الفيديوهات، الإرسال للمراجعة، والمبيعات.
+            {t("subtitle")}
           </p>
         </div>
         <Button asChild>
           <Link href="/profile/programs/new">
             <Plus className="ms-1 h-4 w-4" />
-            كورس جديد
+            {t("newCourse")}
           </Link>
         </Button>
       </div>
@@ -53,7 +56,7 @@ export function ConsultantProgramsListPage() {
 
       {!isLoading && !isError && programs.length === 0 && (
         <div className="rounded-xl border bg-white p-10 text-center text-muted-foreground">
-          لا توجد كورسات بعد. ابدأ بإنشاء كورسك الأول.
+          {t("empty")}
         </div>
       )}
 
@@ -73,10 +76,10 @@ export function ConsultantProgramsListPage() {
 
       <ConfirmationModal
         open={pendingAction?.type === "delete"}
-        title="حذف الكورس"
-        description="هل أنت متأكد أنك تريد حذف هذا الكورس؟ لا يمكن التراجع عن هذا الإجراء."
-        confirmLabel="حذف"
-        cancelLabel="إلغاء"
+        title={t("deleteTitle")}
+        description={t("deleteDesc")}
+        confirmLabel={t("delete")}
+        cancelLabel={t("cancel")}
         isConfirming={isDeleting}
         onConfirm={async () => {
           if (!pendingAction) return;
@@ -128,15 +131,16 @@ function ArchiveConfirmationModal({
   programId: number | null;
   onClose: () => void;
 }) {
+  const t = useTranslations("consultantPrograms.list");
   const { archiveProgram, isLoading } = useArchiveConsultantProgram(programId ?? 0);
 
   return (
     <ConfirmationModal
       open={programId !== null}
-      title="أرشفة الكورس"
-      description="بعد الأرشفة سيتوقف بيع الكورس لعملاء جدد، لكن المشترين الحاليين سيحتفظون بوصولهم الكامل لمحتوى الكورس."
-      confirmLabel="أرشفة"
-      cancelLabel="إلغاء"
+      title={t("archiveTitle")}
+      description={t("archiveDesc")}
+      confirmLabel={t("archive")}
+      cancelLabel={t("cancel")}
       isConfirming={isLoading}
       onConfirm={async () => {
         await archiveProgram();

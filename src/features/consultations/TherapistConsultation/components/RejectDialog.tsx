@@ -21,6 +21,8 @@ interface RejectDialogProps {
   onOpenChange: (open: boolean) => void;
   onConfirm: (reason: string) => Promise<void>;
   isLoading?: boolean;
+  // "cancel": the patient cancels their own pending request; "reject": the specialist rejects it.
+  mode?: "cancel" | "reject";
 }
 
 export default function RejectDialog({
@@ -28,10 +30,15 @@ export default function RejectDialog({
   onOpenChange,
   onConfirm,
   isLoading = false,
+  mode = "reject",
 }: RejectDialogProps) {
   const locale = useLocale();
   const dir: "rtl" | "ltr" = locale === "ar" ? "rtl" : "ltr";
-  const t = useTranslations("consultations.rejectDialog");
+  const t = useTranslations(
+    mode === "cancel"
+      ? "consultations.cancelDialog"
+      : "consultations.rejectDialog",
+  );
   const tCommon = useTranslations("common");
   const [rejectionReason, setRejectionReason] = useState("");
 
@@ -77,9 +84,11 @@ export default function RejectDialog({
               className="min-h-[100px] resize-none text-start"
               dir={dir}
             />
-            <p className="text-xs text-gray-500 text-start">
-              {t("reasonNote")}
-            </p>
+            {mode === "reject" && (
+              <p className="text-xs text-gray-500 text-start">
+                {t("reasonNote")}
+              </p>
+            )}
           </div>
         </div>
 

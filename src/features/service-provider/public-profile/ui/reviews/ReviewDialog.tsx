@@ -1,7 +1,7 @@
 
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import {
   Dialog,
@@ -24,7 +24,8 @@ interface ReviewDialogProps {
   revieweeId: number;
   revieweeType: 'customer' | 'program' | 'platform';
   revieweeName: string;
-  onSubmit: (rating: number, comment: string) => void;
+  /** Must reject on failure so the dialog keeps the form instead of showing the thanks screen. */
+  onSubmit: (rating: number, comment: string) => Promise<unknown>;
   isSubmitting?: boolean;
   defaultRating?: number;
   defaultComment?: string;
@@ -50,6 +51,11 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState(defaultComment);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+  }, []);
 
   // إعادة تعيين الحقول عند فتح الـ Dialog
   useEffect(() => {
@@ -68,6 +74,10 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
   };
 
   const handleClose = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
     if (!isSubmitting) {
       onOpenChange(false);
       if (!isSubmitted) {
@@ -77,34 +87,46 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
     }
   };
 
-  const handleSubmit = () => {
-    if (rating === 0) {
-      // يمكن استخدام toast هنا إذا كان متاحاً
+  const handleSubmit = async () => {
+    if (rating === 0 || isSubmitting) return;
+
+    try {
+      await onSubmit(rating, comment);
+    } catch {
+      // The mutation already shows the error toast; keep the form and the user's input.
       return;
     }
 
-    onSubmit(rating, comment);
+    // Thanks screen only after the server confirmed the review, then auto-close.
     setIsSubmitted(true);
-    
-    // إغلاق الـ Dialog بعد 2 ثانية
-    setTimeout(() => {
-      handleClose();
+    closeTimerRef.current = setTimeout(() => {
+      closeTimerRef.current = null;
+      onOpenChange(false);
+      resetForm();
+      onClose?.();
     }, 2000);
   };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md md:max-w-lg rounded-2xl" dir={dir}>
+      {/* showCloseButton={false}: the shared dialog adds its own physical right-4 X;
+          we keep a single close button that follows the reading direction (end side). */}
+      <DialogContent
+        showCloseButton={false}
+        className="gap-0 p-6 sm:max-w-md rounded-2xl"
+        dir={dir}
+      >
         <button
+          type="button"
           onClick={handleClose}
           disabled={isSubmitting}
-          className="absolute start-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50"
+          className="absolute end-3 top-3 p-2 rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors disabled:opacity-50"
           aria-label={t('close')}
         >
-          <X className="w-5 h-5 text-gray-500" />
+          <X className="w-5 h-5" />
         </button>
 
-        <DialogHeader className="text-center pt-8">
+        <DialogHeader className="items-center text-center sm:text-center gap-1 pt-2">
           {isSubmitted ? (
             <div className="space-y-4">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
@@ -119,13 +141,13 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
             </div>
           ) : (
             <>
-              <div className="w-16 h-16 bg-[#32A88D]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="w-8 h-8 text-[#32A88D]" />
+              <div className="w-14 h-14 bg-[#32A88D]/10 rounded-full flex items-center justify-center mb-2">
+                <Star className="w-7 h-7 text-[#32A88D]" />
               </div>
-              <DialogTitle className="text-2xl font-bold text-gray-800">
+              <DialogTitle className="text-xl font-bold text-gray-800">
                 {t('title')}
               </DialogTitle>
-              <DialogDescription className="text-gray-600">
+              <DialogDescription className="text-sm text-gray-500">
                 {t('subtitle', { name: revieweeName })}
               </DialogDescription>
             </>
@@ -134,17 +156,17 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
 
         {!isSubmitted ? (
           <>
-            <div className="py-6">
-              <div className="text-center mb-4">
-                <p className="text-gray-700 font-medium mb-2">
+            <div className="mt-5 rounded-xl bg-gray-50 px-4 py-4">
+              <div className="text-center mb-2">
+                <p className="text-gray-800 font-semibold">
                   {t('ratingPrompt')}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs text-gray-500 mt-0.5">
                   {t('ratingHint')}
                 </p>
               </div>
 
-              <div className="flex justify-center gap-1 mb-8">
+              <div className="flex justify-center">
                 <ReviewStars
                   rating={rating}
                   hoverRating={hoverRating}
@@ -155,17 +177,14 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
                 />
               </div>
 
-              {rating > 0 && (
-                <div className="text-center">
-                  <p className="text-lg font-semibold text-[#32A88D]">
-                    {t('ratingOutOf', { rating })}
-                  </p>
-                </div>
-              )}
+              {/* Fixed height so the dialog doesn't jump when a star is picked */}
+              <p className="h-5 mt-1 text-center text-sm font-semibold text-[#32A88D]">
+                {rating > 0 ? t('ratingOutOf', { rating }) : null}
+              </p>
             </div>
 
-            <div className="space-y-4">
-              <label htmlFor="comment" className="text-gray-700 font-medium">
+            <div className="mt-5 space-y-2 text-start">
+              <label htmlFor="comment" className="block text-sm font-medium text-gray-700">
                 {t('detailsLabel')}
               </label>
               <Textarea
@@ -174,18 +193,18 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 disabled={isSubmitting}
-                className="min-h-[120px] resize-none rounded-xl border-gray-300 focus:border-[#32A88D] focus:ring-[#32A88D]"
+                className="min-h-[96px] resize-none rounded-xl border-gray-300 focus:border-[#32A88D] focus:ring-[#32A88D]"
               />
-              <p className="text-sm text-gray-500">
+              <p className="text-xs text-gray-500">
                 {t('detailsHint')}
               </p>
             </div>
 
-            <DialogFooter className="mt-6">
+            <DialogFooter className="mt-6 sm:justify-stretch">
               <Button
                 onClick={handleSubmit}
                 disabled={isSubmitting || rating === 0}
-                className="w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl py-6 text-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl h-12 text-base font-semibold transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <div className="flex items-center justify-center gap-2">

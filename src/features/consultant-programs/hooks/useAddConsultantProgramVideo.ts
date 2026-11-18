@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import { addConsultantProgramVideo } from "../api";
 import type { ConsultantProgramVideoPayload } from "../types/consultant-program";
@@ -12,6 +13,7 @@ import type { ConsultantProgramVideoPayload } from "../types/consultant-program"
  * uploading for the same program at once.
  */
 export function useAddConsultantProgramVideo(programId: number) {
+  const t = useTranslations("consultantPrograms.toast");
   const axiosInstance = useAxiosInstance();
   const queryClient = useQueryClient();
   const [progressByTempId, setProgressByTempId] = useState<Record<string, number>>({});
@@ -35,14 +37,14 @@ export function useAddConsultantProgramVideo(programId: number) {
     onSuccess: (response, { tempId }) => {
       queryClient.invalidateQueries({ queryKey: ["consultant-programs"] });
       queryClient.invalidateQueries({ queryKey: ["consultant-program", programId] });
-      toast.success(response.message || "تمت إضافة الفيديو بنجاح");
+      toast.success(response.message || t("addVideoSuccess"));
       setProgressByTempId((prev) => {
         const { [tempId]: _removed, ...rest } = prev;
         return rest;
       });
     },
     onError: (_error, { tempId }) => {
-      toast.error("تعذر رفع الفيديو. حاول مرة أخرى.");
+      toast.error(t("addVideoError"));
       setProgressByTempId((prev) => {
         const { [tempId]: _removed, ...rest } = prev;
         return rest;

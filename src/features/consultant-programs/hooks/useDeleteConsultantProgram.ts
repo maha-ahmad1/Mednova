@@ -2,10 +2,12 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import { deleteConsultantProgram } from "../api";
 
 export function useDeleteConsultantProgram() {
+  const t = useTranslations("consultantPrograms.toast");
   const axiosInstance = useAxiosInstance();
   const queryClient = useQueryClient();
 
@@ -13,10 +15,10 @@ export function useDeleteConsultantProgram() {
     mutationFn: (id: number) => deleteConsultantProgram(axiosInstance, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["consultant-programs"] });
-      toast.success("تم حذف الكورس بنجاح");
+      toast.success(t("deleteSuccess"));
     },
     onError: () => {
-      toast.error("تعذر حذف الكورس. حاول مرة أخرى.");
+      toast.error(t("deleteError"));
     },
   });
 }

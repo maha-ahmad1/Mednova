@@ -17,7 +17,15 @@ import ScheduleCard from "./profile/ScheduleCard";
 import type { ServiceProvider } from "@/features/service-provider/types/provider";
 import BreadcrumbNav from "@/shared/ui/components/BreadcrumbNav";
 import Navbar from "@/shared/ui/components/Navbar/Navbar";
-import { ReviewsSection } from "@/features/service-provider/public-profile/ui/reviews/ReviewsSection";
+import {
+  ReviewsSection,
+  type ReviewAccess,
+} from "@/features/service-provider/public-profile/ui/reviews/ReviewsSection";
+import { ProviderReviewsList } from "@/features/service-provider/public-profile/ui/reviews/ProviderReviewsList";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRatings } from "@/hooks/useRatings";
+import { Link, usePathname as useIntlPathname } from "@/i18n/navigation";
+import { buildLoginHref } from "@/lib/safe-redirect";
 import { useSession } from "next-auth/react";
 import { EmptyState } from "@/shared/ui/components/EmptyState";
 import { normalizeProvider } from "@/utils/normalizeProvider";
@@ -65,8 +73,32 @@ export default function SpecialistProfile(): React.ReactNode {
       })
     : null;
   const { data: session } = useSession();
-  const currentUserId =
-    typeof session?.user?.id === "number" ? session.user.id : 0;
+  // session.user.id is a string (see lib/auth.ts); 0 means "not logged in".
+  const currentUserId = Number(session?.user?.id) || 0;
+
+  const queryClient = useQueryClient();
+  const loginPathname = useIntlPathname();
+  const providerId = provider?.id ?? 0;
+  const { data: ratings, isLoading: ratingsLoading } = useRatings("customer", providerId);
+  const ratingsList = ratings ?? [];
+
+  const myRating = currentUserId
+    ? ratingsList.find((r) => Number(r.reviewer?.id) === currentUserId)
+    : undefined;
+
+  const reviewAccess: ReviewAccess =
+    currentUserId === 0
+      ? "guest"
+      : currentUserId === providerId
+        ? "own"
+        : myRating
+          ? "reviewed"
+          : "can";
+
+  const handleReviewSubmitted = () => {
+    queryClient.invalidateQueries({ queryKey: ["providerProfile", params.id] });
+    queryClient.invalidateQueries({ queryKey: ["ratings", "customer", providerId] });
+  };
 
   useEffect(() => {
     if (!rawProvider || !params.id) return;
@@ -141,20 +173,15 @@ export default function SpecialistProfile(): React.ReactNode {
             <div className="lg:col-span-2">
               <ProfileHeader provider={provider} />
 
+              {/* Radix Tabs defaults to dir="ltr" and overrides the page direction. */}
               <Tabs
                 value={activeTab}
                 onValueChange={setActiveTab}
+                dir={locale === "ar" ? "rtl" : "ltr"}
                 className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mt-4"
               >
+                {/* Bio first: it is the default tab, so it sits at the start (right in Arabic). */}
                 <TabsList className="grid w-full grid-cols-2 mb-8">
-                  <TabsTrigger
-                    value="reviews"
-                    className="text-lg flex items-center gap-2"
-                  >
-                    <Star className="w-5 h-5" />
-                    {t("reviewsTab")}
-                  </TabsTrigger>
-
                   <TabsTrigger
                     value="bio"
                     className="text-lg flex items-center gap-2"
@@ -162,14 +189,23 @@ export default function SpecialistProfile(): React.ReactNode {
                     <BookOpen className="w-5 h-5" />
                     {t("bioTab")}
                   </TabsTrigger>
+
+                  <TabsTrigger
+                    value="reviews"
+                    className="text-lg flex items-center gap-2"
+                  >
+                    <Star className="w-5 h-5" />
+                    {t("reviewsTab")}
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="bio" className="mt-0 text-start">
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <ServicesPricing provider={provider} />
-
+                      {/* Specialties/details first so they sit at the start (right in Arabic). */}
                       <ProfileDetails provider={provider} />
+
+                      <ServicesPricing provider={provider} />
                     </div>
 
                     <div>
@@ -238,8 +274,16 @@ export default function SpecialistProfile(): React.ReactNode {
                       revieweeId={provider.id}
                       revieweeType="customer"
                       revieweeName={provider.name}
-                      showTriggerButton={true}
+                      access={reviewAccess}
+                      loginHref={buildLoginHref(loginPathname)}
+                      myReview={myRating}
                       triggerButtonText={t("writeYourReview")}
+                      onReviewSubmitted={handleReviewSubmitted}
+                    />
+
+                    <ProviderReviewsList
+                      ratings={ratingsList}
+                      isLoading={ratingsLoading}
                     />
                   </div>
                 </TabsContent>
@@ -272,15 +316,28 @@ export default function SpecialistProfile(): React.ReactNode {
                         }}
                       />
 
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={scrollToReviews}
-                        className="w-full border-[#32A88D]/40 text-[#2a8a7a] hover:bg-[#32A88D]/10"
-                      >
-                        <Edit className="w-4 h-4 me-2" />
-                        {t("writeReview")}
-                      </Button>
+                      {reviewAccess === "can" && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={scrollToReviews}
+                          className="w-full border-[#32A88D]/40 text-[#2a8a7a] hover:bg-[#32A88D]/10"
+                        >
+                          <Edit className="w-4 h-4 me-2" />
+                          {t("writeReview")}
+                        </Button>
+                      )}
+                      {reviewAccess === "guest" && (
+                        <p className="text-center text-sm text-gray-600">
+                          {t("reviews.loginPrompt")}{" "}
+                          <Link
+                            href={buildLoginHref(loginPathname)}
+                            className="font-semibold text-[#32A88D] hover:underline"
+                          >
+                            {t("reviews.loginLink")}
+                          </Link>
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>

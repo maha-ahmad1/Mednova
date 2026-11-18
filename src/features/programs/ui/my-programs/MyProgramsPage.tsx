@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useNavigationLoader } from "@/hooks/useNavigationLoader";
 import { EmptyState } from "@/shared/ui/components/EmptyState";
 import { PaginationControls } from "@/shared/ui/components/PaginationControls";
@@ -11,6 +12,7 @@ import { MyCourseCard } from "./components/MyCourseCard";
 const COURSES_PER_PAGE = 15;
 
 export function MyProgramsPage() {
+  const t = useTranslations("programs.my");
   const { push } = useNavigationLoader();
   const [page, setPage] = useState(1);
 
@@ -19,11 +21,11 @@ export function MyProgramsPage() {
   const pagination = data?.pagination;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white py-12" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50/50 to-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">دوراتي</h1>
-          <p className="text-sm text-gray-600 mt-1">الكورسات التي لديك وصول فعّال إليها.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+          <p className="text-sm text-gray-600 mt-1">{t("subtitle")}</p>
         </div>
 
         {(isLoading || isFetching) && <ProgramSkeleton count={6} />}
@@ -31,9 +33,9 @@ export function MyProgramsPage() {
         {!isLoading && !isFetching && isError && (
           <EmptyState
             type="error"
-            title="تعذر تحميل دوراتك"
-            description="حدث خطأ أثناء جلب البيانات. حاول مرة أخرى."
-            actionText="إعادة المحاولة"
+            title={t("errorTitle")}
+            description={t("errorDesc")}
+            actionText={t("retry")}
             onAction={() => window.location.reload()}
           />
         )}
@@ -41,9 +43,9 @@ export function MyProgramsPage() {
         {!isLoading && !isFetching && !isError && courses.length === 0 && (
           <EmptyState
             type="empty"
-            title="لسا ما اشتركتي بأي كورس"
-            description="تصفحي الكورسات المتاحة وابدئي رحلتك التعليمية."
-            actionText="تصفح الكورسات"
+            title={t("emptyTitle")}
+            description={t("emptyDesc")}
+            actionText={t("browse")}
             onAction={() => push("/programs")}
           />
         )}

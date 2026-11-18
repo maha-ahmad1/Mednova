@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
 interface PaginationSummaryInfo {
@@ -16,12 +17,9 @@ interface PaginationControlsProps {
   isLoading?: boolean;
   prevLabel?: string;
   nextLabel?: string;
-  /** Replaces the "page X of Y • total" text. Defaults to the Arabic wording. */
+  /** Replaces the "page X of Y • total" text. Defaults to the localized wording. */
   formatSummary?: (info: PaginationSummaryInfo) => string;
 }
-
-const defaultSummary = ({ currentPage, lastPage, total }: PaginationSummaryInfo) =>
-  `الصفحة ${currentPage} من ${lastPage}${typeof total === "number" ? ` • إجمالي ${total}` : ""}`;
 
 export function PaginationControls({
   currentPage,
@@ -29,10 +27,11 @@ export function PaginationControls({
   total,
   onPageChange,
   isLoading = false,
-  prevLabel = "السابق",
-  nextLabel = "التالي",
-  formatSummary = defaultSummary,
+  prevLabel,
+  nextLabel,
+  formatSummary,
 }: PaginationControlsProps) {
+  const t = useTranslations("common.pagination");
   if (lastPage <= 1) {
     return null;
   }
@@ -40,7 +39,11 @@ export function PaginationControls({
   return (
     <div className="flex items-center justify-between gap-3 rounded-xl border bg-white p-3">
       <p className="text-sm text-muted-foreground">
-        {formatSummary({ currentPage, lastPage, total })}
+        {formatSummary
+          ? formatSummary({ currentPage, lastPage, total })
+          : typeof total === "number"
+            ? t("summaryTotal", { current: currentPage, last: lastPage, total })
+            : t("summary", { current: currentPage, last: lastPage })}
       </p>
 
       <div className="flex items-center gap-2">
@@ -49,14 +52,14 @@ export function PaginationControls({
           onClick={() => onPageChange(currentPage - 1)}
           disabled={isLoading || currentPage <= 1}
         >
-          {prevLabel}
+          {prevLabel ?? t("previous")}
         </Button>
         <Button
           variant="outline"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={isLoading || currentPage >= lastPage}
         >
-          {nextLabel}
+          {nextLabel ?? t("next")}
         </Button>
       </div>
     </div>

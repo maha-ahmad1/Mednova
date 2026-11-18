@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,13 +33,14 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
   canRemove,
   onRemove,
 }: ConsultantVideoFormSectionProps<TValues>) {
+  const t = useTranslations("consultantPrograms.video");
   const path = (name: string) => `${String(basePath)}.${name}` as Path<TValues>;
 
   return (
     <Card className="border-dashed">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-base font-semibold">
-          {title ?? `الفيديو #${index + 1}`}
+          {title ?? t("defaultTitle", { n: index + 1 })}
         </CardTitle>
         <Button type="button" variant="ghost" size="icon" onClick={onRemove} disabled={!canRemove}>
           <Trash2 className="h-4 w-4" />
@@ -50,9 +52,9 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
           name={path("title_ar")}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>عنوان الفيديو (عربي)</FormLabel>
+              <FormLabel>{t("titleAr")}</FormLabel>
               <FormControl>
-                <Input placeholder="أدخل عنوان الفيديو" {...field} dir="rtl" />
+                <Input placeholder={t("titlePlaceholder")} {...field} dir="rtl" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -64,7 +66,7 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
           name={path("title_en")}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>عنوان الفيديو (إنجليزي)</FormLabel>
+              <FormLabel>{t("titleEn")}</FormLabel>
               <FormControl>
                 <Input placeholder="Enter video title" {...field} dir="ltr" />
               </FormControl>
@@ -78,7 +80,7 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
           name={path("order")}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>ترتيب الفيديو</FormLabel>
+              <FormLabel>{t("order")}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -98,7 +100,7 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
           name={path("duration_minute")}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>مدة الفيديو (بالدقائق)</FormLabel>
+              <FormLabel>{t("duration")}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -120,7 +122,7 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
           name={path("video")}
           render={({ field: { onChange, ...field } }) => (
             <FormItem>
-              <FormLabel>رفع الفيديو</FormLabel>
+              <FormLabel>{t("upload")}</FormLabel>
               <FormControl>
                 <Input
                   type="file"
@@ -146,7 +148,7 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
                   onCheckedChange={(checked) => field.onChange(Boolean(checked))}
                 />
               </FormControl>
-              <FormLabel className="mb-0 cursor-pointer">هذا الفيديو مقدمة البرنامج</FormLabel>
+              <FormLabel className="mb-0 cursor-pointer">{t("isIntro")}</FormLabel>
             </FormItem>
           )}
         />
@@ -162,7 +164,7 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
                   onCheckedChange={(checked) => field.onChange(Boolean(checked))}
                 />
               </FormControl>
-              <FormLabel className="mb-0 cursor-pointer">فيديو مجاني</FormLabel>
+              <FormLabel className="mb-0 cursor-pointer">{t("isFree")}</FormLabel>
             </FormItem>
           )}
         />

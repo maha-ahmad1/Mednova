@@ -26,7 +26,7 @@ export function LockedContentOverlay({
 }: LockedContentOverlayProps) {
   return (
     <div className={cn("relative overflow-hidden", className)}>
-      <div className={cn(isLocked && "pointer-events-none select-none opacity-80")}>{children}</div>
+      <div className={cn("h-full w-full", isLocked && "pointer-events-none select-none opacity-80")}>{children}</div>
       {isLocked && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-t from-black/70 via-black/40 to-black/20 p-6 text-center text-white">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20">

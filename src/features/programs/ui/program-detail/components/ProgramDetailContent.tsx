@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import { CheckCircle2, PlayCircle, Smartphone, Star, Users } from "lucide-react"
 import type { ProgramDetail } from "@/features/programs/types/program"
 
@@ -6,6 +7,7 @@ interface ProgramDetailContentProps {
 }
 
 export function ProgramDetailContent({ program }: ProgramDetailContentProps) {
+  const t = useTranslations("programs.detail")
   const rating = Number(program.ratings_avg_rating) || 0
   const enrollments = program.enrollments_count ?? 0
   const totalMinutes = program.videos.reduce(
@@ -22,55 +24,48 @@ export function ProgramDetailContent({ program }: ProgramDetailContentProps) {
     .filter(Boolean)
     .slice(0, 6)
 
-  const fallbackLearningItems = [
-    "بناء خطة تدريبية عملية قابلة للتطبيق مباشرة.",
-    "تعلم المهارات الأساسية خطوة بخطوة مع أمثلة واقعية.",
-    "تطوير القدرة على تنفيذ التمارين بأمان وفعالية.",
-    "فهم أهم الأدوات والنماذج المستخدمة في المجال.",
-    "متابعة التقدم من خلال محتوى مرئي وتمارين موجهة.",
-    "اكتساب ثقة أعلى في التعامل مع الحالات المختلفة.",
-  ]
+  const fallbackLearningItems = [1, 2, 3, 4, 5, 6].map((n) => t(`learn${n}`))
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">نظرة عامة</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">{t("overview")}</h2>
         <div className="grid gap-4 sm:grid-cols-3 mb-6">
           <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <PlayCircle className="h-4 w-4 text-[#32A88D]" />
-              <span>عدد الفيديوهات</span>
+              <span>{t("overviewVideos")}</span>
             </div>
             <p className="mt-3 text-2xl font-bold text-gray-900">{program.videos_count}</p>
           </div>
           <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <Users className="h-4 w-4 text-[#32A88D]" />
-              <span>المسجلون</span>
+              <span>{t("overviewEnrolled")}</span>
             </div>
             <p className="mt-3 text-2xl font-bold text-gray-900">{enrollments}</p>
           </div>
           <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <Star className="h-4 w-4 text-[#32A88D]" />
-              <span>متوسط التقييم</span>
+              <span>{t("overviewRating")}</span>
             </div>
             <p className="mt-3 text-2xl font-bold text-gray-900">{rating.toFixed(1) || "0.0"}</p>
           </div>
         </div>
 
         <div className="prose prose-lg max-w-none">
-          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{program.description}</p>
+          <p dir="auto" className="text-gray-700 leading-relaxed whitespace-pre-wrap">{program.description}</p>
         </div>
       </div>
 
       <div className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">ما ستتعلمه</h3>
+        <h3 className="text-xl font-bold text-gray-900 mb-4">{t("whatYouLearn")}</h3>
         <div className="grid gap-3 sm:grid-cols-2">
           {(learningItems.length ? learningItems : fallbackLearningItems).map((item, index) => (
             <div key={`${item}-${index}`} className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-[#32A88D] mt-0.5" />
-              <span className="text-sm text-gray-700 leading-relaxed">{item}</span>
+              <span dir="auto" className="text-sm text-gray-700 leading-relaxed">{item}</span>
             </div>
           ))}
         </div>
@@ -107,7 +102,7 @@ export function ProgramDetailContent({ program }: ProgramDetailContentProps) {
       </div> */}
 
       <div className="pt-6 border-t border-gray-200">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">عن المدرب</h3>
+        <h3 className="text-xl font-bold text-gray-900 mb-4">{t("aboutInstructor")}</h3>
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-[#32A88D]/10 rounded-full flex items-center justify-center">
             <span className="text-2xl font-bold text-[#32A88D]">
@@ -115,10 +110,10 @@ export function ProgramDetailContent({ program }: ProgramDetailContentProps) {
             </span>
           </div>
           <div>
-            <h4 className="font-bold text-gray-900">
+            <h4 dir="auto" className="font-bold text-gray-900">
               {program.creator?.name || program.title}
             </h4>
-            <p className="text-sm text-gray-600">مدرب معتمد لدى Mednova</p>
+            <p className="text-sm text-gray-600">{t("instructorBadge")}</p>
           </div>
         </div>
       </div>

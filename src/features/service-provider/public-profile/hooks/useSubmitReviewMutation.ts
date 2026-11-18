@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { reviewsApi } from "../api/reviews.api";
+import { getReviewErrorMessage } from "../utils/review-error";
 import type { SubmitReviewPayload, SubmitReviewResponse } from "../types/review";
 import type { AxiosError } from "axios";
 import { useAxiosInstance as useAxios } from "@/lib/axios/axiosInstance";
@@ -17,11 +18,7 @@ export const useSubmitReviewMutation = () => {
       toast.success(data.message || t("submitSuccessToast"));
     },
     onError: (error: AxiosError) => {
-      const errorMessage =
-        (error.response?.data as { message?: string })?.message ||
-        error.message ||
-        t("submitErrorToast");
-      toast.error(errorMessage);
+      toast.error(getReviewErrorMessage(error, t("submitErrorToast")));
     },
   });
 };

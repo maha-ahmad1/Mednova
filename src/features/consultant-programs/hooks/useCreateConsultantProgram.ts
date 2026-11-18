@@ -3,12 +3,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useAxiosInstance } from "@/lib/axios/axiosInstance";
 import { createConsultantProgram } from "../api";
 import type { ConsultantProgramFormPayload } from "../types/consultant-program";
 
 export function useCreateConsultantProgram() {
+  const t = useTranslations("consultantPrograms.toast");
   const axiosInstance = useAxiosInstance();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -18,11 +20,11 @@ export function useCreateConsultantProgram() {
       createConsultantProgram(axiosInstance, payload),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["consultant-programs"] });
-      toast.success(response.message || "تم الإنشاء بنجاح");
+      toast.success(response.message || t("createSuccess"));
       router.push(`/profile/programs/${response.data.id}/edit`);
     },
     onError: (error: AxiosError) => {
-      toast.error("تعذر إنشاء الكورس. حاول مرة أخرى.");
+      toast.error(t("createError"));
     },
   });
 

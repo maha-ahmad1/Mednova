@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { PlayCircle } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ interface MyCourseCardProps {
 }
 
 export function MyCourseCard({ course }: MyCourseCardProps) {
+  const t = useTranslations("programs.my");
   const continueHref = course.last_video_id
     ? (`/programs/${course.program_id}?video=${course.last_video_id}` as const)
     : (`/programs/${course.program_id}` as const);
@@ -28,13 +30,13 @@ export function MyCourseCard({ course }: MyCourseCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col p-6">
-        <h3 className="mb-2 line-clamp-2 text-xl font-bold text-gray-800">{course.title}</h3>
-        <p className="mb-4 text-sm text-gray-600">{course.creator_name}</p>
+        <h3 className="mb-2 line-clamp-2 text-xl font-bold text-gray-800" dir="auto">{course.title}</h3>
+        <p dir="auto" className="mb-4 text-sm text-gray-600">{course.creator_name}</p>
 
         <div className="mt-auto space-y-2">
           <div className="flex items-center justify-between text-xs text-gray-500">
             <span>
-              {course.videos_completed} من {course.videos_count} فيديو
+              {t("progress", { done: course.videos_completed, total: course.videos_count })}
             </span>
             <span className="font-semibold text-[#32A88D]">{course.progress_percent}%</span>
           </div>
@@ -46,7 +48,7 @@ export function MyCourseCard({ course }: MyCourseCardProps) {
           >
             <Link href={continueHref}>
               <PlayCircle className="ms-2 h-4 w-4" />
-              متابعة المشاهدة
+              {t("continue")}
             </Link>
           </Button>
         </div>

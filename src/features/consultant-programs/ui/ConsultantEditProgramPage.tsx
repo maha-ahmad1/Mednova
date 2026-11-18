@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
@@ -15,6 +17,8 @@ interface ConsultantEditProgramPageProps {
 }
 
 export function ConsultantEditProgramPage({ programId }: ConsultantEditProgramPageProps) {
+  const t = useTranslations("consultantPrograms.edit");
+  const tApi = useTranslations("apiErrors");
   const { data, isLoading, isError, error, refetch } = useConsultantProgramDetail(programId);
   const program = data?.data;
 
@@ -25,7 +29,7 @@ export function ConsultantEditProgramPage({ programId }: ConsultantEditProgramPa
   if (isError || !program) {
     const { title, message } = isError
       ? classifyApiError(error)
-      : { title: "حدث خطأ", message: "تعذر تحميل بيانات الكورس." };
+      : { title: tApi("genericTitle"), message: t("loadError") };
 
     return (
       <div className="mx-auto w-full max-w-5xl space-y-3 p-4 sm:p-6">
@@ -37,7 +41,7 @@ export function ConsultantEditProgramPage({ programId }: ConsultantEditProgramPa
         <Card>
           <CardContent className="space-y-3 pt-6 text-center">
             <Button asChild variant="outline">
-              <Link href="/profile/programs">العودة إلى كورساتي</Link>
+              <Link href="/profile/programs">{t("backToList")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -49,15 +53,15 @@ export function ConsultantEditProgramPage({ programId }: ConsultantEditProgramPa
     <div className="mx-auto w-full max-w-5xl space-y-5 p-4 sm:p-6">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold">تحديث الكورس</h1>
+          <h1 className="text-2xl font-semibold">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            قم بتحديث بيانات الكورس وإدارة فيديوهاته ومتابعة مبيعاته.
+            {t("subtitle")}
           </p>
         </div>
         <Button asChild variant="outline" className="gap-2">
           <Link href="/profile/programs">
             <ArrowLeft className="h-4 w-4" />
-            رجوع
+            {t("back")}
           </Link>
         </Button>
       </div>

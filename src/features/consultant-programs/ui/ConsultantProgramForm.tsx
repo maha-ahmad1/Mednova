@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Plus, Save, Send } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -25,9 +26,9 @@ import { useSubmitConsultantProgramForReview } from "../hooks/useSubmitConsultan
 import { useUpdateConsultantProgram } from "../hooks/useUpdateConsultantProgram";
 import { useUpdateConsultantProgramVideo } from "../hooks/useUpdateConsultantProgramVideo";
 import {
-  consultantProgramSchema,
+  createConsultantProgramSchema,
   createDefaultConsultantVideo,
-  newConsultantVideosSchema,
+  createNewConsultantVideosSchema,
   type ConsultantProgramFormValues,
   type NewConsultantVideosFormValues,
 } from "../types/consultant-program-form";
@@ -43,6 +44,10 @@ interface ConsultantProgramFormProps {
 }
 
 export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormProps) {
+  const t = useTranslations("consultantPrograms.form");
+  const tv = useTranslations("consultantPrograms.validation");
+  const programSchema = useMemo(() => createConsultantProgramSchema(tv), [tv]);
+  const newVideosSchema = useMemo(() => createNewConsultantVideosSchema(tv), [tv]);
   const isCreateMode = mode === "create";
   // A program the specialist can't edit (approved/pending/archived) is still
   // shown, read-only, instead of hiding the page — they must be able to see
@@ -67,7 +72,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
   const [isAddVideoFormOpen, setIsAddVideoFormOpen] = useState(false);
 
   const form = useForm<ConsultantProgramFormValues>({
-    resolver: zodResolver(consultantProgramSchema),
+    resolver: zodResolver(programSchema),
     defaultValues: {
       title_ar: program?.title_ar ?? "",
       title_en: program?.title_en ?? "",
@@ -82,7 +87,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
   });
 
   const addVideoForm = useForm<NewConsultantVideosFormValues>({
-    resolver: zodResolver(newConsultantVideosSchema),
+    resolver: zodResolver(newVideosSchema),
     defaultValues: { videos: [createDefaultConsultantVideo((program?.videos.length ?? 0) + 1)] },
   });
 
@@ -156,7 +161,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
             <ConsultantProgramStatusBadge status={program.status} label={program.status_label} />
             {isReadOnly && (
               <span className="text-sm text-muted-foreground">
-                لا يمكن تعديل بيانات الكورس بحالته الحالية — معروضة للقراءة فقط.
+                {t("readOnly")}
               </span>
             )}
           </div>
@@ -170,14 +175,14 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                 submitForReview();
               }}
               disabled={isSubmitting || isUploading}
-              title={isUploading ? "لا يمكن الإرسال أثناء رفع فيديو" : undefined}
+              title={isUploading ? t("cannotSubmitWhileUploading") : undefined}
             >
               {isSubmitting ? (
                 <Loader2 className="ms-1 h-4 w-4 animate-spin" />
               ) : (
                 <Send className="ms-1 h-4 w-4" />
               )}
-              {isSubmitting ? "جارٍ الإرسال..." : "إرسال للمراجعة"}
+              {isSubmitting ? t("submitting") : t("submitForReview")}
             </Button>
           )}
         </div>
@@ -188,7 +193,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
           <form onSubmit={submitProgram} className="space-y-5">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">معلومات الكورس</CardTitle>
+                <CardTitle className="text-lg">{t("info")}</CardTitle>
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-2">
                 <FormField
@@ -196,9 +201,9 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>عنوان الكورس (عربي)</FormLabel>
+                      <FormLabel>{t("titleAr")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="أدخل عنوان الكورس" {...field} dir="rtl" />
+                        <Input placeholder={t("titleArPlaceholder")} {...field} dir="rtl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -209,7 +214,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="title_en"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>عنوان الكورس (إنجليزي)</FormLabel>
+                      <FormLabel>{t("titleEn")}</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter course title" {...field} dir="ltr" />
                       </FormControl>
@@ -223,7 +228,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="price"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel>السعر (OMR)</FormLabel>
+                      <FormLabel>{t("price")}</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -242,9 +247,9 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="description_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>وصف الكورس (عربي)</FormLabel>
+                      <FormLabel>{t("descAr")}</FormLabel>
                       <FormControl>
-                        <Textarea rows={4} placeholder="اكتب وصف الكورس" {...field} dir="rtl" />
+                        <Textarea rows={4} placeholder={t("descArPlaceholder")} {...field} dir="rtl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -255,7 +260,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="description_en"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>وصف الكورس (إنجليزي)</FormLabel>
+                      <FormLabel>{t("descEn")}</FormLabel>
                       <FormControl>
                         <Textarea rows={4} placeholder="Write the course description" {...field} dir="ltr" />
                       </FormControl>
@@ -269,9 +274,9 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="what_you_will_learn_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>ماذا سيتعلم المستخدم (عربي)</FormLabel>
+                      <FormLabel>{t("learnAr")}</FormLabel>
                       <FormControl>
-                        <Textarea rows={4} placeholder="اكتب مخرجات التعلم" {...field} dir="rtl" />
+                        <Textarea rows={4} placeholder={t("learnArPlaceholder")} {...field} dir="rtl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -282,7 +287,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="what_you_will_learn_en"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>ماذا سيتعلم المستخدم (إنجليزي)</FormLabel>
+                      <FormLabel>{t("learnEn")}</FormLabel>
                       <FormControl>
                         <Textarea rows={4} placeholder="Write the learning outcomes" {...field} dir="ltr" />
                       </FormControl>
@@ -298,7 +303,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                     <FormItem className="md:col-span-2">
                       <FormControl>
                         <ProfileImageUpload
-                          label="صورة الغلاف"
+                          label={t("cover")}
                           value={(value as File | null) ?? program?.cover_image ?? null}
                           onChange={(file) => onChange(file)}
                         />
@@ -320,11 +325,11 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   )}
                   {isSubmittingProgram
                     ? isCreateMode
-                      ? "جاري الإنشاء..."
-                      : "جاري التحديث..."
+                      ? t("creating")
+                      : t("updating")
                     : isCreateMode
-                      ? "إنشاء الكورس"
-                      : "تحديث الكورس"}
+                      ? t("create")
+                      : t("update")}
                 </Button>
               </div>
             )}
@@ -336,16 +341,16 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <div className="space-y-1">
-              <CardTitle className="text-lg">إدارة فيديوهات الكورس</CardTitle>
+              <CardTitle className="text-lg">{t("manageVideos")}</CardTitle>
               <p className="text-sm text-muted-foreground">
-                {program.videos.length} فيديو مضاف حاليًا.
+                {t("videosAdded", { count: program.videos.length })}
               </p>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {sortedVideos.length === 0 ? (
               <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-                لا توجد فيديوهات حالية لهذا الكورس حتى الآن.
+                {t("noVideos")}
               </div>
             ) : (
               sortedVideos.map((video) => (
@@ -369,14 +374,14 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
               <div className="space-y-3 rounded-xl border border-dashed bg-muted/10 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="space-y-1">
-                    <h3 className="font-semibold">إضافة فيديو جديد</h3>
+                    <h3 className="font-semibold">{t("addNew")}</h3>
                     <p className="text-sm text-muted-foreground">
-                      اضغط لفتح نموذج إضافة فيديو جديد للكورس.
+                      {t("addNewHint")}
                     </p>
                   </div>
                   <Button type="button" onClick={() => setIsAddVideoFormOpen((prev) => !prev)}>
                     <Plus className="ms-1 h-4 w-4" />
-                    {isAddVideoFormOpen ? "إغلاق النموذج" : "إضافة فيديو"}
+                    {isAddVideoFormOpen ? t("closeForm") : t("addVideo")}
                   </Button>
                 </div>
 
@@ -396,7 +401,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
 
                       {Object.entries(progressByTempId).map(([tempId, percent]) => (
                         <div key={tempId} className="space-y-1">
-                          <p className="text-xs text-muted-foreground">جارٍ رفع الفيديو... {percent}%</p>
+                          <p className="text-xs text-muted-foreground">{t("uploading", { percent })}</p>
                           <Progress value={percent} />
                         </div>
                       ))}
@@ -408,11 +413,11 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                           onClick={() => setIsAddVideoFormOpen(false)}
                           disabled={isUploading}
                         >
-                          إلغاء
+                          {t("cancel")}
                         </Button>
                         <Button type="submit" className="min-w-28" disabled={isUploading}>
                           {isUploading && <Loader2 className="h-4 w-4 animate-spin" />}
-                          {isUploading ? "جارٍ الرفع..." : "حفظ الفيديو"}
+                          {isUploading ? t("uploadingShort") : t("saveVideo")}
                         </Button>
                       </div>
                     </form>

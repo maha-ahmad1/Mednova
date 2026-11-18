@@ -7,6 +7,10 @@ interface ReviewsNavigationProps {
   totalPages: number;
   totalReviews: number;
   reviewsPerPage: number;
+  title: string;
+  prevLabel: string;
+  nextLabel: string;
+  getPageLabel: (page: number) => string;
   onPrevPage: () => void;
   onNextPage: () => void;
   onPageChange: (page: number) => void;
@@ -17,6 +21,10 @@ export function ReviewsNavigation({
   totalPages,
   totalReviews,
   reviewsPerPage,
+  title,
+  prevLabel,
+  nextLabel,
+  getPageLabel,
   onPrevPage,
   onNextPage,
   onPageChange,
@@ -24,9 +32,7 @@ export function ReviewsNavigation({
   return (
     <>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-900">
-          آراء المشاركين ({totalReviews})
-        </h3>
+        <h3 className="text-xl font-bold text-gray-900">{title}</h3>
 
         {totalReviews > reviewsPerPage && (
           <div className="flex items-center gap-2">
@@ -38,9 +44,9 @@ export function ReviewsNavigation({
                   ? "text-gray-300 cursor-not-allowed"
                   : "text-gray-700 hover:bg-gray-100 cursor-pointer"
               }`}
-              aria-label="التقييمات السابقة"
+              aria-label={prevLabel}
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronLeft className="w-5 h-5 rtl:rotate-180" />
             </button>
 
             <span className="text-sm text-gray-600 mx-2">
@@ -55,9 +61,9 @@ export function ReviewsNavigation({
                   ? "text-gray-300 cursor-not-allowed"
                   : "text-gray-700 hover:bg-gray-100 cursor-pointer"
               }`}
-              aria-label="التقييمات التالية"
+              aria-label={nextLabel}
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronRight className="w-5 h-5 rtl:rotate-180" />
             </button>
           </div>
         )}
@@ -75,7 +81,7 @@ export function ReviewsNavigation({
                     ? "bg-blue-600 w-4"
                     : "bg-gray-300 hover:bg-gray-400"
                 }`}
-                aria-label={`الصفحة ${index + 1}`}
+                aria-label={getPageLabel(index + 1)}
               />
             ))}
           </div>

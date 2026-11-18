@@ -2,14 +2,15 @@
 
 import { useRatings } from "@/hooks/useRatings";
 import { useRatingDistribution } from "@/features/programs/hooks/useRatingDistribution";
-import { useReviewsPagination } from "@/features/programs/hooks/useReviewsPagination";
+import { useReviewsPagination } from "@/hooks/useReviewsPagination";
 import { useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import {
   OverallRating,
   RatingDistribution,
-  ReviewsNavigation,
-  ReviewsList,
+  CourseReviewForm,
 } from "./course-reviews";
+import { ReviewsNavigation, ReviewsList } from "@/shared/ui/components/reviews";
 import { CourseReviewsProps } from "@/features/programs/types/reviews";
 
 export function CourseReviews({
@@ -17,7 +18,9 @@ export function CourseReviews({
   rating,
   reviewCount,
   starRatings,
+  isEnrolled,
 }: CourseReviewsProps) {
+  const t = useTranslations("programs.detail");
   const { data: ratingsResponse, isLoading } = useRatings("program", programId);
   
   const reviews = (ratingsResponse || []).map((item) => ({
@@ -50,7 +53,7 @@ export function CourseReviews({
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        تقييمات المشاركين
+        {t("reviewsTitle")}
       </h2>
 
       {/* Overall Rating and Distribution */}
@@ -62,6 +65,15 @@ export function CourseReviews({
         </div>
       </div>
 
+      {/* Add your review */}
+      <div className="mb-8">
+        <CourseReviewForm
+          programId={programId}
+          isEnrolled={isEnrolled === true}
+          reviews={reviews}
+        />
+      </div>
+
       {/* Reviews Section */}
       <div className="mt-8 pt-8 border-t border-gray-200">
         <ReviewsNavigation
@@ -69,6 +81,10 @@ export function CourseReviews({
           totalPages={totalPages}
           totalReviews={reviews.length}
           reviewsPerPage={2}
+          title={t("participantsOpinions", { count: reviews.length })}
+          prevLabel={t("prevReviews")}
+          nextLabel={t("nextReviews")}
+          getPageLabel={(page) => t("pageN", { page })}
           onPrevPage={goToPrevPage}
           onNextPage={goToNextPage}
           onPageChange={goToPage}
@@ -79,6 +95,8 @@ export function CourseReviews({
           <ReviewsList
             reviews={visibleReviews}
             isLoading={isLoading}
+            emptyTitle={t("noReviews")}
+            emptyHint={t("beFirst")}
           />
         </div>
       </div>

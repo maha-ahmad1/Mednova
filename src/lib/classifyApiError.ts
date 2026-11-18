@@ -1,5 +1,6 @@
 import type { AxiosError } from "axios"
 import * as Sentry from "@sentry/nextjs"
+import { apiErrorMessage as t } from "@/lib/apiErrorMessages"
 
 export interface ApiErrorDisplay {
   title: string
@@ -24,7 +25,7 @@ export function classifyApiError(error: unknown): ApiErrorDisplay {
   const axiosError = error as AxiosError<Record<string, unknown>> | undefined
 
   if (axiosError?.code === "ERR_NETWORK" || axiosError?.message === "Network Error") {
-    return { title: "تعذر الاتصال", message: "تأكد من اتصال الإنترنت وحاول مرة أخرى." }
+    return { title: t("networkTitle"), message: t("networkMsg") }
   }
 
   const status = axiosError?.response?.status
@@ -51,25 +52,25 @@ export function classifyApiError(error: unknown): ApiErrorDisplay {
     : undefined
 
   if (status === 401) {
-    return { title: "انتهت الجلسة", message: "الرجاء تسجيل الدخول مرة أخرى." }
+    return { title: t("sessionTitle"), message: t("sessionMsg") }
   }
   if (status === 403) {
-    return { title: "غير مصرح", message: "ليس لديك صلاحية للوصول لهذا المحتوى." }
+    return { title: t("forbiddenTitle"), message: t("forbiddenMsg") }
   }
   if (status === 404) {
     return {
-      title: "غير موجود",
-      message: envelopeMessage ?? "الخدمة غير متاحة حاليًا، جرّب لاحقًا.",
+      title: t("notFoundTitle"),
+      message: envelopeMessage ?? t("notFoundMsg"),
       technicalDetail,
     }
   }
   if (status && status >= 500) {
-    return { title: "خطأ في الخادم", message: "حدث خطأ بالخادم، يرجى المحاولة لاحقًا.", technicalDetail }
+    return { title: t("serverTitle"), message: t("serverMsg"), technicalDetail }
   }
 
   if (envelopeMessage) {
-    return { title: "حدث خطأ", message: envelopeMessage }
+    return { title: t("genericTitle"), message: envelopeMessage }
   }
 
-  return { title: "حدث خطأ غير متوقع", message: "يرجى المحاولة لاحقًا.", technicalDetail }
+  return { title: t("unexpectedTitle"), message: t("unexpectedMsg"), technicalDetail }
 }

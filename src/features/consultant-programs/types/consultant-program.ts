@@ -19,6 +19,9 @@ export interface ConsultantProgramVideo {
   title_ar: string;
   title_en: string;
   order: number;
+  // Computed by the backend from the uploaded file (no longer entered by the specialist).
+  duration_seconds?: number | null;
+  /** @deprecated legacy field; prefer duration_seconds. */
   duration_minute?: number | null;
   is_program_intro: boolean;
   is_free: boolean;
@@ -35,7 +38,7 @@ export interface ConsultantProgram {
   what_you_will_learn_ar?: string;
   what_you_will_learn_en?: string;
   cover_image?: string | null;
-  price: string; // "20.000"
+  price: string | null; // "20.000" — null while a draft has no price yet
   status: ProgramStatus;
   status_label: string;
   rejection_reason: string | null; // سبب رفض الكورس ككل (وليس فيديو منفرد)
@@ -73,14 +76,15 @@ export interface ProgramSalesResponse {
   status: string;
 }
 
+// Only title_ar is mandatory — everything else can be filled in later, before submitting.
 export interface ConsultantProgramFormPayload {
   title_ar: string;
-  title_en: string;
-  description_ar: string;
-  description_en: string;
-  what_you_will_learn_ar: string;
-  what_you_will_learn_en: string;
-  price: number;
+  title_en?: string;
+  description_ar?: string;
+  description_en?: string;
+  what_you_will_learn_ar?: string;
+  what_you_will_learn_en?: string;
+  price?: number | null;
   cover_image?: File;
 }
 
@@ -88,7 +92,6 @@ export interface ConsultantProgramVideoPayload {
   title_ar: string;
   title_en: string;
   order: number;
-  duration_minute: number;
   is_program_intro: boolean;
   is_free: boolean;
   video: File;

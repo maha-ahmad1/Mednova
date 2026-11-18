@@ -18,7 +18,6 @@ export const updateConsultantProgramVideo = async (
   formData.append("title_ar", payload.title_ar);
   formData.append("title_en", payload.title_en);
   formData.append("order", String(payload.order));
-  formData.append("duration_minute", String(payload.duration_minute));
   formData.append("is_program_intro", payload.is_program_intro ? "1" : "0");
   formData.append("is_free", payload.is_free ? "1" : "0");
 

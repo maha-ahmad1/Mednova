@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Plus, Save, Send } from "lucide-react";
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,6 +27,8 @@ import { useSubmitConsultantProgramForReview } from "../hooks/useSubmitConsultan
 import { useUpdateConsultantProgram } from "../hooks/useUpdateConsultantProgram";
 import { useUpdateConsultantProgramVideo } from "../hooks/useUpdateConsultantProgramVideo";
 import {
+  PRICE_MAX,
+  PRICE_MIN,
   createConsultantProgramSchema,
   createDefaultConsultantVideo,
   createNewConsultantVideosSchema,
@@ -33,6 +36,7 @@ import {
   type NewConsultantVideosFormValues,
 } from "../types/consultant-program-form";
 import type { ConsultantProgram } from "../types/consultant-program";
+import { COVER_ACCEPT } from "../utils/upload-rules";
 import { ConsultantProgramSales } from "./components/ConsultantProgramSales";
 import { ConsultantProgramStatusBadge } from "./components/ConsultantProgramStatusBadge";
 import { ConsultantVideoFormSection } from "./components/ConsultantVideoFormSection";
@@ -46,9 +50,9 @@ interface ConsultantProgramFormProps {
 export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormProps) {
   const t = useTranslations("consultantPrograms.form");
   const tv = useTranslations("consultantPrograms.validation");
+  const isCreateMode = mode === "create";
   const programSchema = useMemo(() => createConsultantProgramSchema(tv), [tv]);
   const newVideosSchema = useMemo(() => createNewConsultantVideosSchema(tv), [tv]);
-  const isCreateMode = mode === "create";
   // A program the specialist can't edit (approved/pending/archived) is still
   // shown, read-only, instead of hiding the page — they must be able to see
   // their published course even if they can't change it.
@@ -71,6 +75,13 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
 
   const [isAddVideoFormOpen, setIsAddVideoFormOpen] = useState(false);
 
+  // Duplicate-create guard. After a successful create the mutation is no longer pending,
+  // but the page is still here until router.push lands on /edit (slow with a cover upload,
+  // and in dev while the edit route compiles). Without this, every extra click created
+  // another copy of the program. The ref also blocks a fast double-click before React re-renders.
+  const submitLockRef = useRef(false);
+  const [isCreated, setIsCreated] = useState(false);
+
   const form = useForm<ConsultantProgramFormValues>({
     resolver: zodResolver(programSchema),
     defaultValues: {
@@ -80,7 +91,8 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
       description_en: program?.description_en ?? "",
       what_you_will_learn_ar: program?.what_you_will_learn_ar ?? "",
       what_you_will_learn_en: program?.what_you_will_learn_en ?? "",
-      price: program ? Number(program.price) : 0,
+      // Empty until the specialist sets it (null = not set yet; the price is optional on save).
+      price: program?.price != null && program.price !== "" ? Number(program.price) : null,
       cover_image: undefined,
     },
     mode: "onSubmit",
@@ -101,19 +113,27 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
   const submitProgram = form.handleSubmit(async (values) => {
     // Guards the handler itself — disabled alone leaves a render-cycle window open
     // to a second submit (Enter key or a fast double-click) before it takes effect.
-    if (isCreateMode ? isCreating : isUpdating) return;
+    if (submitLockRef.current || isCreated || (isCreateMode ? isCreating : isUpdating)) return;
 
     if (isCreateMode) {
-      await createProgram({
-        title_ar: values.title_ar,
-        title_en: values.title_en,
-        description_ar: values.description_ar,
-        description_en: values.description_en,
-        what_you_will_learn_ar: values.what_you_will_learn_ar,
-        what_you_will_learn_en: values.what_you_will_learn_en,
-        price: values.price,
-        cover_image: values.cover_image as File | undefined,
-      });
+      submitLockRef.current = true;
+      try {
+        await createProgram({
+          title_ar: values.title_ar,
+          title_en: values.title_en,
+          description_ar: values.description_ar,
+          description_en: values.description_en,
+          what_you_will_learn_ar: values.what_you_will_learn_ar,
+          what_you_will_learn_en: values.what_you_will_learn_en,
+          price: values.price,
+          cover_image: values.cover_image as File | undefined,
+        });
+        // Stay locked: the hook navigates to the edit page on success.
+        setIsCreated(true);
+      } catch {
+        // Failed (the hook already showed the error toast): allow another try.
+        submitLockRef.current = false;
+      }
       return;
     }
 
@@ -138,7 +158,6 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
         title_ar: video.title_ar,
         title_en: video.title_en,
         order: video.order,
-        duration_minute: video.duration_minute,
         is_program_intro: video.is_program_intro,
         is_free: video.is_free,
         video: video.video as File,
@@ -151,7 +170,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
     setIsAddVideoFormOpen(false);
   });
 
-  const isSubmittingProgram = isCreateMode ? isCreating : isUpdating;
+  const isSubmittingProgram = isCreateMode ? isCreating || isCreated : isUpdating;
 
   return (
     <div className="space-y-5">
@@ -201,7 +220,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("titleAr")}</FormLabel>
+                      <FormLabel className="data-[error=true]:text-foreground">{t("titleAr")}</FormLabel>
                       <FormControl>
                         <Input placeholder={t("titleArPlaceholder")} {...field} dir="rtl" />
                       </FormControl>
@@ -214,7 +233,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="title_en"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("titleEn")}</FormLabel>
+                      <FormLabel className="data-[error=true]:text-foreground">{t("titleEn")}</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter course title" {...field} dir="ltr" />
                       </FormControl>
@@ -228,15 +247,22 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="price"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel>{t("price")}</FormLabel>
+                      <FormLabel className="data-[error=true]:text-foreground">{t("price")}</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
-                          value={field.value}
-                          onChange={(event) => field.onChange(Number(event.target.value))}
+                          min={PRICE_MIN}
+                          max={PRICE_MAX}
+                          inputMode="decimal"
+                          placeholder={t("pricePlaceholder")}
+                          value={field.value ?? ""}
+                          onChange={(event) =>
+                            field.onChange(event.target.value === "" ? null : Number(event.target.value))
+                          }
                           className="no-spinner"
                         />
                       </FormControl>
+                      <FormDescription>{t("priceHint", { min: PRICE_MIN, max: PRICE_MAX })}</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -247,7 +273,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="description_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("descAr")}</FormLabel>
+                      <FormLabel className="data-[error=true]:text-foreground">{t("descAr")}</FormLabel>
                       <FormControl>
                         <Textarea rows={4} placeholder={t("descArPlaceholder")} {...field} dir="rtl" />
                       </FormControl>
@@ -260,7 +286,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="description_en"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("descEn")}</FormLabel>
+                      <FormLabel className="data-[error=true]:text-foreground">{t("descEn")}</FormLabel>
                       <FormControl>
                         <Textarea rows={4} placeholder="Write the course description" {...field} dir="ltr" />
                       </FormControl>
@@ -274,7 +300,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="what_you_will_learn_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("learnAr")}</FormLabel>
+                      <FormLabel className="data-[error=true]:text-foreground">{t("learnAr")}</FormLabel>
                       <FormControl>
                         <Textarea rows={4} placeholder={t("learnArPlaceholder")} {...field} dir="rtl" />
                       </FormControl>
@@ -287,7 +313,7 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                   name="what_you_will_learn_en"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("learnEn")}</FormLabel>
+                      <FormLabel className="data-[error=true]:text-foreground">{t("learnEn")}</FormLabel>
                       <FormControl>
                         <Textarea rows={4} placeholder="Write the learning outcomes" {...field} dir="ltr" />
                       </FormControl>
@@ -304,10 +330,19 @@ export function ConsultantProgramForm({ mode, program }: ConsultantProgramFormPr
                       <FormControl>
                         <ProfileImageUpload
                           label={t("cover")}
+                          accept={COVER_ACCEPT}
                           value={(value as File | null) ?? program?.cover_image ?? null}
-                          onChange={(file) => onChange(file)}
+                          onChange={(file) => {
+                            onChange(file ?? undefined);
+                            // Validate right away so a wrong type/size shows before saving.
+                            if (file) void form.trigger("cover_image");
+                          }}
+                          // The saved cover can only be replaced, not deleted (removing it was
+                          // silently ignored by the API). "Remove" only undoes a newly picked file.
+                          removable={isCreateMode || value instanceof File}
                         />
                       </FormControl>
+                      <FormDescription>{t("coverHint")}</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

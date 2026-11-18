@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
+import { VIDEO_ACCEPT } from "../../utils/upload-rules";
 
 interface ConsultantVideoFormSectionProps<TValues extends FieldValues> {
   index: number;
@@ -24,7 +26,7 @@ interface ConsultantVideoFormSectionProps<TValues extends FieldValues> {
 
 // Lightweight sibling of the admin VideoFormSection (control-panel/programs) —
 // same visual card, but only the fields the consultant contract defines
-// (no description_ar; duration_minute is entered manually by the consultant).
+// (no description_ar; the duration is computed by the backend from the uploaded file).
 export function ConsultantVideoFormSection<TValues extends FieldValues>({
   index,
   form,
@@ -85,29 +87,9 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
                 <Input
                   type="number"
                   min={1}
-                  value={field.value as number}
-                  onChange={(event) => field.onChange(Number(event.target.value))}
-                  className="no-spinner"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name={path("duration_minute")}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("duration")}</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={1}
-                  value={field.value ? (field.value as number) : ""}
+                  value={(field.value as number | undefined) ?? ""}
                   onChange={(event) =>
-                    field.onChange(event.target.value === "" ? undefined : Number(event.target.value))
+                    field.onChange(event.target.value === "" ? null : Number(event.target.value))
                   }
                   className="no-spinner"
                 />
@@ -116,6 +98,7 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
             </FormItem>
           )}
         />
+
 
         <FormField
           control={form.control}
@@ -126,12 +109,17 @@ export function ConsultantVideoFormSection<TValues extends FieldValues>({
               <FormControl>
                 <Input
                   type="file"
-                  accept="video/*"
+                  accept={VIDEO_ACCEPT}
                   {...field}
                   value={undefined}
-                  onChange={(event) => onChange(event.target.files?.[0])}
+                  onChange={(event) => {
+                    onChange(event.target.files?.[0]);
+                    // Check type/size immediately, before the user hits save.
+                    void form.trigger(path("video"));
+                  }}
                 />
               </FormControl>
+              <FormDescription>{t("uploadHint")}</FormDescription>
               <FormMessage />
             </FormItem>
           )}

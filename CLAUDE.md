@@ -1,168 +1,84 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Mednova: bilingual (Arabic default/RTL, English/LTR) healthcare platform. Patients book remote consultations with service providers, enrol in programs (courses), and submit home-care requests. Next.js 15 App Router, next-intl, NextAuth, React Query, Zustand.
 
-## Project Overview
+@DESIGN.md
 
-Mednova is a healthcare consultation platform that connects patients with medical specialists and therapists for remote consultations. It supports video and chat consultations, manages financial transactions (wallets, payouts) between patients and service providers, and handles provider profile management with public reviews. The platform is bilingual (Arabic default/RTL, English/LTR) with role-based access for patients, service providers, and admins.
+## Workflow
 
-## API Conventions
+- After every change run `npx tsc --noEmit` and `npm run lint`. Do not introduce new errors. There are no tests.
+- For UI changes, check the result in both `/ar` and `/en`.
+- When you fix an issue listed here as a known gap, remove it from this file in the same PR.
+- The backend is Laravel and owned by another teammate. Never invent endpoints, params or response shapes. If you don't know one, ask.
+- Ask before editing: `src/middleware.ts`, `src/lib/auth.ts`, `src/types/next-auth.d.ts`, `src/lib/echo.ts`, `next.config.ts`, `src/instrumentation-client.ts`, `src/instrumentation.ts`, `sentry.*.config.ts`, any `.env*` file, `package.json`. Ask before installing packages.
+- Never print, log or commit secrets.
+- Naming for new files: stores `useXStore.ts`, utils camelCase (`dateUtils.ts`). Never rename existing files to match these rules.
+- Use `/add-api-hook` for a new API call and `/add-form` for a new form.
 
-API functions live in `src/features/*/api/` and follow one of two patterns:
+## Git
 
-**Standalone axios** (used in auth flows — `authApi.tsx`):
-```ts
-export const loginUser = async (data: LoginData) => {
-  const response = await api.post("/auth/login", data);
-  return response.data;
-};
-```
+- Create feature branches from `Staging`. Open PRs against `Staging`.
+- Branch names: `type/short-description` (e.g. `fix/payment-redirect`).
+- `main` is updated only by release PRs from `Staging`. Never push or open a PR directly to `main`.
+- Commit format: `type(scope): message`. English, lowercase. Scope is the feature folder name. The type must match the change (`fix` for fixes, never `test`).
 
-**Dependency-injected axios** (used everywhere else — pass the `AxiosInstance` from `useAxiosInstance()`):
-```ts
-export const getConsultantWallet = async (
-  axios: AxiosInstance,
-): Promise<ApiEnvelope<ConsultantWallet>> => {
-  const res = await axios.get<ApiEnvelope<ConsultantWallet>>(
-    "/api/financial/consultant/wallet",
-  );
-  return res.data;
-};
-```
+## Privacy
 
-- Response envelope shape: `{ success: boolean, message?: string, data: T }`
-- `useFetcher` unwraps one level — it returns `response.data.data` (the inner `T`), not the full envelope
-- Query params go in `{ params: { page, per_page } }`; `FormData` bodies need `{ headers: { "Content-Type": "multipart/form-data" } }`
-- Mutations handle errors via `axios.isAxiosError()` + `src/lib/backendFormErrors.ts` (`handleBackendFormError`) for 422 field errors; general errors go to a Sonner toast
+- Never put personal or patient data (emails, phones, names, medical info, tokens) in console output or in anything that can reach Sentry: `Sentry.*`, thrown error messages, raw axios errors.
+- New code uses `logger` from `@/utils/logger` (dev-only console, never reaches Sentry). Add no new `console.*`. Existing code that logs emails (e.g. `OtpInputs.tsx`) is not a pattern to copy.
+- Known issue (tracked as a bug): Sentry runs with `sendDefaultPii: true` and Replay masking is not explicit. Do not treat this as the intended config.
 
-## Common Pitfalls
+## API conventions
 
-**Locale-aware navigation** — always import `Link` and `useRouter` from `@/i18n/navigation`, not `next/link` or `next/navigation`. The app uses `localePrefix: "always"`, so bare hrefs like `"/profile/chat"` will drop the locale prefix and break routing.
+- New API files: `src/features/<feature>/api/<name>.api.ts`. Files without JSX use `.ts`, not `.tsx`.
+- Pass the `AxiosInstance` from `useAxiosInstance()` into API functions. The only exception is `src/features/auth/api/authApi.tsx`, which has its own instance.
+- Envelope: `{ success: boolean, message?: string, data: T }`.
+- Query params go in `{ params }`. `FormData` bodies need `{ headers: { "Content-Type": "multipart/form-data" } }`.
+- Mutations handle errors with `axios.isAxiosError()` and `handleBackendFormError` (`src/lib/backendFormErrors.ts`) for 422 field errors. General errors go to a Sonner toast.
+- Real-time: Echo client in `src/lib/echo.ts`, event subscribers in `src/services/echo/`, hook `src/hooks/useEchoNotifications.ts`.
 
-**`useFetcher` vs raw axios** — `useFetcher` extracts `response.data.data` (the inner payload). If you call an API function directly outside `useFetcher`, you get the full envelope (`{ success, data }`). Mixing the two causes type mismatches.
+## Common pitfalls
 
-**`useAxiosInstance()` is a hook** — it must be called inside a client component or custom hook, not in server components or outside the React tree. It creates a new Axios instance with the current session token on every call.
+- **Base URL has no `/api`.** `axiosInstance` uses `NEXT_PUBLIC_API_URL` as-is, so every feature path starts with `/api/...`. `authApi.tsx` appends `/api` itself, so do not prefix its paths.
+- **`useFetcher` vs raw axios.** `useFetcher` returns the inner `response.data.data` (as `T | null`). Calling an API function directly returns the full envelope. Never mix the two.
+- **`useFetcher` options.** `staleTime` is in minutes (default 5). It waits for an authenticated session unless `requiresAuth: false`. A `null` endpoint disables the query.
+- **`useAxiosInstance()` is a client-only hook.** The instance is memoized on `[token, locale]` and sends `Accept-Language`. On a 401 it retries once with the refreshed session, then signs out. Video-stream 401s are exempt.
+- **Navigation.** `Link`, `useRouter`, `usePathname` and `redirect` come from `@/i18n/navigation` (`localePrefix: "always"` drops the locale prefix otherwise). `useSearchParams`, `useParams` and `notFound` stay on `next/navigation`. When editing a file, switch only the first group. Never blind-replace the whole import.
+- **`"use client"`.** Required for `useSession`, `useRouter`, `useAxiosInstance` and Zustand stores. Not required for `useTranslations`, which also works in server components. Use `getTranslations` in async server components.
+- **`dir` and `lang`.** `dir` is set on a wrapper `<div>` in `src/app/[locale]/layout.tsx`, not on `<html>`. `<html>` in `src/app/layout.tsx` has no `lang`.
+- **RTL.** New code uses logical utilities only: `ms-`/`me-`/`ps-`/`pe-`/`start-`/`end-`/`text-start`/`text-end`. Use `rtl:` variants only when no logical equivalent exists (e.g. flipping directional icons). Do not refactor existing physical classes (`ml-`, `mr-`, `left-`, `right-`) unless you are already editing that line.
+- **Translations.** Every new UI string goes in both `src/messages/en.json` and `src/messages/ar.json`. No hardcoded text.
+- **Checkout redirects.** Every external checkout redirect must go through `isAllowedCheckoutUrl` (`src/features/programs/utils/checkoutUrl.ts`). Known gap: `src/features/payment/pages/PaymentPageView.tsx` redirects without it.
+- **`reviewee_type`.** The API currently returns a class name (e.g. `App\Models\Customer`). The backend is changing it to `customer` | `program`. Do not branch on the raw current value. Target `customer` | `program`. `platform` is NOT a valid `reviewee_type`; the backend rejects it. (`platform` is valid only for `creator.type` on courses.)
+- **`consultant` and `specialist` are not roles.** "consultant" only appears in field and route names (`consultant_type`, `consultant/programs`). Never use either as a role value.
+- **Images.** Remote image hosts are allowlisted in `next.config.ts`. A new host needs a config change (ask first, see Workflow).
 
-**RTL classnames** — the default locale is Arabic (RTL). Spacing/directional utilities (`mr-`, `ml-`, `left-`, `right-`) need to be swapped for RTL. Prefer logical CSS equivalents (`ms-`, `me-`) or use `useLocale()` to conditionally apply classes.
+## Glossary
 
-**`"use client"` boundary** — components using `useSession`, `useTranslations`, `useRouter`, `useAxiosInstance`, or any Zustand store must have `"use client"` at the top. Server components cannot call these hooks.
+- **Account types** (`type_account`): `patient`, `therapist`, `rehabilitation_center`. The API always returns `rehabilitation_center`. `center` appears only in the search filter `?type=center`, and the backend also accepts `rehabilitation_center` there.
+- **Service provider**: `therapist` + `rehabilitation_center`.
+- **Admin**: not a backend `type_account` value. `src/middleware.ts` treats a token as admin when `token.role`, `token.user.type_account` or `token.user.role` is `"admin"`. Control-panel login sets `type_account: "admin"` in `src/lib/auth.ts`. Admins skip the profile and approval flow and use `/control-panel/*`.
+- **`approval_status`**: `pending` | `approved` | `rejected`. Incomplete profiles go to `/profile/create`, pending to `/profile/pending`, rejected to `/profile/rejected`. Routes that need an approved account are in `src/lib/routeConfig.ts`.
+- **Programs** (courses): service providers manage them under `/profile/programs`. Patients enrol under `/profile/my-programs`. `creator.type` can be `platform`, meaning the admin/platform created it.
+- **Kawader**: home-care requests. Patients submit them (P1–P5), admins handle them (A1–A3), with realtime notifications. `/profile/kawader` is patients only.
 
-**API base URL duplication** — `axiosInstance` base URL is `https://api.mednovacare.com` (no `/api` suffix), so feature API paths must include `/api/...`. The standalone auth axios instance at `authApi.tsx` already bakes `/api` into its base URL — don't double-prefix those calls.
+## Docs (read when working on the topic; not imported)
 
-## Commands
+- `docs/kawader/api-reference.md`: Kawader API (Arabic).
+- `docs/measurement-api.md`: smart-glove measurement sessions.
+- `docs/booking-flow-audit.md`: booking flow through payment return.
+- `docs/copy-audit-ar.md`: Arabic copy tone report. Read before writing Arabic UI text.
+- `docs/design-system/`: design audit and tokens. Read alongside `DESIGN.md`.
 
-```bash
-npm run dev       # Start dev server
-npm run build     # Production build
-npm run start     # Start production server
-npm run lint      # Run ESLint
-```
+## Environment variables
 
-No test framework is configured in this project.
-
-## Tech Stack
-
-- **Framework**: Next.js 15 (App Router) + React 19 + TypeScript 5 (strict)
-- **Styling**: Tailwind CSS v4 + shadcn/ui (New York style) + `cn()` from `@/lib/utils`
-- **State**: Zustand (client state) + TanStack React Query v5 (server state) + NextAuth.js v4 (auth/session)
-- **HTTP**: Axios with a custom instance at `@/lib/axios/axiosInstance.tsx` that auto-injects Bearer tokens
-- **Forms**: React Hook Form + Zod + `@hookform/resolvers`
-- **i18n**: next-intl v4 — locales: `ar` (default, RTL) and `en` (LTR)
-- **Real-time**: Laravel Echo + Pusher.js for WebSocket events
-- **Error tracking**: Sentry; toasts via Sonner
-- **Icons**: Lucide React
-
-## Architecture
-
-### Routing & Locale
-
-All user-facing routes live under `src/app/[locale]/`. The middleware (`src/middleware.ts`) handles:
-- Injecting the locale prefix (always present: `/ar/...` or `/en/...`)
-- Auth guards — public routes, profile-completion checks, and admin-only paths (`/control-panel/...`)
-- Role-based redirects based on `approval_status` and token type from the NextAuth session
-
-The `[locale]` layout wraps pages with `NextIntlClientProvider` and sets `dir="rtl"` or `dir="ltr"`.
-
-### Feature-Based Structure
-
-Business logic lives in `src/features/<feature>/`:
-```
-src/features/auth/
-├── api/authApi.tsx        # Axios calls
-└── ui/                    # Components for this feature
-```
-Shared/reusable UI goes in `src/shared/ui/`, base shadcn components in `src/components/ui/`.
-
-### Data Fetching Pattern
-
-1. **API functions** defined in `src/features/*/api/` using the axios instance
-2. **`useFetcher`** (`src/hooks/useFetcher.ts`) — generic React Query `useQuery` wrapper (5-minute stale time)
-3. **Mutations** use `useMutation` directly from React Query with error handling via `src/lib/backendFormErrors.ts`
-
-Backend base URL: `https://api.mednovacare.com/api` (configured via `NEXT_PUBLIC_API_URL`)
-
-### State Layers
-
-| Layer | Tool | Location |
+| Variable | Required | Notes |
 |---|---|---|
-| Auth / session | NextAuth (`useSession`) | `src/lib/auth.ts` |
-| Client UI state | Zustand stores | `src/store/` |
-| Server / async data | React Query | via `useFetcher` or `useMutation` |
-| Real-time events | Laravel Echo + Pusher | `src/services/echo/`, `src/hooks/useEchoNotifications.ts` |
+| `NEXT_PUBLIC_API_URL` | yes | Staging host locally, `https://api.mednovacare.com` in production. No `/api` suffix in either. The app throws at startup if unset. |
+| `NEXTAUTH_SECRET` | yes | JWT signing key. Also read in `src/middleware.ts`. |
+| `NEXTAUTH_URL` | yes | Auth callback URL, read by NextAuth. |
+| `NEXT_PUBLIC_PAYMENT_HOSTS` | no | Comma-separated checkout host allowlist (host including port). Unset or blank falls back to `secure.amwalpay.com`. A set value replaces the default. Inlined at build time, so changing it needs a rebuild. |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET` | social login | Read in `src/lib/auth.ts`. Not set in the local `.env.local`. |
+| `SENTRY_AUTH_TOKEN` | build only | Source-map upload. Lives in `.env.sentry-build-plugin`. |
 
-### Form Error Handling
-
-Backend returns 422 with field-level errors. Use `handleBackendFormError` from `src/lib/backendFormErrors.ts` — it fires a Sonner toast with a summary and calls an optional callback with per-field errors to pass to `setError()`.
-
-## Coding Conventions
-
-### Components
-
-- Server components by default; add `"use client"` only when needed
-- i18n: always `const t = useTranslations()` — never hardcode strings
-- RTL awareness: check `useLocale()` for conditional classnames or `dir` props
-- `cn()` from `@/lib/utils` for conditional classnames (wraps `clsx` + `tailwind-merge`)
-
-### File & Folder Naming
-
-- Components: `PascalCase.tsx`
-- Hooks: `useCamelCase.ts`
-- Stores: `useCamelCaseStore.ts` or `CamelCaseStore.ts`
-- Utilities/services: `kebab-case.ts`
-
-### TypeScript
-
-- Strict mode is on — no implicit `any`
-- Types live in `src/types/`; NextAuth types are augmented in `src/types/next-auth.d.ts`
-- Prefer Zod schemas for runtime validation; infer types from schemas
-
-### Path Aliases
-
-Use `@/` for all internal imports (maps to `src/`). Example: `import { cn } from "@/lib/utils"`.
-
-### Zustand Stores
-
-```ts
-export const useStore = create<State>((set) => ({
-  data: null,
-  setData: (data) => set({ data }),
-}));
-```
-
-### Adding a New Feature
-
-1. Create `src/features/<feature>/api/<feature>Api.ts` for API calls
-2. Create `src/features/<feature>/ui/` for components
-3. Add route under `src/app/[locale]/<route>/`
-4. Add i18n keys to both `src/messages/en.json` and `src/messages/ar.json`
-5. Register protected/public status in `src/middleware.ts` if needed
-
-## Environment Variables
-
-| Variable | Purpose |
-|---|---|
-| `NEXTAUTH_SECRET` | JWT signing key |
-| `NEXTAUTH_URL` | Auth callback URL |
-| `NEXT_PUBLIC_API_URL` | Backend API base URL |
-| `NEXT_PUBLIC_PUSHER_APP_KEY` | Pusher WebSocket key |
-| `NEXT_PUBLIC_PUSHER_APP_CLUSTER` | Pusher cluster (eu) |
+The Pusher key is hardcoded in `src/lib/echo.ts` (cluster `eu`). There is no Pusher env var. Moving it to env is a separate task.

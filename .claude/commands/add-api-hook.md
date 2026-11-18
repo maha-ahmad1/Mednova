@@ -22,7 +22,7 @@ export const loginUser = async (data: LoginData) => {
 
 ### Dependency-injected axios (everywhere else)
 
-Every other feature receives `axios` as a parameter. The base URL is `https://api.mednovacare.com` (no `/api` suffix), so all paths must start with `/api/...`.
+Every other feature receives `axios` as a parameter. The base URL is `NEXT_PUBLIC_API_URL` (staging host locally, `https://api.mednovacare.com` in production, no `/api` suffix), so all paths must start with `/api/...`.
 
 ```ts
 // src/features/<feature>/api/<feature>.api.ts

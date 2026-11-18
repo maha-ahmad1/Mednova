@@ -14,7 +14,7 @@ Use this skill when adding a new form to any feature. Everything here is based o
 
 ## Checklist
 
-- [ ] `"use client"` at the top — forms use hooks (`useForm`, `useTranslations`, `useAxiosInstance`)
+- [ ] `"use client"` at the top — forms use hooks (`useForm`, `useAxiosInstance`)
 - [ ] `const t = useTranslations()` — no hardcoded strings
 - [ ] Zod schema defined before the component
 - [ ] `useForm` wired with `zodResolver`
@@ -58,7 +58,7 @@ import axios from "axios";
 ```
 
 **What it does:**
-- **422**: fires a Sonner toast with an Arabic summary of all errors, then calls the optional `onValidationError` callback with a flat `Record<string, string>` (field → first error message)
+- **422**: fires a Sonner toast with a localized summary of all errors, then calls the optional `onValidationError` callback with a flat `Record<string, string>` (field → first error message)
 - **401**: fires "session expired" toast
 - **500+**: fires "server error" toast
 - **other**: fires `errorData.message` or a generic fallback

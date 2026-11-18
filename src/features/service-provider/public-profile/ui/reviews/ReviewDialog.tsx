@@ -22,13 +22,15 @@ interface ReviewDialogProps {
   onOpenChange: (open: boolean) => void;
   reviewerId: number;
   revieweeId: number;
-  revieweeType: 'customer' | 'program' | 'platform';
+  revieweeType: 'customer' | 'program';
   revieweeName: string;
   /** Must reject on failure so the dialog keeps the form instead of showing the thanks screen. */
   onSubmit: (rating: number, comment: string) => Promise<unknown>;
   isSubmitting?: boolean;
   defaultRating?: number;
   defaultComment?: string;
+  /** "edit" when the user already has a review (one per person) and is updating it. */
+  mode?: 'create' | 'edit';
   onClose?: () => void;
 }
 
@@ -43,8 +45,10 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
   isSubmitting = false,
   defaultRating = 0,
   defaultComment = '',
+  mode = 'create',
   onClose,
 }) => {
+  const isEdit = mode === 'edit';
   const t = useTranslations('specialists.reviewDialog');
   const dir = useLocale() === 'ar' ? 'rtl' : 'ltr';
   const [rating, setRating] = useState(defaultRating);
@@ -57,13 +61,16 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
   }, []);
 
-  // إعادة تعيين الحقول عند فتح الـ Dialog
+  // Reset the fields only when the dialog opens. In edit mode the defaults change right
+  // after a successful save (the list refetches); re-running on that would wipe the thanks screen.
+  const wasOpenRef = useRef(false);
   useEffect(() => {
-    if (open) {
+    if (open && !wasOpenRef.current) {
       setRating(defaultRating);
       setComment(defaultComment);
       setIsSubmitted(false);
     }
+    wasOpenRef.current = open;
   }, [open, defaultRating, defaultComment]);
 
   const resetForm = () => {
@@ -87,8 +94,10 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
     }
   };
 
+  const hasChanges = rating !== defaultRating || comment.trim() !== defaultComment.trim();
+
   const handleSubmit = async () => {
-    if (rating === 0 || isSubmitting) return;
+    if (rating === 0 || isSubmitting || (isEdit && !hasChanges)) return;
 
     try {
       await onSubmit(rating, comment);
@@ -136,7 +145,7 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
                 {t('thanksTitle')}
               </DialogTitle>
               <DialogDescription className="text-lg text-gray-600">
-                {t('thanksDesc')}
+                {isEdit ? t('editThanksDesc') : t('thanksDesc')}
               </DialogDescription>
             </div>
           ) : (
@@ -145,7 +154,7 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
                 <Star className="w-7 h-7 text-[#32A88D]" />
               </div>
               <DialogTitle className="text-xl font-bold text-gray-800">
-                {t('title')}
+                {isEdit ? t('editTitle') : t('title')}
               </DialogTitle>
               <DialogDescription className="text-sm text-gray-500">
                 {t('subtitle', { name: revieweeName })}
@@ -203,7 +212,7 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
             <DialogFooter className="mt-6 sm:justify-stretch">
               <Button
                 onClick={handleSubmit}
-                disabled={isSubmitting || rating === 0}
+                disabled={isSubmitting || rating === 0 || (isEdit && !hasChanges)}
                 className="w-full bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white rounded-xl h-12 text-base font-semibold transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
@@ -212,7 +221,7 @@ export const ReviewDialog: React.FC<ReviewDialogProps> = ({
                     <span>{t('submitting')}</span>
                   </div>
                 ) : (
-                  t('submitButton')
+                  isEdit ? t('editSubmitButton') : t('submitButton')
                 )}
               </Button>
             </DialogFooter>

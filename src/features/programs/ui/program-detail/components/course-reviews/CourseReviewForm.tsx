@@ -4,18 +4,17 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { buildLoginHref } from "@/lib/safe-redirect";
-import { ReviewStars } from "@/features/service-provider/public-profile/ui/reviews/ReviewStars";
+import { ReviewDialog } from "@/features/service-provider/public-profile/ui/reviews/ReviewDialog";
 import { useSubmitProgramReview } from "@/features/programs/hooks/useSubmitProgramReview";
 import type { Review } from "@/features/programs/types/reviews";
-
-const MAX_COMMENT = 500;
+import { MyReviewCard, isOwnReview } from "@/shared/ui/components/reviews";
 
 interface CourseReviewFormProps {
   programId: number;
+  programTitle: string;
   isEnrolled: boolean;
   reviews: Review[];
 }
@@ -28,15 +27,19 @@ function Notice({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function CourseReviewForm({ programId, isEnrolled, reviews }: CourseReviewFormProps) {
+// Same review popup as the specialist profile (ReviewDialog): a button opens it,
+// and the thanks screen shows only after the server confirms the review.
+export function CourseReviewForm({
+  programId,
+  programTitle,
+  isEnrolled,
+  reviews,
+}: CourseReviewFormProps) {
   const t = useTranslations("programs.detail.reviewForm");
   const pathname = usePathname();
   const { session, isLoading, isAuthenticated } = useRequireAuth();
-  const { mutate, isPending } = useSubmitProgramReview(programId);
-
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [comment, setComment] = useState("");
+  const { mutateAsync, isPending } = useSubmitProgramReview(programId);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   if (isLoading) return null;
 
@@ -56,86 +59,66 @@ export function CourseReviewForm({ programId, isEnrolled, reviews }: CourseRevie
 
   if (!isEnrolled) return <Notice>{t("enrollPrompt")}</Notice>;
 
-  const userId = Number(session?.user?.id);
-  const myReview = reviews.find((r) => Number(r.reviewer?.id) === userId);
+  const userId = Number(session?.user?.id) || 0;
+  const myReview = reviews.find((r) => isOwnReview(r, userId));
 
-  if (myReview) {
-    return (
-      <div className="rounded-xl border border-[#32A88D]/30 bg-[#32A88D]/5 p-4">
-        <p className="mb-2 text-sm font-semibold text-gray-900">{t("yourReview")}</p>
-        <div className="flex gap-0.5" aria-label={String(myReview.rating)}>
-          {[1, 2, 3, 4, 5].map((s) => (
-            <Star
-              key={s}
-              className={`h-5 w-5 ${
-                s <= myReview.rating
-                  ? "fill-yellow-400 text-yellow-400"
-                  : "fill-gray-200 text-gray-200"
-              }`}
-            />
-          ))}
-        </div>
-        {myReview.comment && (
-          <p className="mt-2 break-words text-sm text-gray-700">{myReview.comment}</p>
-        )}
-      </div>
-    );
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (rating < 1 || isPending) return;
-    mutate({
+  // Rejects on failure so ReviewDialog keeps the form (the hook already shows the error toast).
+  const handleSubmit = async (rating: number, comment: string) => {
+    if (userId <= 0) throw new Error("Not logged in"); // never send reviewer_id = 0
+    await mutateAsync({
       reviewerId: userId,
       rating,
       comment: comment.trim() || undefined,
     });
   };
 
-  return (
-    <form
+  // Kept mounted in both states: after success the list refetches and myReview appears,
+  // and the dialog must stay to finish its thanks screen.
+  const dialog = (
+    <ReviewDialog
+      open={isDialogOpen}
+      onOpenChange={setIsDialogOpen}
+      reviewerId={userId}
+      revieweeId={programId}
+      revieweeType="program"
+      revieweeName={programTitle}
+      // One review per person: when it exists the same dialog edits it (the API updates it).
+      defaultRating={myReview?.rating ?? 0}
+      defaultComment={myReview?.comment ?? ""}
+      mode={myReview ? "edit" : "create"}
       onSubmit={handleSubmit}
-      className="rounded-xl border border-gray-200 p-4 sm:p-5 space-y-4"
-    >
-      <h3 className="text-lg font-semibold text-gray-900">{t("title")}</h3>
+      isSubmitting={isPending}
+    />
+  );
 
-      <div className="space-y-1">
-        <p className="text-sm font-medium text-gray-700">{t("ratingLabel")}</p>
-        <ReviewStars
-          rating={rating}
-          hoverRating={hoverRating}
-          onRatingChange={setRating}
-          onHoverRatingChange={setHoverRating}
+  if (myReview) {
+    return (
+      <>
+        {dialog}
+        <MyReviewCard
+          title={t("yourReview")}
+          rating={myReview.rating}
+          comment={myReview.comment}
+          editLabel={t("editButton")}
+          onEdit={() => setIsDialogOpen(true)}
           disabled={isPending}
         />
-      </div>
+      </>
+    );
+  }
 
-      <div className="space-y-1">
-        <label htmlFor="program-review-comment" className="text-sm font-medium text-gray-700">
-          {t("commentLabel")}
-        </label>
-        <Textarea
-          id="program-review-comment"
-          value={comment}
-          onChange={(e) => setComment(e.target.value.slice(0, MAX_COMMENT))}
-          maxLength={MAX_COMMENT}
-          rows={4}
-          disabled={isPending}
-          placeholder={t("commentPlaceholder")}
-          className="focus-visible:border-[#32A88D]"
-        />
-        <p className="text-xs text-muted-foreground">
-          {t("counter", { count: comment.length, max: MAX_COMMENT })}
-        </p>
-      </div>
-
+  return (
+    <>
       <Button
-        type="submit"
-        disabled={rating < 1 || isPending}
-        className="w-full sm:w-auto bg-[#32A88D] hover:bg-[#2a8a7a] text-white"
+        type="button"
+        onClick={() => setIsDialogOpen(true)}
+        disabled={isPending}
+        className="bg-gradient-to-r from-[#32A88D] to-[#2a8a7a] hover:from-[#2a8a7a] hover:to-[#32A88D] text-white"
       >
-        {isPending ? t("submitting") : t("submit")}
+        <Star className="w-4 h-4 me-2" />
+        {t("title")}
       </Button>
-    </form>
+      {dialog}
+    </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,9 @@ import {
   type ReviewAccess,
 } from "@/features/service-provider/public-profile/ui/reviews/ReviewsSection";
 import { ProviderReviewsList } from "@/features/service-provider/public-profile/ui/reviews/ProviderReviewsList";
+import { isOwnReview } from "@/shared/ui/components/reviews";
+import { OverallRating } from "@/features/programs/ui/program-detail/components/course-reviews/OverallRating";
+import { RatingDistribution } from "@/features/programs/ui/program-detail/components/course-reviews/RatingDistribution";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRatings } from "@/hooks/useRatings";
 import { Link, usePathname as useIntlPathname } from "@/i18n/navigation";
@@ -82,8 +85,28 @@ export default function SpecialistProfile(): React.ReactNode {
   const { data: ratings, isLoading: ratingsLoading } = useRatings("customer", providerId);
   const ratingsList = ratings ?? [];
 
+  // Average, count and per-star distribution are derived from the ratings list:
+  // the provider endpoint returns average_rating / total_reviews as null for now (backend bug),
+  // and it has no per-star counts like programs do.
+  const ratingStats = useMemo(() => {
+    const count = ratingsList.length;
+    const counts = [5, 4, 3, 2, 1].map(
+      (stars) => ratingsList.filter((r) => Math.round(Number(r.rating)) === stars).length,
+    );
+    const sum = ratingsList.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
+    return {
+      count,
+      average: count > 0 ? Math.round((sum / count) * 10) / 10 : 0,
+      distribution: counts.map((c, i) => ({
+        stars: 5 - i,
+        count: c,
+        percentage: count > 0 ? Math.round((c / count) * 100) : 0,
+      })),
+    };
+  }, [ratingsList]);
+
   const myRating = currentUserId
-    ? ratingsList.find((r) => Number(r.reviewer?.id) === currentUserId)
+    ? ratingsList.find((r) => isOwnReview(r, currentUserId))
     : undefined;
 
   const reviewAccess: ReviewAccess =
@@ -210,12 +233,14 @@ export default function SpecialistProfile(): React.ReactNode {
 
                     <div>
                       <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                        {t("aboutTitle")}
+                        {rawProvider.type_account === "rehabilitation_center"
+                          ? t("aboutTitleCenter")
+                          : t("aboutTitle")}
                       </h3>
                       <p
                         ref={bioRef}
                         className={cn(
-                          "text-gray-600 leading-relaxed text-lg",
+                          "max-w-3xl text-base leading-7 text-gray-600",
                           !bioExpanded && "line-clamp-3",
                         )}
                       >
@@ -236,35 +261,15 @@ export default function SpecialistProfile(): React.ReactNode {
 
                 <TabsContent value="reviews" className="mt-0 text-start">
                   <div className="space-y-6" ref={reviewsTabRef}>
+                    {/* Same summary as the course page: average + per-star distribution. */}
                     <div className="bg-white p-6 rounded-2xl shadow-sm border">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-4">
-                          <div className="text-center">
-                            <div className="text-4xl font-bold text-gray-800">
-                              {provider.rating.toFixed(1)}
-                            </div>
-                            <div className="text-gray-500">
-                              {t("outOfFive")}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-1">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`w-6 h-6 ${
-                                    i < Math.floor(provider.rating)
-                                      ? "fill-yellow-400 text-yellow-400"
-                                      : "fill-gray-200 text-gray-200"
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                            <div className="text-gray-600 mt-1">
-                              ({provider.reviewsCount} {t("reviewsCountSuffix")}
-                              )
-                            </div>
-                          </div>
+                      <div className="grid md:grid-cols-3 gap-8 items-center">
+                        <OverallRating
+                          rating={ratingStats.average}
+                          reviewCount={ratingStats.count}
+                        />
+                        <div className="md:col-span-2">
+                          <RatingDistribution distribution={ratingStats.distribution} />
                         </div>
                       </div>
                     </div>

@@ -4,19 +4,20 @@ import { ReviewDialog } from "./ReviewDialog";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { MyReviewCard } from "@/shared/ui/components/reviews";
 import { useSubmitReviewMutation } from "../../hooks/useSubmitReviewMutation";
 import type { SubmitReviewPayload, SubmitReviewResponse } from "../../types/review";
 
 // guest    → not logged in (reviewerId 0): show login prompt, never submit
 // own      → the viewer owns this profile: no review UI
-// reviewed → the viewer already reviewed: show their review, no new one
+// reviewed → the viewer already reviewed: show their review with an edit button (one per person)
 // can      → show the write-review button
 export type ReviewAccess = "guest" | "own" | "reviewed" | "can";
 
 interface ReviewsSectionProps {
   reviewerId: number;
   revieweeId: number;
-  revieweeType: "customer" | "program" | "platform";
+  revieweeType: "customer" | "program";
   revieweeName: string;
   access: ReviewAccess;
   loginHref: string;
@@ -70,6 +71,25 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
 
   if (access === "own") return null;
 
+  // Rendered next to every logged-in state: after a successful submit the list refetches and
+  // access flips to "reviewed"; keeping the dialog mounted lets the thanks screen finish.
+  const dialog = (
+    <ReviewDialog
+      open={isDialogOpen}
+      onOpenChange={setIsDialogOpen}
+      reviewerId={reviewerId}
+      revieweeId={revieweeId}
+      revieweeType={revieweeType}
+      revieweeName={revieweeName}
+      // One review per person: when one exists the same dialog edits it (the API updates it).
+      defaultRating={myReview?.rating ?? 0}
+      defaultComment={myReview?.comment ?? ""}
+      mode={access === "reviewed" && myReview ? "edit" : "create"}
+      onSubmit={handleSubmitReview}
+      isSubmitting={isPending}
+    />
+  );
+
   if (access === "guest") {
     return (
       <p className="text-sm text-gray-600">
@@ -83,24 +103,17 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
 
   if (access === "reviewed" && myReview) {
     return (
-      <div className="rounded-xl border border-[#32A88D]/30 bg-[#32A88D]/5 p-4">
-        <p className="mb-2 text-sm font-semibold text-gray-900">{tp("yourReview")}</p>
-        <div className="flex gap-0.5">
-          {[1, 2, 3, 4, 5].map((s) => (
-            <Star
-              key={s}
-              className={`h-5 w-5 ${
-                s <= myReview.rating
-                  ? "fill-yellow-400 text-yellow-400"
-                  : "fill-gray-200 text-gray-200"
-              }`}
-            />
-          ))}
-        </div>
-        {myReview.comment && (
-          <p className="mt-2 break-words text-sm text-gray-700">{myReview.comment}</p>
-        )}
-      </div>
+      <>
+        {dialog}
+        <MyReviewCard
+          title={tp("yourReview")}
+          rating={myReview.rating}
+          comment={myReview.comment}
+          editLabel={tp("editYourReview")}
+          onEdit={() => setIsDialogOpen(true)}
+          disabled={isPending}
+        />
+      </>
     );
   }
 
@@ -117,18 +130,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
         {triggerButtonText ?? t("addReview")}
       </Button>
 
-      <ReviewDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        reviewerId={reviewerId}
-        revieweeId={revieweeId}
-        revieweeType={revieweeType}
-        revieweeName={revieweeName}
-        defaultRating={0}
-        defaultComment=""
-        onSubmit={handleSubmitReview}
-        isSubmitting={isPending}
-      />
+      {dialog}
     </div>
   );
 };

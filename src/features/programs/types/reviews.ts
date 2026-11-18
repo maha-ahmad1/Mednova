@@ -8,22 +8,12 @@ export interface ApiReviewResponse {
   comment: string;
 }
 
+// Shortened name only — the API no longer returns the reviewer's image or contact details.
 export interface Reviewer {
-  id: number;
-  image: string | null;
-  full_name: string;
-  email: string;
-  phone?: string;
-  type_account: string;
-  birth_date: string;
-  gender: string;
-  average_rating: number | null;
-  total_reviews: number | null;
-  is_completed: boolean;
-  status: string;
-  is_banned: number;
-  timezone: string | null;
-  email_verified_at: string;
+  id?: number;
+  full_name?: string;
+  name?: string;
+  image?: string | null;
 }
 
 export interface Review {
@@ -31,6 +21,7 @@ export interface Review {
   reviewer: Reviewer;
   rating: number;
   comment: string;
+  is_mine?: boolean;
 }
 
 export interface StarRatings {
@@ -47,6 +38,8 @@ export interface CourseReviewsProps {
   reviewCount: number;
   starRatings?: StarRatings;
   isEnrolled?: boolean;
+  /** Shown in the review dialog subtitle ("شاركنا تجربتك مع ..."). */
+  programTitle?: string;
 }
 
 export interface ApiRatingsResponse {

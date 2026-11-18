@@ -35,7 +35,7 @@ export const useSubmitProgramReview = (programId: number) => {
       queryClient.invalidateQueries({ queryKey: ["program", programId] });
     },
     onError: (error) => {
-      toast.error(getReviewErrorMessage(error, t("submitError")));
+      toast.error(getReviewErrorMessage(error, t("submitError"), t("forbidden")));
     },
   });
 };

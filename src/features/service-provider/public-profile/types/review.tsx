@@ -2,7 +2,7 @@ export interface Review {
   id: number;
   reviewer: Reviewer;
   reviewee: Reviewee;
-  reviewee_type: 'customer' | 'program' | 'platform';
+  reviewee_type: 'customer' | 'program';
   rating: number;
   comment?: string;
   created_at?: string;
@@ -45,7 +45,7 @@ export interface Reviewee {
 export interface SubmitReviewPayload {
   reviewer_id: number;
   reviewee_id: number;
-  reviewee_type: 'customer' | 'program' | 'platform';
+  reviewee_type: 'customer' | 'program';
   rating: number;
   comment?: string;
 }

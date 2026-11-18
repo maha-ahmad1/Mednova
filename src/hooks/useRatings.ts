@@ -3,22 +3,13 @@ import { useFetcher } from './useFetcher';
 
 export type ReviewableType = 'program' | 'customer';
 
+// The ratings API returns a shortened reviewer name and no image or contact details.
+// `full_name`/`image` are kept optional for older responses.
 export interface RatingUser {
-  id: number;
-  full_name: string;
-  email: string;
-  phone: string;
-  type_account: string;
-  birth_date: string;
-  gender: string;
-  average_rating: number | null;
-  total_reviews: number | null;
-  is_completed: boolean;
-  status: string;
-  is_banned: number;
-  timezone: string | null;
-  email_verified_at: string;
-  image: string | null;
+  id?: number;
+  full_name?: string;
+  name?: string;
+  image?: string | null;
 }
 
 export interface Reviewee {
@@ -39,7 +30,9 @@ export interface Reviewee {
 export interface Rating {
   id: number;
   reviewer: RatingUser;
-  reviewee: Reviewee;
+  reviewee?: Reviewee;
+  /** True when the review belongs to the current user (if the API sends it). */
+  is_mine?: boolean;
   reviewee_type: string;
   rating: number;
   comment: string;

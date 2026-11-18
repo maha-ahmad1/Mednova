@@ -7,6 +7,7 @@ import { useReviewsPagination } from "@/hooks/useReviewsPagination";
 import {
   ReviewsList,
   ReviewsNavigation,
+  getReviewerName,
   type ReviewItem,
 } from "@/shared/ui/components/reviews";
 
@@ -18,7 +19,7 @@ interface ProviderReviewsListProps {
 export function ProviderReviewsList({ ratings, isLoading }: ProviderReviewsListProps) {
   const t = useTranslations("specialists.publicProfile.reviews");
 
-  // Whitelist reviewer fields: only name + image, never email / phone / birth_date.
+  // Whitelist reviewer fields: only the (shortened) name, never contact details.
   const reviews: ReviewItem[] = useMemo(
     () =>
       ratings.map((r) => ({
@@ -26,9 +27,8 @@ export function ProviderReviewsList({ ratings, isLoading }: ProviderReviewsListP
         rating: r.rating,
         comment: r.comment,
         reviewer: {
-          id: r.reviewer.id,
-          full_name: r.reviewer.full_name,
-          image: r.reviewer.image,
+          id: r.reviewer?.id,
+          name: getReviewerName(r.reviewer),
         },
       })),
     [ratings],

@@ -24,7 +24,7 @@ export const reviewsApi = {
 //     axios: AxiosInstance,
 //     params: {
 //       reviewee_id: number;
-//       reviewee_type: 'customer' | 'program' | 'platform';
+//       reviewee_type: 'customer' | 'program';
 //       page?: number;
 //       limit?: number;
 //     }

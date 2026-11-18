@@ -18,7 +18,7 @@ export const useSubmitReviewMutation = () => {
       toast.success(data.message || t("submitSuccessToast"));
     },
     onError: (error: AxiosError) => {
-      toast.error(getReviewErrorMessage(error, t("submitErrorToast")));
+      toast.error(getReviewErrorMessage(error, t("submitErrorToast"), t("forbiddenToast")));
     },
   });
 };

@@ -7,8 +7,16 @@ type ReviewErrorBody = {
 
 // The rating API reports validation errors as
 // { message: "ERROR OCCURRED", data: { field: "msg" } }.
-// Prefer the first field message, then `message`, then the translated fallback.
-export function getReviewErrorMessage(error: AxiosError, fallback: string): string {
+// 403 = the user isn't allowed to review this item (e.g. not enrolled / no consultation):
+// always show our own translated explanation, since the backend text isn't localized.
+// Otherwise prefer the first field message, then `message`, then the translated fallback.
+export function getReviewErrorMessage(
+  error: AxiosError,
+  fallback: string,
+  forbiddenMessage?: string,
+): string {
+  if (error.response?.status === 403 && forbiddenMessage) return forbiddenMessage;
+
   const body = error.response?.data as ReviewErrorBody | undefined;
 
   const first =

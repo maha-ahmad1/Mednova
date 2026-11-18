@@ -10,7 +10,7 @@ export const updateConsultantProgram = async (
   id: number,
   payload: ConsultantProgramFormPayload,
 ): Promise<ConsultantProgramResponse> => {
-  const formData = buildConsultantProgramFormData(payload);
+  const formData = buildConsultantProgramFormData(payload, { includeEmpty: true });
   // Laravel method-spoofing — multipart bodies must be sent as POST.
   formData.append("_method", "PUT");
 

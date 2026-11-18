@@ -23,6 +23,14 @@ import {
 } from "../../types/consultant-program-form";
 import type { ConsultantProgramVideo, ProgramStatus } from "../../types/consultant-program";
 
+const formatDuration = (totalSeconds: number) => {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return hours > 0 ? `${hours}:${pad(minutes)}:${pad(seconds)}` : `${minutes}:${pad(seconds)}`;
+};
+
 const reviewStatusClasses: Record<ConsultantProgramVideo["review_status"], string> = {
   pending: "bg-sky-100 text-sky-700 border-sky-200",
   approved: "bg-emerald-100 text-emerald-700 border-emerald-200",
@@ -57,6 +65,9 @@ export function ConsultantVideoItemCard({
   const tv = useTranslations("consultantPrograms.validation");
   const schema = useMemo(() => createConsultantVideoEditSchema(tv), [tv]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  // Duration now comes from the backend in seconds; hidden until it has been computed.
+  const durationSeconds =
+    video.duration_seconds ?? (video.duration_minute ? video.duration_minute * 60 : null);
   const [isEditing, setIsEditing] = useState(false);
 
   // An archived course is fully locked — no video add/edit/delete at all, confirmed by
@@ -81,7 +92,6 @@ export function ConsultantVideoItemCard({
       title_ar: video.title_ar,
       title_en: video.title_en,
       order: video.order,
-      duration_minute: video.duration_minute ?? 0,
       is_program_intro: video.is_program_intro,
       is_free: video.is_free,
     },
@@ -92,7 +102,6 @@ export function ConsultantVideoItemCard({
       title_ar: video.title_ar,
       title_en: video.title_en,
       order: video.order,
-      duration_minute: video.duration_minute ?? 0,
       is_program_intro: video.is_program_intro,
       is_free: video.is_free,
     });
@@ -112,12 +121,11 @@ export function ConsultantVideoItemCard({
           <p className="font-semibold">{locale === "en" ? video.title_en : video.title_ar}</p>
           <p className="text-xs text-muted-foreground">
             {t("orderLabel", { order: video.order })}
-            {" · "}
-            {t("durationLabel")}{" "}
-            {video.duration_minute ? (
-              t("minutes", { count: video.duration_minute })
-            ) : (
-              <span className="font-medium text-destructive">{t("unspecified")}</span>
+            {durationSeconds !== null && (
+              <>
+                {" · "}
+                {t("durationLabel")} <span dir="ltr">{formatDuration(durationSeconds)}</span>
+              </>
             )}
           </p>
         </div>
@@ -200,30 +208,10 @@ export function ConsultantVideoItemCard({
                     <Input
                       type="number"
                       min={1}
-                      value={field.value}
-                      onChange={(event) => field.onChange(Number(event.target.value))}
-                      className="no-spinner"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="duration_minute"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("duration")}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={1}
-                      value={field.value ? field.value : ""}
+                      value={field.value ?? ""}
                       onChange={(event) =>
                         field.onChange(
-                          event.target.value === "" ? undefined : Number(event.target.value),
+                          event.target.value === "" ? null : Number(event.target.value),
                         )
                       }
                       className="no-spinner"
@@ -233,6 +221,7 @@ export function ConsultantVideoItemCard({
                 </FormItem>
               )}
             />
+
 
             <FormField
               control={form.control}

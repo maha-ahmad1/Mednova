@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { BookOpen, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { ConfirmationModal } from "@/features/control-panel/users/ui/components/ConfirmationModal";
@@ -55,8 +55,35 @@ export function ConsultantProgramsListPage() {
       )}
 
       {!isLoading && !isError && programs.length === 0 && (
-        <div className="rounded-xl border bg-white p-10 text-center text-muted-foreground">
-          {t("empty")}
+        <div className="rounded-2xl border border-dashed border-[#32A88D]/30 bg-white px-6 py-12 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#32A88D]/10">
+            <BookOpen className="h-8 w-8 text-[#32A88D]" />
+          </div>
+          <h2 className="text-lg font-semibold text-gray-900">{t("emptyTitle")}</h2>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+            {t("emptyDesc")}
+          </p>
+
+          {/* What happens next, so the first step feels small. */}
+          <ol className="mx-auto mt-6 flex max-w-lg flex-col items-center gap-3 text-sm text-gray-700 sm:flex-row sm:justify-center sm:gap-6">
+            {(["emptyStep1", "emptyStep2", "emptyStep3"] as const).map((key, index) => (
+              <li key={key} className="flex items-center gap-2">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#32A88D] text-xs font-semibold text-white">
+                  {index + 1}
+                </span>
+                {t(key)}
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-8 flex justify-center">
+            <Button asChild size="lg" className="w-auto bg-[#32A88D] px-8 hover:bg-[#2a8a7a]">
+              <Link href="/profile/programs/new">
+                <Plus className="me-1 h-4 w-4" />
+                {t("emptyCta")}
+              </Link>
+            </Button>
+          </div>
         </div>
       )}
 
@@ -80,6 +107,7 @@ export function ConsultantProgramsListPage() {
         description={t("deleteDesc")}
         confirmLabel={t("delete")}
         cancelLabel={t("cancel")}
+        confirmVariant="destructive"
         isConfirming={isDeleting}
         onConfirm={async () => {
           if (!pendingAction) return;

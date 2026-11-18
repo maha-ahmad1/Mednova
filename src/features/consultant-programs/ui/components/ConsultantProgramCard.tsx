@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { AlertTriangle, Archive, Loader2, Pencil, Plus, Send, Trash2 } from "lucide-react";
+import { AlertTriangle, Archive, BookOpen, Loader2, Pencil, Plus, Send, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { ConsultantProgram } from "../../types/consultant-program";
@@ -41,7 +41,12 @@ export function ConsultantProgramCard({
               className="object-cover"
               unoptimized
             />
-          ) : null}
+          ) : (
+            // Programs created before the cover became required.
+            <div className="flex h-full min-h-40 w-full items-center justify-center bg-[#32A88D]/10">
+              <BookOpen className="h-10 w-10 text-[#32A88D]/60" />
+            </div>
+          )}
         </div>
 
         <CardContent className="flex flex-1 flex-col gap-3 p-4">
@@ -49,7 +54,7 @@ export function ConsultantProgramCard({
             <div className="space-y-1">
               <h3 className="text-lg font-bold text-foreground">{locale === "en" ? program.title_en : program.title_ar}</h3>
               <p className="text-sm text-muted-foreground">
-                {t("summary", { price: program.price, videos: program.videos.length, sales: program.sales_count })}
+                {t("summary", { price: program.price ?? "—", videos: program.videos.length, sales: program.sales_count })}
               </p>
               <p className="text-xs text-muted-foreground">
                 {t("commission", { rate: program.platform_commission_rate, earning: program.your_earning_per_sale })}

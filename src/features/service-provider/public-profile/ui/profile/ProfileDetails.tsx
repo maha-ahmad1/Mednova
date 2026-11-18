@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import type { NormalizedProvider } from "@/utils/normalizeProvider";
@@ -11,33 +12,37 @@ export default function ProfileDetails({ provider }: ProfileDetailsProps) {
   const tCard = useTranslations("specialists.card");
 
   return (
-    <div className="space-y-4 text-start">
-      <div className="flex items-start gap-3">
-        <span className="text-gray-500 text-sm whitespace-nowrap">{t("specialtiesLabel")}</span>
-        <div className="flex flex-wrap gap-2">
+    <div className="text-start">
+      {/* Same heading style as ServicesPricing so both columns match. */}
+      <h3 className="text-gray-500 text-sm mb-4">{t("professionalInfoTitle")}</h3>
+
+      {/* Two-column grid: the label column sizes to the widest label, so all values line up. */}
+      <dl className="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-4 gap-y-3 rounded-xl bg-gray-50 p-4">
+        <dt className="text-gray-500 text-sm whitespace-nowrap">{t("specialtiesLabel")}</dt>
+        <dd className="flex min-w-0 flex-wrap gap-2">
           {provider.specialties?.length > 0 ? (
             provider.specialties.map((specialty) => (
               <Badge
                 key={specialty.id}
-                className="bg-[#32A88D]/10 text-[#32A88D] px-3 py-1.5 text-sm"
+                className="h-auto max-w-full shrink whitespace-normal text-start leading-snug bg-[#32A88D]/10 text-[#32A88D] px-3 py-1 text-sm"
               >
                 {specialty.name}
               </Badge>
             ))
           ) : (
-            <Badge className="bg-[#32A88D]/10 text-[#32A88D] px-3 py-1.5 text-sm">
+            <Badge className="h-auto max-w-full shrink whitespace-normal text-start leading-snug bg-[#32A88D]/10 text-[#32A88D] px-3 py-1 text-sm">
               {tCard("notSpecified")}
             </Badge>
           )}
-        </div>
-      </div>
+        </dd>
 
-      {provider.details.map((detail) => (
-        <div className="flex gap-2" key={detail.label}>
-          <span className="text-gray-500 text-sm whitespace-nowrap">{detail.label}:</span>
-          <span className="text-gray-800">{detail.value}</span>
-        </div>
-      ))}
+        {provider.details.map((detail) => (
+          <Fragment key={detail.label}>
+            <dt className="text-gray-500 text-sm whitespace-nowrap">{detail.label}:</dt>
+            <dd className="text-gray-800 break-words">{detail.value}</dd>
+          </Fragment>
+        ))}
+      </dl>
     </div>
   );
 }

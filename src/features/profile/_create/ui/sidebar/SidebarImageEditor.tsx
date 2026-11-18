@@ -10,6 +10,7 @@ import { useUpdateProfileImage , type UserType } from "@/features/profile/_views
 import Image from "next/image"
 import { useSession } from "next-auth/react"
 import { useProfileImageStore } from "@/store/useProfileImageStore"
+import { useTranslations } from "next-intl"
 
 interface SidebarImageEditorProps {
   currentImage: string
@@ -28,6 +29,7 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const t = useTranslations("profileImageEditor")
   
   const { setImage: setStoreImage } = useProfileImageStore()
   
@@ -57,7 +59,7 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
       setIsModalOpen(false)
       setPreviewImage(null)
       setSelectedFile(null)
-      toast.success("تم تحديث الصورة بنجاح")
+      toast.success(t("success"))
       
       if (refetch) {
         refetch()
@@ -65,7 +67,7 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
     },
     onError: (error) => {
       console.error("Image update failed:", error)
-      toast.error("فشل تحديث الصورة")
+      toast.error(t("error"))
     },
     refetch,
   })
@@ -76,13 +78,13 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      toast.error("يرجى اختيار صورة صالحة")
+      toast.error(t("invalidType"))
       return
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("حجم الصورة يجب أن يكون أقل من 5 ميجابايت")
+      toast.error(t("tooLarge"))
       return
     }
 
@@ -98,7 +100,7 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
 
   const handleSave = async () => {
     if (!selectedFile) {
-      toast.error("يرجى اختيار صورة")
+      toast.error(t("selectImage"))
       return
     }
 
@@ -121,12 +123,12 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
 
   return (
     <>
-      <div className="relative group">
+      <div className="relative group w-20 h-20 shrink-0">
         <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
           {currentImage && currentImage !== "/images/placeholder.svg" ? (
             <Image  
               src={currentImage || "/images/placeholder.svg"} 
-              alt="Profile" 
+              alt={t("profileAlt")} 
               width={100} 
               height={100} 
               className="object-cover w-full h-full" 
@@ -140,8 +142,10 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="absolute bottom-0 right-0 bg-[#32A88D] text-white rounded-full p-2 hover:bg-[#2b8e77] transition-all shadow-md group-hover:scale-110"
-          title="تغيير الصورة"
+          type="button"
+          aria-label={t("changeImage")}
+          className="absolute bottom-0 end-0 bg-[#32A88D] text-white rounded-full p-2 hover:bg-[#2b8e77] transition-all shadow-md group-hover:scale-110"
+          title={t("changeImage")}
         >
           <Pencil className="w-3 h-3" />
         </button>
@@ -150,7 +154,7 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-center">تحديث صورة الملف الشخصي</DialogTitle>
+            <DialogTitle className="text-center">{t("title")}</DialogTitle>
           </DialogHeader>
 
           <div className="flex flex-col items-center gap-4 py-4">
@@ -158,7 +162,7 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
               {modalPreviewImage && modalPreviewImage !== "/images/placeholder.svg" ? (
                 <Image
                   src={modalPreviewImage || "/images/placeholder.svg"}
-                  alt="Preview"
+                  alt={t("previewAlt")}
                   className="object-cover w-full h-full"
                   width={100}
                   height={100}
@@ -180,14 +184,14 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
             />
 
             <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full">
-              <Upload className="w-4 h-4 mr-2" />
-              اختر صورة جديدة
+              <Upload className="w-4 h-4 me-2" />
+              {t("choose")}
             </Button>
           </div>
 
-          <DialogFooter className="flex gap-2 sm:gap-0">
+          <DialogFooter className="gap-2">
             <Button type="button" variant="outline" onClick={handleCancel} disabled={isUpdating}>
-              إلغاء
+              {t("cancel")}
             </Button>
             <Button
               type="button"
@@ -195,8 +199,8 @@ export const SidebarImageEditor: React.FC<SidebarImageEditorProps> = ({
               disabled={!selectedFile || isUpdating}
               className="bg-[#32A88D] hover:bg-[#2b8e77]"
             >
-              {isUpdating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              حفظ
+              {isUpdating && <Loader2 className="w-4 h-4 me-2 animate-spin" />}
+              {t("save")}
             </Button>
           </DialogFooter>
         </DialogContent>

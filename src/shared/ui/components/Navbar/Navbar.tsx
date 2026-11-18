@@ -36,15 +36,21 @@ export default function Navbar({
           ${className}
         `}
       >
-        {variant === "dashboard" && isMobileSearchOpen ? (
-          <div className="flex items-center gap-2 w-full lg:hidden">
+        {variant === "dashboard" && isMobileSearchOpen && (
+          // Mobile search overlays the normal bar (which stays rendered underneath), so the
+          // header keeps its height and nothing jumps. Soft rounded field, icon at the start,
+          // light focus ring instead of the thick one.
+          <div className="absolute inset-0 z-10 flex items-center gap-2 bg-white px-4 lg:hidden">
             <div className="relative flex-1">
-              <Search className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="pointer-events-none absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
                 type="search"
                 autoFocus
                 placeholder={t("searchPlaceholder")}
-                className="w-full pe-10 text-start"
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") setIsMobileSearchOpen(false);
+                }}
+                className="h-11 w-full rounded-full border-gray-200 bg-gray-50 ps-10 pe-4 text-start text-sm shadow-none placeholder:text-gray-400 focus-visible:border-[#32A88D] focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-[#32A88D]/15 [&::-webkit-search-cancel-button]:hidden"
               />
             </div>
             <Button
@@ -52,11 +58,12 @@ export default function Navbar({
               size="icon"
               onClick={() => setIsMobileSearchOpen(false)}
               aria-label={tCommon("close")}
+              className="h-10 w-10 shrink-0 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700"
             >
               <X className="w-5 h-5" />
             </Button>
           </div>
-        ) : (
+        )}
           <>
             <div className="flex items-center gap-4 flex-1 min-w-0">
               {variant === "landing" && (
@@ -116,7 +123,6 @@ export default function Navbar({
               <AuthActions variant={variant} />
             </div>
           </>
-        )}
       </header>
 
       {variant === "landing" && (

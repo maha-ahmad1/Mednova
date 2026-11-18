@@ -10,7 +10,7 @@ import {
   RatingDistribution,
   CourseReviewForm,
 } from "./course-reviews";
-import { ReviewsNavigation, ReviewsList } from "@/shared/ui/components/reviews";
+import { ReviewsNavigation, ReviewsList, getReviewerName } from "@/shared/ui/components/reviews";
 import { CourseReviewsProps } from "@/features/programs/types/reviews";
 
 export function CourseReviews({
@@ -19,6 +19,7 @@ export function CourseReviews({
   reviewCount,
   starRatings,
   isEnrolled,
+  programTitle,
 }: CourseReviewsProps) {
   const t = useTranslations("programs.detail");
   const { data: ratingsResponse, isLoading } = useRatings("program", programId);
@@ -27,7 +28,11 @@ export function CourseReviews({
     id: item.id,
     rating: item.rating,
     comment: item.comment,
-    reviewer: item.reviewer,
+    is_mine: item.is_mine,
+    reviewer: {
+      id: item.reviewer?.id,
+      name: getReviewerName(item.reviewer),
+    },
   }));
 
   const reviewsDistribution = useRatingDistribution(starRatings, reviewCount);
@@ -69,6 +74,7 @@ export function CourseReviews({
       <div className="mb-8">
         <CourseReviewForm
           programId={programId}
+          programTitle={programTitle ?? ""}
           isEnrolled={isEnrolled === true}
           reviews={reviews}
         />

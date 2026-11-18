@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
+import { useLocale } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -40,6 +41,8 @@ export function ConfirmationModal({
   confirmVariant = "default",
   children,
 }: ConfirmationModalProps) {
+  const dir = useLocale() === "ar" ? "rtl" : "ltr";
+
   const handleConfirm = () => {
     // Guards the handler itself, not just the Button's disabled prop — closes the
     // render-cycle window where a second click could land before the button
@@ -50,8 +53,20 @@ export function ConfirmationModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      {/* dir follows the locale: text and X on the right in Arabic, on the left side mirrored in English.
+          The shared dialog's own X is pinned to the physical right, so we render our own at the end side. */}
+      <DialogContent className="sm:max-w-md" dir={dir} showCloseButton={false}>
+        <button
+          type="button"
+          onClick={() => onOpenChange(false)}
+          disabled={isConfirming}
+          aria-label={cancelLabel}
+          className="absolute end-4 top-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        <DialogHeader className="text-start sm:text-start pe-6">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>

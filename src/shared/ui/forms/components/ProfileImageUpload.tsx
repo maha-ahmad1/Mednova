@@ -13,6 +13,8 @@ interface ProfileImageUploadProps {
   rtl?: boolean;
   error?: string | undefined;
   required?: boolean;
+  /** Show "إزالة الصورة" under the preview. Default true (unchanged behavior). */
+  removable?: boolean;
 }
 
 export function ProfileImageUpload({
@@ -23,6 +25,7 @@ export function ProfileImageUpload({
   accept = "image/*",
   rtl = true,
   required = false,
+  removable = true,
 }: ProfileImageUploadProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -197,6 +200,7 @@ export function ProfileImageUpload({
                 ✓
               </div>
             </div>
+            {removable && (
             <button
               type="button"
               onClick={handleRemove}
@@ -204,6 +208,7 @@ export function ProfileImageUpload({
             >
               إزالة الصورة
             </button>
+            )}
           </div>
         )}
       </div>
